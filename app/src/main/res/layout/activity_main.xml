@@ -159,9 +159,12 @@
         android:layout_marginStart="2dp"
         android:layout_marginLeft="2dp"
         android:text="Sign up"
+        android:onClick="SignUpTextClicked"
         android:textColor="@color/blueforLoginButton"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/textView3"
         app:layout_constraintTop_toTopOf="@+id/textView3" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

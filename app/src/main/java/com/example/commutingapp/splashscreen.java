@@ -2,6 +2,7 @@ package com.example.commutingapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -11,6 +12,6 @@ private final Handler handler = new Handler();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
-        handler.postDelayed(()->setContentView(R.layout.activity_main),2500);
+        handler.postDelayed(()->this.startActivity(new Intent(this, MainActivity.class)),2500);
     }
 }
