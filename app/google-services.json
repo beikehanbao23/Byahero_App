@@ -7,6 +7,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:154359044162:android:34615678e5375e449cf5db",
+        "android_client_info": {
+          "package_name": "com.example.commutingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "154359044162-aok1861cb5lgk0o2afrlk81u9kmnnm8p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFAhyLbsd4AWtnYp9Z5cHpCKk01fjEXCc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "154359044162-aok1861cb5lgk0o2afrlk81u9kmnnm8p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:154359044162:android:18b939a073e194739cf5db",
         "android_client_info": {
           "package_name": "com.miko.commutingapp"
