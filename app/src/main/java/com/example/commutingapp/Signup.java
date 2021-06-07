@@ -14,7 +14,14 @@ public class Signup extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
     }
 
-    public void backToSignInButton(View view) {
+    public void backToSignIn(View view) {
         startActivity(new Intent(this,MainActivity.class));
+        finish();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        backToSignIn(null);
     }
 }

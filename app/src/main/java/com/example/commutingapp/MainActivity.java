@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void SignUpTextClicked(View view) {
         this.startActivity(new Intent(this, Signup.class));
+        finish();
     }
 
     @Override
