@@ -1,8 +1,18 @@
 package ValidateUser;
 
-public class NameValidation {
+import android.widget.EditText;
 
-        //check if null
+public class NameValidation   {
+    private EditText name;
+
+    public NameValidation(EditText name){
+        this.name = name;
+    }
+
+
+
+
+    //check if null
         //check if already used
 
 

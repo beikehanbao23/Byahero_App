@@ -2,26 +2,25 @@ package ValidateUser;
 
 import android.widget.EditText;
 
-import com.google.firebase.auth.FirebaseAuthEmailException;
+import Logger.NullErrorDialog;
 
-public class EmailValidation implements UserValidator{
+public class EmailValidation implements CharactersValidation, NullErrorDialog,ProperInput {
     private EditText email;
 
     public EmailValidation(EditText email){this.email = email;}
 
-    @Override
-    public void isNull() {
-    if(email.toString().isEmpty()){
-        email.setError("Email is required");
-        return;
-    }
-    email.setError(null);
-    }
 
     @Override
-    public void isValid() {
-    //check if already registered
+    public boolean isProper() {
+
+        if(!email.toString().trim().contains("@")){
+            email.setError("Email is invalid");
+            return true;
+        }
+        email.setError(null);
+        return false;
     }
+
 
 
 //check if null
