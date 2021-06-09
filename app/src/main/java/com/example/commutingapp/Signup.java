@@ -8,12 +8,12 @@ import android.view.View;
 import android.widget.EditText;
 
 public class Signup extends AppCompatActivity {
-
+private EditText name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
+        name = findViewById(R.id.editTextTextPersonName2);
     }
 
     public void backToSignInButton(View view) {
@@ -24,5 +24,10 @@ public class Signup extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         backToSignInButton(null);
+    }
+
+
+    public void CreateButtonClicked(View view) {
+
     }
 }
