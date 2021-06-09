@@ -26,4 +26,12 @@ public class Users {
     public String getPhoneNumber() {
         return phoneNumber;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
