@@ -25,9 +25,8 @@ public class BackButton extends AppCompatActivity {
             message.hideMessage();
             super.onBackPressed();
             return;
-        } else {
-            message.showMessage();
         }
+        message.showMessage();
         backPressedTime = System.currentTimeMillis();
     }
 
