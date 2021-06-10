@@ -4,6 +4,7 @@ import android.widget.EditText;
 
 import Logger.NullErrorDialog;
 import ValidateUser.EmailValidation;
+import ValidateUser.NameValidation;
 import ValidateUser.PasswordValidation;
 import ValidateUser.PhoneNumberValidation;
 import ValidateUser.Validation;
@@ -47,7 +48,7 @@ public class Register implements NullErrorDialog {
 
     private boolean isInputUnfit(){
         for (Validation validation:getValidateInputs()) {
-            if (validation.is_Unfit()){
+            if(validation.is_Unfit()){
                 return true;
             }
         }
@@ -59,6 +60,6 @@ public class Register implements NullErrorDialog {
         return new EditText[]{name,email,phoneNo,password,confirmPassword};
     }
     private Validation[] getValidateInputs(){
-        return new Validation[]{new EmailValidation(email),new PasswordValidation(password,confirmPassword),new PhoneNumberValidation(phoneNo)};
+        return new Validation[]{new NameValidation(name), new EmailValidation(email),new PhoneNumberValidation(phoneNo), new PasswordValidation(password,confirmPassword)};
     }
 }

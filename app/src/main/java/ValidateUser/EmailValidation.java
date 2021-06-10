@@ -17,7 +17,7 @@ public class EmailValidation implements CharactersValidation,Validation {
     @Override
     public boolean is_Unfit() {
 
-        if (anInvalidEmail()) {
+        if (!anInvalidEmail()) {
             email.setError("Email is invalid");
             return true;
         }
@@ -25,6 +25,6 @@ public class EmailValidation implements CharactersValidation,Validation {
         return false;
     }
     private boolean anInvalidEmail(){
-        return (!email.getText().toString().trim().contains("@"));
+        return android.util.Patterns.EMAIL_ADDRESS.matcher((CharSequence) email.getText().toString().trim()).matches();
     }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import RegisterUser.Register;
 
@@ -41,6 +42,7 @@ private EditText name,email,phoneNumber,password,confirmPassword;
 
 
     public void CreateBttnClicked(View view) {
+
         Register register = new Register(name, email, phoneNumber, password, confirmPassword);
         register.registerUser();
     }
