@@ -12,7 +12,7 @@ public class PhoneNumberValidation implements CharactersValidation,Validation{
 
     @Override
     public boolean is_Unfit() {
-        if(hasSpecialCharacters(phoneNumber.getText().toString().trim()) || isNumberSizeCorrect()){
+        if(hasSpecialCharacters(phoneNumber.getText().toString().trim()) || isNumberSizeIncorrect()){
             phoneNumber.setError("Phone number is invalid.");
             return true;
         }
@@ -26,8 +26,8 @@ public class PhoneNumberValidation implements CharactersValidation,Validation{
     //check if contains special characters
     //check if alreadyused
 
-    private boolean isNumberSizeCorrect(){
-        return phoneNumber.getText().toString().toCharArray().length == 11;
+    private boolean isNumberSizeIncorrect(){
+        return phoneNumber.getText().toString().toCharArray().length != 11;
     }
 
 

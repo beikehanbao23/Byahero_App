@@ -11,7 +11,7 @@ import RegisterUser.Register;
 
 public class Signup extends AppCompatActivity {
 private EditText name,email,phoneNumber,password,confirmPassword;
-private Register register;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +41,7 @@ private Register register;
 
 
     public void CreateBttnClicked(View view) {
-
+        Register register = new Register(name, email, phoneNumber, password, confirmPassword);
+        register.registerUser();
     }
 }

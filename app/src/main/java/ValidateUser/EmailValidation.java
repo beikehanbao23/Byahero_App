@@ -17,11 +17,14 @@ public class EmailValidation implements CharactersValidation,Validation {
     @Override
     public boolean is_Unfit() {
 
-        if (!email.getText().toString().trim().contains("@")) {
+        if (anInvalidEmail()) {
             email.setError("Email is invalid");
             return true;
         }
         email.setError(null);
         return false;
+    }
+    private boolean anInvalidEmail(){
+        return (!email.getText().toString().trim().contains("@"));
     }
 }

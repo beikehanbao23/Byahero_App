@@ -14,7 +14,7 @@ public class PasswordValidation implements CharactersValidation,Validation {
     @Override
     public boolean is_Unfit() {
 
-        if (!password.getText().toString().trim().equals(confirmPassword.toString().trim())) {
+        if (isPasswordUnmatch()) {
             confirmPassword.setError("The specified password do not match.");
             return true;
         }
@@ -28,7 +28,9 @@ public class PasswordValidation implements CharactersValidation,Validation {
         return false;
     }
 
-
+    private boolean isPasswordUnmatch(){
+        return (!password.getText().toString().trim().equals(confirmPassword.getText().toString().trim()));
+    }
     private boolean isPasswordWeak() {
         return confirmPassword.getText().toString().trim().toCharArray().length >= 8 && !hasNumber(confirmPassword.toString()) || !hasSpecialCharacters(confirmPassword.toString());
     }
