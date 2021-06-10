@@ -2,7 +2,9 @@ package RegisterUser;
 
 import android.widget.EditText;
 
-public class Register {
+import Logger.NullErrorDialog;
+
+public class Register implements NullErrorDialog {
 
     private EditText name,email,phoneNo,password,confirmPassword;
     public Register(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
@@ -12,11 +14,23 @@ public class Register {
     this.password = password;
     this.confirmPassword = confirmPassword;
     }
-    public boolean oneInputIsNull(){
-        EditText inputs[] = {name,email,phoneNo,password,confirmPassword};//class dapat
-        for (EditText i: inputs){
-            return i.toString().isEmpty();
+
+
+    public void registerUser(){
+        if(oneInputIsNull()){
+            return;
         }
+    }
+    public boolean oneInputIsNull(){
+        EditText inputs[] = {name,email,phoneNo,password,confirmPassword};
+        for (EditText values: inputs){
+           if(values.getText().toString().trim().isEmpty()){
+               values.setError(getErrorMessage());
+               return true;
+           }
+            values.setError(null);
+        }
+
         return false;
     }
 }

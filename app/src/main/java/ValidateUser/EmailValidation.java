@@ -4,14 +4,14 @@ import android.widget.EditText;
 
 import Logger.NullErrorDialog;
 
-public class EmailValidation implements CharactersValidation, NullErrorDialog,ProperInput {
+public class EmailValidation implements CharactersValidation,ProperInput {
     private EditText email;
 
     public EmailValidation(EditText email){this.email = email;}
 
 
     @Override
-    public boolean isProper() {
+    public boolean is_Unacceptable() {
 
         if(!email.toString().trim().contains("@")){
             email.setError("Email is invalid");
@@ -23,8 +23,7 @@ public class EmailValidation implements CharactersValidation, NullErrorDialog,Pr
 
 
 
-//check if null
-        //check if email contains(@)
-         //checkifalready used
+
+    //checkifalready used
 
 }

@@ -12,7 +12,7 @@ public class PasswordValidation implements ProperInput, CharactersValidation {
     }
 
     @Override
-    public boolean isProper() {
+    public boolean is_Unacceptable() {
 
         if (password.toString().trim() != confirmPassword.toString().trim()) {
             confirmPassword.setError("The specified password do not match.");
@@ -33,7 +33,6 @@ public class PasswordValidation implements ProperInput, CharactersValidation {
         return confirmPassword.toString().trim().toCharArray().length >= 8 && !hasNumber(confirmPassword.toString()) || !hasSpecialCharacters(confirmPassword.toString());
     }
 
-    //check if password is weak
-    //check if not equal
+
     //check if null
 }
