@@ -2,7 +2,7 @@ package ValidateUser;
 
 import android.widget.EditText;
 
-public class PasswordValidation implements ProperInput, CharactersValidation {
+public class PasswordValidation implements CharactersValidation,Validation {
     private final EditText password;
     private final EditText confirmPassword;
 
@@ -14,7 +14,7 @@ public class PasswordValidation implements ProperInput, CharactersValidation {
     @Override
     public boolean is_Unfit() {
 
-        if (password.toString().trim() != confirmPassword.toString().trim()) {
+        if (!password.getText().toString().trim().equals(confirmPassword.toString().trim())) {
             confirmPassword.setError("The specified password do not match.");
             return true;
         }
@@ -29,8 +29,8 @@ public class PasswordValidation implements ProperInput, CharactersValidation {
     }
 
 
-    public boolean isPasswordWeak() {
-        return confirmPassword.toString().trim().toCharArray().length >= 8 && !hasNumber(confirmPassword.toString()) || !hasSpecialCharacters(confirmPassword.toString());
+    private boolean isPasswordWeak() {
+        return confirmPassword.getText().toString().trim().toCharArray().length >= 8 && !hasNumber(confirmPassword.toString()) || !hasSpecialCharacters(confirmPassword.toString());
     }
 
 

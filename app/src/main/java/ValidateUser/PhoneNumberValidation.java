@@ -2,16 +2,17 @@ package ValidateUser;
 
 import android.widget.EditText;
 
-public class PhoneNumberValidation implements CharactersValidation,ProperInput{
+public class PhoneNumberValidation implements CharactersValidation,Validation{
 
     private EditText phoneNumber;
 
     public PhoneNumberValidation(EditText phoneNumber){
         this.phoneNumber = phoneNumber;
     }
+
     @Override
     public boolean is_Unfit() {
-        if(hasSpecialCharacters(phoneNumber.toString().trim()) || isNumberSizeCorrect()){
+        if(hasSpecialCharacters(phoneNumber.getText().toString().trim()) || isNumberSizeCorrect()){
             phoneNumber.setError("Phone number is invalid.");
             return true;
         }
@@ -26,7 +27,7 @@ public class PhoneNumberValidation implements CharactersValidation,ProperInput{
     //check if alreadyused
 
     private boolean isNumberSizeCorrect(){
-        return phoneNumber.toString().toCharArray().length == 11;
+        return phoneNumber.getText().toString().toCharArray().length == 11;
     }
 
 

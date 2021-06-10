@@ -1,7 +1,5 @@
 package ValidateUser;
 
-public interface ProperInput {
+public interface Validation {
     public boolean is_Unfit();
-
-
 }
