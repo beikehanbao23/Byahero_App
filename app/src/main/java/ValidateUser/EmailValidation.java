@@ -17,14 +17,14 @@ public class EmailValidation implements CharactersValidation,Validation {
     @Override
     public boolean is_Unfit() {
 
-        if (!anInvalidEmail()) {
+        if (!validEmail()) {
             email.setError("Email is invalid");
             return true;
         }
         email.setError(null);
         return false;
     }
-    private boolean anInvalidEmail(){
+    private boolean validEmail(){
         return android.util.Patterns.EMAIL_ADDRESS.matcher((CharSequence) email.getText().toString().trim()).matches();
     }
 }

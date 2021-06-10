@@ -31,6 +31,8 @@ public class Register implements NullErrorDialog {
 
         if(isInputUnfit())return;
 
+
+
     }
 
     private boolean oneInputIsNull(){

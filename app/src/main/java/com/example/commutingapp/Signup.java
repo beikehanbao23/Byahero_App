@@ -8,11 +8,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import RegisterUser.Register;
 
 public class Signup extends AppCompatActivity {
 private EditText name,email,phoneNumber,password,confirmPassword;
-
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,9 +24,18 @@ private EditText name,email,phoneNumber,password,confirmPassword;
         phoneNumber = findViewById(R.id.editTextPhone);
         password = findViewById(R.id.editTextPassword);
         confirmPassword = findViewById(R.id.EditTextConfirmPassword);
+        mAuth = FirebaseAuth.getInstance();
 
 
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(mAuth.getCurrentUser() != null){
+            //create screen
+        }
     }
 
     public void backToSignInButton(View view) {
