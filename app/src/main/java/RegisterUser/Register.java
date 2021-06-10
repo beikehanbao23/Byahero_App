@@ -17,12 +17,10 @@ public class Register implements NullErrorDialog {
 
 
     public void registerUser(){
-        if(oneInputIsNull()){
-            return;
-        }
+        if(oneInputIsNull()) return;
     }
     public boolean oneInputIsNull(){
-        EditText inputs[] = {name,email,phoneNo,password,confirmPassword};
+
         for (EditText values: inputs){
            if(values.getText().toString().trim().isEmpty()){
                values.setError(getErrorMessage());
@@ -32,5 +30,11 @@ public class Register implements NullErrorDialog {
         }
 
         return false;
+    }
+
+
+    private EditText getInputs(){
+        EditText inputs[] = {name,email,phoneNo,password,confirmPassword};
+        return inputs;
     }
 }

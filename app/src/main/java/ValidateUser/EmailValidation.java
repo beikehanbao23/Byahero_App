@@ -11,7 +11,7 @@ public class EmailValidation implements CharactersValidation,ProperInput {
 
 
     @Override
-    public boolean is_Unacceptable() {
+    public boolean is_Unfit() {
 
         if(!email.toString().trim().contains("@")){
             email.setError("Email is invalid");

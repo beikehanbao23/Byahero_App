@@ -12,7 +12,7 @@ public class PasswordValidation implements ProperInput, CharactersValidation {
     }
 
     @Override
-    public boolean is_Unacceptable() {
+    public boolean is_Unfit() {
 
         if (password.toString().trim() != confirmPassword.toString().trim()) {
             confirmPassword.setError("The specified password do not match.");

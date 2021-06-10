@@ -10,7 +10,7 @@ public class PhoneNumberValidation implements CharactersValidation,ProperInput{
         this.phoneNumber = phoneNumber;
     }
     @Override
-    public boolean is_Unacceptable() {
+    public boolean is_Unfit() {
         if(hasSpecialCharacters(phoneNumber.toString().trim()) || isNumberSizeCorrect()){
             phoneNumber.setError("Phone number is invalid.");
             return true;

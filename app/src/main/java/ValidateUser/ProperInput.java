@@ -1,7 +1,7 @@
 package ValidateUser;
 
 public interface ProperInput {
-    public boolean is_Unacceptable();
+    public boolean is_Unfit();
 
 
 }
