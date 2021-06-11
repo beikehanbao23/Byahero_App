@@ -54,7 +54,7 @@ private EditText name,email,phoneNumber,password,confirmPassword;
 
     public void CreateBttnClicked(View view) {
 
-        Register register = new Register(name, email, phoneNumber, password, confirmPassword);
-        register.registerUser();
+
+
     }
 }

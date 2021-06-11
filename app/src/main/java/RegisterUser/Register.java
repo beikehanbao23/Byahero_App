@@ -3,11 +3,6 @@ package RegisterUser;
 import android.widget.EditText;
 
 import Logger.NullErrorDialog;
-import ValidateUser.EmailValidation;
-import ValidateUser.NameValidation;
-import ValidateUser.PasswordValidation;
-import ValidateUser.PhoneNumberValidation;
-import ValidateUser.Validation;
 
 public class Register implements NullErrorDialog {
 
@@ -26,42 +21,19 @@ public class Register implements NullErrorDialog {
     }
 
 
-    public void registerUser(){
-        if(oneInputIsNull()) return;
+    /*
+    if validate throw message put the thrown message as setError
+    if catched then return true else false
+    create a function called register with multiple  if's
 
-        if(isInputUnfit())return;
-
-
-
-    }
-
-    private boolean oneInputIsNull(){
-
-        for (EditText values: getInputs()){
-           if(values.getText().toString().trim().isEmpty()){
-               values.setError(getErrorMessage());
-               return true;
-           }
-            values.setError(null);
-        }
-
-        return false;
-    }
-
-    private boolean isInputUnfit(){
-        for (Validation validation:getValidateInputs()) {
-            if(validation.is_Unfit()){
-                return true;
-            }
-        }
-        return false;
-    }
+     */
 
 
-    private EditText[] getInputs(){
-        return new EditText[]{name,email,phoneNo,password,confirmPassword};
-    }
-    private Validation[] getValidateInputs(){
-        return new Validation[]{new NameValidation(name), new EmailValidation(email),new PhoneNumberValidation(phoneNo), new PasswordValidation(password,confirmPassword)};
-    }
+
+
+
+
+
+
+
 }
