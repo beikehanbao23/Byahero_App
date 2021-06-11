@@ -2,31 +2,27 @@ package RegisterUser;
 
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import Logger.NullErrorDialog;
+import ValidateUser.UserManager;
 
 public class Register implements NullErrorDialog {
 
-    private EditText name;
-    private EditText email;
-    private EditText phoneNo;
-    private EditText password;
-    private EditText confirmPassword;
 
-    public Register(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
-    this.name = name;
-    this.email = email;
-    this.phoneNo = phoneNumber;
-    this.password = password;
-    this.confirmPassword = confirmPassword;
+
+    public void RegisterUser(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
+    UserManager userManager = new UserManager();
+    userManager.createUser(name,email,phoneNumber,password,confirmPassword);
+
+    if(userManager.UserInputRequirementsFailed()){
+        return;
+    }
+
     }
 
 
-    /*
-    if validate throw message put the thrown message as setError
-    if catched then return true else false
-    create a function called register with multiple  if's
 
-     */
 
 
 
