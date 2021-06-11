@@ -2,15 +2,17 @@ package ValidateUser;
 
 import android.widget.EditText;
 
-public class User implements CharactersValidation {
-    private final String name;
-    private final String email;
-    private final String phoneNumber;
-    private final String password;
-    private final String confirmPassword;
+import Logger.NullErrorDialog;
+
+public class User implements CharactersValidation, NullErrorDialog {
+    private final EditText name;
+    private final EditText email;
+    private final EditText phoneNumber;
+    private final EditText password;
+    private final EditText confirmPassword;
 
 
-    public User(String name, String email, String phoneNumber, String password, String confirmPassword) {
+    public User(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -19,70 +21,92 @@ public class User implements CharactersValidation {
     }
 
 
-    public String getPassword() {
-        return password.trim();
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword.trim();
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber.trim();
-    }
-
-    public String getEmail() {
-        return email.trim();
-    }
-
-    public String getName() {
-        return name.trim();
-    }
-
-
-    public void validateName() {
-        if (hasSpecialCharacters(name.trim())) {
-          throw new RuntimeException("Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.");
+    public boolean validateName() {
+        boolean result = false;
+        if (isNull(name.getText().toString())) {
+            name.setError(getErrorMessage());
+            result = true;
         }
+
+        if (hasSpecialCharacters(name.getText().toString().trim())) {
+            name.setError("Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.");
+            result = true;
+        }
+        name.setError(null);
+        return result;
     }
 
-    public void validateEmail() {
+
+    public boolean validateEmail() {
+        boolean result = false;
+        if (isNull(email.getText().toString())) {
+            email.setError(getErrorMessage());
+            result = true;
+        }
+
         if (!validEmail()) {
-            throw new RuntimeException("Email is invalid");
+            email.setError("Email is invalid");
+            result = true;
         }
+        email.setError(null);
+        return result;
     }
 
-    public void validatePassword() {
+    public boolean validateConfirmPassword() {
+        boolean result = false;
+        if (isNull(confirmPassword.getText().toString())) {
+            confirmPassword.setError(getErrorMessage());
+            result = true;
+        }
         if (Password_Is_Unmatch()) {
-            throw new RuntimeException("The specified password do not match.");
+            confirmPassword.setError("The specified password do not match.");
+            result = true;
         }
 
         if (!isPasswordStrong()) {
-            throw new RuntimeException("Password must contain at least 8 characters, including numbers or special characters.");
+            confirmPassword.setError("Password must contain at least 8 characters, including numbers or special characters.");
+            result = true;
         }
-
+        confirmPassword.setError(null);
+        return result;
     }
 
-    public void validatePhoneNumber() {
-        if (hasSpecialCharacters(phoneNumber.trim()) || isNumberSizeCorrect()) {
-            throw new RuntimeException("Phone number is invalid.");
+    public boolean validatePassword() {
+    if(isNull(password.getText().toString())){
+        password.setError(getErrorMessage());
+        return true;
+    }
+    password.setError(null);
+    return false;
+    }
+
+    public boolean validatePhoneNumber() {
+        if (hasSpecialCharacters(phoneNumber.getText().toString().trim()) || isNumberSizeCorrect()) {
+            phoneNumber.setError("Phone number is invalid.");
+            return true;
         }
+        phoneNumber.setError(null);
+        return false;
     }
 
 
     private boolean Password_Is_Unmatch() {
-        return (!password.trim().equals(confirmPassword.trim()));
+        return (!password.getText().toString().trim().equals(confirmPassword.getText().toString().trim()));
     }
 
     private boolean isPasswordStrong() {
-        return confirmPassword.trim().toCharArray().length >= 8 && (hasNumber(confirmPassword.trim()) || hasSpecialCharacters(confirmPassword.trim()));
+        return confirmPassword.getText().toString().trim().toCharArray().length >= 8 && (hasNumber(confirmPassword.getText().toString().trim()) || hasSpecialCharacters(confirmPassword.getText().toString().trim()));
     }
 
     private boolean validEmail() {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches();
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email.getText().toString().trim()).matches();
     }
 
     private boolean isNumberSizeCorrect() {
-        return phoneNumber.trim().toCharArray().length != 11;
+        return phoneNumber.getText().toString().trim().toCharArray().length != 11;
+    }
+
+    private boolean isNull(String input) {
+        return input.trim().isEmpty();
     }
 }

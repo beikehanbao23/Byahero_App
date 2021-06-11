@@ -17,64 +17,13 @@ public class UserManager {
         this.password = password;
         this.confirmPassword = confirmPassword;
 
-         user = new User(name.getText().toString(), email.getText().toString(), phoneNumber.getText().toString(), password.getText().toString(), confirmPassword.getText().toString());
+         user = new User(name, email, phoneNumber, password, confirmPassword);
 
     }
 
     public boolean UserInputRequirementsFailed() {
-        boolean result = false;
-
-        if (nameNotValid()) result = true;
-
-        if(emailNotValid()) result = true;
-
-        if(phoneNumberNotValid()) result = true;
-
-        if(passwordNotValid()) result = true;
-
-        return result;
+    return  true;
     }
 
 
-
-    private boolean phoneNumberNotValid(){
-        try{
-            user.validatePhoneNumber();
-        }catch (RuntimeException ex){
-            phoneNumber.setError(ex.getMessage());
-            return true;
-        }
-        return false;
-    }
-
-    private boolean passwordNotValid(){
-        try{
-            user.validatePassword();
-        }catch (RuntimeException ex){
-            password.setError(ex.getMessage());
-            return true;
-        }
-        return false;
-    }
-
-    private boolean emailNotValid() {
-        try {
-            user.validateEmail();
-        } catch (RuntimeException ex) {
-            email.setError(ex.getMessage());
-            return true;
-        }
-        return false;
-    }
-
-    private boolean nameNotValid() {
-        try {
-            user.validateName();
-        } catch (RuntimeException ex) {
-            name.setError(ex.getMessage());
-            return true;
-        }
-        return false;
-
-    }
 }
