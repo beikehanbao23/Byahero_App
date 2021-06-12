@@ -12,10 +12,6 @@ public class User implements CharactersValidation, NullErrorDialog {
     private final EditText confirmPassword;
 
 
-
-
-
-
     public User(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
         this.name = name;
         this.email = email;
@@ -45,72 +41,75 @@ public class User implements CharactersValidation, NullErrorDialog {
     }
 
 
-
-
     public boolean validateName() {
-        boolean result = false;
+
         if (isNull(name.getText().toString())) {
             name.setError(getErrorMessage());
-            result = true;
+            return true;
         }
 
         if (hasSpecialCharacters(name.getText().toString().trim())) {
             name.setError("Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.");
-            result = true;
+            return true;
         }
         name.setError(null);
-        return result;
+        return false;
     }
 
 
     public boolean validateEmail() {
-        boolean result = false;
+
         if (isNull(email.getText().toString())) {
             email.setError(getErrorMessage());
-            result = true;
+            return true;
         }
 
         if (!validEmail()) {
             email.setError("Email is invalid");
-            result = true;
+            return true;
         }
         email.setError(null);
-        return result;
+        return false;
     }
 
     public boolean validateConfirmPassword() {
-        boolean result = false;
+
         if (isNull(confirmPassword.getText().toString())) {
             confirmPassword.setError(getErrorMessage());
-            result = true;
+            return true;
         }
         if (Password_Is_Unmatch()) {
             confirmPassword.setError("The specified password do not match.");
-            result = true;
+            return true;
         }
 
         if (!isPasswordStrong()) {
             confirmPassword.setError("Password must contain at least 8 characters, including numbers or special characters.");
-            result = true;
+            return true;
+
         }
         confirmPassword.setError(null);
-        return result;
+        return false;
     }
 
     public boolean validatePassword() {
-    if(isNull(password.getText().toString())){
-        password.setError(getErrorMessage());
-        return true;
-    }
-    password.setError(null);
-    return false;
+
+        if (isNull(password.getText().toString())) {
+            password.setError(getErrorMessage());
+            return true;
+        }
+
+        password.setError(null);
+        return false;
     }
 
     public boolean validatePhoneNumber() {
+
         if (hasSpecialCharacters(phoneNumber.getText().toString().trim()) || isNumberSizeCorrect()) {
             phoneNumber.setError("Phone number is invalid.");
             return true;
         }
+
         phoneNumber.setError(null);
         return false;
     }

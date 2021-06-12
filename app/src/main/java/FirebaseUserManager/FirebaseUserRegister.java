@@ -1,14 +1,9 @@
 package FirebaseUserManager;
+
 import android.widget.EditText;
 import android.widget.Toast;
 
-
-import androidx.annotation.NonNull;
-
 import com.example.commutingapp.Signup;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -17,52 +12,48 @@ import ValidateUser.User;
 
 
 public class FirebaseUserRegister implements NullErrorDialog {
+
+
     private FirebaseAuth firebaseAuthenticate;
     private FirebaseUser firebaseUser;
     private User user;
+    private String email;
+    private String confirmPassword;
 
     public void createUser(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
-       user = new User(name, email, phoneNumber, password, confirmPassword);
-    }
-    public void registerUser(){
-        firebaseAuthenticate.createUserWithEmailAndPassword(user.getEmail(),user.getConfirmPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-
-            }
-        })
-
+        user = new User(name, email, phoneNumber, password, confirmPassword);
+        this.email = email.getText().toString().trim();
+        this.confirmPassword =  confirmPassword.getText().toString().trim();
 
     }
 
 
+    public String getEmail() {
+        return email;
+    }
 
-
-
-
-
-    public void getCurrentUser(){
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+    public void getCurrentUser() {
         firebaseUser = firebaseAuthenticate.getCurrentUser();
     }
-    public void initializeFirebase(){
+
+    public FirebaseAuth getFirebaseAuthenticate() {
+        return firebaseAuthenticate;
+    }
+
+    public void initializeFirebase() {
         firebaseAuthenticate = FirebaseAuth.getInstance();
     }
-    public boolean isUserAlreadySignedIn(){
+
+    public boolean isUserAlreadySignedIn() {
         return firebaseUser != null;
     }
 
     public boolean UserInputRequirementsFailed() {
         return user.validateName() || user.validateEmail() || user.validatePhoneNumber() || user.validatePassword() || user.validateConfirmPassword();
     }
-
-
-
-
-
-
-
-
-
 
 
 }
