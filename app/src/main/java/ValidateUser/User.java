@@ -12,6 +12,10 @@ public class User implements CharactersValidation, NullErrorDialog {
     private final EditText confirmPassword;
 
 
+
+
+
+
     public User(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
         this.name = name;
         this.email = email;
@@ -19,6 +23,28 @@ public class User implements CharactersValidation, NullErrorDialog {
         this.password = password;
         this.confirmPassword = confirmPassword;
     }
+
+    public String getName() {
+        return name.getText().toString();
+    }
+
+    public String getEmail() {
+        return email.getText().toString();
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber.getText().toString();
+    }
+
+    public String getPassword() {
+        return password.getText().toString();
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword.getText().toString();
+    }
+
+
 
 
     public boolean validateName() {
