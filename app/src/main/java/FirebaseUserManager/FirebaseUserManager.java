@@ -1,29 +1,31 @@
 package FirebaseUserManager;
 
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.commutingapp.Signup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import Logger.NullErrorDialog;
-import ValidateUser.User;
+import ValidateUser.User_RegisterAndLogin;
 
 
-public class FirebaseUserRegister implements NullErrorDialog {
+public class FirebaseUserManager implements NullErrorDialog {
 
 
-    private FirebaseAuth firebaseAuthenticate;
+    private FirebaseAuth firebaseManager;
     private FirebaseUser firebaseUser;
-    private User user;
+    private User_RegisterAndLogin userRegisterAndLogin;
     private String email;
     private String confirmPassword;
 
     public void createUser(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
-        user = new User(name, email, phoneNumber, password, confirmPassword);
+        userRegisterAndLogin = new User_RegisterAndLogin(name, email, phoneNumber, password, confirmPassword);
         this.email = email.getText().toString().trim();
         this.confirmPassword =  confirmPassword.getText().toString().trim();
+
+    }
+
+    public void LogInUser(){
 
     }
 
@@ -36,15 +38,18 @@ public class FirebaseUserRegister implements NullErrorDialog {
         return confirmPassword;
     }
     public void getCurrentUser() {
-        firebaseUser = firebaseAuthenticate.getCurrentUser();
+        firebaseUser = firebaseManager.getCurrentUser();
     }
 
     public FirebaseAuth getFirebaseAuthenticate() {
-        return firebaseAuthenticate;
+        return firebaseManager;
     }
 
+    public void signOutUserAccount(){
+        firebaseManager.getInstance().signOut();
+    }
     public void initializeFirebase() {
-        firebaseAuthenticate = FirebaseAuth.getInstance();
+        firebaseManager = FirebaseAuth.getInstance();
     }
 
     public boolean isUserAlreadySignedIn() {
@@ -52,7 +57,7 @@ public class FirebaseUserRegister implements NullErrorDialog {
     }
 
     public boolean UserInputRequirementsFailed() {
-        return user.validateName() || user.validateEmail() || user.validatePhoneNumber() || user.validatePassword() || user.validateConfirmPassword();
+        return userRegisterAndLogin.validateName() || userRegisterAndLogin.validateEmail() || userRegisterAndLogin.validatePhoneNumber() || userRegisterAndLogin.validatePassword() || userRegisterAndLogin.validateConfirmPassword();
     }
 
 

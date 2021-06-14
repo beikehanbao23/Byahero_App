@@ -4,7 +4,7 @@ import android.widget.EditText;
 
 import Logger.NullErrorDialog;
 
-public class User implements CharactersValidation, NullErrorDialog {
+public class User_RegisterAndLogin implements CharactersValidation, NullErrorDialog {
     private final EditText name;
     private final EditText email;
     private final EditText phoneNumber;
@@ -12,14 +12,20 @@ public class User implements CharactersValidation, NullErrorDialog {
     private final EditText confirmPassword;
 
 
-    public User(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
+    public User_RegisterAndLogin(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.confirmPassword = confirmPassword;
     }
-
+    public User_RegisterAndLogin(EditText email, EditText password){
+        this.email = email;
+        this.name = null;
+        this.phoneNumber = null;
+        this.password = null;
+        this.confirmPassword = password;
+    }
     public String getName() {
         return name.getText().toString();
     }

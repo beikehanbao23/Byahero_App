@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import MenuButtons.BackButton;
 
-public class MainActivity extends AppCompatActivity {
+public class SignIn extends AppCompatActivity {
     private BackButton backButton;
 
     @Override

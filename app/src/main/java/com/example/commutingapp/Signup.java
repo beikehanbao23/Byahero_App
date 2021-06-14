@@ -8,16 +8,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import FirebaseUserManager.FirebaseUserRegister;
+import FirebaseUserManager.FirebaseUserManager;
 
 
 public class Signup extends AppCompatActivity {
 
     private EditText name, email, phoneNumber, password, confirmPassword;
-    private FirebaseUserRegister firebaseUserRegister;
+    private FirebaseUserManager firebaseUserManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +26,15 @@ public class Signup extends AppCompatActivity {
         phoneNumber = findViewById(R.id.editTextPhone);
         password = findViewById(R.id.editTextPassword);
         confirmPassword = findViewById(R.id.EditTextConfirmPassword);
-        firebaseUserRegister = new FirebaseUserRegister();
-        firebaseUserRegister.initializeFirebase();
+        firebaseUserManager = new FirebaseUserManager();
+        firebaseUserManager.initializeFirebase();
 
 
     }
 
 
     public void backToSignInButton(View view) {
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, SignIn.class));
         finish();
 
     }
@@ -49,14 +46,14 @@ public class Signup extends AppCompatActivity {
 
 
     public void CreateBttnClicked(View view) {
-    firebaseUserRegister.createUser(name,email,phoneNumber,password,confirmPassword);
+    firebaseUserManager.createUser(name,email,phoneNumber,password,confirmPassword);
 
-    if(firebaseUserRegister.UserInputRequirementsFailed()){
+    if(firebaseUserManager.UserInputRequirementsFailed()){
         return;
     }
-    firebaseUserRegister.getFirebaseAuthenticate().createUserWithEmailAndPassword(firebaseUserRegister.getEmail(),firebaseUserRegister.getConfirmPassword()).addOnCompleteListener(task -> {
+    firebaseUserManager.getFirebaseAuthenticate().createUserWithEmailAndPassword(firebaseUserManager.getEmail(), firebaseUserManager.getConfirmPassword()).addOnCompleteListener(task -> {
         if(task.isSuccessful()){
-            firebaseUserRegister.getCurrentUser();
+            firebaseUserManager.getCurrentUser();
             startActivity(new Intent(this,MainScreen.class));
             return;
         }
