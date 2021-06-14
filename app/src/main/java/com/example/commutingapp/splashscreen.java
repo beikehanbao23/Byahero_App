@@ -17,9 +17,8 @@ public class splashscreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        backButton = new BackButton(this.getBaseContext(), 2000, "Tap again to exit");
         setContentView(R.layout.activity_splashscreen);
-
+        backButton = new BackButton(this.getBaseContext(), 2000, "Tap again to exit");
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
     }
@@ -27,18 +26,22 @@ public class splashscreen extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
         firebaseUserManager.getCurrentUser();
         if (firebaseUserManager.isUserAlreadySignedIn()) {
-           handler.postDelayed(() -> this.startActivity(new Intent(this, MainScreen.class)), 2500);
-           return;
-       }
-        handler.postDelayed(() -> this.startActivity(new Intent(this, SignIn.class)), 2500);
+                startActivity(new Intent(this, MainScreen.class));
+            return;
+        }
 
+        handler.postDelayed(() -> {
+            startActivity(new Intent(this, SignIn.class));
+            finish();
+        }, 2200);
     }
 
     @Override
     public void onBackPressed() {
-        backButton.backButtonisPressed();
+        backButton.showToastMessageThenBack();
     }
 
 

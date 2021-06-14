@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.rejowan.cutetoast.CuteToast;
+
 import FirebaseUserManager.FirebaseUserManager;
 
 
@@ -61,7 +63,7 @@ public class Signup extends AppCompatActivity {
             startActivity(new Intent(this,MainScreen.class));
             return;
         }
-        Toast.makeText(new Signup().getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show(); // change later
+        CuteToast.ct(this, "Failed to create account. Please check your device network connection.", CuteToast.LENGTH_SHORT, CuteToast.ERROR, true).show();  // change later
     });
 
     }

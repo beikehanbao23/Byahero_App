@@ -11,18 +11,20 @@
         android:roundIcon="@mipmap/ic_byahero"
         android:supportsRtl="true"
         android:theme="@style/Theme.CommutingApp">
-        <activity android:name=".MainScreen"></activity>
-        <activity
-            android:name=".Signup"
-            android:noHistory="true"
+
+        <activity android:name=".MainScreen">
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".SignIn"
-            android:noHistory="true"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".splashscreen"
-            android:noHistory="true"
+        </activity>
+
+        <activity android:name=".Signup"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".SignIn"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".splashscreen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

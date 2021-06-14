@@ -20,7 +20,7 @@ public class BackButton extends AppCompatActivity {
         message = new ToastMessage(context, textmessage);
     }
 
-    public void backButtonisPressed() {
+    public void showToastMessageThenBack() {
         if (isDoubleTapped()) {
             message.hideMessage();
             super.onBackPressed();

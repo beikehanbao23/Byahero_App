@@ -20,9 +20,11 @@ public class MainScreen extends AppCompatActivity {
 
     }
 
+
+
     public void LogoutButtonClicked(View view) {
         firebaseUserManager.getFirebaseAuthenticate().signOut();
         startActivity(new Intent(this, SignIn.class));
-        finish();
+
     }
 }

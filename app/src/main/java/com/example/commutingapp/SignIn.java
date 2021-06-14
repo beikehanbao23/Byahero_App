@@ -4,12 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.firebase.auth.AuthResult;
+import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
 import MenuButtons.BackButton;
@@ -23,12 +19,12 @@ public class SignIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        new splashscreen().finish();
         backButton = new BackButton(this.getBaseContext(), 2000, "Tap again to exit");
         email = findViewById(R.id.editlogin_TextName);
         password = findViewById(R.id.editlogin_TextPassword);
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
+
     }
 
 
@@ -37,9 +33,11 @@ public class SignIn extends AppCompatActivity {
         finish();
     }
 
+
     @Override
     public void onBackPressed() {
-       backButton.backButtonisPressed();
+
+        backButton.showToastMessageThenBack();
     }
 
     public void SignInButtonIsClicked(View view) {
@@ -56,9 +54,10 @@ public class SignIn extends AppCompatActivity {
             if(task.isSuccessful()){
             firebaseUserManager.getCurrentUser();
             startActivity(new Intent(this,MainScreen.class));
+            finish();
             return;
         }
-            Toast.makeText(new Signup().getBaseContext(), "Failed to sign in account.", Toast.LENGTH_SHORT).show(); // change later
+            CuteToast.ct(this, "Username or password is incorrect", CuteToast.LENGTH_SHORT, CuteToast.ERROR, true).show(); // change later
         });
     }
 }
