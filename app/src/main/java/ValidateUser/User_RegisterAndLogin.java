@@ -2,14 +2,17 @@ package ValidateUser;
 
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseUser;
+
+import FirebaseUserManager.FirebaseUserManager;
 import Logger.NullErrorDialog;
 
 public class User_RegisterAndLogin implements CharactersValidation, NullErrorDialog {
-    private final EditText name;
-    private final EditText email;
-    private final EditText phoneNumber;
-    private final EditText password;
-    private final EditText confirmPassword;
+    private EditText name;
+    private EditText email;
+    private EditText phoneNumber;
+    private EditText password;
+    private EditText confirmPassword;
 
 
     public User_RegisterAndLogin(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
@@ -19,13 +22,10 @@ public class User_RegisterAndLogin implements CharactersValidation, NullErrorDia
         this.password = password;
         this.confirmPassword = confirmPassword;
     }
-    public User_RegisterAndLogin(EditText email, EditText password){
+  public User_RegisterAndLogin(EditText email, EditText password){
         this.email = email;
-        this.name = null;
-        this.phoneNumber = null;
-        this.password = null;
-        this.confirmPassword = password;
-    }
+        this.password = password;
+  }
     public String getName() {
         return name.getText().toString();
     }

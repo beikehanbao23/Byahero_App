@@ -9,16 +9,19 @@ import android.view.View;
 import FirebaseUserManager.FirebaseUserManager;
 
 public class MainScreen extends AppCompatActivity {
-
+    private FirebaseUserManager firebaseUserManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+        firebaseUserManager = new FirebaseUserManager();
+        firebaseUserManager.initializeFirebase();
+
+
     }
 
     public void LogoutButtonClicked(View view) {
-        FirebaseUserManager firebaseUserManager = new FirebaseUserManager();
-        firebaseUserManager.signOutUserAccount();
+        firebaseUserManager.getFirebaseAuthenticate().signOut();
         startActivity(new Intent(this, SignIn.class));
         finish();
     }

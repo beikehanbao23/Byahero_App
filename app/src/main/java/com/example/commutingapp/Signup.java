@@ -26,6 +26,7 @@ public class Signup extends AppCompatActivity {
         phoneNumber = findViewById(R.id.editTextPhone);
         password = findViewById(R.id.editTextPassword);
         confirmPassword = findViewById(R.id.EditTextConfirmPassword);
+
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
 
@@ -46,18 +47,21 @@ public class Signup extends AppCompatActivity {
 
 
     public void CreateBttnClicked(View view) {
-    firebaseUserManager.createUser(name,email,phoneNumber,password,confirmPassword);
+        String userEmail = email.getText().toString().trim();
+        String userConfirmPassword = confirmPassword.getText().toString().trim();
 
-    if(firebaseUserManager.UserInputRequirementsFailed()){
+    firebaseUserManager.createUser(name,email,phoneNumber,password,confirmPassword);
+    if(firebaseUserManager.UserInputRequirementsFailedAtSignUp()){
         return;
     }
-    firebaseUserManager.getFirebaseAuthenticate().createUserWithEmailAndPassword(firebaseUserManager.getEmail(), firebaseUserManager.getConfirmPassword()).addOnCompleteListener(task -> {
+
+    firebaseUserManager.getFirebaseAuthenticate().createUserWithEmailAndPassword(userEmail,userConfirmPassword).addOnCompleteListener(task -> {
         if(task.isSuccessful()){
             firebaseUserManager.getCurrentUser();
             startActivity(new Intent(this,MainScreen.class));
             return;
         }
-        Toast.makeText(new Signup().getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+        Toast.makeText(new Signup().getBaseContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show(); // change later
     });
 
     }

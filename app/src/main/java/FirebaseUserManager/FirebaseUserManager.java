@@ -15,28 +15,19 @@ public class FirebaseUserManager implements NullErrorDialog {
     private FirebaseAuth firebaseManager;
     private FirebaseUser firebaseUser;
     private User_RegisterAndLogin userRegisterAndLogin;
-    private String email;
-    private String confirmPassword;
+
 
     public void createUser(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
         userRegisterAndLogin = new User_RegisterAndLogin(name, email, phoneNumber, password, confirmPassword);
-        this.email = email.getText().toString().trim();
-        this.confirmPassword =  confirmPassword.getText().toString().trim();
-
-    }
-
-    public void LogInUser(){
-
     }
 
 
-    public String getEmail() {
-        return email;
+    public void loginUser(EditText email, EditText password){
+        userRegisterAndLogin = new User_RegisterAndLogin(email,password);
     }
 
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
+
+
     public void getCurrentUser() {
         firebaseUser = firebaseManager.getCurrentUser();
     }
@@ -45,9 +36,7 @@ public class FirebaseUserManager implements NullErrorDialog {
         return firebaseManager;
     }
 
-    public void signOutUserAccount(){
-        firebaseManager.getInstance().signOut();
-    }
+
     public void initializeFirebase() {
         firebaseManager = FirebaseAuth.getInstance();
     }
@@ -56,9 +45,14 @@ public class FirebaseUserManager implements NullErrorDialog {
         return firebaseUser != null;
     }
 
-    public boolean UserInputRequirementsFailed() {
+
+
+
+    public boolean UserInputRequirementsFailedAtSignUp() {
         return userRegisterAndLogin.validateName() || userRegisterAndLogin.validateEmail() || userRegisterAndLogin.validatePhoneNumber() || userRegisterAndLogin.validatePassword() || userRegisterAndLogin.validateConfirmPassword();
     }
-
+    public boolean UserInputRequirementsFailedAtSignIn(){
+        return userRegisterAndLogin.validateEmail() || userRegisterAndLogin.validatePassword();
+    }
 
 }
