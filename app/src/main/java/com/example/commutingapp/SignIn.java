@@ -17,6 +17,8 @@ public class SignIn extends AppCompatActivity {
     private EditText username, password;
     private FirebaseUserManager firebaseUserManager;
     private CustomToastMessage customToastMessage;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

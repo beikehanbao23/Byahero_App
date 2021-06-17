@@ -36,7 +36,7 @@ public class splashscreen extends AppCompatActivity {
         handler.postDelayed(() -> {
             startActivity(new Intent(this, SignIn.class));
             finish();
-        }, 2200);
+        }, 750);
     }
 
     @Override
