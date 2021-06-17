@@ -22,8 +22,8 @@ public class FirebaseUserManager implements NullErrorDialog {
     }
 
 
-    public void loginUser(EditText email, EditText password){
-        userRegisterAndLogin = new User_RegisterAndLogin(email,password);
+    public void loginUser(EditText username, EditText password){
+        userRegisterAndLogin = new User_RegisterAndLogin(username,password);
     }
 
 
@@ -49,10 +49,10 @@ public class FirebaseUserManager implements NullErrorDialog {
 
 
     public boolean UserInputRequirementsFailedAtSignUp() {
-        return userRegisterAndLogin.validateName() || userRegisterAndLogin.validateEmail() || userRegisterAndLogin.validatePhoneNumber() || userRegisterAndLogin.validatePassword() || userRegisterAndLogin.validateConfirmPassword();
+        return userRegisterAndLogin.validateUserName() || userRegisterAndLogin.validateEmail() || userRegisterAndLogin.validatePhoneNumber() || userRegisterAndLogin.validatePassword() || userRegisterAndLogin.validateConfirmPassword();
     }
     public boolean UserInputRequirementsFailedAtSignIn(){
-        return userRegisterAndLogin.validateEmail() || userRegisterAndLogin.validatePassword();
+        return userRegisterAndLogin.validateUserName()|| userRegisterAndLogin.validatePassword();
     }
 
 }

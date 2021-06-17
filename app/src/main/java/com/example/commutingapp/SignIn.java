@@ -12,7 +12,7 @@ import MenuButtons.BackButton;
 
 public class SignIn extends AppCompatActivity {
     private BackButton backButton;
-    private EditText email, password;
+    private EditText username, password;
     private FirebaseUserManager firebaseUserManager;
 
     @Override
@@ -20,7 +20,7 @@ public class SignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         backButton = new BackButton(this.getBaseContext(), 2000, "Tap again to exit");
-        email = findViewById(R.id.editlogin_TextName);
+        username = findViewById(R.id.editlogin_TextName);
         password = findViewById(R.id.editlogin_TextPassword);
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
@@ -41,10 +41,10 @@ public class SignIn extends AppCompatActivity {
     }
 
     public void SignInButtonIsClicked(View view) {
-        String userEmail = email.getText().toString().trim();
+        String userEmail = username.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
 
-        firebaseUserManager.loginUser(email,password);
+        firebaseUserManager.loginUser(username,password);
         if(firebaseUserManager.UserInputRequirementsFailedAtSignIn()){
             return;
         }

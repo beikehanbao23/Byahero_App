@@ -8,26 +8,26 @@ import FirebaseUserManager.FirebaseUserManager;
 import Logger.NullErrorDialog;
 
 public class User_RegisterAndLogin implements CharactersValidation, NullErrorDialog {
-    private EditText name;
+    private EditText username;
     private EditText email;
     private EditText phoneNumber;
     private EditText password;
     private EditText confirmPassword;
 
 
-    public User_RegisterAndLogin(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
-        this.name = name;
+    public User_RegisterAndLogin(EditText Username, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
+        this.username = Username;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.confirmPassword = confirmPassword;
     }
-  public User_RegisterAndLogin(EditText email, EditText password){
-        this.email = email;
+  public User_RegisterAndLogin(EditText username, EditText password){
+        this.username = username;
         this.password = password;
   }
     public String getName() {
-        return name.getText().toString();
+        return username.getText().toString();
     }
 
     public String getEmail() {
@@ -47,18 +47,18 @@ public class User_RegisterAndLogin implements CharactersValidation, NullErrorDia
     }
 
 
-    public boolean validateName() {
+    public boolean validateUserName() {
 
-        if (isNull(name.getText().toString())) {
-            name.setError(getErrorMessage());
+        if (isNull(username.getText().toString())) {
+            username.setError(getErrorMessage());
             return true;
         }
 
-        if (hasSpecialCharacters(name.getText().toString().trim())) {
-            name.setError("Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.");
+        if (hasSpecialCharacters(username.getText().toString().trim())) {
+            username.setError("Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.");
             return true;
         }
-        name.setError(null);
+        username.setError(null);
         return false;
     }
 
