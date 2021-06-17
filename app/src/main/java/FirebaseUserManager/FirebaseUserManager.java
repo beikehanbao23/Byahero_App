@@ -5,25 +5,24 @@ import android.widget.EditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import Logger.NullErrorDialog;
-import ValidateUser.User_RegisterAndLogin;
+import ValidateUser.UserManager;
 
 
-public class FirebaseUserManager implements NullErrorDialog {
+public class FirebaseUserManager   {
 
 
     private FirebaseAuth firebaseManager;
     private FirebaseUser firebaseUser;
-    private User_RegisterAndLogin userRegisterAndLogin;
+    private UserManager userRegisterAndLogin;
 
 
-    public void createUser(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
-        userRegisterAndLogin = new User_RegisterAndLogin(name, email, phoneNumber, password, confirmPassword);
+    public void verifyUserForSignUp(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
+        userRegisterAndLogin = new UserManager(name, email, phoneNumber, password, confirmPassword);
     }
 
 
-    public void loginUser(EditText username, EditText password){
-        userRegisterAndLogin = new User_RegisterAndLogin(username,password);
+    public void verifyUserForSignIn(EditText username, EditText password){
+        userRegisterAndLogin = new UserManager(username,password);
     }
 
 

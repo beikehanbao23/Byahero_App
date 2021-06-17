@@ -2,12 +2,9 @@ package ValidateUser;
 
 import android.widget.EditText;
 
-import com.google.firebase.auth.FirebaseUser;
+import Logger.LoggerErrorMessage;
 
-import FirebaseUserManager.FirebaseUserManager;
-import Logger.NullErrorDialog;
-
-public class User_RegisterAndLogin implements CharactersValidation, NullErrorDialog {
+public class UserManager implements CharactersValidation {
     private EditText username;
     private EditText email;
     private EditText phoneNumber;
@@ -15,14 +12,14 @@ public class User_RegisterAndLogin implements CharactersValidation, NullErrorDia
     private EditText confirmPassword;
 
 
-    public User_RegisterAndLogin(EditText Username, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
+    public UserManager(EditText Username, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
         this.username = Username;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.confirmPassword = confirmPassword;
     }
-  public User_RegisterAndLogin(EditText username, EditText password){
+  public UserManager(EditText username, EditText password){
         this.username = username;
         this.password = password;
   }
@@ -50,7 +47,7 @@ public class User_RegisterAndLogin implements CharactersValidation, NullErrorDia
     public boolean validateUserName() {
 
         if (isNull(username.getText().toString())) {
-            username.setError(getErrorMessage());
+            username.setError(LoggerErrorMessage.getNullErrorMessage());
             return true;
         }
 
@@ -66,7 +63,7 @@ public class User_RegisterAndLogin implements CharactersValidation, NullErrorDia
     public boolean validateEmail() {
 
         if (isNull(email.getText().toString())) {
-            email.setError(getErrorMessage());
+            email.setError(LoggerErrorMessage.getNullErrorMessage());
             return true;
         }
 
@@ -81,7 +78,7 @@ public class User_RegisterAndLogin implements CharactersValidation, NullErrorDia
     public boolean validateConfirmPassword() {
 
         if (isNull(confirmPassword.getText().toString())) {
-            confirmPassword.setError(getErrorMessage());
+            confirmPassword.setError(LoggerErrorMessage.getNullErrorMessage());
             return true;
         }
         if (Password_Is_Unmatch()) {
@@ -101,7 +98,7 @@ public class User_RegisterAndLogin implements CharactersValidation, NullErrorDia
     public boolean validatePassword() {
 
         if (isNull(password.getText().toString())) {
-            password.setError(getErrorMessage());
+            password.setError(LoggerErrorMessage.getNullErrorMessage());
             return true;
         }
 

@@ -6,29 +6,36 @@ import android.view.View;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
+import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
+import Logger.LoggerErrorMessage;
 import MenuButtons.Clicks_BackButton;
 
 public class SignIn extends AppCompatActivity {
     private Clicks_BackButton backButton;
     private EditText username, password;
     private FirebaseUserManager firebaseUserManager;
-    private CustomToastMessage customToastMessage;
-
+    private CustomToastMessage ToastMessageIncorrectUserNameAndPassword;
+    private CustomToastMessage ToastMessageNoInternetConnection;
+    private ConnectionManager connectionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        backButton = new Clicks_BackButton(this.getBaseContext(), 2000, "Tap again to exit");
         username = findViewById(R.id.editlogin_TextName);
         password = findViewById(R.id.editlogin_TextPassword);
+
+        backButton = new Clicks_BackButton(this.getBaseContext(), 2000, "Tap again to exit");
+
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
-        customToastMessage = new CustomToastMessage(this,"Username or password is incorrect",3);
+
+        ToastMessageIncorrectUserNameAndPassword = new CustomToastMessage(this, "Username or password is incorrect", 3);
+        ToastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(), 2);
+
     }
 
 
@@ -37,10 +44,14 @@ public class SignIn extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        connectionManager = new ConnectionManager(this);
+    }
 
     @Override
     public void onBackPressed() {
-
         backButton.showToastMessageThenBack();
     }
 
@@ -48,21 +59,34 @@ public class SignIn extends AppCompatActivity {
         String userEmail = username.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
 
-        firebaseUserManager.loginUser(username,password);
-        if(firebaseUserManager.UserInputRequirementsFailedAtSignIn()){
+        firebaseUserManager.verifyUserForSignIn(username, password);
+
+        if (firebaseUserManager.UserInputRequirementsFailedAtSignIn()) {
             return;
         }
 
-
-        firebaseUserManager.getFirebaseAuthenticate().signInWithEmailAndPassword(userEmail,userPassword).addOnCompleteListener(this, task -> {
-            if(task.isSuccessful()){
-            firebaseUserManager.getCurrentUser();
-            customToastMessage.hideMessage();
-            startActivity(new Intent(this,MainScreen.class));
-            finish();
+        if (!connectionManager.PhoneHasInternetConnection()) {
+            ToastMessageNoInternetConnection.showMessage();
             return;
         }
-            customToastMessage.showMessage();
+
+        firebaseUserManager.getFirebaseAuthenticate().signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                firebaseUserManager.getCurrentUser();
+                ToastMessageIncorrectUserNameAndPassword.hideMessage();
+                showMainScreen();
+                return;
+            }
+            ToastMessageIncorrectUserNameAndPassword.showMessage();
+            ToastMessageNoInternetConnection.hideMessage();
         });
+
+
     }
+
+    private void showMainScreen() {
+        startActivity(new Intent(this, MainScreen.class));
+        finish();
+    }
+
 }
