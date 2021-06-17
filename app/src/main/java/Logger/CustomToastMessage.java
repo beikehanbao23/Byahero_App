@@ -5,12 +5,13 @@ import android.widget.Toast;
 
 import com.rejowan.cutetoast.CuteToast;
 
-public class ToastMessage {
+public class CustomToastMessage {
     private Toast cuteToast;
 
 
-    public ToastMessage(Context context, String message) {
-       cuteToast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT,CuteToast.NORMAL,true);
+    public CustomToastMessage(Context context, String message, int type) {
+       cuteToast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT,type,true);
+
     }
 
     public void showMessage() {

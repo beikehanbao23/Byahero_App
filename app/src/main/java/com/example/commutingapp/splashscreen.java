@@ -7,18 +7,18 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 
 import FirebaseUserManager.FirebaseUserManager;
-import MenuButtons.BackButton;
+import MenuButtons.Clicks_BackButton;
 
 public class splashscreen extends AppCompatActivity {
     private final Handler handler = new Handler();
-    private BackButton backButton;
+    private Clicks_BackButton backButton;
     private FirebaseUserManager firebaseUserManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
-        backButton = new BackButton(this.getBaseContext(), 2000, "Tap again to exit");
+        backButton = new Clicks_BackButton(this.getBaseContext(), 2000, "Tap again to exit");
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
     }

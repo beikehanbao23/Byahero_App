@@ -36,7 +36,6 @@ public class FirebaseUserManager implements NullErrorDialog {
         return firebaseManager;
     }
 
-
     public void initializeFirebase() {
         firebaseManager = FirebaseAuth.getInstance();
     }

@@ -4,27 +4,29 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
-import MenuButtons.BackButton;
+import Logger.CustomToastMessage;
+import MenuButtons.Clicks_BackButton;
 
 public class SignIn extends AppCompatActivity {
-    private BackButton backButton;
+    private Clicks_BackButton backButton;
     private EditText username, password;
     private FirebaseUserManager firebaseUserManager;
-
+    private CustomToastMessage customToastMessage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        backButton = new BackButton(this.getBaseContext(), 2000, "Tap again to exit");
+        backButton = new Clicks_BackButton(this.getBaseContext(), 2000, "Tap again to exit");
         username = findViewById(R.id.editlogin_TextName);
         password = findViewById(R.id.editlogin_TextPassword);
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
-
+        customToastMessage = new CustomToastMessage(this,"Username or password is incorrect",3);
     }
 
 
@@ -53,11 +55,12 @@ public class SignIn extends AppCompatActivity {
         firebaseUserManager.getFirebaseAuthenticate().signInWithEmailAndPassword(userEmail,userPassword).addOnCompleteListener(this, task -> {
             if(task.isSuccessful()){
             firebaseUserManager.getCurrentUser();
+            customToastMessage.hideMessage();
             startActivity(new Intent(this,MainScreen.class));
             finish();
             return;
         }
-            CuteToast.ct(this, "Username or password is incorrect", CuteToast.LENGTH_SHORT, CuteToast.ERROR, true).show(); // change later
+            customToastMessage.showMessage();
         });
     }
 }
