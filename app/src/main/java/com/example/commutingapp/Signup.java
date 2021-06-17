@@ -11,13 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
+import Logger.CustomToastMessage;
 
 
 public class Signup extends AppCompatActivity {
 
     private EditText name, email, phoneNumber, password, confirmPassword;
     private FirebaseUserManager firebaseUserManager;
-
+    private CustomToastMessage toastMessage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +29,8 @@ public class Signup extends AppCompatActivity {
         phoneNumber = findViewById(R.id.editTextPhone);
         password = findViewById(R.id.editTextPassword);
         confirmPassword = findViewById(R.id.EditTextConfirmPassword);
+
+        toastMessage = new CustomToastMessage(this,"Failed to create account. Please check your device network connection.",3);
 
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
@@ -60,10 +63,11 @@ public class Signup extends AppCompatActivity {
     firebaseUserManager.getFirebaseAuthenticate().createUserWithEmailAndPassword(userEmail,userConfirmPassword).addOnCompleteListener(task -> {
         if(task.isSuccessful()){
             firebaseUserManager.getCurrentUser();
+            toastMessage.hideMessage();
             startActivity(new Intent(this,MainScreen.class));
             return;
         }
-        CuteToast.ct(this, "Failed to create account. Please check your device network connection.", CuteToast.LENGTH_SHORT, CuteToast.ERROR, true).show();  // change later
+       toastMessage.showMessage();
     });
 
     }

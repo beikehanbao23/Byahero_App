@@ -13,6 +13,8 @@ public class splashscreen extends AppCompatActivity {
     private final Handler handler = new Handler();
     private Clicks_BackButton backButton;
     private FirebaseUserManager firebaseUserManager;
+    private final int delayInMillis = 750;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,7 @@ public class splashscreen extends AppCompatActivity {
         handler.postDelayed(() -> {
             startActivity(new Intent(this, SignIn.class));
             finish();
-        }, 750);
+        }, delayInMillis);
     }
 
     @Override
