@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,26 +16,30 @@ import MenuButtons.Clicks_BackButton;
 
 public class SignIn extends AppCompatActivity {
     private Clicks_BackButton backButton;
-    private EditText username, password;
+    private EditText email, password;
     private FirebaseUserManager firebaseUserManager;
-    private CustomToastMessage ToastMessageIncorrectUserNameAndPassword;
-    private CustomToastMessage ToastMessageNoInternetConnection;
+    private CustomToastMessage toastMessageIncorrectUserNameAndPassword;
+    private CustomToastMessage toastMessageNoInternetConnection;
     private ConnectionManager connectionManager;
+    private ProgressBar circularProgressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        username = findViewById(R.id.editlogin_TextName);
+        email = findViewById(R.id.editlogin_TextEmail);
         password = findViewById(R.id.editlogin_TextPassword);
+        circularProgressBar = findViewById(R.id.SignInProgressBar);
+
 
         backButton = new Clicks_BackButton(this.getBaseContext(), 2000, "Tap again to exit");
 
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
 
-        ToastMessageIncorrectUserNameAndPassword = new CustomToastMessage(this, "Username or password is incorrect", 3);
-        ToastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(), 2);
+        toastMessageIncorrectUserNameAndPassword = new CustomToastMessage(this, "Username or password is incorrect", 3);
+        toastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(), 2);
 
     }
 
@@ -56,29 +61,30 @@ public class SignIn extends AppCompatActivity {
     }
 
     public void SignInButtonIsClicked(View view) {
-        String userEmail = username.getText().toString().trim();
+        String userUsername = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
 
-        firebaseUserManager.verifyUserForSignIn(username, password);
+        firebaseUserManager.verifyUserForSignIn(email, password);
 
         if (firebaseUserManager.UserInputRequirementsFailedAtSignIn()) {
             return;
         }
 
         if (!connectionManager.PhoneHasInternetConnection()) {
-            ToastMessageNoInternetConnection.showMessage();
+            toastMessageNoInternetConnection.showMessage();
             return;
         }
 
-        firebaseUserManager.getFirebaseAuthenticate().signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(this, task -> {
+        firebaseUserManager.getFirebaseAuthenticate().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
             if (task.isSuccessful()) {
+                circularProgressBar.setVisibility(View.VISIBLE);
                 firebaseUserManager.getCurrentUser();
-                ToastMessageIncorrectUserNameAndPassword.hideMessage();
+                toastMessageIncorrectUserNameAndPassword.hideMessage();
                 showMainScreen();
                 return;
             }
-            ToastMessageIncorrectUserNameAndPassword.showMessage();
-            ToastMessageNoInternetConnection.hideMessage();
+            toastMessageIncorrectUserNameAndPassword.showMessage();
+            toastMessageNoInternetConnection.hideMessage();
         });
 
 

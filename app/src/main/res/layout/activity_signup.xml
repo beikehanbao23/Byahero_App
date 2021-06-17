@@ -184,5 +184,17 @@
         app:layout_constraintStart_toEndOf="@+id/AlreadyHaveAccountText"
         app:layout_constraintTop_toTopOf="@+id/AlreadyHaveAccountText" />
 
+    <ProgressBar
+        android:id="@+id/SignUpProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:indeterminate="true"
+        android:layout_width="74dp"
+        android:layout_height="74dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

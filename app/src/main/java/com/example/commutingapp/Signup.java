@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +21,11 @@ public class Signup extends AppCompatActivity {
     private CustomToastMessage toastMessageErrorCreatingAccount;
     private CustomToastMessage toastMessageNoInternetConnection;
     private ConnectionManager connectionManager;
+    private ProgressBar circularProgressbar;
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +36,7 @@ public class Signup extends AppCompatActivity {
         phoneNumber = findViewById(R.id.editTextPhone);
         password = findViewById(R.id.editTextPassword);
         confirmPassword = findViewById(R.id.EditTextConfirmPassword);
+        circularProgressbar = findViewById(R.id.SignUpProgressBar);
 
         toastMessageErrorCreatingAccount = new CustomToastMessage(this, "Something went wrong with creating your account. Please try again later.", 3);
         toastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(),2);
@@ -76,6 +83,7 @@ public class Signup extends AppCompatActivity {
 
         firebaseUserManager.getFirebaseAuthenticate().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                circularProgressbar.setVisibility(View.VISIBLE);
                 firebaseUserManager.getCurrentUser();
                 toastMessageErrorCreatingAccount.hideMessage();
                 showMainScreen();

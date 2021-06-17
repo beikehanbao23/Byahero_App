@@ -7,7 +7,7 @@ public interface CharactersValidation {
         return Pattern.compile("[0-9]").matcher(input).find();
     }
      default boolean hasSpecialCharacters(String input){
-        return Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~]").matcher(input).find();
+        return Pattern.compile("[!#$%&*()_+=|<>?{}\\[\\]~]").matcher(input).find();
     }
 
 }
