@@ -31,11 +31,12 @@ public class Signup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        name = findViewById(R.id.EditTextName);
-        email = findViewById(R.id.EditTextEmail);
-        phoneNumber = findViewById(R.id.editTextPhone);
-        password = findViewById(R.id.editTextPassword);
-        confirmPassword = findViewById(R.id.EditTextConfirmPassword);
+        name = findViewById(R.id.editTextSignUpName);
+        email = findViewById(R.id.editTextSignUpEmailAddress);
+        phoneNumber = findViewById(R.id.editTextSignUpPhone);
+        password = findViewById(R.id.editTextSignUpPassword);
+        confirmPassword = findViewById(R.id.editSignUpConfirmPassword);
+
         circularProgressbar = findViewById(R.id.SignUpProgressBar);
 
         toastMessageErrorCreatingAccount = new CustomToastMessage(this, "Something went wrong with creating your account. Please try again later.", 3);

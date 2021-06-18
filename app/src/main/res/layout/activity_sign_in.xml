@@ -160,10 +160,12 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editlogin_TextEmail"
+            android:inputType="textEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/TextInputLayoutLoginPassword"
@@ -181,9 +183,10 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editLogin_TextPassword"
+            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="12sp"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
