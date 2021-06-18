@@ -29,9 +29,9 @@ public class SignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         email = findViewById(R.id.editlogin_TextEmail);
-        password = findViewById(R.id.editlogin_TextPassword);
-        circularProgressBar = findViewById(R.id.SignInProgressBar);
+        password = findViewById(R.id.editLogin_TextPassword);
 
+        circularProgressBar = findViewById(R.id.SignInProgressBar);
 
         backButton = new Clicks_BackButton(this.getBaseContext(), 2000, "Tap again to exit");
 
