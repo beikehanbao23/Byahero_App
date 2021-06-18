@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="164dp"
-        android:layout_height="wrap_content"
+        android:layout_width="185dp"
+        android:layout_height="174dp"
         android:background="@drawable/ic_applogo_byahero"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
