@@ -2,6 +2,8 @@ package ValidateUser;
 
 import android.widget.EditText;
 
+import com.example.commutingapp.R;
+
 import Logger.LoggerErrorMessage;
 
 public class UserManager implements CharactersValidation {
@@ -19,8 +21,8 @@ public class UserManager implements CharactersValidation {
         this.password = password;
         this.confirmPassword = confirmPassword;
     }
-  public UserManager(EditText username, EditText password){
-        this.username = username;
+  public UserManager(EditText email, EditText password){
+        this.email = email;
         this.password = password;
   }
     public String getName() {
@@ -48,11 +50,13 @@ public class UserManager implements CharactersValidation {
 
         if (isNull(username.getText().toString())) {
             username.setError(LoggerErrorMessage.getNullErrorMessage());
+            username.requestFocus();
             return true;
         }
 
         if (hasSpecialCharacters(username.getText().toString().trim())) {
             username.setError("Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.");
+            username.requestFocus();
             return true;
         }
         username.setError(null);
@@ -64,11 +68,13 @@ public class UserManager implements CharactersValidation {
 
         if (isNull(email.getText().toString())) {
             email.setError(LoggerErrorMessage.getNullErrorMessage());
+            email.requestFocus();
             return true;
         }
 
         if (!validEmail()) {
-            email.setError("Email is invalid"); ;
+            email.setError("Email is invalid");
+            email.requestFocus();
             return true;
         }
         email.setError(null);
@@ -79,15 +85,18 @@ public class UserManager implements CharactersValidation {
 
         if (isNull(confirmPassword.getText().toString())) {
             confirmPassword.setError(LoggerErrorMessage.getNullErrorMessage());
+            confirmPassword.requestFocus();
             return true;
         }
         if (Password_Is_Unmatch()) {
             confirmPassword.setError("The specified password do not match.");
+            confirmPassword.requestFocus();
             return true;
         }
 
         if (!isPasswordStrong()) {
             confirmPassword.setError("Password must contain at least 8 characters, including numbers or special characters.");
+            confirmPassword.requestFocus();
             return true;
 
         }
@@ -99,6 +108,7 @@ public class UserManager implements CharactersValidation {
 
         if (isNull(password.getText().toString())) {
             password.setError(LoggerErrorMessage.getNullErrorMessage());
+            password.requestFocus();
             return true;
         }
 
@@ -110,6 +120,7 @@ public class UserManager implements CharactersValidation {
 
         if (hasSpecialCharacters(phoneNumber.getText().toString().trim()) || isNumberSizeCorrect()) {
             phoneNumber.setError("Phone number is invalid.");
+            phoneNumber.requestFocus();
             return true;
         }
 

@@ -20,7 +20,7 @@ public class splashscreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
-        backButton = new Clicks_BackButton(this.getBaseContext(), 2000, "Tap again to exit");
+        backButton = new Clicks_BackButton(this.getBaseContext(),"Tap again to exit");
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
     }
@@ -31,13 +31,12 @@ public class splashscreen extends AppCompatActivity {
 
         firebaseUserManager.getCurrentUser();
         if (firebaseUserManager.isUserAlreadySignedIn()) {
-                startActivity(new Intent(this, MainScreen.class));
+            showMainScreen();
             return;
         }
 
         handler.postDelayed(() -> {
-            startActivity(new Intent(this, SignIn.class));
-            finish();
+            showSignIn();
         }, delayInMillis);
     }
 
@@ -47,4 +46,12 @@ public class splashscreen extends AppCompatActivity {
     }
 
 
+    private void showMainScreen(){
+        startActivity(new Intent(this, MainScreen.class));
+        finish();
+    }
+    private void showSignIn(){
+        startActivity(new Intent(this, SignIn.class));
+        finish();
+    }
 }

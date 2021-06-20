@@ -21,8 +21,8 @@ public class FirebaseUserManager   {
     }
 
 
-    public void verifyUserForSignIn(EditText username, EditText password){
-        userRegisterAndLogin = new UserManager(username,password);
+    public void verifyUserForSignIn(EditText email, EditText password){
+        userRegisterAndLogin = new UserManager(email,password);
     }
 
 
@@ -50,7 +50,7 @@ public class FirebaseUserManager   {
         return userRegisterAndLogin.validateUserName() || userRegisterAndLogin.validateEmail() || userRegisterAndLogin.validatePhoneNumber() || userRegisterAndLogin.validatePassword() || userRegisterAndLogin.validateConfirmPassword();
     }
     public boolean UserInputRequirementsFailedAtSignIn(){
-        return userRegisterAndLogin.validateUserName()|| userRegisterAndLogin.validatePassword();
+        return userRegisterAndLogin.validateEmail()|| userRegisterAndLogin.validatePassword();
     }
 
 }

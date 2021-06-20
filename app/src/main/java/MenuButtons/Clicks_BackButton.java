@@ -8,12 +8,11 @@ import Logger.CustomToastMessage;
 
 public class Clicks_BackButton extends AppCompatActivity {
     private  long backPressedTime = 0;
-    private final Integer timeDelayInMillis;
+    private final Integer timeDelayInMillis = 2000;
     private final CustomToastMessage message;
 
 
-    public Clicks_BackButton(Context context, Integer timeDelayInMillis, String textmessage) {
-        this.timeDelayInMillis = timeDelayInMillis;
+    public Clicks_BackButton(Context context, String textmessage) {
         message = new CustomToastMessage(context, textmessage,10);
     }
 

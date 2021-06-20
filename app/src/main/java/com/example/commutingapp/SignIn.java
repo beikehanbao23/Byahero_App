@@ -1,9 +1,7 @@
 package com.example.commutingapp;
 
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -35,7 +33,7 @@ public class SignIn extends AppCompatActivity {
 
         circularProgressBar = findViewById(R.id.SignInProgressBar);
 
-        backButton = new Clicks_BackButton(this.getBaseContext(), 2000, "Tap again to exit");
+        backButton = new Clicks_BackButton(this.getBaseContext(), "Tap again to exit");
 
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
@@ -66,28 +64,30 @@ public class SignIn extends AppCompatActivity {
         String userUsername = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
 
-            firebaseUserManager.verifyUserForSignIn(email, password);
 
-        if (firebaseUserManager.UserInputRequirementsFailedAtSignIn()) {
+    firebaseUserManager.verifyUserForSignIn(email, password);
+
+    if (firebaseUserManager.UserInputRequirementsFailedAtSignIn()) {
+        return;
+    }
+
+    if (!connectionManager.PhoneHasInternetConnection()) {
+        toastMessageNoInternetConnection.showMessage();
+        return;
+    }
+
+    firebaseUserManager.getFirebaseAuthenticate().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
+        if (task.isSuccessful()) {
+
+            circularProgressBar.setVisibility(View.VISIBLE);
+            firebaseUserManager.getCurrentUser();
+            toastMessageIncorrectUserNameAndPassword.hideMessage();
+            showMainScreen();
             return;
         }
-
-        if (!connectionManager.PhoneHasInternetConnection()) {
-            toastMessageNoInternetConnection.showMessage();
-            return;
-        }
-
-        firebaseUserManager.getFirebaseAuthenticate().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
-            if (task.isSuccessful()) {
-                circularProgressBar.setVisibility(View.VISIBLE);
-                firebaseUserManager.getCurrentUser();
-                toastMessageIncorrectUserNameAndPassword.hideMessage();
-                showMainScreen();
-                return;
-            }
-             toastMessageIncorrectUserNameAndPassword.showMessage();
-            toastMessageNoInternetConnection.hideMessage();
-        });
+        toastMessageIncorrectUserNameAndPassword.showMessage();
+        toastMessageNoInternetConnection.hideMessage();
+    });
 
 
     }
