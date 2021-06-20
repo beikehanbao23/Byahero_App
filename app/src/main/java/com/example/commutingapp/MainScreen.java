@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import FirebaseUserManager.FirebaseUserManager;
@@ -16,7 +17,6 @@ public class MainScreen extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen);
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
-
 
     }
 

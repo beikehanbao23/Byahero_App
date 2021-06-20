@@ -68,7 +68,7 @@ public class UserManager implements CharactersValidation {
         }
 
         if (!validEmail()) {
-            email.setError("Email is invalid");
+            email.setError("Email is invalid"); ;
             return true;
         }
         email.setError(null);

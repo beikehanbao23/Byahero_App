@@ -8,12 +8,11 @@
 
     <Button
         android:id="@+id/BackButton"
-        android:layout_width="63dp"
-        android:layout_height="43dp"
-        android:onClick="backToSignInButton"
+        android:layout_width="58dp"
+        android:layout_height="35dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="6dp"
+        android:onClick="backToSignInButton"
         app:backgroundTint="@color/white"
         app:icon="@drawable/ic_backbutton"
         app:iconTint="@color/black"
@@ -24,7 +23,7 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
+        android:layout_marginStart="84dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="84dp"
         android:fontFamily="sans-serif-medium"
@@ -34,20 +33,17 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02" />
+        app:layout_constraintVertical_bias="0.091" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="89dp"
-        android:layout_marginLeft="89dp"
+        android:layout_marginStart="84dp"
         android:layout_marginTop="2dp"
-        android:layout_marginEnd="89dp"
-        android:layout_marginRight="89dp"
+        android:layout_marginEnd="86dp"
         android:text="Create an account to Byahero"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.571"
@@ -70,15 +66,16 @@
 
     <TextView
         android:id="@+id/AlreadyHaveAccountText"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:onClick="backToSignInButton"
         android:text="Already have an account?"
         android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.373"
+        app:layout_constraintHorizontal_bias="0.351"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CreateButton" />
 
@@ -116,6 +113,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="32dp"
         android:hint="Name"
+        app:startIconDrawable="@drawable/ic_usrname"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -136,9 +134,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="32dp"
         android:hint="Email"
+        app:startIconDrawable="@drawable/ic_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TextInputLayoutSignUpName">
@@ -157,9 +156,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="32dp"
         android:hint="Phone"
+        app:startIconDrawable="@drawable/ic_phonenumber"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TextInputLayoutSignUpEmailAddress">
@@ -178,9 +178,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="32dp"
         android:hint="Password"
+        app:startIconDrawable="@drawable/ic_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TextInputLayoutSignUpPhoneNumber">
@@ -196,24 +197,24 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayoutSignUpConfirmPassword"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-
-        android:hint="Confirm Password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="32dp"
+        android:hint="Confirm Password"
+        app:startIconDrawable="@drawable/ic_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TextInputLayoutSignUpPassword">
+        app:layout_constraintTop_toBottomOf="@+id/TextInputLayoutSignUpPassword"
+       >
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editSignUpConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editSignUpConfirmPassword"
-            android:textSize="12sp"
             android:inputType="textPassword"
-            />
+            android:textSize="12sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
 

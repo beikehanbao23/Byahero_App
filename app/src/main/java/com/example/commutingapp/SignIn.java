@@ -1,7 +1,9 @@
 package com.example.commutingapp;
 
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -64,7 +66,7 @@ public class SignIn extends AppCompatActivity {
         String userUsername = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
 
-        firebaseUserManager.verifyUserForSignIn(email, password);
+            firebaseUserManager.verifyUserForSignIn(email, password);
 
         if (firebaseUserManager.UserInputRequirementsFailedAtSignIn()) {
             return;
@@ -83,7 +85,7 @@ public class SignIn extends AppCompatActivity {
                 showMainScreen();
                 return;
             }
-            toastMessageIncorrectUserNameAndPassword.showMessage();
+             toastMessageIncorrectUserNameAndPassword.showMessage();
             toastMessageNoInternetConnection.hideMessage();
         });
 
