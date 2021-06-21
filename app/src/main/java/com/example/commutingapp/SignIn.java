@@ -13,6 +13,7 @@ import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
 import Logger.LoggerErrorMessage;
 import MenuButtons.Clicks_BackButton;
+import ValidateUser.UserManager;
 
 public class SignIn extends AppCompatActivity {
     private Clicks_BackButton backButton;
@@ -22,6 +23,7 @@ public class SignIn extends AppCompatActivity {
     private CustomToastMessage toastMessageNoInternetConnection;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressBar;
+    private UserManager userManager;
 
 
     @Override
@@ -34,7 +36,7 @@ public class SignIn extends AppCompatActivity {
         circularProgressBar = findViewById(R.id.SignInProgressBar);
 
         backButton = new Clicks_BackButton(this.getBaseContext(), "Tap again to exit");
-
+        userManager = new UserManager();
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
 
@@ -65,9 +67,9 @@ public class SignIn extends AppCompatActivity {
         String userPassword = password.getText().toString().trim();
 
 
-    firebaseUserManager.verifyUserForSignIn(email, password);
+    userManager.verifyUserForSignIn(email, password);
 
-    if (firebaseUserManager.UserInputRequirementsFailedAtSignIn()) {
+    if (userManager.UserInputRequirementsFailedAtSignIn()) {
         return;
     }
 

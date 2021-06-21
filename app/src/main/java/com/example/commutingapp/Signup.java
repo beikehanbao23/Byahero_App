@@ -12,9 +12,11 @@ import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
 import Logger.LoggerErrorMessage;
+import ValidateUser.User;
+import ValidateUser.UserManager;
 
 
-public class Signup extends AppCompatActivity {
+ public class Signup extends AppCompatActivity {
 
     private EditText name, email, phoneNumber, password, confirmPassword;
     private FirebaseUserManager firebaseUserManager;
@@ -22,7 +24,7 @@ public class Signup extends AppCompatActivity {
     private CustomToastMessage toastMessageNoInternetConnection;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressbar;
-
+    private UserManager userManager;
 
 
 
@@ -41,7 +43,7 @@ public class Signup extends AppCompatActivity {
 
         toastMessageErrorCreatingAccount = new CustomToastMessage(this, "Something went wrong with creating your account. Please try again later.", 3);
         toastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(),2);
-
+        userManager = new UserManager();
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
 
@@ -71,8 +73,8 @@ public class Signup extends AppCompatActivity {
         String userEmail = email.getText().toString().trim();
         String userConfirmPassword = confirmPassword.getText().toString().trim();
 
-        firebaseUserManager.verifyUserForSignUp(name, email, phoneNumber, password, confirmPassword);
-        if (firebaseUserManager.UserInputRequirementsFailedAtSignUp()) {
+        userManager.verifyUserForSignUp(name, email, phoneNumber, password, confirmPassword);
+        if (userManager.UserInputRequirementsFailedAtSignUp()) {
             return;
         }
 
