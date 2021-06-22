@@ -25,11 +25,15 @@ public class MainScreen extends AppCompatActivity {
 
 
     public void LogoutButtonClicked(View view) {
-        firebaseUserManager.getFirebaseAuthenticate().signOut();
+       signOutUser();
+    }
+
+
+    private void signOutUser(){
+        firebaseUserManager.getFirebaseInstance().signOut();
         startActivity(new Intent(this, SignIn.class));
         finish();
     }
-
     @Override
     public void onBackPressed() {
       backButton.showToastMessageThenBack();

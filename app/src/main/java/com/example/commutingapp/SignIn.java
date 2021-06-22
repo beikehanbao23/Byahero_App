@@ -63,9 +63,6 @@ public class SignIn extends AppCompatActivity {
     }
 
     public void SignInButtonIsClicked(View view) {
-        String userUsername = email.getText().toString().trim();
-        String userPassword = password.getText().toString().trim();
-
 
     userManager.verifyUserForSignIn(email, password);
 
@@ -77,21 +74,32 @@ public class SignIn extends AppCompatActivity {
         toastMessageNoInternetConnection.showMessage();
         return;
     }
-
-    firebaseUserManager.getFirebaseAuthenticate().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
-        if (task.isSuccessful()) {
-
-            circularProgressBar.setVisibility(View.VISIBLE);
-            firebaseUserManager.getCurrentUser();
-            toastMessageIncorrectUserNameAndPassword.hideMessage();
-            showMainScreen();
-            return;
-        }
-        toastMessageIncorrectUserNameAndPassword.showMessage();
         toastMessageNoInternetConnection.hideMessage();
-    });
+        circularProgressBar.setVisibility(View.VISIBLE);
+        signInToFirebase();
 
 
+    }
+
+
+
+
+
+
+
+    private void signInToFirebase(){
+        String userUsername = email.getText().toString().trim();
+        String userPassword = password.getText().toString().trim();
+
+        firebaseUserManager.getFirebaseInstance().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                firebaseUserManager.getCurrentUser();
+                toastMessageIncorrectUserNameAndPassword.hideMessage();
+                showMainScreen();
+                return;
+            }
+            toastMessageIncorrectUserNameAndPassword.showMessage();
+        });
     }
 
     private void showMainScreen() {

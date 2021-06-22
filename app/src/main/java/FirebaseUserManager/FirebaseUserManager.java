@@ -20,7 +20,7 @@ public class FirebaseUserManager   {
         firebaseUser = firebaseManager.getCurrentUser();
     }
 
-    public FirebaseAuth getFirebaseAuthenticate() {
+    public FirebaseAuth getFirebaseInstance() {
         return firebaseManager;
     }
 

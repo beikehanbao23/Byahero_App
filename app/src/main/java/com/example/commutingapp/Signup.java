@@ -1,4 +1,4 @@
- package com.example.commutingapp;
+package com.example.commutingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,11 +12,10 @@ import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
 import Logger.LoggerErrorMessage;
-import ValidateUser.User;
 import ValidateUser.UserManager;
 
 
- public class Signup extends AppCompatActivity {
+public class Signup extends AppCompatActivity {
 
     private EditText name, email, phoneNumber, password, confirmPassword;
     private FirebaseUserManager firebaseUserManager;
@@ -25,7 +24,6 @@ import ValidateUser.UserManager;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressbar;
     private UserManager userManager;
-
 
 
     @Override
@@ -42,7 +40,7 @@ import ValidateUser.UserManager;
         circularProgressbar = findViewById(R.id.SignUpProgressBar);
 
         toastMessageErrorCreatingAccount = new CustomToastMessage(this, "Something went wrong with creating your account. Please try again later.", 3);
-        toastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(),2);
+        toastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(), 2);
         userManager = new UserManager();
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
@@ -70,35 +68,43 @@ import ValidateUser.UserManager;
     }
 
     public void CreateBttnClicked(View view) {
-        String userEmail = email.getText().toString().trim();
-        String userConfirmPassword = confirmPassword.getText().toString().trim();
 
         userManager.verifyUserForSignUp(name, email, phoneNumber, password, confirmPassword);
         if (userManager.UserInputRequirementsFailedAtSignUp()) {
             return;
         }
 
-        if(!connectionManager.PhoneHasInternetConnection()){
+        if (!connectionManager.PhoneHasInternetConnection()) {
             toastMessageNoInternetConnection.showMessage();
             return;
         }
 
 
-        firebaseUserManager.getFirebaseAuthenticate().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
+        toastMessageNoInternetConnection.hideMessage();
+        circularProgressbar.setVisibility(View.VISIBLE);
+        signUpToFirebase();
+
+
+    }
+
+    private void signUpToFirebase() {
+        String userEmail = email.getText().toString().trim();
+        String userConfirmPassword = confirmPassword.getText().toString().trim();
+        firebaseUserManager.getFirebaseInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                circularProgressbar.setVisibility(View.VISIBLE);
                 firebaseUserManager.getCurrentUser();
                 toastMessageErrorCreatingAccount.hideMessage();
                 showMainScreen();
                 return;
             }
+
             toastMessageErrorCreatingAccount.showMessage();
-            toastMessageNoInternetConnection.hideMessage();
+
         });
 
     }
 
-    private void showMainScreen() {
+    public void showMainScreen() {
         startActivity(new Intent(this, MainScreen.class));
         finish();
     }
