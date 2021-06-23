@@ -78,22 +78,29 @@ public class SignIn extends AppCompatActivity {
         return;
     }
 
-    firebaseUserManager.getFirebaseAuthenticate().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
-        if (task.isSuccessful()) {
-
-            circularProgressBar.setVisibility(View.VISIBLE);
-            firebaseUserManager.getCurrentUser();
-            toastMessageIncorrectUserNameAndPassword.hideMessage();
-            showMainScreen();
-            return;
-        }
-        toastMessageIncorrectUserNameAndPassword.showMessage();
         toastMessageNoInternetConnection.hideMessage();
-    });
-
+        signInuser();
 
     }
 
+
+    private void signInuser(){
+
+        String userUsername = email.getText().toString().trim();
+        String userPassword = password.getText().toString().trim();
+
+        firebaseUserManager.getFirebaseAuthenticate().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                circularProgressBar.setVisibility(View.VISIBLE);
+                firebaseUserManager.getCurrentUser();
+                toastMessageIncorrectUserNameAndPassword.hideMessage();
+                showMainScreen();
+                return;
+            }
+            toastMessageIncorrectUserNameAndPassword.showMessage();
+        });
+
+    }
     private void showMainScreen() {
         startActivity(new Intent(this, MainScreen.class));
         finish();

@@ -70,8 +70,7 @@ import ValidateUser.UserManager;
     }
 
     public void CreateBttnClicked(View view) {
-        String userEmail = email.getText().toString().trim();
-        String userConfirmPassword = confirmPassword.getText().toString().trim();
+
 
         userManager.verifyUserForSignUp(name, email, phoneNumber, password, confirmPassword);
         if (userManager.UserInputRequirementsFailedAtSignUp()) {
@@ -84,6 +83,20 @@ import ValidateUser.UserManager;
         }
 
 
+        toastMessageNoInternetConnection.hideMessage();
+        SignUpUser();
+
+
+    }
+
+
+
+
+
+
+    private void SignUpUser(){
+        String userEmail = email.getText().toString().trim();
+        String userConfirmPassword = confirmPassword.getText().toString().trim();
         firebaseUserManager.getFirebaseAuthenticate().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 circularProgressbar.setVisibility(View.VISIBLE);
@@ -93,10 +106,10 @@ import ValidateUser.UserManager;
                 return;
             }
             toastMessageErrorCreatingAccount.showMessage();
-            toastMessageNoInternetConnection.hideMessage();
         });
-
     }
+
+
 
     private void showMainScreen() {
         startActivity(new Intent(this, MainScreen.class));
