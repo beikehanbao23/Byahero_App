@@ -75,8 +75,8 @@ public class SignIn extends AppCompatActivity {
         return;
     }
         toastMessageNoInternetConnection.hideMessage();
-        circularProgressBar.setVisibility(View.VISIBLE);
-        signInToFirebase();
+        signInUser();
+
 
 
     }
@@ -87,12 +87,18 @@ public class SignIn extends AppCompatActivity {
 
 
 
-    private void signInToFirebase(){
+
+
+
+
+    private void signInUser(){
+
         String userUsername = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
 
         firebaseUserManager.getFirebaseInstance().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
             if (task.isSuccessful()) {
+                circularProgressBar.setVisibility(View.VISIBLE);
                 firebaseUserManager.getCurrentUser();
                 toastMessageIncorrectUserNameAndPassword.hideMessage();
                 showMainScreen();
@@ -100,8 +106,8 @@ public class SignIn extends AppCompatActivity {
             }
             toastMessageIncorrectUserNameAndPassword.showMessage();
         });
-    }
 
+    }
     private void showMainScreen() {
         startActivity(new Intent(this, MainScreen.class));
         finish();

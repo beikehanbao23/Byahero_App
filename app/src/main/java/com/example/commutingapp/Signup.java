@@ -68,7 +68,6 @@ public class Signup extends AppCompatActivity {
     }
 
     public void CreateBttnClicked(View view) {
-
         userManager.verifyUserForSignUp(name, email, phoneNumber, password, confirmPassword);
         if (userManager.UserInputRequirementsFailedAtSignUp()) {
             return;
@@ -81,17 +80,22 @@ public class Signup extends AppCompatActivity {
 
 
         toastMessageNoInternetConnection.hideMessage();
-        circularProgressbar.setVisibility(View.VISIBLE);
-        signUpToFirebase();
+        SignUpUser();
+
 
 
     }
 
-    private void signUpToFirebase() {
+
+
+
+    private void SignUpUser(){
         String userEmail = email.getText().toString().trim();
         String userConfirmPassword = confirmPassword.getText().toString().trim();
         firebaseUserManager.getFirebaseInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
+
             if (task.isSuccessful()) {
+                circularProgressbar.setVisibility(View.VISIBLE);
                 firebaseUserManager.getCurrentUser();
                 toastMessageErrorCreatingAccount.hideMessage();
                 showMainScreen();
@@ -99,12 +103,13 @@ public class Signup extends AppCompatActivity {
             }
 
             toastMessageErrorCreatingAccount.showMessage();
-
         });
-
     }
 
-    public void showMainScreen() {
+
+
+    private void showMainScreen() {
+
         startActivity(new Intent(this, MainScreen.class));
         finish();
     }
