@@ -83,14 +83,6 @@ public class SignIn extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
-
-
     private void signInUser(){
 
         String userUsername = email.getText().toString().trim();

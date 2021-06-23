@@ -87,8 +87,6 @@ public class Signup extends AppCompatActivity {
     }
 
 
-
-
     private void SignUpUser(){
         String userEmail = email.getText().toString().trim();
         String userConfirmPassword = confirmPassword.getText().toString().trim();
