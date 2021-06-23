@@ -81,18 +81,15 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         return;
     }
         toastMessageNoInternetConnection.hideMessage();
-        signInUser();
+        signInUserToFirebase();
+
     }
 
 
 
 
 
-
-
-
-
-    private void signInUser(){
+    private void signInUserToFirebase(){
 
         String userUsername = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
