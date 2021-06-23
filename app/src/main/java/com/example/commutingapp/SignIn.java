@@ -75,7 +75,7 @@ public class SignIn extends AppCompatActivity {
         return;
     }
         toastMessageNoInternetConnection.hideMessage();
-        signInUser();
+        signInUserToFirebase();
 
 
 
@@ -83,7 +83,7 @@ public class SignIn extends AppCompatActivity {
 
 
 
-    private void signInUser(){
+    private void signInUserToFirebase(){
 
         String userUsername = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();

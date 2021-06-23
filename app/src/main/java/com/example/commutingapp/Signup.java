@@ -80,14 +80,14 @@ public class Signup extends AppCompatActivity {
 
 
         toastMessageNoInternetConnection.hideMessage();
-        SignUpUser();
+        SignUpUserToFirebase();
 
 
 
     }
 
 
-    private void SignUpUser(){
+    private void SignUpUserToFirebase(){
         String userEmail = email.getText().toString().trim();
         String userConfirmPassword = confirmPassword.getText().toString().trim();
         firebaseUserManager.getFirebaseInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
