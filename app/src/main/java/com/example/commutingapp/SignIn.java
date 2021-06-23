@@ -12,15 +12,19 @@ import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
 import Logger.LoggerErrorMessage;
-import MenuButtons.Clicks_BackButton;
+import MenuButtons.ButtonClicksTimeDelay;
+import MenuButtons.CustomBackButton;
 import ValidateUser.UserManager;
 
-public class SignIn extends AppCompatActivity {
-    private Clicks_BackButton backButton;
+public class SignIn extends AppCompatActivity implements CustomBackButton {
+
     private EditText email, password;
     private FirebaseUserManager firebaseUserManager;
     private CustomToastMessage toastMessageIncorrectUserNameAndPassword;
     private CustomToastMessage toastMessageNoInternetConnection;
+    private CustomToastMessage toastMessageBackButton;
+
+
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressBar;
     private UserManager userManager;
@@ -35,13 +39,14 @@ public class SignIn extends AppCompatActivity {
 
         circularProgressBar = findViewById(R.id.SignInProgressBar);
 
-        backButton = new Clicks_BackButton(this.getBaseContext(), "Tap again to exit");
+
         userManager = new UserManager();
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
 
         toastMessageIncorrectUserNameAndPassword = new CustomToastMessage(this, "Username or password is incorrect", 3);
         toastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(), 2);
+        toastMessageBackButton = new CustomToastMessage(this,"Tap again to exit.",10);
 
     }
 
@@ -59,7 +64,7 @@ public class SignIn extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        backButton.showToastMessageThenBack();
+        backButtonClicked();
     }
 
     public void SignInButtonIsClicked(View view) {
@@ -76,10 +81,13 @@ public class SignIn extends AppCompatActivity {
     }
         toastMessageNoInternetConnection.hideMessage();
         signInUser();
-
-
-
     }
+
+
+
+
+
+
 
 
 
@@ -105,4 +113,17 @@ public class SignIn extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void backButtonClicked() {
+        ButtonClicksTimeDelay backButtonClick = new ButtonClicksTimeDelay(2000);
+        CustomBackButton customBackButton = ()->{
+            if(backButtonClick.isDoubleTapped()){
+                toastMessageBackButton.showMessage();
+                super.onBackPressed();
+                return;
+            }
+            toastMessageBackButton.hideMessage();
+            backButtonClick.setBackPressedTimeTo_CurrentTimeMillis();
+        };
+    }
 }

@@ -4,22 +4,28 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import FirebaseUserManager.FirebaseUserManager;
-import MenuButtons.Clicks_BackButton;
+import Logger.CustomToastMessage;
+import MenuButtons.ButtonClicksTimeDelay;
+import MenuButtons.CustomBackButton;
 
-public class MainScreen extends AppCompatActivity {
+public class MainScreen extends AppCompatActivity implements CustomBackButton {
     private FirebaseUserManager firebaseUserManager;
-    private Clicks_BackButton backButton;
+    private ButtonClicksTimeDelay backButtonClick;
+    private CustomToastMessage toastMessageBackButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+
+        backButtonClick = new ButtonClicksTimeDelay(2000);
+        toastMessageBackButton = new CustomToastMessage(this,"Tap again to exit",10);
+
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
-        backButton = new Clicks_BackButton(this.getBaseContext(),  "Tap again to exit");
+
     }
 
 
@@ -36,6 +42,21 @@ public class MainScreen extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-      backButton.showToastMessageThenBack();
+      backButtonClicked();
+    }
+
+    @Override
+    public void backButtonClicked() {
+
+
+        CustomBackButton customBackButton = ()->{
+            if(backButtonClick.isDoubleTapped()){
+                toastMessageBackButton.showMessage();
+                super.onBackPressed();
+                return;
+            }
+            toastMessageBackButton.hideMessage();
+            backButtonClick.setBackPressedTimeTo_CurrentTimeMillis();
+        };
     }
 }

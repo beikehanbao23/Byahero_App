@@ -7,11 +7,11 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 
 import FirebaseUserManager.FirebaseUserManager;
-import MenuButtons.Clicks_BackButton;
+import MenuButtons.ButtonClicksTimeDelay;
 
 public class splashscreen extends AppCompatActivity {
     private final Handler handler = new Handler();
-    private Clicks_BackButton backButton;
+    private ButtonClicksTimeDelay backButton;
     private FirebaseUserManager firebaseUserManager;
     private final int delayInMillis = 750;
 
@@ -20,7 +20,7 @@ public class splashscreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
-        backButton = new Clicks_BackButton(this.getBaseContext(),"Tap again to exit");
+        backButton = new ButtonClicksTimeDelay(this.getBaseContext(),"Tap again to exit");
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
     }
@@ -42,7 +42,7 @@ public class splashscreen extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        backButton.showToastMessageThenBack();
+        backButton.showToastMessageThenBack(this);
     }
 
 
