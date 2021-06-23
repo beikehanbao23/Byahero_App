@@ -3,6 +3,7 @@ package Logger;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.example.commutingapp.R;
 import com.rejowan.cutetoast.CuteToast;
 
 public class CustomToastMessage {
@@ -24,11 +25,20 @@ types of Toast Message::
 
  */
     public CustomToastMessage(Context context, String message, int type) {
+        if(message.equals(null)){
+            throw new RuntimeException("Message is invalid!");
+        }
+        if(type > 10 || type < 1){
+            throw new RuntimeException("Toast message type is invalid!");
+        }
+
        cuteToast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT,type,true);
 
     }
 
-    public void showMessage() { cuteToast.show(); }
+    public void showMessage() {
+        cuteToast.show();
+    }
 
     public void hideMessage() {
         cuteToast.cancel();

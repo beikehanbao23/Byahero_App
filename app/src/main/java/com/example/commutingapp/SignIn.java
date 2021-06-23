@@ -123,7 +123,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
                 return;
             }
             toastMessageBackButton.hideMessage();
-            backButtonClick.setBackPressedTimeTo_CurrentTimeMillis();
+            backButtonClick.registerFirstClick();
         };
     }
 }

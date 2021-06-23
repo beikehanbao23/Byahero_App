@@ -26,9 +26,9 @@ public class ButtonClicksTimeDelay extends AppCompatActivity {
     public void setPrefferedTimeDelayInMillis(int preferredTimeDelayInMillis){
         this.timeDelayInMillis = preferredTimeDelayInMillis;
     }
+
 /*
     /public void showToastMessageThenBack(Context act) {
-
         //    if (isDoubleTapped()) {
                // message.hideMessage();
          //       super.onBackPressed();
@@ -38,6 +38,7 @@ public class ButtonClicksTimeDelay extends AppCompatActivity {
       //  setBackPressedTimeTo_CurrentTimeMillis();
     }
 */
+
     public boolean isDoubleTapped() {
         if(timeDelayInMillis == 0){
             throw new RuntimeException("Preferred time set is invalid");
@@ -46,7 +47,7 @@ public class ButtonClicksTimeDelay extends AppCompatActivity {
         return backPressedTime + timeDelayInMillis > System.currentTimeMillis();
     }
 
-    public void     setBackPressedTimeTo_CurrentTimeMillis(){
+    public void registerFirstClick(){
         backPressedTime = System.currentTimeMillis();
     }
 }

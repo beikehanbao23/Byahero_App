@@ -7,20 +7,25 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 
 import FirebaseUserManager.FirebaseUserManager;
+import Logger.CustomToastMessage;
 import MenuButtons.ButtonClicksTimeDelay;
+import MenuButtons.CustomBackButton;
 
-public class splashscreen extends AppCompatActivity {
+public class splashscreen extends AppCompatActivity implements CustomBackButton {
     private final Handler handler = new Handler();
-    private ButtonClicksTimeDelay backButton;
+    private ButtonClicksTimeDelay backButtonClick;
     private FirebaseUserManager firebaseUserManager;
-    private final int delayInMillis = 750;
-
+    private final int delayInMillis = 700;
+    private CustomToastMessage toastMessageBackButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
-        backButton = new ButtonClicksTimeDelay(this.getBaseContext(),"Tap again to exit");
+
+        backButtonClick = new ButtonClicksTimeDelay(2000);
+        toastMessageBackButton = new CustomToastMessage(this,"Tap again to exit",10);
+
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
     }
@@ -40,9 +45,10 @@ public class splashscreen extends AppCompatActivity {
         }, delayInMillis);
     }
 
+
     @Override
     public void onBackPressed() {
-        backButton.showToastMessageThenBack(this);
+        backButtonClicked();
     }
 
 
@@ -53,5 +59,19 @@ public class splashscreen extends AppCompatActivity {
     private void showSignIn(){
         startActivity(new Intent(this, SignIn.class));
         finish();
+    }
+
+    @Override
+    public void backButtonClicked() {
+
+        CustomBackButton customBackButton = ()->{
+            if(backButtonClick.isDoubleTapped()){
+                toastMessageBackButton.showMessage();
+                super.onBackPressed();
+                return;
+            }
+            toastMessageBackButton.hideMessage();
+            backButtonClick.registerFirstClick();
+        };
     }
 }

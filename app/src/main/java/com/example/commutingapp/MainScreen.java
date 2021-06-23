@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import FirebaseUserManager.FirebaseUserManager;
@@ -51,12 +52,13 @@ public class MainScreen extends AppCompatActivity implements CustomBackButton {
 
         CustomBackButton customBackButton = ()->{
             if(backButtonClick.isDoubleTapped()){
-                toastMessageBackButton.showMessage();
+                toastMessageBackButton.hideMessage();
                 super.onBackPressed();
                 return;
             }
-            toastMessageBackButton.hideMessage();
-            backButtonClick.setBackPressedTimeTo_CurrentTimeMillis();
+            toastMessageBackButton.showMessage();
+            backButtonClick.registerFirstClick();
         };
+        customBackButton.backButtonClicked();
     }
 }
