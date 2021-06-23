@@ -118,12 +118,13 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         ButtonClicksTimeDelay backButtonClick = new ButtonClicksTimeDelay(2000);
         CustomBackButton customBackButton = ()->{
             if(backButtonClick.isDoubleTapped()){
-                toastMessageBackButton.showMessage();
+                toastMessageBackButton.hideMessage();
                 super.onBackPressed();
                 return;
             }
-            toastMessageBackButton.hideMessage();
+            toastMessageBackButton.showMessage();
             backButtonClick.registerFirstClick();
         };
+        customBackButton.backButtonClicked();
     }
 }
