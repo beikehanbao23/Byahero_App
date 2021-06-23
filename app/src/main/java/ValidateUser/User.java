@@ -26,6 +26,9 @@ public class User implements CharactersValidation {
         this.email = email;
         this.password = password;
   }
+  public User(){
+
+  }
     public String getName() {
         return username.getText().toString();
     }

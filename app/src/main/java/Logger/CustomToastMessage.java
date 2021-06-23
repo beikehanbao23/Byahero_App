@@ -35,6 +35,9 @@ types of Toast Message::
        cuteToast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT,type,true);
 
     }
+    public CustomToastMessage(){
+
+    }
 
     public void showMessage() {
         cuteToast.show();

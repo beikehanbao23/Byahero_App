@@ -23,7 +23,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
     private CustomToastMessage toastMessageIncorrectUserNameAndPassword;
     private CustomToastMessage toastMessageNoInternetConnection;
     private CustomToastMessage toastMessageBackButton;
-
+    private ButtonClicksTimeDelay backButtonClick;
 
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressBar;
@@ -39,9 +39,10 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
         circularProgressBar = findViewById(R.id.SignInProgressBar);
 
-
+        backButtonClick = new ButtonClicksTimeDelay(2000);
         userManager = new UserManager();
         firebaseUserManager = new FirebaseUserManager();
+
         firebaseUserManager.initializeFirebase();
 
         toastMessageIncorrectUserNameAndPassword = new CustomToastMessage(this, "Username or password is incorrect", 3);
@@ -115,7 +116,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     @Override
     public void backButtonClicked() {
-        ButtonClicksTimeDelay backButtonClick = new ButtonClicksTimeDelay(2000);
+
         CustomBackButton customBackButton = ()->{
             if(backButtonClick.isDoubleTapped()){
                 toastMessageBackButton.hideMessage();
