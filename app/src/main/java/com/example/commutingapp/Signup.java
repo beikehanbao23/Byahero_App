@@ -74,12 +74,12 @@ public class Signup extends AppCompatActivity {
         }
 
         if (!connectionManager.PhoneHasInternetConnection()) {
-            toastMessageNoInternetConnection.showMessage();
+            toastMessageNoInternetConnection.showToast();
             return;
         }
 
 
-        toastMessageNoInternetConnection.hideMessage();
+        toastMessageNoInternetConnection.hideToast();
         SignUpUserToFirebase();
 
 
@@ -95,12 +95,12 @@ public class Signup extends AppCompatActivity {
             if (task.isSuccessful()) {
                 circularProgressbar.setVisibility(View.VISIBLE);
                 firebaseUserManager.getCurrentUser();
-                toastMessageErrorCreatingAccount.hideMessage();
+                toastMessageErrorCreatingAccount.hideToast();
                 showMainScreen();
                 return;
             }
 
-            toastMessageErrorCreatingAccount.showMessage();
+            toastMessageErrorCreatingAccount.showToast();
         });
     }
 

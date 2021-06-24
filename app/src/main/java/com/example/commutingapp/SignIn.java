@@ -20,7 +20,8 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     private EditText email, password;
     private FirebaseUserManager firebaseUserManager;
-    private CustomToastMessage toastMessageIncorrectUserNameAndPassword;
+
+    private CustomToastMessage toastMessageUserAuthentication;
     private CustomToastMessage toastMessageNoInternetConnection;
     private CustomToastMessage toastMessageBackButton;
     private ButtonClicksTimeDelay backButtonClick;
@@ -45,9 +46,9 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
         firebaseUserManager.initializeFirebase();
 
-        toastMessageIncorrectUserNameAndPassword = new CustomToastMessage(this, "Username or password is incorrect", 3);
+        toastMessageUserAuthentication = new CustomToastMessage();
         toastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(), 2);
-        toastMessageBackButton = new CustomToastMessage(this,"Tap again to exit.",10);
+        toastMessageBackButton = new CustomToastMessage(this, "Tap again to exit.", 10);
 
     }
 
@@ -70,42 +71,43 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     public void SignInButtonIsClicked(View view) {
 
-    userManager.verifyUserForSignIn(email, password);
+        userManager.verifyUserForSignIn(email, password);
 
-    if (userManager.UserInputRequirementsFailedAtSignIn()) {
-        return;
+        if (userManager.UserInputRequirementsFailedAtSignIn()) {
+            return;
+        }
+
+        if (!connectionManager.PhoneHasInternetConnection()) {
+            toastMessageNoInternetConnection.showToast();
+            return;
+        }
+        toastMessageNoInternetConnection.hideToast();
+        AuthenticateUserToFirebase();
     }
 
-    if (!connectionManager.PhoneHasInternetConnection()) {
-        toastMessageNoInternetConnection.showMessage();
-        return;
-    }
-        toastMessageNoInternetConnection.hideMessage();
-        signInUserToFirebase();
 
-    }
-
-
-
-
-
-    private void signInUserToFirebase(){
+    private void AuthenticateUserToFirebase() {
 
         String userUsername = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
 
+
         firebaseUserManager.getFirebaseInstance().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
+
+
+
+
             if (task.isSuccessful()) {
                 circularProgressBar.setVisibility(View.VISIBLE);
                 firebaseUserManager.getCurrentUser();
-                toastMessageIncorrectUserNameAndPassword.hideMessage();
                 showMainScreen();
                 return;
             }
-            toastMessageIncorrectUserNameAndPassword.showMessage();
+            toastMessageUserAuthentication.showTheToastMessage(this,"User Authentication Failed: " + task.getException().getMessage(),3);
         });
 
     }
+
     private void showMainScreen() {
         startActivity(new Intent(this, MainScreen.class));
         finish();
@@ -114,13 +116,13 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
     @Override
     public void backButtonClicked() {
 
-        CustomBackButton customBackButton = ()->{
-            if(backButtonClick.isDoubleTapped()){
-                toastMessageBackButton.hideMessage();
+        CustomBackButton customBackButton = () -> {
+            if (backButtonClick.isDoubleTapped()) {
+                toastMessageBackButton.hideToast();
                 super.onBackPressed();
                 return;
             }
-            toastMessageBackButton.showMessage();
+            toastMessageBackButton.showToast();
             backButtonClick.registerFirstClick();
         };
         customBackButton.backButtonClicked();

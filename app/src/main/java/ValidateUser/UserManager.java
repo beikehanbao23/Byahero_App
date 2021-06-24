@@ -14,7 +14,7 @@ public class UserManager {
     }
 
     public boolean UserInputRequirementsFailedAtSignUp() {
-        return userRegisterAndLogin.validateUserNameFailed() || userRegisterAndLogin.validateEmailFailed() || userRegisterAndLogin.validatePhoneNumberFailed() || userRegisterAndLogin.validatePasswordFailed() || userRegisterAndLogin.validateConfirmPasswordFailed();
+        return userRegisterAndLogin.validateNameFailed() || userRegisterAndLogin.validateEmailFailed() || userRegisterAndLogin.validatePhoneNumberFailed() || userRegisterAndLogin.validatePasswordFailed() || userRegisterAndLogin.validateConfirmPasswordFailed();
     }
     public boolean UserInputRequirementsFailedAtSignIn(){
         return userRegisterAndLogin.validateEmailFailed() || userRegisterAndLogin.validatePasswordFailed();

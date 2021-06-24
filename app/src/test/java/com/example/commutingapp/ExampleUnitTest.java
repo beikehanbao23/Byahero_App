@@ -1,6 +1,9 @@
 package com.example.commutingapp;
 
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,10 +18,5 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
     }
 
-    @Test
-    public void isNumberStartsWithZero() {
-        String phoneNumber = "10919";
-        boolean res = !phoneNumber.trim().startsWith("0");
-        assertEquals(false, res);
-    }
+
 }

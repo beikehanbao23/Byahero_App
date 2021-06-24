@@ -8,15 +8,15 @@ import com.example.commutingapp.R;
 import Logger.LoggerErrorMessage;
 
 public class User implements CharactersValidation {
-    private EditText username;
+    private EditText name;
     private EditText email;
     private EditText phoneNumber;
     private EditText password;
     private EditText confirmPassword;
 
 
-    public User(EditText Username, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
-        this.username = Username;
+    public User(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
+        this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
@@ -29,8 +29,8 @@ public class User implements CharactersValidation {
   public User(){
 
   }
-    public String getName() {
-        return username.getText().toString();
+    public String getNname() {
+        return name.getText().toString();
     }
 
     public String getEmail() {
@@ -50,20 +50,24 @@ public class User implements CharactersValidation {
     }
 
 
-    public boolean validateUserNameFailed() {
-
-        if (isNull(username.getText().toString())) {
-            username.setError(LoggerErrorMessage.getNullErrorMessage());
-            username.requestFocus();
+    public boolean validateNameFailed() {
+        if(name.getText().toString().length() < 3){
+            name.setError("Name should be at least 3 character long");
+            name.requestFocus();
+            return true;
+        }
+        if (isNull(name.getText().toString())) {
+            name.setError(LoggerErrorMessage.getNullErrorMessage());
+            name.requestFocus();
             return true;
         }
 
-        if (hasSpecialCharacters(username.getText().toString().trim())) {
-            username.setError("Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.");
-            username.requestFocus();
+        if (hasSpecialCharacters(name.getText().toString().trim())) {
+            name.setError("Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.");
+            name.requestFocus();
             return true;
         }
-        username.setError(null);
+        name.setError(null);
         return false;
     }
 

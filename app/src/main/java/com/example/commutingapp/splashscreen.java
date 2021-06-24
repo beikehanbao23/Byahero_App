@@ -66,11 +66,11 @@ public class splashscreen extends AppCompatActivity implements CustomBackButton 
 
         CustomBackButton customBackButton = ()->{
             if(backButtonClick.isDoubleTapped()){
-                toastMessageBackButton.hideMessage();
+                toastMessageBackButton.hideToast();
                 super.onBackPressed();
                 return;
             }
-            toastMessageBackButton.showMessage();
+            toastMessageBackButton.showToast();
             backButtonClick.registerFirstClick();
         };
         customBackButton.backButtonClicked();
