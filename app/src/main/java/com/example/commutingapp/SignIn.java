@@ -104,10 +104,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         String userUsername = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
 
-        circularProgressBar.setVisibility(View.VISIBLE);
-        email.setEnabled(false);
-        password.setEnabled(false);
-
+        startLoading();
         firebaseUserManager.getFirebaseInstance().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
             toastMessageUserAuthentication = new CustomToastMessage(this, "User Authentication Failed: " + task.getException().getMessage(), 3);
 
@@ -119,19 +116,38 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
                 showMainScreen();
                 return;
             }
+
             if (task.getException().getMessage() != null) {
-                circularProgressBar.setVisibility(View.INVISIBLE);
+             finishLoading();
             }
             toastMessageUserAuthentication.showToast();
-/*
-TODO
-fix internet connection issue
-fix exception handling
-set visible progress bar when checking exceptions
- */
+
         });
 
     }
+
+    private void startLoading(){
+        circularProgressBar.setVisibility(View.VISIBLE);
+        email.setEnabled(false);
+        password.setEnabled(false);
+        loginButton.setEnabled(false);
+        facebookButton.setEnabled(false);
+        googleButton.setEnabled(false);
+        dontHaveAnAccountTextView.setEnabled(false);
+        signUpTextView.setEnabled(false);
+    }
+
+    private void finishLoading(){
+        circularProgressBar.setVisibility(View.INVISIBLE);
+        email.setEnabled(true);
+        password.setEnabled(true);
+        loginButton.setEnabled(true);
+        facebookButton.setEnabled(true);
+        googleButton.setEnabled(true);
+        dontHaveAnAccountTextView.setEnabled(true);
+        signUpTextView.setEnabled(true);
+    }
+
 
     private void handleException(Task<AuthResult> task) {
         try {
