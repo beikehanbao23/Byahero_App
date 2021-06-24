@@ -12,7 +12,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_byahero"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CommutingApp">
+        android:theme="@style/Theme.CommutingApp"
+        android:usesCleartextTraffic="true"
+        >
 
         <activity android:name=".MainScreen">
             android:screenOrientation="portrait" />

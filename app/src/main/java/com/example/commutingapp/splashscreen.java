@@ -12,7 +12,7 @@ import MenuButtons.ButtonClicksTimeDelay;
 import MenuButtons.CustomBackButton;
 
 public class splashscreen extends AppCompatActivity implements CustomBackButton {
-    private final Handler handler = new Handler();
+    private  Handler handler;
     private ButtonClicksTimeDelay backButtonClick;
     private FirebaseUserManager firebaseUserManager;
     private final int delayInMillis = 700;
@@ -23,6 +23,7 @@ public class splashscreen extends AppCompatActivity implements CustomBackButton 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
 
+        handler = new Handler();
         backButtonClick = new ButtonClicksTimeDelay(2000);
         toastMessageBackButton = new CustomToastMessage(this,"Tap again to exit",10);
 

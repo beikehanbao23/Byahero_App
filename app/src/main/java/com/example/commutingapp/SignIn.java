@@ -3,10 +3,15 @@ package com.example.commutingapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
@@ -19,8 +24,9 @@ import ValidateUser.UserManager;
 public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     private EditText email, password;
+    private Button facebookButton,googleButton,loginButton;
     private FirebaseUserManager firebaseUserManager;
-
+    private TextView dontHaveAnAccountTextView,signUpTextView;
     private CustomToastMessage toastMessageUserAuthentication;
     private CustomToastMessage toastMessageNoInternetConnection;
     private CustomToastMessage toastMessageBackButton;
@@ -37,8 +43,15 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         setContentView(R.layout.activity_sign_in);
         email = findViewById(R.id.editlogin_TextEmail);
         password = findViewById(R.id.editLogin_TextPassword);
-
+        loginButton = findViewById(R.id.LogInButton);
+        facebookButton = findViewById(R.id.FacebookButton);
+        googleButton = findViewById(R.id.GoogleButton);
+        dontHaveAnAccountTextView = findViewById(R.id.TextView_DontHaveAnAccount);
+        signUpTextView = findViewById(R.id.TextViewSignUp);
         circularProgressBar = findViewById(R.id.SignInProgressBar);
+
+
+
 
         backButtonClick = new ButtonClicksTimeDelay(2000);
         userManager = new UserManager();
@@ -91,21 +104,41 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         String userUsername = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
 
+        circularProgressBar.setVisibility(View.VISIBLE);
+        email.setEnabled(false);
+        password.setEnabled(false);
 
         firebaseUserManager.getFirebaseInstance().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
-
-
+            toastMessageUserAuthentication = new CustomToastMessage(this, "User Authentication Failed: " + task.getException().getMessage(), 3);
 
 
             if (task.isSuccessful()) {
-                circularProgressBar.setVisibility(View.VISIBLE);
+                circularProgressBar.setVisibility(View.INVISIBLE);
                 firebaseUserManager.getCurrentUser();
+                toastMessageUserAuthentication.hideToast();
                 showMainScreen();
                 return;
             }
-            toastMessageUserAuthentication.showTheToastMessage(this,"User Authentication Failed: " + task.getException().getMessage(),3);
+            if (task.getException().getMessage() != null) {
+                circularProgressBar.setVisibility(View.INVISIBLE);
+            }
+            toastMessageUserAuthentication.showToast();
+/*
+TODO
+fix internet connection issue
+fix exception handling
+set visible progress bar when checking exceptions
+ */
         });
 
+    }
+
+    private void handleException(Task<AuthResult> task) {
+        try {
+            throw task.getException();
+        } catch (Exception e) {
+
+        }
     }
 
     private void showMainScreen() {

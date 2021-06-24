@@ -1,13 +1,14 @@
 package Logger;
 
 import android.content.Context;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.rejowan.cutetoast.CuteToast;
 
 public class CustomToastMessage {
     private Toast cuteToast;
-
+    private Handler handler;
     /*
     types of Toast Message::
 
@@ -32,7 +33,7 @@ public class CustomToastMessage {
             throw new RuntimeException("Toast message type is invalid!");
         }
         cuteToast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT, type, true);
-
+        handler = new Handler();
     }
 
 
@@ -41,21 +42,7 @@ public class CustomToastMessage {
     }
 
 
-    public void showTheToastMessage(Context context, String message, int type) {
-        if(message.equals(null)){
-            throw new RuntimeException("Message is invalid!");
-        }
-        if (type > 10 || type < 1) {
-            throw new RuntimeException("Toast message type is invalid!");
-        }
-        try {
-            cuteToast.getView().isShown();
-            cuteToast.setText(message);
-        } catch (Exception e) {
-            cuteToast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT, type, true);
-        }
-        cuteToast.show();
-    }
+
 
 
     public void showToast() {
