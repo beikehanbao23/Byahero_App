@@ -59,7 +59,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
         firebaseUserManager.initializeFirebase();
 
-        toastMessageUserAuthentication = new CustomToastMessage();
+
         toastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(), 2);
         toastMessageBackButton = new CustomToastMessage(this, "Tap again to exit.", 10);
 
@@ -91,10 +91,10 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         }
 
         if (!connectionManager.PhoneHasInternetConnection()) {
-            toastMessageNoInternetConnection.showToast();
+            toastMessageNoInternetConnection.showToastWithLimitedTime(2250);
             return;
         }
-        toastMessageNoInternetConnection.hideToast();
+
         AuthenticateUserToFirebase();
     }
 
@@ -106,21 +106,22 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
         startLoading();
         firebaseUserManager.getFirebaseInstance().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
-            toastMessageUserAuthentication = new CustomToastMessage(this, "User Authentication Failed: " + task.getException().getMessage(), 3);
+
 
 
             if (task.isSuccessful()) {
-                circularProgressBar.setVisibility(View.INVISIBLE);
+               finishLoading();
                 firebaseUserManager.getCurrentUser();
-                toastMessageUserAuthentication.hideToast();
                 showMainScreen();
                 return;
             }
 
             if (task.getException().getMessage() != null) {
+             toastMessageUserAuthentication = new CustomToastMessage(this, "User Authentication Failed: " + task.getException().getMessage(), 3);
              finishLoading();
+             toastMessageUserAuthentication.showToastWithLimitedTime(2250);
             }
-            toastMessageUserAuthentication.showToast();
+
 
         });
 

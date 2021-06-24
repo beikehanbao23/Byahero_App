@@ -9,6 +9,7 @@ import com.rejowan.cutetoast.CuteToast;
 public class CustomToastMessage {
     private Toast cuteToast;
     private Handler handler;
+
     /*
     types of Toast Message::
 
@@ -42,16 +43,25 @@ public class CustomToastMessage {
     }
 
 
+    public void showToastWithLimitedTime(long timeAsMilliseconds) {
+        if(timeAsMilliseconds == 0) {
+            throw new RuntimeException("Time as millis is invalid!");
+        }
+        cuteToast.show();
 
+        handler.postDelayed(() -> {
+            cuteToast.cancel();
+        }, timeAsMilliseconds);
+    }
 
-
+    //show toast, then after 2 sec close toast
     public void showToast() {
         cuteToast.show();
     }
 
     public void hideToast() {
         cuteToast.cancel();
-    }
+    }//remove
 
 }
 
