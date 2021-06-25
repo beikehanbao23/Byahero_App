@@ -10,7 +10,7 @@ import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
 import MenuButtons.ButtonClicksTimeDelay;
 import MenuButtons.CustomBackButton;
-
+import static com.example.commutingapp.R.string.*;
 public class splashscreen extends AppCompatActivity implements CustomBackButton {
     private  Handler handler;
     private ButtonClicksTimeDelay backButtonClick;

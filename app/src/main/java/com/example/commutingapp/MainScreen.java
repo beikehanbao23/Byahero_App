@@ -10,6 +10,7 @@ import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
 import MenuButtons.ButtonClicksTimeDelay;
 import MenuButtons.CustomBackButton;
+import static com.example.commutingapp.R.string.*;
 
 public class MainScreen extends AppCompatActivity implements CustomBackButton {
     private FirebaseUserManager firebaseUserManager;

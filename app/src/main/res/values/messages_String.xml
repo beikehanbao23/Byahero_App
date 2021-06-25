@@ -11,4 +11,5 @@
     <string name="getPasswordIsNotMatchMessage">The specified password do not match.</string>
     <string name="getPhoneNumberIsInvalidMessage">Phone number is invalid</string>
     <string name="getPasswordIsWeakMessage">Password must contain at least 8 characters, including numbers or special characters.</string>
+    <string name="getDisabledAccountMessage">Account Disabled, our content monitors have determined that your behaviour has been in violation of our Terms of Service.</string>
 </resources>

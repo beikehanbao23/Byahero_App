@@ -152,20 +152,20 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     private void handleTaskExceptionResults(Task<AuthResult> task) {
         try {
-
             throw task.getException();
-
         }catch(FirebaseNetworkException firebaseNetworkException) {
-
             toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
-
         }catch(FirebaseAuthInvalidUserException firebaseAuthInvalidUserException ){
 
-          CuteToast.ct(this,getString(getIncorrectEmailOrPasswordMessage),Toast.LENGTH_SHORT,3,true).show();
+        if(firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")){
+            CuteToast.ct(this,getString(getDisabledAccountMessage),Toast.LENGTH_SHORT,3,true).show();
+            return;
+        }
+            CuteToast.ct(this,getString(getIncorrectEmailOrPasswordMessage),Toast.LENGTH_SHORT,3,true).show();
 
         } catch (Exception e) {
 
-        CuteToast.ct(this,getString(getSomethingWentWrongMessage),Toast.LENGTH_SHORT,2,true).show();
+        CuteToast.ct(this,getString(getSomethingWentWrongMessage),Toast.LENGTH_SHORT,3,true).show();
         Log.e("SignIn",e.getMessage().toUpperCase());
 
         }
