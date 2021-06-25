@@ -6,9 +6,9 @@ import android.widget.EditText;
 
 public class UserManager extends User{
 
-    public UserManager(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
+    public UserManager(Context context, EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
         super(name, email, phoneNumber, password, confirmPassword);
-
+        super.setContext(context);
     }
 
     public UserManager(Context context,EditText email, EditText password){

@@ -79,13 +79,13 @@ public class User implements CharactersValidation  {
         }
 
         if (nameInput.length() < 3) {
-            name.setError(getSystem().getString(getNameTooShortMessage));
+            name.setError(context.getString(getNameTooShortMessage));
             name.requestFocus();
             return true;
         }
 
         if (hasSpecialCharacters(nameInput)) {
-            name.setError(getSystem().getString(getNameHasSpecialCharactersMessage));
+            name.setError(context.getString(getNameHasSpecialCharactersMessage));
             name.requestFocus();
             return true;
         }
@@ -98,13 +98,13 @@ public class User implements CharactersValidation  {
         String emailInput = email.getText().toString().trim();
 
         if (isNull(emailInput)) {
-            email.setError(context.getResources().getString(getFieldLeftBlankMessage));
+            email.setError(context.getString(getFieldLeftBlankMessage));
             email.requestFocus();
             return true;
         }
 
         if (!validEmail()) {
-            email.setError(getSystem().getString(getEmailIsInvalidMessage));
+            email.setError(context.getString(getEmailIsInvalidMessage));
             email.requestFocus();
             return true;
         }
@@ -117,18 +117,18 @@ public class User implements CharactersValidation  {
         String confirmPasswordInput = confirmPassword.getText().toString().trim();
 
         if (isNull(confirmPasswordInput)) {
-            confirmPassword.setError("getString(getFieldLeftBlankMessage)");
+            confirmPassword.setError(context.getString(getFieldLeftBlankMessage));
             confirmPassword.requestFocus();
             return true;
         }
         if (Password_Is_Unmatch()) {
-            confirmPassword.setError(getSystem().getString(getPasswordIsNotMatchMessage));
+            confirmPassword.setError(context.getString(getPasswordIsNotMatchMessage));
             confirmPassword.requestFocus();
             return true;
         }
 
         if (!isPasswordStrong()) {
-            confirmPassword.setError(getSystem().getString(getPasswordIsWeakMessage));
+            confirmPassword.setError(context.getString(getPasswordIsWeakMessage));
             confirmPassword.requestFocus();
             return true;
 
@@ -141,7 +141,7 @@ public class User implements CharactersValidation  {
         String passwordInput = password.getText().toString().trim();
 
         if (isNull(passwordInput)) {
-            password.setError(getSystem().getString(getFieldLeftBlankMessage));
+            password.setError(context.getString(getFieldLeftBlankMessage));
             password.requestFocus();
             return true;
         }
@@ -154,12 +154,12 @@ public class User implements CharactersValidation  {
 
         String phoneNumberInput = phoneNumber.getText().toString().trim();
         if(isNull(phoneNumberInput)){
-            phoneNumber.setError(getSystem().getString(getFieldLeftBlankMessage));
+            phoneNumber.setError(context.getString(getFieldLeftBlankMessage));
             phoneNumber.requestFocus();
             return true;
         }
         if (hasSpecialCharacters(phoneNumberInput) || isNumberSizeIncorrect() || isPhoneNumberDoesNotStartAtZero()) {
-            phoneNumber.setError(getSystem().getString(getPhoneNumberIsInvalidMessage));
+            phoneNumber.setError(context.getString(getPhoneNumberIsInvalidMessage));
             phoneNumber.requestFocus();
             return true;
         }

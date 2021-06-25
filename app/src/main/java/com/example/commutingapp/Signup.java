@@ -69,7 +69,7 @@ public class Signup extends AppCompatActivity {
     }
 
     public void CreateBttnClicked(View view) {
-        userManager = new UserManager(name, email, phoneNumber, password, confirmPassword);
+        userManager = new UserManager(getBaseContext(),name, email, phoneNumber, password, confirmPassword);
         if (userManager.UserInputRequirementsFailedAtSignUp()) {
             return;
         }
