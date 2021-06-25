@@ -38,8 +38,8 @@ public class Signup extends AppCompatActivity {
 
         circularProgressbar = findViewById(R.id.SignUpProgressBar);
 
-        toastMessageErrorCreatingAccount = new CustomToastMessage(this, "Something went wrong with creating your account. Please try again later.", 3);
-        toastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(), 2);
+        toastMessageErrorCreatingAccount = new CustomToastMessage(this, getString(R.string.somethingWentWrongMessage), 3);
+        toastMessageNoInternetConnection = new CustomToastMessage(this, getString(R.string.noInternetConnectionAtSignMessage), 2);
         userManager = new UserManager();
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();

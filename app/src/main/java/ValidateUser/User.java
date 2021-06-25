@@ -1,7 +1,16 @@
 package ValidateUser;
 
+import android.content.res.Resources;
 import android.util.Patterns;
 import android.widget.EditText;
+
+import androidx.core.content.res.TypedArrayUtils;
+
+import com.example.commutingapp.R;
+
+import static android.provider.Settings.System.getString;
+import static com.example.commutingapp.R.string.*;
+
 
 public class User implements CharactersValidation {
     private EditText name;
@@ -53,7 +62,7 @@ public class User implements CharactersValidation {
             return true;
         }
         if (isNull(name.getText().toString())) {
-            name.setError(LoggerErrorMessage.getNullErrorMessage());
+            name.setError(Resources.getSystem().getString(noInternetConnectionAtSignMessage));
             name.requestFocus();
             return true;
         }

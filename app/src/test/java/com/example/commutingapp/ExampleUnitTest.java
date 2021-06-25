@@ -23,7 +23,7 @@ public class ExampleUnitTest {
     }
     @Test
     public void test(){
-
+    System.out.println(R.string.noInternetConnectionAtSignMessage);
     }
 
 }

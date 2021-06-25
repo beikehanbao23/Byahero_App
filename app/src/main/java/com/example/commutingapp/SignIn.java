@@ -21,6 +21,9 @@ import Logger.CustomToastMessage;
 import MenuButtons.ButtonClicksTimeDelay;
 import MenuButtons.CustomBackButton;
 import ValidateUser.UserManager;
+import static com.example.commutingapp.R.string.*;
+import static com.example.commutingapp.R.id.*;
+import static com.example.commutingapp.R.layout.*;
 
 public class SignIn extends AppCompatActivity implements CustomBackButton {
 
@@ -41,15 +44,15 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in);
-        email = findViewById(R.id.editlogin_TextEmail);
-        password = findViewById(R.id.editLogin_TextPassword);
-        loginButton = findViewById(R.id.LogInButton);
-        facebookButton = findViewById(R.id.FacebookButton);
-        googleButton = findViewById(R.id.GoogleButton);
-        dontHaveAnAccountTextView = findViewById(R.id.TextView_DontHaveAnAccount);
-        signUpTextView = findViewById(R.id.TextViewSignUp);
-        circularProgressBar = findViewById(R.id.SignInProgressBar);
+        setContentView(activity_sign_in);
+        email = findViewById(editlogin_TextEmail);
+        password = findViewById(editLogin_TextPassword);
+        loginButton = findViewById(LogInButton);
+        facebookButton = findViewById(FacebookButton);
+        googleButton = findViewById(GoogleButton);
+        dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
+        signUpTextView = findViewById(TextViewSignUp);
+        circularProgressBar = findViewById(SignInProgressBar);
 
 
         backButtonClick = new ButtonClicksTimeDelay(2000);
@@ -59,7 +62,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         firebaseUserManager.initializeFirebase();
 
 
-        toastMessageNoInternetConnection = new CustomToastMessage(this, getString(R.string.noInternetConnectionAtSignMessage), 2);
+        toastMessageNoInternetConnection = new CustomToastMessage(this, getString(noInternetConnectionAtSignMessage), 2);
         toastMessageBackButton = new CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10);
 
     }
@@ -158,11 +161,11 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
         }catch(FirebaseAuthInvalidUserException firebaseAuthInvalidUserException ){
 
-          CuteToast.ct(this,getString(R.string.incorrectEmailOrPasswordMessage),Toast.LENGTH_SHORT,3,true).show();
+          CuteToast.ct(this,getString(incorrectEmailOrPasswordMessage),Toast.LENGTH_SHORT,3,true).show();
 
         } catch (Exception e) {
 
-        CuteToast.ct(this,getString(R.string.somethingWentWrongMessage),Toast.LENGTH_SHORT,2,true).show();
+        CuteToast.ct(this,getString(somethingWentWrongMessage),Toast.LENGTH_SHORT,2,true).show();
         Log.e("SignIn",e.getMessage().toUpperCase());
 
         }
