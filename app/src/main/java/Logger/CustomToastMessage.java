@@ -43,7 +43,7 @@ public class CustomToastMessage {
     }
 
 
-    public void showToastWithLimitedTime(long timeAsMilliseconds) {
+    public void showToastWithLimitedTimeThenClose(long timeAsMilliseconds) {
         if(timeAsMilliseconds == 0) {
             throw new RuntimeException("Time as millis is invalid!");
         }

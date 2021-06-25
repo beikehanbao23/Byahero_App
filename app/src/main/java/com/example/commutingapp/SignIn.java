@@ -2,16 +2,20 @@ package com.example.commutingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
+import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
@@ -24,9 +28,9 @@ import ValidateUser.UserManager;
 public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     private EditText email, password;
-    private Button facebookButton,googleButton,loginButton;
+    private Button facebookButton, googleButton, loginButton;
     private FirebaseUserManager firebaseUserManager;
-    private TextView dontHaveAnAccountTextView,signUpTextView;
+    private TextView dontHaveAnAccountTextView, signUpTextView;
     private CustomToastMessage toastMessageUserAuthentication;
     private CustomToastMessage toastMessageNoInternetConnection;
     private CustomToastMessage toastMessageBackButton;
@@ -49,8 +53,6 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         dontHaveAnAccountTextView = findViewById(R.id.TextView_DontHaveAnAccount);
         signUpTextView = findViewById(R.id.TextViewSignUp);
         circularProgressBar = findViewById(R.id.SignInProgressBar);
-
-
 
 
         backButtonClick = new ButtonClicksTimeDelay(2000);
@@ -91,7 +93,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         }
 
         if (!connectionManager.PhoneHasInternetConnection()) {
-            toastMessageNoInternetConnection.showToastWithLimitedTime(2250);
+            toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
             return;
         }
 
@@ -107,19 +109,16 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         startLoading();
         firebaseUserManager.getFirebaseInstance().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
 
-
-
             if (task.isSuccessful()) {
-               finishLoading();
+                finishLoading();
                 firebaseUserManager.getCurrentUser();
                 showMainScreen();
                 return;
             }
 
             if (task.getException().getMessage() != null) {
-             toastMessageUserAuthentication = new CustomToastMessage(this, "User Authentication Failed: " + task.getException().getMessage(), 3);
-             finishLoading();
-             toastMessageUserAuthentication.showToastWithLimitedTime(2250);
+                finishLoading();
+                handleTaskExceptionResults(task);
             }
 
 
@@ -127,7 +126,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     }
 
-    private void startLoading(){
+    private void startLoading() {
         circularProgressBar.setVisibility(View.VISIBLE);
         email.setEnabled(false);
         password.setEnabled(false);
@@ -138,7 +137,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         signUpTextView.setEnabled(false);
     }
 
-    private void finishLoading(){
+    private void finishLoading() {
         circularProgressBar.setVisibility(View.INVISIBLE);
         email.setEnabled(true);
         password.setEnabled(true);
@@ -150,10 +149,16 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
     }
 
 
-    private void handleException(Task<AuthResult> task) {
+    private void handleTaskExceptionResults(Task<AuthResult> task) {
         try {
             throw task.getException();
+        }catch(FirebaseNetworkException firebaseNetworkException) {
+            toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
+        }catch(Firebase){
+
         } catch (Exception e) {
+        CuteToast.ct(this,e.getMessage(),Toast.LENGTH_SHORT,2,true).show();
+
 
         }
     }
