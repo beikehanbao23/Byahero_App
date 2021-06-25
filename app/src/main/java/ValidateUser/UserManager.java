@@ -1,23 +1,23 @@
 package ValidateUser;
 
+
 import android.widget.EditText;
 
-public class UserManager {
-    private User userRegisterAndLogin;
+public class UserManager extends User{
 
-    public void verifyUserForSignUp(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
-        userRegisterAndLogin = new User(name, email, phoneNumber, password, confirmPassword);
+    public UserManager(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
+        super(name, email, phoneNumber, password, confirmPassword);
     }
 
-    public void verifyUserForSignIn(EditText email, EditText password){
-        userRegisterAndLogin = new User(email,password);
+    public UserManager(EditText email, EditText password){
+      super(email, password);
     }
 
     public boolean UserInputRequirementsFailedAtSignUp() {
-        return userRegisterAndLogin.validateNameFailed() || userRegisterAndLogin.validateEmailFailed() || userRegisterAndLogin.validatePhoneNumberFailed() || userRegisterAndLogin.validatePasswordFailed() || userRegisterAndLogin.validateConfirmPasswordFailed();
+        return validateNameFailed() || validateEmailFailed() || validatePhoneNumberFailed() || validatePasswordFailed() || validateConfirmPasswordFailed();
     }
     public boolean UserInputRequirementsFailedAtSignIn(){
-        return userRegisterAndLogin.validateEmailFailed() || userRegisterAndLogin.validatePasswordFailed();
+        return validateEmailFailed() || validatePasswordFailed();
     }
 
 }

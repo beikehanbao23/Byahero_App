@@ -42,7 +42,7 @@ public class Signup extends AppCompatActivity {
 
         toastMessageErrorCreatingAccount = new CustomToastMessage(this, getString(getSomethingWentWrongMessage), 3);
         toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
-        userManager = new UserManager();
+
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();
 
@@ -69,7 +69,7 @@ public class Signup extends AppCompatActivity {
     }
 
     public void CreateBttnClicked(View view) {
-        userManager.verifyUserForSignUp(name, email, phoneNumber, password, confirmPassword);
+        userManager = new UserManager(name, email, phoneNumber, password, confirmPassword);
         if (userManager.UserInputRequirementsFailedAtSignUp()) {
             return;
         }

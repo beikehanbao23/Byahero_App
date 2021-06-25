@@ -56,7 +56,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
 
         backButtonClick = new ButtonClicksTimeDelay(2000);
-        userManager = new UserManager();
+
         firebaseUserManager = new FirebaseUserManager();
 
         firebaseUserManager.initializeFirebase();
@@ -87,7 +87,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     public void SignInButtonIsClicked(View view) {
 
-        userManager.verifyUserForSignIn(email, password);
+        userManager = new UserManager(email,password);
 
         if (userManager.UserInputRequirementsFailedAtSignIn()) {
             return;
@@ -156,9 +156,9 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         }catch(FirebaseNetworkException firebaseNetworkException) {
             toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
         }catch(FirebaseAuthInvalidUserException firebaseAuthInvalidUserException ){
-
+        Log.i("SignIn",firebaseAuthInvalidUserException.getErrorCode());
         if(firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")){
-            CuteToast.ct(this,getString(getDisabledAccountMessage),Toast.LENGTH_SHORT,3,true).show();
+            CuteToast.ct(this,getString(getDisabledAccountMessage),Toast.LENGTH_LONG,3,true).show();
             return;
         }
             CuteToast.ct(this,getString(getIncorrectEmailOrPasswordMessage),Toast.LENGTH_SHORT,3,true).show();

@@ -1,5 +1,6 @@
 package FirebaseUserManager;
 
+import android.content.Context;
 import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,7 +16,13 @@ public class FirebaseUserManager   {
     private FirebaseUser firebaseUser;
 
 
+    public FirebaseUserManager(Context context){
 
+    }
+
+    public FirebaseUserManager(){
+
+    }
     public void getCurrentUser() { firebaseUser = firebaseManager.getCurrentUser(); }
 
     public FirebaseAuth getFirebaseInstance() {

@@ -54,14 +54,14 @@ public class CustomToastMessage {
         }, timeAsMilliseconds);
     }
 
-    //show toast, then after 2 sec close toast
+
     public void showToast() {
         cuteToast.show();
     }
 
     public void hideToast() {
         cuteToast.cancel();
-    }//remove
+    }
 
 }
 

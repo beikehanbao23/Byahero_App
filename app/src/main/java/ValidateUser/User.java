@@ -1,9 +1,13 @@
 package ValidateUser;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.util.Patterns;
 import android.widget.EditText;
 
-import static android.content.res.Resources.getSystem;
+import com.example.commutingapp.R;
+
+import static android.content.res.Resources.*;
 import static com.example.commutingapp.R.string.*;
 
 
@@ -13,7 +17,6 @@ public class User implements CharactersValidation {
     private EditText phoneNumber;
     private EditText password;
     private EditText confirmPassword;
-
 
     public User(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
         this.name = name;
@@ -31,6 +34,8 @@ public class User implements CharactersValidation {
     public User() {
 
     }
+
+
 
     public String getNname() {
         return name.getText().toString();
@@ -83,7 +88,7 @@ public class User implements CharactersValidation {
         String emailInput = email.getText().toString().trim();
 
         if (isNull(emailInput)) {
-            email.setError(getSystem().getString(getFieldLeftBlankMessage));
+            email.setError(Resources.getSystem().getString(R.string.getFieldLeftBlankMessage));
             email.requestFocus();
             return true;
         }
@@ -102,7 +107,7 @@ public class User implements CharactersValidation {
         String confirmPasswordInput = confirmPassword.getText().toString().trim();
 
         if (isNull(confirmPasswordInput)) {
-            confirmPassword.setError(getSystem().getString(getFieldLeftBlankMessage));
+            confirmPassword.setError(Resources.getSystem().getString(getFieldLeftBlankMessage));
             confirmPassword.requestFocus();
             return true;
         }
