@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
-import Logger.LoggerErrorMessage;
 import ValidateUser.UserManager;
 
 

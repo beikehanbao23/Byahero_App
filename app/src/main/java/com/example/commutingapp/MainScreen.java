@@ -21,7 +21,7 @@ public class MainScreen extends AppCompatActivity implements CustomBackButton {
         setContentView(R.layout.activity_main_screen);
 
         backButtonClick = new ButtonClicksTimeDelay(2000);
-        toastMessageBackButton = new CustomToastMessage(this,"Tap again to exit",10);
+        toastMessageBackButton = new CustomToastMessage(this,getString(R.string.doubleTappedMessage),10);
 
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();

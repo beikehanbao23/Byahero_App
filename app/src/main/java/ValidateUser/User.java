@@ -3,10 +3,6 @@ package ValidateUser;
 import android.util.Patterns;
 import android.widget.EditText;
 
-import com.example.commutingapp.R;
-
-import Logger.LoggerErrorMessage;
-
 public class User implements CharactersValidation {
     private EditText name;
     private EditText email;

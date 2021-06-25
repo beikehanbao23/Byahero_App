@@ -4,23 +4,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
-import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.*;
+
 import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
-import Logger.LoggerErrorMessage;
 import MenuButtons.ButtonClicksTimeDelay;
 import MenuButtons.CustomBackButton;
 import ValidateUser.UserManager;
@@ -62,8 +59,8 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         firebaseUserManager.initializeFirebase();
 
 
-        toastMessageNoInternetConnection = new CustomToastMessage(this, LoggerErrorMessage.getNoInternetConnectionErrorMessage(), 2);
-        toastMessageBackButton = new CustomToastMessage(this, "Tap again to exit.", 10);
+        toastMessageNoInternetConnection = new CustomToastMessage(this, getString(R.string.noInternetConnectionAtSignMessage), 2);
+        toastMessageBackButton = new CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10);
 
     }
 
@@ -76,6 +73,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
     @Override
     protected void onStart() {
         super.onStart();
+
         connectionManager = new ConnectionManager(this);
     }
 
@@ -151,14 +149,21 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     private void handleTaskExceptionResults(Task<AuthResult> task) {
         try {
+
             throw task.getException();
+
         }catch(FirebaseNetworkException firebaseNetworkException) {
+
             toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
-        }catch(Firebase){
+
+        }catch(FirebaseAuthInvalidUserException firebaseAuthInvalidUserException ){
+
+          CuteToast.ct(this,getString(R.string.incorrectEmailOrPasswordMessage),Toast.LENGTH_SHORT,3,true).show();
 
         } catch (Exception e) {
-        CuteToast.ct(this,e.getMessage(),Toast.LENGTH_SHORT,2,true).show();
 
+        CuteToast.ct(this,getString(R.string.somethingWentWrongMessage),Toast.LENGTH_SHORT,2,true).show();
+        Log.e("SignIn",e.getMessage().toUpperCase());
 
         }
     }
