@@ -25,7 +25,7 @@ public class splashscreen extends AppCompatActivity implements CustomBackButton 
 
         handler = new Handler();
         backButtonClick = new ButtonClicksTimeDelay(2000);
-        toastMessageBackButton = new CustomToastMessage(this,getString(R.string.doubleTappedMessage),10);
+        toastMessageBackButton = new CustomToastMessage(this,getString(getDoubleTappedMessage),10);
 
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();

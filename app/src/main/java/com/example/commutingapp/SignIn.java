@@ -62,8 +62,8 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         firebaseUserManager.initializeFirebase();
 
 
-        toastMessageNoInternetConnection = new CustomToastMessage(this, getString(noInternetConnectionAtSignMessage), 2);
-        toastMessageBackButton = new CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10);
+        toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
+        toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
 
     }
 
@@ -161,11 +161,11 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
         }catch(FirebaseAuthInvalidUserException firebaseAuthInvalidUserException ){
 
-          CuteToast.ct(this,getString(incorrectEmailOrPasswordMessage),Toast.LENGTH_SHORT,3,true).show();
+          CuteToast.ct(this,getString(getIncorrectEmailOrPasswordMessage),Toast.LENGTH_SHORT,3,true).show();
 
         } catch (Exception e) {
 
-        CuteToast.ct(this,getString(somethingWentWrongMessage),Toast.LENGTH_SHORT,2,true).show();
+        CuteToast.ct(this,getString(getSomethingWentWrongMessage),Toast.LENGTH_SHORT,2,true).show();
         Log.e("SignIn",e.getMessage().toUpperCase());
 
         }

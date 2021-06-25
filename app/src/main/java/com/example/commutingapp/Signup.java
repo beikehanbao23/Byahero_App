@@ -12,7 +12,9 @@ import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
 import ValidateUser.UserManager;
-
+import static com.example.commutingapp.R.string.*;
+import static com.example.commutingapp.R.id.*;
+import static com.example.commutingapp.R.layout.*;
 
 public class Signup extends AppCompatActivity {
 
@@ -28,18 +30,18 @@ public class Signup extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(activity_signup);
 
-        name = findViewById(R.id.editTextSignUpName);
-        email = findViewById(R.id.editTextSignUpEmailAddress);
-        phoneNumber = findViewById(R.id.editTextSignUpPhone);
-        password = findViewById(R.id.editTextSignUpPassword);
-        confirmPassword = findViewById(R.id.editSignUpConfirmPassword);
+        name = findViewById(editTextSignUpName);
+        email = findViewById(editTextSignUpEmailAddress);
+        phoneNumber = findViewById(editTextSignUpPhone);
+        password = findViewById(editTextSignUpPassword);
+        confirmPassword = findViewById(editSignUpConfirmPassword);
 
-        circularProgressbar = findViewById(R.id.SignUpProgressBar);
+        circularProgressbar = findViewById(SignUpProgressBar);
 
-        toastMessageErrorCreatingAccount = new CustomToastMessage(this, getString(R.string.somethingWentWrongMessage), 3);
-        toastMessageNoInternetConnection = new CustomToastMessage(this, getString(R.string.noInternetConnectionAtSignMessage), 2);
+        toastMessageErrorCreatingAccount = new CustomToastMessage(this, getString(getSomethingWentWrongMessage), 3);
+        toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
         userManager = new UserManager();
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();

@@ -10,7 +10,6 @@ import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
 import MenuButtons.ButtonClicksTimeDelay;
 import MenuButtons.CustomBackButton;
-import static com.example.commutingapp.R.string.*;
 
 public class MainScreen extends AppCompatActivity implements CustomBackButton {
     private FirebaseUserManager firebaseUserManager;
@@ -22,7 +21,7 @@ public class MainScreen extends AppCompatActivity implements CustomBackButton {
         setContentView(R.layout.activity_main_screen);
 
         backButtonClick = new ButtonClicksTimeDelay(2000);
-        toastMessageBackButton = new CustomToastMessage(this,getString(doubleTappedMessage),10);
+        toastMessageBackButton = new CustomToastMessage(this,getString(getDoubleTappedMessage),10);
 
         firebaseUserManager = new FirebaseUserManager();
         firebaseUserManager.initializeFirebase();

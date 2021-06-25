@@ -1,14 +1,9 @@
 package ValidateUser;
 
-import android.content.res.Resources;
 import android.util.Patterns;
 import android.widget.EditText;
 
-import androidx.core.content.res.TypedArrayUtils;
-
-import com.example.commutingapp.R;
-
-import static android.provider.Settings.System.getString;
+import static android.content.res.Resources.getSystem;
 import static com.example.commutingapp.R.string.*;
 
 
@@ -27,13 +22,16 @@ public class User implements CharactersValidation {
         this.password = password;
         this.confirmPassword = confirmPassword;
     }
-  public User(EditText email, EditText password){
+
+    public User(EditText email, EditText password) {
         this.email = email;
         this.password = password;
-  }
-  public User(){
+    }
 
-  }
+    public User() {
+
+    }
+
     public String getNname() {
         return name.getText().toString();
     }
@@ -56,19 +54,23 @@ public class User implements CharactersValidation {
 
 
     public boolean validateNameFailed() {
-        if(name.getText().toString().length() < 3){
-            name.setError("Name should be at least 3 character long");
-            name.requestFocus();
-            return true;
-        }
-        if (isNull(name.getText().toString())) {
-            name.setError(Resources.getSystem().getString(noInternetConnectionAtSignMessage));
+
+        String nameInput = name.getText().toString().trim();
+
+        if (isNull(nameInput)) {
+            name.setError(getSystem().getString(getFieldLeftBlankMessage));
             name.requestFocus();
             return true;
         }
 
-        if (hasSpecialCharacters(name.getText().toString().trim())) {
-            name.setError("Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.");
+        if (nameInput.length() < 3) {
+            name.setError(getSystem().getString(getNameTooShortMessage));
+            name.requestFocus();
+            return true;
+        }
+
+        if (hasSpecialCharacters(nameInput)) {
+            name.setError(getSystem().getString(getNameHasSpecialCharactersMessage));
             name.requestFocus();
             return true;
         }
@@ -78,15 +80,16 @@ public class User implements CharactersValidation {
 
 
     public boolean validateEmailFailed() {
+        String emailInput = email.getText().toString().trim();
 
-        if (isNull(email.getText().toString())) {
-            email.setError(LoggerErrorMessage.getNullErrorMessage());
+        if (isNull(emailInput)) {
+            email.setError(getSystem().getString(getFieldLeftBlankMessage));
             email.requestFocus();
             return true;
         }
 
         if (!validEmail()) {
-            email.setError("Email is invalid");
+            email.setError(getSystem().getString(getEmailIsInvalidMessage));
             email.requestFocus();
             return true;
         }
@@ -96,19 +99,21 @@ public class User implements CharactersValidation {
 
     public boolean validateConfirmPasswordFailed() {
 
-        if (isNull(confirmPassword.getText().toString())) {
-            confirmPassword.setError(LoggerErrorMessage.getNullErrorMessage());
+        String confirmPasswordInput = confirmPassword.getText().toString().trim();
+
+        if (isNull(confirmPasswordInput)) {
+            confirmPassword.setError(getSystem().getString(getFieldLeftBlankMessage));
             confirmPassword.requestFocus();
             return true;
         }
         if (Password_Is_Unmatch()) {
-            confirmPassword.setError("The specified password do not match.");
+            confirmPassword.setError(getSystem().getString(getPasswordIsNotMatchMessage));
             confirmPassword.requestFocus();
             return true;
         }
 
         if (!isPasswordStrong()) {
-            confirmPassword.setError("Password must contain at least 8 characters, including numbers or special characters.");
+            confirmPassword.setError(getSystem().getString(getPasswordIsWeakMessage));
             confirmPassword.requestFocus();
             return true;
 
@@ -118,9 +123,10 @@ public class User implements CharactersValidation {
     }
 
     public boolean validatePasswordFailed() {
+        String passwordInput = password.getText().toString().trim();
 
-        if (isNull(password.getText().toString())) {
-            password.setError(LoggerErrorMessage.getNullErrorMessage());
+        if (isNull(passwordInput)) {
+            password.setError(getSystem().getString(getFieldLeftBlankMessage));
             password.requestFocus();
             return true;
         }
@@ -131,12 +137,17 @@ public class User implements CharactersValidation {
 
     public boolean validatePhoneNumberFailed() {
 
-        if (hasSpecialCharacters(phoneNumber.getText().toString().trim()) || isNumberSizeIncorrect() || isPhoneNumberDoesNotStartAtZero()) {
-            phoneNumber.setError("Phone number is invalid.");
+        String phoneNumberInput = phoneNumber.getText().toString().trim();
+        if(isNull(phoneNumberInput)){
+            phoneNumber.setError(getSystem().getString(getFieldLeftBlankMessage));
             phoneNumber.requestFocus();
             return true;
         }
-
+        if (hasSpecialCharacters(phoneNumberInput) || isNumberSizeIncorrect() || isPhoneNumberDoesNotStartAtZero()) {
+            phoneNumber.setError(getSystem().getString(getPhoneNumberIsInvalidMessage));
+            phoneNumber.requestFocus();
+            return true;
+        }
 
 
         phoneNumber.setError(null);
@@ -163,7 +174,8 @@ public class User implements CharactersValidation {
     private boolean isNull(String input) {
         return input.trim().isEmpty();
     }
-    private boolean isPhoneNumberDoesNotStartAtZero(){
+
+    private boolean isPhoneNumberDoesNotStartAtZero() {
         return !phoneNumber.getText().toString().trim().startsWith("0");
     }
 }

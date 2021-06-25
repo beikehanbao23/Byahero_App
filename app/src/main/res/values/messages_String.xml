@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="fieldLeftBlankMessage">Field cannot be left blank.</string>
-    <string name="noInternetConnectionAtSignMessage">Unable to login. Please check your internet connection</string>
-    <string name="doubleTappedMessage">Tap again to exit</string>
-    <string name="incorrectEmailOrPasswordMessage">Email or password is incorrect</string>
-    <string name="somethingWentWrongMessage">We\'re sorry, Something went wrong. Please try again.</string>
-
+    <string name="getFieldLeftBlankMessage">Field cannot be left blank.</string>
+    <string name="getNoInternetConnectionAtSignMessage">Unable to login. Please check your internet connection</string>
+    <string name="getDoubleTappedMessage">Tap again to exit</string>
+    <string name="getIncorrectEmailOrPasswordMessage">Email or password is incorrect</string>
+    <string name="getSomethingWentWrongMessage">We\'re sorry, Something went wrong. Please try again.</string>
+    <string name="getNameTooShortMessage">Name should be at least 3 characters long</string>
+    <string name="getNameHasSpecialCharactersMessage">Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.</string>
+    <string name="getEmailIsInvalidMessage">Email is invalid</string>
+    <string name="getPasswordIsNotMatchMessage">The specified password do not match.</string>
+    <string name="getPhoneNumberIsInvalidMessage">Phone number is invalid</string>
+    <string name="getPasswordIsWeakMessage">Password must contain at least 8 characters, including numbers or special characters.</string>
 </resources>
