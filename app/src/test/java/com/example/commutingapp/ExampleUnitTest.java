@@ -1,5 +1,7 @@
 package com.example.commutingapp;
 
+import android.content.res.Resources;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

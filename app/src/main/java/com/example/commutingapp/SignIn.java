@@ -1,5 +1,6 @@
 package com.example.commutingapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +44,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(activity_sign_in);
         email = findViewById(editlogin_TextEmail);
@@ -68,6 +70,8 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
     }
 
 
+
+
     public void SignUpTextClicked(View view) {
         this.startActivity(new Intent(this, Signup.class));
         finish();
@@ -87,7 +91,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     public void SignInButtonIsClicked(View view) {
 
-        userManager = new UserManager(email,password);
+        userManager = new UserManager(getBaseContext(),email,password);
 
         if (userManager.UserInputRequirementsFailedAtSignIn()) {
             return;
@@ -152,11 +156,14 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     private void handleTaskExceptionResults(Task<AuthResult> task) {
         try {
+
             throw task.getException();
+
         }catch(FirebaseNetworkException firebaseNetworkException) {
             toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
         }catch(FirebaseAuthInvalidUserException firebaseAuthInvalidUserException ){
-        Log.i("SignIn",firebaseAuthInvalidUserException.getErrorCode());
+
+            Log.i("SignIn",firebaseAuthInvalidUserException.getErrorCode());
         if(firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")){
             CuteToast.ct(this,getString(getDisabledAccountMessage),Toast.LENGTH_LONG,3,true).show();
             return;

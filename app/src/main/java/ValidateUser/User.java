@@ -1,22 +1,26 @@
 package ValidateUser;
 
+import android.app.Application;
+
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Patterns;
 import android.widget.EditText;
 
 import com.example.commutingapp.R;
+import com.example.commutingapp.SignIn;
 
 import static android.content.res.Resources.*;
 import static com.example.commutingapp.R.string.*;
 
 
-public class User implements CharactersValidation {
+public class User implements CharactersValidation  {
     private EditText name;
     private EditText email;
     private EditText phoneNumber;
     private EditText password;
     private EditText confirmPassword;
+    private Context context;
+
 
     public User(EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
         this.name = name;
@@ -33,6 +37,12 @@ public class User implements CharactersValidation {
 
     public User() {
 
+    }
+
+    public void setContext(Context context){
+        if(context == null)throw new RuntimeException("Context cannot be null");
+
+        this.context = context;
     }
 
 
@@ -63,7 +73,7 @@ public class User implements CharactersValidation {
         String nameInput = name.getText().toString().trim();
 
         if (isNull(nameInput)) {
-            name.setError(getSystem().getString(getFieldLeftBlankMessage));
+            name.setError(context.getString(getFieldLeftBlankMessage));
             name.requestFocus();
             return true;
         }
@@ -88,7 +98,7 @@ public class User implements CharactersValidation {
         String emailInput = email.getText().toString().trim();
 
         if (isNull(emailInput)) {
-            email.setError(Resources.getSystem().getString(R.string.getFieldLeftBlankMessage));
+            email.setError(context.getResources().getString(getFieldLeftBlankMessage));
             email.requestFocus();
             return true;
         }
@@ -107,7 +117,7 @@ public class User implements CharactersValidation {
         String confirmPasswordInput = confirmPassword.getText().toString().trim();
 
         if (isNull(confirmPasswordInput)) {
-            confirmPassword.setError(Resources.getSystem().getString(getFieldLeftBlankMessage));
+            confirmPassword.setError("getString(getFieldLeftBlankMessage)");
             confirmPassword.requestFocus();
             return true;
         }

@@ -27,12 +27,10 @@ public class CustomToastMessage {
      */
 
     public CustomToastMessage(Context context, String message, int type) {
-        if (message.equals(null)) {
-            throw new RuntimeException("Message is invalid!");
-        }
-        if (type > 10 || type < 1) {
-            throw new RuntimeException("Toast message type is invalid!");
-        }
+        if (message == null) { throw new RuntimeException("Message cannot be null!");}
+        if (context == null){throw new RuntimeException("Context cannot be null");}
+        if (type > 10 || type < 1) { throw new RuntimeException("Type of toast is out of bounds"); }
+
         cuteToast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT, type, true);
         handler = new Handler();
     }
@@ -45,7 +43,7 @@ public class CustomToastMessage {
 
     public void showToastWithLimitedTimeThenClose(long timeAsMilliseconds) {
         if(timeAsMilliseconds == 0) {
-            throw new RuntimeException("Time as millis is invalid!");
+            throw new RuntimeException("Time as milliseconds is invalid!");
         }
         cuteToast.show();
 
