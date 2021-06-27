@@ -91,7 +91,7 @@ public class Signup extends AppCompatActivity {
     private void SignUpUserToFirebase(){
         String userEmail = email.getText().toString().trim();
         String userConfirmPassword = confirmPassword.getText().toString().trim();
-        firebaseUserManager.getFirebaseInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
+        firebaseUserManager.getFirebaseAuth().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
 
             if (task.isSuccessful()) {
                 circularProgressbar.setVisibility(View.VISIBLE);

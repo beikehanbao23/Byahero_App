@@ -37,7 +37,7 @@ public class MainScreen extends AppCompatActivity implements CustomBackButton {
 
 
     private void signOutUser(){
-        firebaseUserManager.getFirebaseInstance().signOut();
+        firebaseUserManager.getFirebaseAuth().signOut();
         startActivity(new Intent(this, SignIn.class));
         finish();
     }

@@ -10,8 +10,10 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="154dp"
+
         android:layout_height="152dp"
         android:background="@drawable/ic_applogo_byahero"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"

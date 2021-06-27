@@ -13,11 +13,11 @@
         android:roundIcon="@mipmap/ic_byahero"
         android:supportsRtl="true"
         android:theme="@style/Theme.CommutingApp"
-        android:usesCleartextTraffic="true"
+
         >
 
         <activity android:name=".MainScreen">
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
         </activity>
 
         <activity android:name=".Signup"

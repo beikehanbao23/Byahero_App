@@ -7,7 +7,7 @@ import android.widget.Toast;
 import com.rejowan.cutetoast.CuteToast;
 
 public class CustomToastMessage {
-    private Toast cuteToast;
+    private Toast toast;
     private Handler handler;
 
     /*
@@ -31,7 +31,7 @@ public class CustomToastMessage {
         if (context == null){throw new RuntimeException("Context cannot be null");}
         if (type > 10 || type < 1) { throw new RuntimeException("Type of toast is out of bounds"); }
 
-        cuteToast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT, type, true);
+        toast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT, type, true);
         handler = new Handler();
     }
 
@@ -45,20 +45,20 @@ public class CustomToastMessage {
         if(timeAsMilliseconds == 0) {
             throw new RuntimeException("Time as milliseconds is invalid!");
         }
-        cuteToast.show();
+        toast.show();
 
         handler.postDelayed(() -> {
-            cuteToast.cancel();
+            toast.cancel();
         }, timeAsMilliseconds);
     }
 
 
     public void showToast() {
-        cuteToast.show();
+        toast.show();
     }
 
     public void hideToast() {
-        cuteToast.cancel();
+        toast.cancel();
     }
 
 }

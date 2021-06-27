@@ -13,7 +13,7 @@ import static android.content.res.Resources.*;
 import static com.example.commutingapp.R.string.*;
 
 
-public class User implements CharactersValidation  {
+public class User   {
     private EditText name;
     private EditText email;
     private EditText phoneNumber;
@@ -84,7 +84,7 @@ public class User implements CharactersValidation  {
             return true;
         }
 
-        if (hasSpecialCharacters(nameInput)) {
+        if (RegexValidation.isSpecialCharacters(nameInput)) {
             name.setError(context.getString(getNameHasSpecialCharactersMessage));
             name.requestFocus();
             return true;
@@ -158,7 +158,7 @@ public class User implements CharactersValidation  {
             phoneNumber.requestFocus();
             return true;
         }
-        if (hasSpecialCharacters(phoneNumberInput) || isNumberSizeIncorrect() || isPhoneNumberDoesNotStartAtZero()) {
+        if (RegexValidation.isSpecialCharacters(phoneNumberInput) || isNumberSizeIncorrect() || isPhoneNumberDoesNotStartAtZero()) {
             phoneNumber.setError(context.getString(getPhoneNumberIsInvalidMessage));
             phoneNumber.requestFocus();
             return true;
@@ -175,7 +175,7 @@ public class User implements CharactersValidation  {
     }
 
     private boolean isPasswordStrong() {
-        return confirmPassword.getText().toString().trim().toCharArray().length >= 8 && (hasNumber(confirmPassword.getText().toString().trim()) || hasSpecialCharacters(confirmPassword.getText().toString().trim()));
+        return confirmPassword.getText().toString().trim().toCharArray().length >= 8 && (RegexValidation.isNumeric(confirmPassword.getText().toString().trim()) || RegexValidation.isSpecialCharacters(confirmPassword.getText().toString().trim()));
     }
 
     private boolean validEmail() {

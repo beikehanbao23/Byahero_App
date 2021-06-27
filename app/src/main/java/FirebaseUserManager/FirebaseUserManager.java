@@ -1,36 +1,28 @@
 package FirebaseUserManager;
 
 import android.content.Context;
-import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import ValidateUser.User;
 
 
 public class FirebaseUserManager   {
 
 
-    private FirebaseAuth firebaseManager;
+    private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
 
-
-    public FirebaseUserManager(Context context){
-
+    public void getCurrentUser() {
+        firebaseUser = firebaseAuth.getCurrentUser();
     }
 
-    public FirebaseUserManager(){
 
-    }
-    public void getCurrentUser() { firebaseUser = firebaseManager.getCurrentUser(); }
-
-    public FirebaseAuth getFirebaseInstance() {
-        return firebaseManager;
+    public FirebaseAuth getFirebaseAuth() {
+        return firebaseAuth;
     }
 
     public void initializeFirebase() {
-        firebaseManager = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
     }
 
     public boolean isUserAlreadySignedIn() {

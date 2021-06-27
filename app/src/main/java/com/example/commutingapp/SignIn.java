@@ -1,6 +1,5 @@
 package com.example.commutingapp;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -112,7 +111,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         String userPassword = password.getText().toString().trim();
 
         startLoading();
-        firebaseUserManager.getFirebaseInstance().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
+        firebaseUserManager.getFirebaseAuth().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
 
             if (task.isSuccessful()) {
                 finishLoading();
@@ -164,17 +163,15 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         }catch(FirebaseAuthInvalidUserException firebaseAuthInvalidUserException ){
 
             Log.i("SignIn",firebaseAuthInvalidUserException.getErrorCode());
+
         if(firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")){
             CuteToast.ct(this,getString(getDisabledAccountMessage),Toast.LENGTH_LONG,3,true).show();
             return;
         }
             CuteToast.ct(this,getString(getIncorrectEmailOrPasswordMessage),Toast.LENGTH_SHORT,3,true).show();
-
         } catch (Exception e) {
-
         CuteToast.ct(this,getString(getSomethingWentWrongMessage),Toast.LENGTH_SHORT,3,true).show();
         Log.e("SignIn",e.getMessage().toUpperCase());
-
         }
     }
 
