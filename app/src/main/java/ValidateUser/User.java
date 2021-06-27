@@ -1,15 +1,9 @@
 package ValidateUser;
 
-import android.app.Application;
-
 import android.content.Context;
 import android.util.Patterns;
 import android.widget.EditText;
 
-import com.example.commutingapp.R;
-import com.example.commutingapp.SignIn;
-
-import static android.content.res.Resources.*;
 import static com.example.commutingapp.R.string.*;
 
 
@@ -47,7 +41,7 @@ public class User   {
 
 
 
-    public String getNname() {
+    public String getName() {
         return name.getText().toString();
     }
 
@@ -121,7 +115,7 @@ public class User   {
             confirmPassword.requestFocus();
             return true;
         }
-        if (Password_Is_Unmatch()) {
+        if (passwordIsNotMatch()) {
             confirmPassword.setError(context.getString(getPasswordIsNotMatchMessage));
             confirmPassword.requestFocus();
             return true;
@@ -170,7 +164,7 @@ public class User   {
     }
 
 
-    private boolean Password_Is_Unmatch() {
+    private boolean passwordIsNotMatch() {
         return (!password.getText().toString().trim().equals(confirmPassword.getText().toString().trim()));
     }
 

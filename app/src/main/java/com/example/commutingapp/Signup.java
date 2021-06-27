@@ -68,7 +68,7 @@ public class Signup extends AppCompatActivity {
         connectionManager = new ConnectionManager(this);
     }
 
-    public void CreateBttnClicked(View view) {
+    public void CreateButtonClicked(View view) {
         userManager = new UserManager(getBaseContext(),name, email, phoneNumber, password, confirmPassword);
         if (userManager.UserInputRequirementsFailedAtSignUp()) {
             return;
