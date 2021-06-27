@@ -4,13 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
-import com.google.firebase.auth.*;
-
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
@@ -19,9 +24,21 @@ import Logger.CustomToastMessage;
 import MenuButtons.ButtonClicksTimeDelay;
 import MenuButtons.CustomBackButton;
 import ValidateUser.UserManager;
-import static com.example.commutingapp.R.string.*;
-import static com.example.commutingapp.R.id.*;
-import static com.example.commutingapp.R.layout.*;
+
+import static com.example.commutingapp.R.id.FacebookButton;
+import static com.example.commutingapp.R.id.GoogleButton;
+import static com.example.commutingapp.R.id.LogInButton;
+import static com.example.commutingapp.R.id.SignInProgressBar;
+import static com.example.commutingapp.R.id.TextViewSignUp;
+import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
+import static com.example.commutingapp.R.id.editLogin_TextPassword;
+import static com.example.commutingapp.R.id.editlogin_TextEmail;
+import static com.example.commutingapp.R.layout.activity_sign_in;
+import static com.example.commutingapp.R.string.getDisabledAccountMessage;
+import static com.example.commutingapp.R.string.getDoubleTappedMessage;
+import static com.example.commutingapp.R.string.getIncorrectEmailOrPasswordMessage;
+import static com.example.commutingapp.R.string.getNoInternetConnectionAtSignMessage;
+import static com.example.commutingapp.R.string.getSomethingWentWrongMessage;
 
 public class SignIn extends AppCompatActivity implements CustomBackButton {
 
@@ -43,15 +60,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
         super.onCreate(savedInstanceState);
         setContentView(activity_sign_in);
-        email = findViewById(editlogin_TextEmail);
-        password = findViewById(editLogin_TextPassword);
-        loginButton = findViewById(LogInButton);
-        facebookButton = findViewById(FacebookButton);
-        googleButton = findViewById(GoogleButton);
-        dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
-        signUpTextView = findViewById(TextViewSignUp);
-        circularProgressBar = findViewById(SignInProgressBar);
-
+        initializeAttributes();
 
         backButtonClick = new ButtonClicksTimeDelay(2000);
 
@@ -64,7 +73,16 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     }
 
-
+    private void initializeAttributes() {
+        email = findViewById(editlogin_TextEmail);
+        password = findViewById(editLogin_TextPassword);
+        loginButton = findViewById(LogInButton);
+        facebookButton = findViewById(FacebookButton);
+        googleButton = findViewById(GoogleButton);
+        dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
+        signUpTextView = findViewById(TextViewSignUp);
+        circularProgressBar = findViewById(SignInProgressBar);
+    }
 
 
     public void SignUpTextClicked(View view) {
@@ -86,7 +104,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     public void SignInButtonIsClicked(View view) {
 
-        userManager = new UserManager(getBaseContext(),email,password);
+        userManager = new UserManager(getBaseContext(), email, password);
 
         if (userManager.UserInputRequirementsFailedAtSignIn()) {
             return;
@@ -157,18 +175,18 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
     private void handleTaskExceptionResults(Task<AuthResult> task) {
         try {
             throw task.getException();
-        }catch(FirebaseNetworkException firebaseNetworkException) {
+        } catch (FirebaseNetworkException firebaseNetworkException) {
             toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
-        }catch(FirebaseAuthInvalidUserException firebaseAuthInvalidUserException ){
+        } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
 
-        if(firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")){
-            CuteToast.ct(this,getString(getDisabledAccountMessage),Toast.LENGTH_LONG,3,true).show();
-            return;
-        }
-            CuteToast.ct(this,getString(getIncorrectEmailOrPasswordMessage),Toast.LENGTH_SHORT,3,true).show();
+            if (firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")) {
+                CuteToast.ct(this, getString(getDisabledAccountMessage), Toast.LENGTH_LONG, 3, true).show();
+                return;
+            }
+            CuteToast.ct(this, getString(getIncorrectEmailOrPasswordMessage), Toast.LENGTH_SHORT, 3, true).show();
         } catch (Exception e) {
-        CuteToast.ct(this,getString(getSomethingWentWrongMessage),Toast.LENGTH_SHORT,3,true).show();
-        Log.e("SignIn",e.getMessage().toUpperCase());
+            CuteToast.ct(this, getString(getSomethingWentWrongMessage), Toast.LENGTH_SHORT, 3, true).show();
+            Log.e("SignIn", e.getMessage().toUpperCase());
         }
     }
 

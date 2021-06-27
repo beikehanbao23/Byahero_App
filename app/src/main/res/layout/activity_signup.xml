@@ -66,7 +66,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayoutSignUp_ConfirmPassword" />
 
     <TextView
-        android:id="@+id/AlreadyHaveAccountText"
+        android:id="@+id/TextView_AlreadyHaveAccount"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -76,12 +76,12 @@
         android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.384"
+        app:layout_constraintHorizontal_bias="0.376"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CreateButton" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/TextView_LoginHere"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
@@ -90,8 +90,8 @@
         android:onClick="backToSignInButton"
         android:textColor="@color/blueForLoginButton"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/AlreadyHaveAccountText"
-        app:layout_constraintTop_toTopOf="@+id/AlreadyHaveAccountText" />
+        app:layout_constraintStart_toEndOf="@+id/TextView_AlreadyHaveAccount"
+        app:layout_constraintTop_toTopOf="@+id/TextView_AlreadyHaveAccount" />
 
     <ProgressBar
         android:id="@+id/SignUpProgressBar"
