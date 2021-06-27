@@ -11,7 +11,7 @@ public class ConnectionManager {
     private final ConnectivityManager connectivityManager;
 
     public ConnectionManager(Context form) {
-        connectivityManager = (ConnectivityManager) form.getSystemService(form.CONNECTIVITY_SERVICE);
+        connectivityManager = (ConnectivityManager) form.getSystemService(Context.CONNECTIVITY_SERVICE);
 
     }
 
