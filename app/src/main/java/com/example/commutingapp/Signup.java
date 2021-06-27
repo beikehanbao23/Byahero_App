@@ -18,7 +18,7 @@ import static com.example.commutingapp.R.layout.*;
 
 public class Signup extends AppCompatActivity {
 
-    private EditText name, email, phoneNumber, password, confirmPassword;
+    private EditText email, password, confirmPassword;
     private FirebaseUserManager firebaseUserManager;
     private CustomToastMessage toastMessageErrorCreatingAccount;
     private CustomToastMessage toastMessageNoInternetConnection;
@@ -32,9 +32,8 @@ public class Signup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(activity_signup);
 
-        name = findViewById(editTextSignUpName);
+
         email = findViewById(editTextSignUpEmailAddress);
-        phoneNumber = findViewById(editTextSignUpPhone);
         password = findViewById(editTextSignUpPassword);
         confirmPassword = findViewById(editSignUpConfirmPassword);
 
@@ -69,18 +68,18 @@ public class Signup extends AppCompatActivity {
     }
 
     public void CreateButtonClicked(View view) {
-        userManager = new UserManager(getBaseContext(),name, email, phoneNumber, password, confirmPassword);
+        userManager = new UserManager(getBaseContext(), email, password, confirmPassword);
         if (userManager.UserInputRequirementsFailedAtSignUp()) {
             return;
         }
 
         if (!connectionManager.PhoneHasInternetConnection()) {
-            toastMessageNoInternetConnection.showToast();
+            toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
             return;
         }
 
 
-        toastMessageNoInternetConnection.hideToast();
+
         SignUpUserToFirebase();
 
 

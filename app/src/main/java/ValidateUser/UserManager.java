@@ -6,8 +6,8 @@ import android.widget.EditText;
 
 public class UserManager extends User{
 
-    public UserManager(Context context, EditText name, EditText email, EditText phoneNumber, EditText password, EditText confirmPassword) {
-        super(name, email, phoneNumber, password, confirmPassword);
+    public UserManager(Context context,  EditText email,  EditText password, EditText confirmPassword) {
+        super( email, password, confirmPassword);
         super.setContext(context);
     }
 
@@ -17,7 +17,7 @@ public class UserManager extends User{
     }
 
     public boolean UserInputRequirementsFailedAtSignUp() {
-        return validateNameFailed() || validateEmailFailed() || validatePhoneNumberFailed() || validatePasswordFailed() || validateConfirmPasswordFailed();
+        return  validateEmailFailed() || validatePasswordFailed() || validateConfirmPasswordFailed();
     }
     public boolean UserInputRequirementsFailedAtSignIn(){
         return validateEmailFailed() || validatePasswordFailed();

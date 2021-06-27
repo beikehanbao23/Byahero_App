@@ -6,9 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.*;
@@ -31,7 +29,6 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
     private Button facebookButton, googleButton, loginButton;
     private FirebaseUserManager firebaseUserManager;
     private TextView dontHaveAnAccountTextView, signUpTextView;
-    private CustomToastMessage toastMessageUserAuthentication;
     private CustomToastMessage toastMessageNoInternetConnection;
     private CustomToastMessage toastMessageBackButton;
     private ButtonClicksTimeDelay backButtonClick;
@@ -155,14 +152,10 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     private void handleTaskExceptionResults(Task<AuthResult> task) {
         try {
-
             throw task.getException();
-
         }catch(FirebaseNetworkException firebaseNetworkException) {
             toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
         }catch(FirebaseAuthInvalidUserException firebaseAuthInvalidUserException ){
-
-            Log.i("SignIn",firebaseAuthInvalidUserException.getErrorCode());
 
         if(firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")){
             CuteToast.ct(this,getString(getDisabledAccountMessage),Toast.LENGTH_LONG,3,true).show();
