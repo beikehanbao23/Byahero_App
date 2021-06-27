@@ -19,7 +19,7 @@ import static com.example.commutingapp.R.layout.*;
 public class Signup extends AppCompatActivity {
 
     private EditText email, password, confirmPassword;
-    private FirebaseUserManager firebaseUserManager;
+
     private CustomToastMessage toastMessageErrorCreatingAccount;
     private CustomToastMessage toastMessageNoInternetConnection;
     private ConnectionManager connectionManager;
@@ -42,8 +42,8 @@ public class Signup extends AppCompatActivity {
         toastMessageErrorCreatingAccount = new CustomToastMessage(this, getString(getSomethingWentWrongMessage), 3);
         toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
 
-        firebaseUserManager = new FirebaseUserManager();
-        firebaseUserManager.initializeFirebase();
+
+        FirebaseUserManager.initializeFirebase();
 
 
     }
@@ -90,11 +90,11 @@ public class Signup extends AppCompatActivity {
     private void SignUpUserToFirebase(){
         String userEmail = email.getText().toString().trim();
         String userConfirmPassword = confirmPassword.getText().toString().trim();
-        firebaseUserManager.getFirebaseAuth().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
+        FirebaseUserManager.getFirebaseAuth().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
 
             if (task.isSuccessful()) {
                 circularProgressbar.setVisibility(View.VISIBLE);
-                firebaseUserManager.getCurrentUser();
+                FirebaseUserManager.getCurrentUser();
                 toastMessageErrorCreatingAccount.hideToast();
                 showMainScreen();
                 return;
@@ -104,7 +104,15 @@ public class Signup extends AppCompatActivity {
         });
     }
 
+/*
+if task is successful then
+send email verification
+show message about 'please verify email'
 
+if email is verified then
+go to main screen
+
+ */
 
     private void showMainScreen() {
 

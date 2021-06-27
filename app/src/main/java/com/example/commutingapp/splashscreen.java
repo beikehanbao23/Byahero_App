@@ -1,8 +1,10 @@
 package com.example.commutingapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,7 +16,7 @@ import static com.example.commutingapp.R.string.*;
 public class splashscreen extends AppCompatActivity implements CustomBackButton {
     private  Handler handler;
     private ButtonClicksTimeDelay backButtonClick;
-    private FirebaseUserManager firebaseUserManager;
+
     private final int delayInMillis = 700;
     private CustomToastMessage toastMessageBackButton;
 
@@ -27,16 +29,16 @@ public class splashscreen extends AppCompatActivity implements CustomBackButton 
         backButtonClick = new ButtonClicksTimeDelay(2000);
         toastMessageBackButton = new CustomToastMessage(this,getString(getDoubleTappedMessage),10);
 
-        firebaseUserManager = new FirebaseUserManager();
-        firebaseUserManager.initializeFirebase();
+
+        FirebaseUserManager.initializeFirebase();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        firebaseUserManager.getCurrentUser();
-        if (firebaseUserManager.isUserAlreadySignedIn()) {
+        FirebaseUserManager.getCurrentUser();
+        if (FirebaseUserManager.isUserAlreadySignedIn()) {
             showMainScreen();
             return;
         }

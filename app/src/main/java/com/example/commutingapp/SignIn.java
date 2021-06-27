@@ -27,7 +27,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
     private EditText email, password;
     private Button facebookButton, googleButton, loginButton;
-    private FirebaseUserManager firebaseUserManager;
+
     private TextView dontHaveAnAccountTextView, signUpTextView;
     private CustomToastMessage toastMessageNoInternetConnection;
     private CustomToastMessage toastMessageBackButton;
@@ -55,9 +55,8 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
         backButtonClick = new ButtonClicksTimeDelay(2000);
 
-        firebaseUserManager = new FirebaseUserManager();
 
-        firebaseUserManager.initializeFirebase();
+        FirebaseUserManager.initializeFirebase();
 
 
         toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
@@ -108,11 +107,11 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         String userPassword = password.getText().toString().trim();
 
         startLoading();
-        firebaseUserManager.getFirebaseAuth().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
+        FirebaseUserManager.getFirebaseAuth().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
 
             if (task.isSuccessful()) {
                 finishLoading();
-                firebaseUserManager.getCurrentUser();
+                FirebaseUserManager.getCurrentUser();
                 showMainScreen();
                 return;
             }
@@ -149,6 +148,11 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         signUpTextView.setEnabled(true);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
 
     private void handleTaskExceptionResults(Task<AuthResult> task) {
         try {

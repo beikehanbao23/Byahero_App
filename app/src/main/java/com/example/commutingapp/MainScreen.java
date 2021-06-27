@@ -13,7 +13,7 @@ import MenuButtons.CustomBackButton;
 import static com.example.commutingapp.R.string.*;
 
 public class MainScreen extends AppCompatActivity implements CustomBackButton {
-    private FirebaseUserManager firebaseUserManager;
+
     private ButtonClicksTimeDelay backButtonClick;
     private CustomToastMessage toastMessageBackButton;
     @Override
@@ -24,8 +24,8 @@ public class MainScreen extends AppCompatActivity implements CustomBackButton {
         backButtonClick = new ButtonClicksTimeDelay(2000);
         toastMessageBackButton = new CustomToastMessage(this,getString(getDoubleTappedMessage),10);
 
-        firebaseUserManager = new FirebaseUserManager();
-        firebaseUserManager.initializeFirebase();
+
+        FirebaseUserManager.initializeFirebase();
 
     }
 
@@ -37,7 +37,7 @@ public class MainScreen extends AppCompatActivity implements CustomBackButton {
 
 
     private void signOutUser(){
-        firebaseUserManager.getFirebaseAuth().signOut();
+        FirebaseUserManager.getFirebaseAuth().signOut();
         startActivity(new Intent(this, SignIn.class));
         finish();
     }

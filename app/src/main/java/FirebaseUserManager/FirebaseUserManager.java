@@ -2,6 +2,7 @@ package FirebaseUserManager;
 
 import android.content.Context;
 
+import com.google.firebase.auth.EmailAuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -10,28 +11,27 @@ import com.google.firebase.auth.PhoneAuthCredential;
 public class FirebaseUserManager   {
 
 
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
-    private PhoneAuthCredential phoneAuthCredential;
+    private static FirebaseAuth firebaseAuth;
+    private static FirebaseUser firebaseUser;
 
-    public void getCurrentUser() {
+
+    public static void getCurrentUser() {
+
         firebaseUser = firebaseAuth.getCurrentUser();
     }
 
+    public static FirebaseAuth getFirebaseAuth() {
 
-    public FirebaseAuth getFirebaseAuth() {
         return firebaseAuth;
     }
 
-    public void initializeFirebase() {
+    public static void initializeFirebase() {
+
         firebaseAuth = FirebaseAuth.getInstance();
     }
 
-    public void setPhoneAuthCredential(){
+    public static boolean isUserAlreadySignedIn() {
 
-    }
-
-    public boolean isUserAlreadySignedIn() {
         return firebaseUser != null;
     }
 
