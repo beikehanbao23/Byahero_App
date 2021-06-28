@@ -12,6 +12,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.auth.AuthResult;
 import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
@@ -28,7 +31,9 @@ import static com.example.commutingapp.R.id.editSignUpConfirmPassword;
 import static com.example.commutingapp.R.id.editTextSignUpEmailAddress;
 import static com.example.commutingapp.R.id.editTextSignUpPassword;
 import static com.example.commutingapp.R.layout.activity_signup;
+import static com.example.commutingapp.R.string.getErrorConnectingToPlatformMessage;
 import static com.example.commutingapp.R.string.getNoInternetConnectionAtSignMessage;
+import static com.example.commutingapp.R.string.getSendingEmailErrorMessage;
 import static com.example.commutingapp.R.string.getSomethingWentWrongMessage;
 import static com.example.commutingapp.R.string.getVerifyEmailToContinueMessage;
 
@@ -37,7 +42,6 @@ public class Signup extends AppCompatActivity {
     private EditText email, password, confirmPassword;
     private Button backButton, createButton;
     private TextView alreadyHaveAnAccount, loginHere;
-    private CustomToastMessage toastMessageErrorCreatingAccount;
     private CustomToastMessage toastMessageNoInternetConnection;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressbar;
@@ -51,7 +55,7 @@ public class Signup extends AppCompatActivity {
 
         initializeAttributes();
 
-        toastMessageErrorCreatingAccount = new CustomToastMessage(this, getString(getSomethingWentWrongMessage), 3);
+
         toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
 
 
@@ -81,19 +85,29 @@ public class Signup extends AppCompatActivity {
      */
 
         FirebaseUserManager.getCurrentUser();
-        if(FirebaseUserManager.isUserAlreadySignedIn()){
+        if (FirebaseUserManager.isUserAlreadySignedIn()) {
+
+            Log.e(getClass().getName(),"Email instance is" + FirebaseUserManager.getFirebaseUser().getEmail());
+
             FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
-                if(task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()){
+                if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
                     showMainScreen();
                     return;
                 }
-                CuteToast.ct(this,task.getException().getMessage(),Toast.LENGTH_SHORT,3,true).show();
+                //TODO
+                Log.e("Signup","At resume "+FirebaseUserManager.getFirebaseUser().getEmail());
+
             });
-            return;
+
         }
 
     }
-
+/*
+TODO
+problems
+1. recheck error message sign in
+2. test if account already signed but email not verified
+ */
     private void initializeAttributes() {
         email = findViewById(editTextSignUpEmailAddress);
         password = findViewById(editTextSignUpPassword);
@@ -112,21 +126,6 @@ public class Signup extends AppCompatActivity {
     }
 
 
-
-      /*
-        FirebaseUserManager.getCurrentUser();
-        if(FirebaseUserManager.isUserAlreadySignedIn()) {
-            FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
-                if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-                    showMainScreen();
-                    return;
-                }
-                CuteToast.ct(this, task.getException().getMessage(), Toast.LENGTH_SHORT, 3, true).show();
-            });
-        }
-        */
-
-
     public void CreateButtonClicked(View view) {
         userManager = new UserManager(getBaseContext(), email, password, confirmPassword);
         if (userManager.UserInputRequirementsFailedAtSignUp()) {
@@ -139,18 +138,20 @@ public class Signup extends AppCompatActivity {
         }
 
         FirebaseUserManager.getCurrentUser();
-        if(FirebaseUserManager.isUserAlreadySignedIn()){
+        if (FirebaseUserManager.isUserAlreadySignedIn()) {
             FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
-                if(task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()){
+
+                if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
                     showMainScreen();
                     return;
                 }
-                CuteToast.ct(this,task.getException().getMessage(),Toast.LENGTH_SHORT,3,true).show();
+                //TODO
+                //we can use sign out
+                Log.e("Signup","At click button user instance "+FirebaseUserManager.getFirebaseUser().getEmail());
             });
-            return;
+        return;
         }
-
-        SignUpUser();
+            SignUpUser();
 
 
     }
@@ -161,7 +162,7 @@ public class Signup extends AppCompatActivity {
                 CuteToast.ct(this, getString(getVerifyEmailToContinueMessage), Toast.LENGTH_SHORT, 1, true).show();
                 return;
             }
-            CuteToast.ct(this, task.getException().getMessage(), Toast.LENGTH_SHORT, 3, true).show();
+           CuteToast.ct(this,getString(getSendingEmailErrorMessage),Toast.LENGTH_LONG,3,true).show();
         });
     }
 
@@ -181,28 +182,26 @@ public class Signup extends AppCompatActivity {
 
             }
 
-            //TODO
+
             if (task.getException() != null) {
                 finishLoading();
-                Log.e("Signup","GOTCHA! ERROR AT SIGNUP USER FUNCTION");
-                CuteToast.ct(this, task.getException().getMessage(), Toast.LENGTH_SHORT, 3, true).show();
+                Log.e("Signup", "GOTCHA! ERROR AT SIGNUP USER FUNCTION");
+                handleTaskExceptionResults(task);
             }
 
         });
     }
 
-    /*
-    if task is successful then
-    send email verification
-    show message about 'please verify email'
+    public void handleTaskExceptionResults(Task<AuthResult> task) {
+        try {
+            throw task.getException();
+        } catch (FirebaseNetworkException firebaseNetworkException) {
+            toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
 
-    if email is verified then
-    go to main screen
-    TODO
-    create resend email functionality
-    stop email spamming send email
-    create timer for email to stop user spamming
-     */
+        } catch (Exception ex) {
+            CuteToast.ct(this, task.getException().getMessage(), Toast.LENGTH_SHORT, 3, true).show();
+        }
+    }
 
     private void startLoading() {
         circularProgressbar.setVisibility(View.VISIBLE);
