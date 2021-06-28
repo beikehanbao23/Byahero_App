@@ -60,6 +60,40 @@ public class Signup extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        backToSignInButton(null);
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        connectionManager = new ConnectionManager(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    /*
+    when user back to the application after verifying email then it automatically go to
+    main screen without clicking the create button again.
+     */
+
+        FirebaseUserManager.getCurrentUser();
+        if(FirebaseUserManager.isUserAlreadySignedIn()){
+            FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
+                if(task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()){
+                    showMainScreen();
+                    return;
+                }
+                CuteToast.ct(this,task.getException().getMessage(),Toast.LENGTH_SHORT,3,true).show();
+            });
+            return;
+        }
+
+    }
+
     private void initializeAttributes() {
         email = findViewById(editTextSignUpEmailAddress);
         password = findViewById(editTextSignUpPassword);
@@ -77,29 +111,21 @@ public class Signup extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        backToSignInButton(null);
-    }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        connectionManager = new ConnectionManager(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+      /*
         FirebaseUserManager.getCurrentUser();
-        Log.e("Signup","RESULT");
-        System.out.println(FirebaseUserManager.isUserAlreadySignedIn() && FirebaseUserManager.getFirebaseUser().isEmailVerified());
-        if (FirebaseUserManager.isUserAlreadySignedIn() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-            showMainScreen();
-            return;
+        if(FirebaseUserManager.isUserAlreadySignedIn()) {
+            FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+                    showMainScreen();
+                    return;
+                }
+                CuteToast.ct(this, task.getException().getMessage(), Toast.LENGTH_SHORT, 3, true).show();
+            });
         }
-    }
+        */
+
 
     public void CreateButtonClicked(View view) {
         userManager = new UserManager(getBaseContext(), email, password, confirmPassword);
@@ -111,9 +137,16 @@ public class Signup extends AppCompatActivity {
             toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
             return;
         }
+
         FirebaseUserManager.getCurrentUser();
-        if (FirebaseUserManager.isUserAlreadySignedIn() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-            showMainScreen();
+        if(FirebaseUserManager.isUserAlreadySignedIn()){
+            FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
+                if(task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()){
+                    showMainScreen();
+                    return;
+                }
+                CuteToast.ct(this,task.getException().getMessage(),Toast.LENGTH_SHORT,3,true).show();
+            });
             return;
         }
 
@@ -151,6 +184,7 @@ public class Signup extends AppCompatActivity {
             //TODO
             if (task.getException() != null) {
                 finishLoading();
+                Log.e("Signup","GOTCHA! ERROR AT SIGNUP USER FUNCTION");
                 CuteToast.ct(this, task.getException().getMessage(), Toast.LENGTH_SHORT, 3, true).show();
             }
 
