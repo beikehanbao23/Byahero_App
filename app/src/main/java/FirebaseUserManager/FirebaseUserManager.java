@@ -1,11 +1,10 @@
 package FirebaseUserManager;
 
-import android.content.Context;
 
-import com.google.firebase.auth.EmailAuthCredential;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.PhoneAuthCredential;
+
 
 
 public class FirebaseUserManager   {
@@ -19,7 +18,10 @@ public class FirebaseUserManager   {
 
         firebaseUser = firebaseAuth.getCurrentUser();
     }
+    public static FirebaseUser getFirebaseUser(){
 
+        return firebaseUser;
+    }
     public static FirebaseAuth getFirebaseAuth() {
 
         return firebaseAuth;

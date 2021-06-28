@@ -64,7 +64,6 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
 
         backButtonClick = new ButtonClicksTimeDelay(2000);
 
-
         FirebaseUserManager.initializeFirebase();
 
 
@@ -115,11 +114,11 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
             return;
         }
 
-        AuthenticateUserToFirebase();
+        LoginUser();
     }
 
 
-    private void AuthenticateUserToFirebase() {
+    private void LoginUser() {
 
         String userUsername = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
@@ -134,7 +133,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
                 return;
             }
 
-            if (task.getException().getMessage() != null) {
+            if (task.getException() != null) {
                 finishLoading();
                 handleTaskExceptionResults(task);
             }

@@ -2,13 +2,17 @@ package com.example.commutingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
@@ -26,6 +30,7 @@ import static com.example.commutingapp.R.id.editTextSignUpPassword;
 import static com.example.commutingapp.R.layout.activity_signup;
 import static com.example.commutingapp.R.string.getNoInternetConnectionAtSignMessage;
 import static com.example.commutingapp.R.string.getSomethingWentWrongMessage;
+import static com.example.commutingapp.R.string.getVerifyEmailToContinueMessage;
 
 public class Signup extends AppCompatActivity {
 
@@ -84,6 +89,18 @@ public class Signup extends AppCompatActivity {
         connectionManager = new ConnectionManager(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseUserManager.getCurrentUser();
+        Log.e("Signup","RESULT");
+        System.out.println(FirebaseUserManager.isUserAlreadySignedIn() && FirebaseUserManager.getFirebaseUser().isEmailVerified());
+        if (FirebaseUserManager.isUserAlreadySignedIn() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+            showMainScreen();
+            return;
+        }
+    }
+
     public void CreateButtonClicked(View view) {
         userManager = new UserManager(getBaseContext(), email, password, confirmPassword);
         if (userManager.UserInputRequirementsFailedAtSignUp()) {
@@ -94,35 +111,49 @@ public class Signup extends AppCompatActivity {
             toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
             return;
         }
+        FirebaseUserManager.getCurrentUser();
+        if (FirebaseUserManager.isUserAlreadySignedIn() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+            showMainScreen();
+            return;
+        }
 
-
-        SignUpUserToFirebase();
+        SignUpUser();
 
 
     }
 
-    public void sendEmailVerification() {
-
+    private void sendEmailVerificationToUser() {
+        FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                CuteToast.ct(this, getString(getVerifyEmailToContinueMessage), Toast.LENGTH_SHORT, 1, true).show();
+                return;
+            }
+            CuteToast.ct(this, task.getException().getMessage(), Toast.LENGTH_SHORT, 3, true).show();
+        });
     }
 
-    public void verifyEmailVerification() {
 
-    }
-
-    private void SignUpUserToFirebase() {
+    private void SignUpUser() {
         String userEmail = email.getText().toString().trim();
         String userConfirmPassword = confirmPassword.getText().toString().trim();
+
+        startLoading();
         FirebaseUserManager.getFirebaseAuth().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
 
             if (task.isSuccessful()) {
-                circularProgressbar.setVisibility(View.VISIBLE);
+                finishLoading();
                 FirebaseUserManager.getCurrentUser();
-                toastMessageErrorCreatingAccount.hideToast();
-                showMainScreen();
+                sendEmailVerificationToUser();
                 return;
+
             }
 
-            toastMessageErrorCreatingAccount.showToast();
+            //TODO
+            if (task.getException() != null) {
+                finishLoading();
+                CuteToast.ct(this, task.getException().getMessage(), Toast.LENGTH_SHORT, 3, true).show();
+            }
+
         });
     }
 
@@ -133,8 +164,12 @@ public class Signup extends AppCompatActivity {
 
     if email is verified then
     go to main screen
-
+    TODO
+    create resend email functionality
+    stop email spamming send email
+    create timer for email to stop user spamming
      */
+
     private void startLoading() {
         circularProgressbar.setVisibility(View.VISIBLE);
         email.setEnabled(false);

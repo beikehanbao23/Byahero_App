@@ -38,7 +38,7 @@ public class splashscreen extends AppCompatActivity implements CustomBackButton 
         super.onStart();
 
         FirebaseUserManager.getCurrentUser();
-        if (FirebaseUserManager.isUserAlreadySignedIn()) {
+        if (FirebaseUserManager.isUserAlreadySignedIn() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
             showMainScreen();
             return;
         }

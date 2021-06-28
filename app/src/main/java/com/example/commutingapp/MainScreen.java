@@ -16,6 +16,7 @@ public class MainScreen extends AppCompatActivity implements CustomBackButton {
 
     private ButtonClicksTimeDelay backButtonClick;
     private CustomToastMessage toastMessageBackButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
