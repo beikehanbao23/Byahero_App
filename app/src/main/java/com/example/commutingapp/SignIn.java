@@ -38,7 +38,6 @@ import static com.example.commutingapp.R.string.getDisabledAccountMessage;
 import static com.example.commutingapp.R.string.getDoubleTappedMessage;
 import static com.example.commutingapp.R.string.getIncorrectEmailOrPasswordMessage;
 import static com.example.commutingapp.R.string.getNoInternetConnectionAtSignMessage;
-import static com.example.commutingapp.R.string.getSomethingWentWrongMessage;
 
 public class SignIn extends AppCompatActivity implements CustomBackButton {
 
@@ -113,7 +112,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
             toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
             return;
         }
-
+        //TODO change variable name
         LoginUser();
     }
 
@@ -124,23 +123,29 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         String userPassword = password.getText().toString().trim();
 
         startLoading();
-        FirebaseUserManager.getFirebaseAuth().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, task -> {
+        FirebaseUserManager.getFirebaseAuth().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, signInTask -> {
 
-            if (task.isSuccessful()) {
-                finishLoading();
+            if (signInTask.isSuccessful()) {
                 FirebaseUserManager.getCurrentUser();
+                LoginAndVerifyUser();
+                return;
+            }
+            if (signInTask.getException() != null) {
+                finishLoading();
+                handleTaskExceptionResults(signInTask);
+            }
+        });
+
+    }
+    private void LoginAndVerifyUser(){
+        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(reloadTask -> {
+            if(reloadTask.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()){
                 showMainScreen();
                 return;
             }
-
-            if (task.getException() != null) {
-                finishLoading();
-                handleTaskExceptionResults(task);
-            }
-
-
+            //TODO set a toast message
+            Log.e(getClass().getName(),"Email already sent please verify");
         });
-
     }
 
     private void startLoading() {
@@ -170,7 +175,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         super.onResume();
 
     }
-
+    //TODO retest exceptions
     private void handleTaskExceptionResults(Task<AuthResult> task) {
         try {
 
