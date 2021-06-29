@@ -155,6 +155,21 @@ problems
 
 
     }
+    /*
+    my solutions
+    add sign out at onDestroy
+    add sign out if email not already verified
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    if(FirebaseUserManager.isUserAlreadySignedIn()){
+        Log.e(getClass().getName(),"Signing out");
+        FirebaseUserManager.getFirebaseAuth().signOut();
+    }
+
+    }
 
     private void sendEmailVerificationToUser() {
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
