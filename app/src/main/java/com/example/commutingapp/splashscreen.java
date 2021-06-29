@@ -1,22 +1,20 @@
 package com.example.commutingapp;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
-import MenuButtons.ButtonClicksTimeDelay;
+import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
-import static com.example.commutingapp.R.string.*;
-public class splashscreen extends AppCompatActivity implements CustomBackButton {
-    private  Handler handler;
-    private ButtonClicksTimeDelay backButtonClick;
+import MenuButtons.backButton;
 
+import static com.example.commutingapp.R.string.*;
+public class splashscreen extends AppCompatActivity implements BackButtonDoubleClicked {
+    private Handler handler;
     private final int delayInMillis = 700;
     private CustomToastMessage toastMessageBackButton;
 
@@ -26,8 +24,8 @@ public class splashscreen extends AppCompatActivity implements CustomBackButton 
         setContentView(R.layout.activity_splashscreen);
 
         handler = new Handler();
-        backButtonClick = new ButtonClicksTimeDelay(2000);
-        toastMessageBackButton = new CustomToastMessage(this,getString(getDoubleTappedMessage),10);
+
+        toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
 
 
         FirebaseUserManager.initializeFirebase();
@@ -55,11 +53,12 @@ public class splashscreen extends AppCompatActivity implements CustomBackButton 
     }
 
 
-    private void showMainScreen(){
+    private void showMainScreen() {
         startActivity(new Intent(this, MainScreen.class));
         finish();
     }
-    private void showSignIn(){
+
+    private void showSignIn() {
         startActivity(new Intent(this, SignIn.class));
         finish();
     }
@@ -67,15 +66,19 @@ public class splashscreen extends AppCompatActivity implements CustomBackButton 
     @Override
     public void backButtonClicked() {
 
-        CustomBackButton customBackButton = ()->{
-            if(backButtonClick.isDoubleTapped()){
+        new CustomBackButton(()->{
+            if(backButton.isDoubleTapped()){
                 toastMessageBackButton.hideToast();
                 super.onBackPressed();
                 return;
             }
             toastMessageBackButton.showToast();
-            backButtonClick.registerFirstClick();
-        };
-        customBackButton.backButtonClicked();
+            backButton.registerFirstClick();
+        }).backButtonIsClicked();
+
+    
+
     }
 }
+
+         

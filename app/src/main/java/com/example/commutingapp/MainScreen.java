@@ -8,13 +8,13 @@ import android.view.View;
 
 import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
-import MenuButtons.ButtonClicksTimeDelay;
 import MenuButtons.CustomBackButton;
+import MenuButtons.backButton;
+import MenuButtons.BackButtonDoubleClicked;
 import static com.example.commutingapp.R.string.*;
 
-public class MainScreen extends AppCompatActivity implements CustomBackButton {
+public class MainScreen extends AppCompatActivity implements BackButtonDoubleClicked {
 
-    private ButtonClicksTimeDelay backButtonClick;
     private CustomToastMessage toastMessageBackButton;
 
     @Override
@@ -22,7 +22,7 @@ public class MainScreen extends AppCompatActivity implements CustomBackButton {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
-        backButtonClick = new ButtonClicksTimeDelay(2000);
+
         toastMessageBackButton = new CustomToastMessage(this,getString(getDoubleTappedMessage),10);
 
 
@@ -51,15 +51,15 @@ public class MainScreen extends AppCompatActivity implements CustomBackButton {
     public void backButtonClicked() {
 
 
-        CustomBackButton customBackButton = ()->{
-            if(backButtonClick.isDoubleTapped()){
+        new CustomBackButton(()->{
+            if(backButton.isDoubleTapped()){
                 toastMessageBackButton.hideToast();
                 super.onBackPressed();
                 return;
             }
             toastMessageBackButton.showToast();
-            backButtonClick.registerFirstClick();
-        };
-        customBackButton.backButtonClicked();
+            backButton.registerFirstClick();
+        }).backButtonIsClicked();
+
     }
 }

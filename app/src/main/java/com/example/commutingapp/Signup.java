@@ -52,7 +52,7 @@ public class Signup extends AppCompatActivity {
         setContentView(activity_signup);
 
         initializeAttributes();
-
+        //TODO this is wrong
         toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
 
         FirebaseUserManager.initializeFirebase();
@@ -120,7 +120,7 @@ public class Signup extends AppCompatActivity {
             Log.e(getClass().getName(), "Email instance is" + FirebaseUserManager.getFirebaseUser().getEmail());
 
             if(isUserCreatedNewAccount()){
-            FirebaseUserManager.getFirebaseAuth().signOut();
+            signOutPreviousAccount();
             SignUpUser();
             return;
             }
@@ -133,9 +133,12 @@ public class Signup extends AppCompatActivity {
 
 
     }
-
+    private void signOutPreviousAccount(){
+        FirebaseUserManager.getFirebaseAuth().signOut();
+    }
     private boolean isUserCreatedNewAccount(){
-        return !FirebaseUserManager.getFirebaseUser().getEmail().equals(email.getText().toString().trim());
+        String userEmail = email.getText().toString().trim();
+        return !FirebaseUserManager.getFirebaseUser().getEmail().equals(userEmail);
     }
 
     private void sendEmailVerificationToUser() {
@@ -155,7 +158,7 @@ public class Signup extends AppCompatActivity {
                 showMainScreen();
                 return;
             }
-
+            //TODO: CHANGE UI
             CuteToast.ct(this, getString(getVerifyEmailToContinueMessage), Toast.LENGTH_SHORT, 1, true).show();
             Log.e("Signup", "At click button user instance " + FirebaseUserManager.getFirebaseUser().getEmail());
         });
@@ -175,7 +178,6 @@ public class Signup extends AppCompatActivity {
                 return;
 
             }
-
 
             if (task.getException() != null) {
                 finishLoading();

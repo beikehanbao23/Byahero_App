@@ -16,38 +16,30 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+
 import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
-import MenuButtons.ButtonClicksTimeDelay;
+import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
+import MenuButtons.backButton;
 import ValidateUser.UserManager;
 
-import static com.example.commutingapp.R.id.FacebookButton;
-import static com.example.commutingapp.R.id.GoogleButton;
-import static com.example.commutingapp.R.id.LogInButton;
-import static com.example.commutingapp.R.id.SignInProgressBar;
-import static com.example.commutingapp.R.id.TextViewSignUp;
-import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
-import static com.example.commutingapp.R.id.editLogin_TextPassword;
-import static com.example.commutingapp.R.id.editlogin_TextEmail;
-import static com.example.commutingapp.R.layout.activity_sign_in;
-import static com.example.commutingapp.R.string.getDisabledAccountMessage;
-import static com.example.commutingapp.R.string.getDoubleTappedMessage;
-import static com.example.commutingapp.R.string.getIncorrectEmailOrPasswordMessage;
-import static com.example.commutingapp.R.string.getNoInternetConnectionAtSignMessage;
+import static com.example.commutingapp.R.id.*;
+import static com.example.commutingapp.R.layout.*;
+import static com.example.commutingapp.R.string.*;
 
-public class SignIn extends AppCompatActivity implements CustomBackButton {
+public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked {
 
     private EditText email, password;
     private Button facebookButton, googleButton, loginButton;
 
     private TextView dontHaveAnAccountTextView, signUpTextView;
-    private CustomToastMessage toastMessageNoInternetConnection;
+  //  private CustomToastMessage toastMessageNoInternetConnection;
     private CustomToastMessage toastMessageBackButton;
-    private ButtonClicksTimeDelay backButtonClick;
+
 
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressBar;
@@ -61,12 +53,12 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         setContentView(activity_sign_in);
         initializeAttributes();
 
-        backButtonClick = new ButtonClicksTimeDelay(2000);
+
 
         FirebaseUserManager.initializeFirebase();
 
 
-        toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
+        //toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
         toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
 
     }
@@ -109,7 +101,8 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         }
 
         if (!connectionManager.PhoneHasInternetConnection()) {
-            toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
+           // toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
+
             return;
         }
         //TODO change variable name
@@ -170,11 +163,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
         signUpTextView.setEnabled(true);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-    }
     //TODO retest exceptions
     private void handleTaskExceptionResults(Task<AuthResult> task) {
         try {
@@ -182,7 +171,7 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
             throw task.getException();
 
         } catch (FirebaseNetworkException firebaseNetworkException) {
-            toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
+          //  toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
 
             if (firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")) {
@@ -205,15 +194,14 @@ public class SignIn extends AppCompatActivity implements CustomBackButton {
     @Override
     public void backButtonClicked() {
 
-        CustomBackButton customBackButton = () -> {
-            if (backButtonClick.isDoubleTapped()) {
+        new CustomBackButton(() -> {
+            if (backButton.isDoubleTapped()) {
                 toastMessageBackButton.hideToast();
                 super.onBackPressed();
                 return;
             }
             toastMessageBackButton.showToast();
-            backButtonClick.registerFirstClick();
-        };
-        customBackButton.backButtonClicked();
+            backButton.registerFirstClick();
+        }).backButtonIsClicked();
     }
-}
+    }
