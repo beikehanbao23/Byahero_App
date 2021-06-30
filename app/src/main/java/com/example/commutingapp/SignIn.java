@@ -99,7 +99,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         if (userManager.UserInputRequirementsFailedAtSignIn()) {
             return;
         }
-
+    //TODO CREATE ANIMATION
         if (!connectionManager.PhoneHasInternetConnection()) {
            // toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
 
