@@ -4,11 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,18 +19,9 @@ import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
 import ValidateUser.UserManager;
 
-import static com.example.commutingapp.R.id.BackButton;
-import static com.example.commutingapp.R.id.CreateButton;
-import static com.example.commutingapp.R.id.SignUpProgressBar;
-import static com.example.commutingapp.R.id.TextView_AlreadyHaveAccount;
-import static com.example.commutingapp.R.id.TextView_LoginHere;
-import static com.example.commutingapp.R.id.editSignUpConfirmPassword;
-import static com.example.commutingapp.R.id.editTextSignUpEmailAddress;
-import static com.example.commutingapp.R.id.editTextSignUpPassword;
+import static com.example.commutingapp.R.id.*;
 import static com.example.commutingapp.R.layout.activity_signup;
-import static com.example.commutingapp.R.string.getNoInternetConnectionAtSignMessage;
-import static com.example.commutingapp.R.string.getSendingEmailErrorMessage;
-import static com.example.commutingapp.R.string.getVerifyEmailToContinueMessage;
+import static com.example.commutingapp.R.string.*;
 
 public class Signup extends AppCompatActivity {
 
@@ -94,7 +82,7 @@ public class Signup extends AppCompatActivity {
         loginHere = findViewById(TextView_LoginHere);
         backButton = findViewById(BackButton);
         createButton = findViewById(CreateButton);
-        circularProgressbar = findViewById(SignUpProgressBar);
+        circularProgressbar = findViewById(LoadingProgressBar);
     }
 
     public void backToSignInButton(View view) {

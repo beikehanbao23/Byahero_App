@@ -71,7 +71,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         googleButton = findViewById(GoogleButton);
         dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
         signUpTextView = findViewById(TextViewSignUp);
-        circularProgressBar = findViewById(SignInProgressBar);
+        circularProgressBar = findViewById(LoadingProgressBar);
     }
 
 
