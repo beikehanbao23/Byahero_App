@@ -1,5 +1,6 @@
 package com.example.commutingapp;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,8 +40,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private TextView dontHaveAnAccountTextView, signUpTextView;
   //  private CustomToastMessage toastMessageNoInternetConnection;
     private CustomToastMessage toastMessageBackButton;
-
-
+    private Dialog noInternetDialog;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressBar;
     private UserManager userManager;
@@ -52,11 +52,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         super.onCreate(savedInstanceState);
         setContentView(activity_sign_in);
         initializeAttributes();
-
-
-
+        noInternetDialog = new Dialog(this);
         FirebaseUserManager.initializeFirebase();
-
 
         //toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
         toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);

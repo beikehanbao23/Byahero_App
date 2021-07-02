@@ -2,12 +2,14 @@ package FirebaseUserManager;
 
 
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 
 
-public class FirebaseUserManager   {
+public class FirebaseUserManager   extends AppCompatActivity {
 
 
     private static FirebaseAuth firebaseAuth;
