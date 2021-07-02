@@ -3,23 +3,17 @@ package com.example.commutingapp;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.rejowan.cutetoast.CuteToast;
-
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
@@ -27,20 +21,10 @@ import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 import ValidateUser.UserManager;
+import static com.example.commutingapp.R.id.*;
+import static com.example.commutingapp.R.layout.*;
+import static com.example.commutingapp.R.string.*;
 
-import static com.example.commutingapp.R.id.FacebookButton;
-import static com.example.commutingapp.R.id.GoogleButton;
-import static com.example.commutingapp.R.id.LoadingProgressBar;
-import static com.example.commutingapp.R.id.LogInButton;
-import static com.example.commutingapp.R.id.TextViewSignUp;
-import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
-import static com.example.commutingapp.R.id.editLogin_TextPassword;
-import static com.example.commutingapp.R.id.editlogin_TextEmail;
-import static com.example.commutingapp.R.layout.activity_sign_in;
-import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
-import static com.example.commutingapp.R.string.getDisabledAccountMessage;
-import static com.example.commutingapp.R.string.getDoubleTappedMessage;
-import static com.example.commutingapp.R.string.getIncorrectEmailOrPasswordMessage;
 
 public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked {
 
@@ -77,7 +61,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     }
 
     public void GoToSettingsClicked(View view) {
-
+        startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
 
     private void initializeAttributes() {
