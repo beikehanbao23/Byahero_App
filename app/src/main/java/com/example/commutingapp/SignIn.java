@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -17,7 +18,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-
 import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
@@ -28,19 +28,27 @@ import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 import ValidateUser.UserManager;
 
-import static com.example.commutingapp.R.id.*;
-import static com.example.commutingapp.R.layout.*;
-import static com.example.commutingapp.R.string.*;
+import static com.example.commutingapp.R.id.FacebookButton;
+import static com.example.commutingapp.R.id.GoogleButton;
+import static com.example.commutingapp.R.id.LoadingProgressBar;
+import static com.example.commutingapp.R.id.LogInButton;
+import static com.example.commutingapp.R.id.TextViewSignUp;
+import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
+import static com.example.commutingapp.R.id.editLogin_TextPassword;
+import static com.example.commutingapp.R.id.editlogin_TextEmail;
+import static com.example.commutingapp.R.layout.activity_sign_in;
+import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
+import static com.example.commutingapp.R.string.getDisabledAccountMessage;
+import static com.example.commutingapp.R.string.getDoubleTappedMessage;
+import static com.example.commutingapp.R.string.getIncorrectEmailOrPasswordMessage;
 
 public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked {
 
     private EditText email, password;
     private Button facebookButton, googleButton, loginButton;
-
-    private TextView dontHaveAnAccountTextView, signUpTextView;
-  //  private CustomToastMessage toastMessageNoInternetConnection;
-    private CustomToastMessage toastMessageBackButton;
     private Dialog noInternetDialog;
+    private TextView dontHaveAnAccountTextView, signUpTextView;
+    private CustomToastMessage toastMessageBackButton;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressBar;
     private UserManager userManager;
@@ -50,13 +58,25 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(activity_sign_in);
         initializeAttributes();
-        noInternetDialog = new Dialog(this);
+
+        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        noInternetDialog.setContentView(custom_no_internet_dialog);
+
         FirebaseUserManager.initializeFirebase();
 
-        //toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
         toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
+
+    }
+
+    private void showNoInternetDialog() {
+        noInternetDialog.show();
+    }
+
+    public void GoToSettingsClicked(View view) {
 
     }
 
@@ -69,6 +89,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
         signUpTextView = findViewById(TextViewSignUp);
         circularProgressBar = findViewById(LoadingProgressBar);
+
     }
 
 
@@ -84,21 +105,31 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         connectionManager = new ConnectionManager(this);
     }
 
+
+    public void retryButtonClicked(View view) {
+        if (connectionManager.PhoneHasInternetConnection()) {
+            noInternetDialog.dismiss();
+            return;
+        }
+        showNoInternetDialog();
+    }
+
+
     @Override
     public void onBackPressed() {
         backButtonClicked();
     }
 
+
     public void SignInButtonIsClicked(View view) {
 
         userManager = new UserManager(getBaseContext(), email, password);
-
         if (userManager.UserInputRequirementsFailedAtSignIn()) {
             return;
         }
-    //TODO CREATE ANIMATION
+        //TODO CREATE ANIMATION
         if (!connectionManager.PhoneHasInternetConnection()) {
-           // toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
+            showNoInternetDialog();
 
             return;
         }
@@ -127,14 +158,15 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         });
 
     }
-    private void LoginAndVerifyUser(){
+
+    private void LoginAndVerifyUser() {
         FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(reloadTask -> {
-            if(reloadTask.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()){
+            if (reloadTask.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
                 showMainScreen();
                 return;
             }
-            //TODO set a toast message
-            Log.e(getClass().getName(),"Email already sent please verify");
+            //TODO set a toast message add UI
+            Log.e(getClass().getName(), "Email already sent please verify");
         });
     }
 
@@ -168,7 +200,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             throw task.getException();
 
         } catch (FirebaseNetworkException firebaseNetworkException) {
-          //  toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
+            showNoInternetDialog();
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
 
             if (firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")) {
@@ -201,4 +233,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             backButton.registerFirstClick();
         }).backButtonIsClicked();
     }
-    }
+
+
+}
