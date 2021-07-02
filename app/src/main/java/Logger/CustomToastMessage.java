@@ -8,7 +8,7 @@ import com.rejowan.cutetoast.CuteToast;
 
 public class CustomToastMessage {
     private Toast toast;
-    private Handler handler;
+
 
     /*
     types of Toast Message::
@@ -32,7 +32,6 @@ public class CustomToastMessage {
         if (type > 10 || type < 1) { throw new RuntimeException("Type of toast is out of bounds"); }
 
         toast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT, type, true);
-        handler = new Handler();
     }
 
 
@@ -47,7 +46,7 @@ public class CustomToastMessage {
         }
         toast.show();
 
-        handler.postDelayed(() -> {
+        new Handler().postDelayed(() -> {
             toast.cancel();
         }, timeAsMilliseconds);
     }

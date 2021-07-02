@@ -1,12 +1,16 @@
 package com.example.commutingapp;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.*;
-
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,23 +21,30 @@ import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
-import Logger.CustomToastMessage;
 import ValidateUser.UserManager;
 
-import static com.example.commutingapp.R.id.*;
+import static com.example.commutingapp.R.id.BackButton;
+import static com.example.commutingapp.R.id.CreateButton;
+import static com.example.commutingapp.R.id.LoadingProgressBar;
+import static com.example.commutingapp.R.id.TextView_AlreadyHaveAccount;
+import static com.example.commutingapp.R.id.TextView_LoginHere;
+import static com.example.commutingapp.R.id.editSignUpConfirmPassword;
+import static com.example.commutingapp.R.id.editTextSignUpEmailAddress;
+import static com.example.commutingapp.R.id.editTextSignUpPassword;
 import static com.example.commutingapp.R.layout.activity_signup;
-import static com.example.commutingapp.R.string.*;
+import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
+import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
+import static com.example.commutingapp.R.string.getSendingEmailErrorMessage;
 
 public class Signup extends AppCompatActivity {
 
     private EditText email, password, confirmPassword;
     private Button backButton, createButton;
     private TextView alreadyHaveAnAccount, loginHere;
-    private CustomToastMessage toastMessageNoInternetConnection;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressbar;
     private UserManager userManager;
-
+    private Dialog noInternetDialog, emailSentDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +53,23 @@ public class Signup extends AppCompatActivity {
         setContentView(activity_signup);
 
         initializeAttributes();
-        //TODO this is wrong
-        toastMessageNoInternetConnection = new CustomToastMessage(this, getString(getNoInternetConnectionAtSignMessage), 2);
+
+        emailSentDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        noInternetDialog.setContentView(custom_no_internet_dialog);
+        emailSentDialog.setContentView(custom_emailsent_dialog);
 
         FirebaseUserManager.initializeFirebase();
 
 
+    }
+
+    private void showNoInternetDialog() {
+        noInternetDialog.show();
+    }
+
+    private void showEmailSentDialog() {
+        emailSentDialog.show();
     }
 
     @Override
@@ -76,6 +98,7 @@ public class Signup extends AppCompatActivity {
     /*
     TODO recheck error message sign in
      */
+
     private void initializeAttributes() {
         email = findViewById(editTextSignUpEmailAddress);
         password = findViewById(editTextSignUpPassword);
@@ -101,66 +124,83 @@ public class Signup extends AppCompatActivity {
         }
 
         if (!connectionManager.PhoneHasInternetConnection()) {
-            toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
+            showNoInternetDialog();
             return;
         }
 
         FirebaseUserManager.getCurrentUser();
-        if (FirebaseUserManager.isUserAlreadySignedIn()) {// email_1
-            Log.e(getClass().getName(), "Email instance is" + FirebaseUserManager.getFirebaseUser().getEmail());
+        if (FirebaseUserManager.isUserAlreadySignedIn()) {
 
-            if(isUserCreatedNewAccount()){
-            signOutPreviousAccount();
-            SignUpUser();
-            return;
+            if (isUserCreatedNewAccount()) {
+                signOutPreviousAccount();
+                ProceedToSignUp();
+                return;
             }
 
-            SignUpAndVerifyUser();
+            SignupAndVerifyUserEmail();
             return;
         }
 
-        SignUpUser();
+        ProceedToSignUp();
 
 
     }
-    private void signOutPreviousAccount(){
+
+    private void signOutPreviousAccount() {
         FirebaseUserManager.getFirebaseAuth().signOut();
     }
-    private boolean isUserCreatedNewAccount(){
+
+    private boolean isUserCreatedNewAccount() {
         String userEmail = email.getText().toString().trim();
         return !FirebaseUserManager.getFirebaseUser().getEmail().equals(userEmail);
     }
 
+
+
     private void sendEmailVerificationToUser() {
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                CuteToast.ct(this, getString(getVerifyEmailToContinueMessage), Toast.LENGTH_SHORT, 1, true).show();
+                showEmailSentDialog();
                 return;
             }
+            //TODO changing UI
             CuteToast.ct(this, getString(getSendingEmailErrorMessage), Toast.LENGTH_LONG, 3, true).show();
         });
     }
 
-    private void SignUpAndVerifyUser() {
+    //TODO REFACTOR This
+    private void SignupAndVerifyUserEmail() {
 
-        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-                showMainScreen();
+        try {
+            //can't put the showEmailSentDialog inside while loop, the documentation says show method should not be override
+
+            if (!FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+                showEmailSentDialog();
+                while (!FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+                    FirebaseUserManager.getFirebaseUser().reload();
+                    if (FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+                        showMainScreen();
+                        break;
+                    }
+                }
                 return;
             }
-            //TODO: CHANGE UI
-            CuteToast.ct(this, getString(getVerifyEmailToContinueMessage), Toast.LENGTH_SHORT, 1, true).show();
-            Log.e("Signup", "At click button user instance " + FirebaseUserManager.getFirebaseUser().getEmail());
-        });
+            showMainScreen();
+
+        } catch (Exception e) {
+            CuteToast.ct(this, e.getMessage(), Toast.LENGTH_SHORT, 3, true).show();
+        }
+
+
     }
 
-    private void SignUpUser() {
+    private void ProceedToSignUp() {
         String userEmail = email.getText().toString().trim();
         String userConfirmPassword = confirmPassword.getText().toString().trim();
 
         startLoading();
         FirebaseUserManager.getFirebaseAuth().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
-        //TODO change animation while waiting for user to verify email
+
             if (task.isSuccessful()) {
                 FirebaseUserManager.getCurrentUser();
                 sendEmailVerificationToUser();
@@ -182,7 +222,7 @@ public class Signup extends AppCompatActivity {
         try {
             throw task.getException();
         } catch (FirebaseNetworkException firebaseNetworkException) {
-            toastMessageNoInternetConnection.showToastWithLimitedTimeThenClose(2250);
+            showNoInternetDialog();
         } catch (Exception ex) {
             CuteToast.ct(this, task.getException().getMessage(), Toast.LENGTH_SHORT, 3, true).show();
         }

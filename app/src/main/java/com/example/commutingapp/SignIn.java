@@ -30,7 +30,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private EditText email, password;
     private Button facebookButton, googleButton, loginButton;
-    private Dialog noInternetDialog;
+    private Dialog noInternetDialog,emailSentDialog;
     private TextView dontHaveAnAccountTextView, signUpTextView;
     private CustomToastMessage toastMessageBackButton;
     private ConnectionManager connectionManager;
@@ -47,12 +47,10 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         setContentView(activity_sign_in);
         initializeAttributes();
 
-        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
-        noInternetDialog.setContentView(custom_no_internet_dialog);
-
         FirebaseUserManager.initializeFirebase();
+        noInternetDialog.setContentView(custom_no_internet_dialog);
+        emailSentDialog.setContentView(custom_emailsent_dialog);
 
-        toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
 
     }
 
@@ -60,9 +58,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         noInternetDialog.show();
     }
 
-    public void GoToSettingsClicked(View view) {
-        startActivity(new Intent(Settings.ACTION_SETTINGS));
-    }
+    private void showEmailSentDialog(){ emailSentDialog.show(); }
+
+    public void GoToSettingsClicked(View view) { startActivity(new Intent(Settings.ACTION_SETTINGS)); }
 
     private void initializeAttributes() {
         email = findViewById(editlogin_TextEmail);
@@ -73,6 +71,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
         signUpTextView = findViewById(TextViewSignUp);
         circularProgressBar = findViewById(LoadingProgressBar);
+        toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
+        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        emailSentDialog = new Dialog(this,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
 
     }
 
@@ -111,28 +112,27 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         if (userManager.UserInputRequirementsFailedAtSignIn()) {
             return;
         }
-        //TODO CREATE ANIMATION
+
         if (!connectionManager.PhoneHasInternetConnection()) {
             showNoInternetDialog();
 
             return;
         }
-        //TODO change variable name
-        LoginUser();
+
+       ProceedToLogin();
     }
 
 
-    private void LoginUser() {
+    private void ProceedToLogin() {
 
         String userUsername = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
 
         startLoading();
         FirebaseUserManager.getFirebaseAuth().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, signInTask -> {
-
             if (signInTask.isSuccessful()) {
                 FirebaseUserManager.getCurrentUser();
-                LoginAndVerifyUser();
+                LoginAndVerifyUserEmail();
                 return;
             }
             if (signInTask.getException() != null) {
@@ -143,13 +143,13 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     }
 
-    private void LoginAndVerifyUser() {
+    private void LoginAndVerifyUserEmail() {
         FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(reloadTask -> {
             if (reloadTask.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
                 showMainScreen();
                 return;
             }
-            //TODO set a toast message add UI
+            showEmailSentDialog();
             Log.e(getClass().getName(), "Email already sent please verify");
         });
     }
