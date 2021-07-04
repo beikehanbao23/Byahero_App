@@ -3,7 +3,6 @@ package com.example.commutingapp;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -32,6 +31,7 @@ import static com.example.commutingapp.R.id.TextView_LoginHere;
 import static com.example.commutingapp.R.id.editSignUpConfirmPassword;
 import static com.example.commutingapp.R.id.editTextSignUpEmailAddress;
 import static com.example.commutingapp.R.id.editTextSignUpPassword;
+import static com.example.commutingapp.R.id.textViewEmail;
 import static com.example.commutingapp.R.layout.activity_signup;
 import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
 import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
@@ -41,12 +41,13 @@ public class Signup extends AppCompatActivity {
 
     private EditText email, password, confirmPassword;
     private Button backButton, createButton;
-    private TextView alreadyHaveAnAccount, loginHere;
+    private TextView alreadyHaveAnAccount, loginHere, emailTextView;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressbar;
     private UserManager userManager;
-    private Dialog noInternetDialog, emailSentDialog;
-    private boolean backButtonPressed;
+    private Dialog noInternetDialog;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,37 +55,17 @@ public class Signup extends AppCompatActivity {
         setContentView(activity_signup);
 
         initializeAttributes();
-        backButtonPressed = false;
-        emailSentDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
-        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+
         noInternetDialog.setContentView(custom_no_internet_dialog);
-        emailSentDialog.setContentView(custom_emailsent_dialog);
 
         FirebaseUserManager.initializeFirebase();
 
 
     }
 
-    private void showNoInternetDialog() {
-        if(noInternetDialog.isShowing()){
-            noInternetDialog.dismiss();
-            return;
-        }
-        noInternetDialog.show();
-    }
-
-    private void showEmailSentDialog() {
-        if(emailSentDialog.isShowing()){
-            emailSentDialog.dismiss();
-            return;
-        }
-        emailSentDialog.show();
-
-    }
 
     @Override
     public void onBackPressed() {
-        backButtonPressed = true;
         backToSignInButton(null);
     }
 
@@ -95,32 +76,9 @@ public class Signup extends AppCompatActivity {
         connectionManager = new ConnectionManager(this);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    /*
-    TODO:
-    when user back to the application after verifying email then it automatically go to
-    main screen without clicking the create button again.
-     */
-    }
-
     /*
     TODO recheck error message sign in
      */
-
-    private void initializeAttributes() {
-        email = findViewById(editTextSignUpEmailAddress);
-        password = findViewById(editTextSignUpPassword);
-        confirmPassword = findViewById(editSignUpConfirmPassword);
-        alreadyHaveAnAccount = findViewById(TextView_AlreadyHaveAccount);
-        loginHere = findViewById(TextView_LoginHere);
-        backButton = findViewById(BackButton);
-        createButton = findViewById(CreateButton);
-        circularProgressbar = findViewById(LoadingProgressBar);
-    }
-
     public void backToSignInButton(View view) {
         startActivity(new Intent(this, SignIn.class));
         finish();
@@ -133,29 +91,31 @@ public class Signup extends AppCompatActivity {
         if (userManager.UserInputRequirementsFailedAtSignUp()) {
             return;
         }
-
         if (!connectionManager.PhoneHasInternetConnection()) {
             showNoInternetDialog();
             return;
         }
-
         FirebaseUserManager.getCurrentUser();
-        if (FirebaseUserManager.isUserAlreadySignedIn()) {
-
-            if (isUserCreatedNewAccount()) {
-                signOutPreviousAccount();
-                ProceedToSignUp();
-                return;
-            }
-
-            SignupAndVerifyUserEmail();
+        if (FirebaseUserManager.isUserAlreadySignedIn() && isUserCreatedNewAccount()) {
+            signOutPreviousAccount();
+            ProceedToSignUp();
             return;
         }
-
         ProceedToSignUp();
-
-
     }
+
+
+    public void retryButtonClicked(View view) {
+    }
+
+    public void GoToSettingsClicked(View view) {
+    }
+
+
+
+
+
+
 
     private void signOutPreviousAccount() {
         FirebaseUserManager.getFirebaseAuth().signOut();
@@ -166,53 +126,34 @@ public class Signup extends AppCompatActivity {
         return !FirebaseUserManager.getFirebaseUser().getEmail().equals(userEmail);
     }
 
-
-
+    //TODO HERE IT IS
+    private boolean isEmailSentSuccessfully(){
+        return FirebaseUserManager.getFirebaseUser().sendEmailVerification().isSuccessful();
+    }
     private void sendEmailVerificationToUser() {
-        FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                showEmailSentDialog();
-                return;
-            }
-            //TODO changing UI
-            CuteToast.ct(this, getString(getSendingEmailErrorMessage), Toast.LENGTH_LONG, 3, true).show();
-        });
+
+        if (isEmailSentSuccessfully()) {
+            clearInputs();
+            showEmailSentDialog();
+            return;
+        }
+        //TODO changing UI
+        CuteToast.ct(this, getString(getSendingEmailErrorMessage), Toast.LENGTH_LONG, 3, true).show();
+
     }
 
     //TODO REFACTOR This
-    private void SignupAndVerifyUserEmail() {
+    private void VerifyUserEmail() {
 
-        try {
-
-
-            if (!FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-                showEmailSentDialog();
-                //TODO create another fucntion
-
-            Handler handler = new Handler();
-                while (!FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-                     handler.postDelayed(() ->{
-                       //FAILED TO CREATE AUTO REFRESH :(
-                             Log.e(getClass().getName(),"Running");
-                             FirebaseUserManager.getFirebaseUser().reload();
-                             if (FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-                                 showMainScreen();
-                                 return;
-                             }
-                         },2000);
-                }
-
-                return;
+        //TODO if email dialog shows then if user click back button the 'pressed again to exit' will show
+        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
+            if(task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()){
+                showMainScreen();
             }
-
-            showMainScreen();
-
-        } catch (Exception e) {
-            CuteToast.ct(this, e.getMessage(), Toast.LENGTH_SHORT, 3, true).show();
-        }
-
+        });
 
     }
+
 
     private void ProceedToSignUp() {
         String userEmail = email.getText().toString().trim();
@@ -239,7 +180,7 @@ public class Signup extends AppCompatActivity {
         });
     }
 
-    public void handleTaskExceptionResults(Task<AuthResult> task) {
+    private void handleTaskExceptionResults(Task<AuthResult> task) {
         try {
             throw task.getException();
         } catch (FirebaseNetworkException firebaseNetworkException) {
@@ -261,6 +202,12 @@ public class Signup extends AppCompatActivity {
 
     }
 
+    private void clearInputs() {
+        email.setText("");
+        password.setText("");
+        confirmPassword.setText("");
+    }
+
     private void finishLoading() {
         circularProgressbar.setVisibility(View.INVISIBLE);
         email.setEnabled(true);
@@ -271,11 +218,35 @@ public class Signup extends AppCompatActivity {
         backButton.setEnabled(true);
         createButton.setEnabled(true);
     }
+    private void initializeAttributes() {
+        email = findViewById(editTextSignUpEmailAddress);
+        password = findViewById(editTextSignUpPassword);
+        confirmPassword = findViewById(editSignUpConfirmPassword);
+        alreadyHaveAnAccount = findViewById(TextView_AlreadyHaveAccount);
+        loginHere = findViewById(TextView_LoginHere);
+        backButton = findViewById(BackButton);
+        createButton = findViewById(CreateButton);
+        circularProgressbar = findViewById(LoadingProgressBar);
+        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        emailTextView = findViewById(textViewEmail);
+    }
 
     private void showMainScreen() {
 
         startActivity(new Intent(this, MainScreen.class));
         finish();
+    }
+    private void showNoInternetDialog() {
+        if (noInternetDialog.isShowing()) {
+            noInternetDialog.dismiss();
+            return;
+        }
+        noInternetDialog.show();
+    }
+
+    private void showEmailSentDialog() {
+        emailTextView.setText(email.getText().toString().trim());
+        setContentView(custom_emailsent_dialog);
     }
 
 }
