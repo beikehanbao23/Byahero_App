@@ -3,6 +3,7 @@ package com.example.commutingapp;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -45,7 +46,7 @@ public class Signup extends AppCompatActivity {
     private ProgressBar circularProgressbar;
     private UserManager userManager;
     private Dialog noInternetDialog, emailSentDialog;
-
+    private boolean backButtonPressed;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +54,7 @@ public class Signup extends AppCompatActivity {
         setContentView(activity_signup);
 
         initializeAttributes();
-
+        backButtonPressed = false;
         emailSentDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
         noInternetDialog.setContentView(custom_no_internet_dialog);
@@ -65,15 +66,25 @@ public class Signup extends AppCompatActivity {
     }
 
     private void showNoInternetDialog() {
+        if(noInternetDialog.isShowing()){
+            noInternetDialog.dismiss();
+            return;
+        }
         noInternetDialog.show();
     }
 
     private void showEmailSentDialog() {
+        if(emailSentDialog.isShowing()){
+            emailSentDialog.dismiss();
+            return;
+        }
         emailSentDialog.show();
+
     }
 
     @Override
     public void onBackPressed() {
+        backButtonPressed = true;
         backToSignInButton(null);
     }
 
@@ -172,19 +183,28 @@ public class Signup extends AppCompatActivity {
     private void SignupAndVerifyUserEmail() {
 
         try {
-            //can't put the showEmailSentDialog inside while loop, the documentation says show method should not be override
+
 
             if (!FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
                 showEmailSentDialog();
+                //TODO create another fucntion
+
+            Handler handler = new Handler();
                 while (!FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-                    FirebaseUserManager.getFirebaseUser().reload();
-                    if (FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-                        showMainScreen();
-                        break;
-                    }
+                     handler.postDelayed(() ->{
+                       //FAILED TO CREATE AUTO REFRESH :(
+                             Log.e(getClass().getName(),"Running");
+                             FirebaseUserManager.getFirebaseUser().reload();
+                             if (FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+                                 showMainScreen();
+                                 return;
+                             }
+                         },2000);
                 }
+
                 return;
             }
+
             showMainScreen();
 
         } catch (Exception e) {
@@ -203,8 +223,9 @@ public class Signup extends AppCompatActivity {
 
             if (task.isSuccessful()) {
                 FirebaseUserManager.getCurrentUser();
-                sendEmailVerificationToUser();
                 finishLoading();
+                sendEmailVerificationToUser();
+
                 return;
 
             }

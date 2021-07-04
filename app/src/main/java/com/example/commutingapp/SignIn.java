@@ -55,10 +55,20 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     }
 
     private void showNoInternetDialog() {
+        if(noInternetDialog.isShowing()){
+            noInternetDialog.dismiss();
+            return;
+        }
         noInternetDialog.show();
     }
 
-    private void showEmailSentDialog(){ emailSentDialog.show(); }
+    private void showEmailSentDialog(){
+        if(emailSentDialog.isShowing()){
+            emailSentDialog.dismiss();
+            return;
+        }
+        emailSentDialog.show();
+    }
 
     public void GoToSettingsClicked(View view) { startActivity(new Intent(Settings.ACTION_SETTINGS)); }
 
@@ -132,7 +142,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         FirebaseUserManager.getFirebaseAuth().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, signInTask -> {
             if (signInTask.isSuccessful()) {
                 FirebaseUserManager.getCurrentUser();
-                LoginAndVerifyUserEmail();
+                VerifyUserEmail();
                 return;
             }
             if (signInTask.getException() != null) {
@@ -143,7 +153,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     }
 
-    private void LoginAndVerifyUserEmail() {
+    private void VerifyUserEmail() {
         FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(reloadTask -> {
             if (reloadTask.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
                 showMainScreen();
