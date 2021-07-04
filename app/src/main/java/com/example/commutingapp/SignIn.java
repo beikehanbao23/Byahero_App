@@ -7,15 +7,19 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.rejowan.cutetoast.CuteToast;
-
-import org.w3c.dom.Text;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
@@ -24,16 +28,29 @@ import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 import ValidateUser.UserManager;
-import static com.example.commutingapp.R.id.*;
-import static com.example.commutingapp.R.layout.*;
-import static com.example.commutingapp.R.string.*;
+
+import static com.example.commutingapp.R.id.FacebookButton;
+import static com.example.commutingapp.R.id.GoogleButton;
+import static com.example.commutingapp.R.id.LoadingProgressBar;
+import static com.example.commutingapp.R.id.LogInButton;
+import static com.example.commutingapp.R.id.TextViewSignUp;
+import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
+import static com.example.commutingapp.R.id.editLogin_TextPassword;
+import static com.example.commutingapp.R.id.editlogin_TextEmail;
+import static com.example.commutingapp.R.id.textViewEmail;
+import static com.example.commutingapp.R.layout.activity_sign_in;
+import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
+import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
+import static com.example.commutingapp.R.string.getDisabledAccountMessage;
+import static com.example.commutingapp.R.string.getDoubleTappedMessage;
+import static com.example.commutingapp.R.string.getIncorrectEmailOrPasswordMessage;
 
 
 public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked {
 
     private EditText email, password;
     private Button facebookButton, googleButton, loginButton;
-    private Dialog noInternetDialog,emailSentDialog;
+    private Dialog noInternetDialog, emailSentDialog;
     private TextView dontHaveAnAccountTextView, signUpTextView;
     private CustomToastMessage toastMessageBackButton;
     private ConnectionManager connectionManager;
@@ -58,23 +75,11 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     }
 
 
-    public void GoToSettingsClicked(View view) { startActivity(new Intent(Settings.ACTION_SETTINGS)); }
-
-    private void initializeAttributes() {
-        email = findViewById(editlogin_TextEmail);
-        password = findViewById(editLogin_TextPassword);
-        loginButton = findViewById(LogInButton);
-        facebookButton = findViewById(FacebookButton);
-        googleButton = findViewById(GoogleButton);
-        dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
-        signUpTextView = findViewById(TextViewSignUp);
-        circularProgressBar = findViewById(LoadingProgressBar);
-        toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
-        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
-        emailSentDialog = new Dialog(this,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
-        emailTextView = findViewById(textViewEmail);
-
+    public void GoToSettingsClicked(View view) {
+        startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
+
+
 
 
     public void SignUpTextClicked(View view) {
@@ -90,9 +95,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
 
     public void retryButtonClicked(View view) {
-        if (connectionManager.PhoneHasInternetConnection()) {
+        if (connectionManager.PhoneHasInternetConnection() && noInternetDialog.isShowing()) {
             noInternetDialog.dismiss();
-            return;
         }
 
     }
@@ -113,11 +117,10 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         if (!connectionManager.PhoneHasInternetConnection()) {
             showNoInternetDialog();
-
             return;
         }
 
-       ProceedToLogin();
+        ProceedToLogin();
     }
     //TODO retest exceptions
 
@@ -138,21 +141,22 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
 
     public void refreshButtonClicked(View view) {
-        if(isUserVerified()){
-            showMainScreen();
-        }
+        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+                showMainScreen();
+            }
+        });
     }
 
+    //TODO fix later
     public void resendEmailIsClicked(View view) {
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
+            if (task.isSuccessful()) {
                 //show cutetoast
                 //start timer
             }
         });
     }
-
-
 
 
     private void ProceedToLogin() {
@@ -174,18 +178,21 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         });
 
     }
-    //TODO fix later
-    private boolean isUserVerified() {
-        return FirebaseUserManager.getFirebaseUser().reload().isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified();
+
+
+    private void VerifyUserEmail() {
+        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
+
+            if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+                showMainScreen();
+                return;
+            }
+            showEmailSentDialog();
+            Log.e(getClass().getName(), "Email already sent please verify");
+
+        });
     }
-    private void VerifyUserEmail(){
-        if(isUserVerified()){
-            showMainScreen();
-            return;
-        }
-        showEmailSentDialog();
-        Log.e(getClass().getName(), "Email already sent please verify");
-    }
+
     private void startLoading() {
         circularProgressBar.setVisibility(View.VISIBLE);
         email.setEnabled(false);
@@ -224,6 +231,21 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             Log.e("SignIn", e.getMessage().toUpperCase());
         }
     }
+    private void initializeAttributes() {
+        email = findViewById(editlogin_TextEmail);
+        password = findViewById(editLogin_TextPassword);
+        loginButton = findViewById(LogInButton);
+        facebookButton = findViewById(FacebookButton);
+        googleButton = findViewById(GoogleButton);
+        dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
+        signUpTextView = findViewById(TextViewSignUp);
+        circularProgressBar = findViewById(LoadingProgressBar);
+        toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
+        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        emailSentDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        emailTextView = findViewById(textViewEmail);
+
+    }
 
     private void showMainScreen() {
         startActivity(new Intent(this, MainScreen.class));
@@ -231,15 +253,15 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     }
 
     private void showNoInternetDialog() {
-        if(noInternetDialog.isShowing()){
+        if (noInternetDialog.isShowing()) {
             noInternetDialog.dismiss();
             return;
         }
         noInternetDialog.show();
     }
 
-    private void showEmailSentDialog(){
-        if(emailSentDialog.isShowing()){
+    private void showEmailSentDialog() {
+        if (emailSentDialog.isShowing()) {
             emailSentDialog.dismiss();
             return;
         }

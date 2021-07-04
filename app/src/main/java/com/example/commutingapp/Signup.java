@@ -3,6 +3,7 @@ package com.example.commutingapp;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -106,15 +107,14 @@ public class Signup extends AppCompatActivity {
 
 
     public void retryButtonClicked(View view) {
+        if(connectionManager.PhoneHasInternetConnection() && noInternetDialog.isShowing()){
+            noInternetDialog.dismiss();
+        }
     }
 
     public void GoToSettingsClicked(View view) {
+        startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
-
-
-
-
-
 
 
     private void signOutPreviousAccount() {
@@ -126,20 +126,17 @@ public class Signup extends AppCompatActivity {
         return !FirebaseUserManager.getFirebaseUser().getEmail().equals(userEmail);
     }
 
-    //TODO HERE IT IS
-    private boolean isEmailSentSuccessfully(){
-        return FirebaseUserManager.getFirebaseUser().sendEmailVerification().isSuccessful();
-    }
+
     private void sendEmailVerificationToUser() {
-
-        if (isEmailSentSuccessfully()) {
-            clearInputs();
-            showEmailSentDialog();
-            return;
-        }
-        //TODO changing UI
-        CuteToast.ct(this, getString(getSendingEmailErrorMessage), Toast.LENGTH_LONG, 3, true).show();
-
+        FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                clearInputs();
+                showEmailSentDialog();
+                return;
+            }
+            //TODO changing UI
+            CuteToast.ct(this, getString(getSendingEmailErrorMessage), Toast.LENGTH_LONG, 3, true).show();
+        });
     }
 
     //TODO REFACTOR This
@@ -147,7 +144,7 @@ public class Signup extends AppCompatActivity {
 
         //TODO if email dialog shows then if user click back button the 'pressed again to exit' will show
         FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
-            if(task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()){
+            if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
                 showMainScreen();
             }
         });
@@ -218,6 +215,7 @@ public class Signup extends AppCompatActivity {
         backButton.setEnabled(true);
         createButton.setEnabled(true);
     }
+
     private void initializeAttributes() {
         email = findViewById(editTextSignUpEmailAddress);
         password = findViewById(editTextSignUpPassword);
@@ -236,6 +234,7 @@ public class Signup extends AppCompatActivity {
         startActivity(new Intent(this, MainScreen.class));
         finish();
     }
+
     private void showNoInternetDialog() {
         if (noInternetDialog.isShowing()) {
             noInternetDialog.dismiss();
