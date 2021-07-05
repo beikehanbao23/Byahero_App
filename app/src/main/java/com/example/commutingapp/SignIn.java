@@ -29,20 +29,10 @@ import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 import ValidateUser.UserManager;
 
-import static com.example.commutingapp.R.id.FacebookButton;
-import static com.example.commutingapp.R.id.GoogleButton;
-import static com.example.commutingapp.R.id.LoadingProgressBar;
-import static com.example.commutingapp.R.id.LogInButton;
-import static com.example.commutingapp.R.id.TextViewSignUp;
-import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
-import static com.example.commutingapp.R.id.editLogin_TextPassword;
-import static com.example.commutingapp.R.id.editlogin_TextEmail;
-import static com.example.commutingapp.R.layout.activity_sign_in;
-import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
-import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
-import static com.example.commutingapp.R.string.getDisabledAccountMessage;
-import static com.example.commutingapp.R.string.getDoubleTappedMessage;
-import static com.example.commutingapp.R.string.getIncorrectEmailOrPasswordMessage;
+import static com.example.commutingapp.R.id.*;
+import static com.example.commutingapp.R.layout.*;
+import static com.example.commutingapp.R.string.*;
+
 
 
 public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked {

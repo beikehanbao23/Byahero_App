@@ -8,13 +8,10 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
@@ -28,20 +25,10 @@ import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 import ValidateUser.UserManager;
 
-import static com.example.commutingapp.R.id.BackButton;
-import static com.example.commutingapp.R.id.CreateButton;
-import static com.example.commutingapp.R.id.LoadingProgressBar;
-import static com.example.commutingapp.R.id.TextView_AlreadyHaveAccount;
-import static com.example.commutingapp.R.id.TextView_LoginHere;
-import static com.example.commutingapp.R.id.editSignUpConfirmPassword;
-import static com.example.commutingapp.R.id.editTextSignUpEmailAddress;
-import static com.example.commutingapp.R.id.editTextSignUpPassword;
-import static com.example.commutingapp.R.id.textViewEmail;
-import static com.example.commutingapp.R.layout.activity_signup;
-import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
-import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
-import static com.example.commutingapp.R.string.getDoubleTappedMessage;
-import static com.example.commutingapp.R.string.getSendingEmailErrorMessage;
+import static com.example.commutingapp.R.id.*;
+import static com.example.commutingapp.R.layout.*;
+import static com.example.commutingapp.R.string.*;
+
 
 
 public class Signup extends AppCompatActivity {
@@ -49,7 +36,7 @@ public class Signup extends AppCompatActivity {
     private final long twoMinutes = 120000;
     private EditText email, password, confirmPassword;
     private Button back_Button, createButton;
-    private TextView alreadyHaveAnAccount, loginHere;
+    private TextView alreadyHaveAnAccount, loginHere, resendEmailTextView;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressbar;
     private UserManager userManager;
@@ -157,16 +144,16 @@ public class Signup extends AppCompatActivity {
     //TODO fix later
     public void resendEmailIsClicked(View view) {
 
-                FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
-                    //show cutetoast
-                    if(task.isSuccessful()){
-                        Log.e(getClass().getName(),"SUCCESS");
-                        return;
-                    }
-                    if(!task.isSuccessful()){
+        FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
 
-                    }
-                });
+            startTimerForVerification();
+            if (task.isSuccessful()) {
+                CuteToast.ct(this, getString(getResendEmailSuccessMessage), Toast.LENGTH_SHORT, 4, true).show();
+                return;
+            }
+            CuteToast.ct(this, getString(getResendEmailFailedMessage), Toast.LENGTH_SHORT, 2, true).show();
+
+        });
 
 
     }
@@ -179,18 +166,24 @@ public class Signup extends AppCompatActivity {
             }
         });
     }
-
+    private void setDisplayForResendEmailTextView_OnTick(long secondsLeft){
+        TextView resendEmailTextView = findViewById(textViewResendEmail);
+        resendEmailTextView.setTextColor(ContextCompat.getColor(this,R.color.gray));
+        resendEmailTextView.setText("Resend verification in "+ secondsLeft+"s");
+        resendEmailTextView.setEnabled(false);
+    }
 
     private void startTimerForVerification() {
         verificationTimer = new CountDownTimer(twoMinutes, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                Log.e(getClass().getName(), "Ticking");
+                long secondsLeft = millisUntilFinished/1000;
+                setDisplayForResendEmailTextView_OnTick(secondsLeft);
             }
 
             @Override
             public void onFinish() {
-
+                Log.e(getClass().getName(), "Finished");
             }
         }.start();
 
@@ -308,5 +301,6 @@ public class Signup extends AppCompatActivity {
         String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
         emailTextView.setText(usersEmail);
     }
+
 
 }
