@@ -37,7 +37,6 @@ import static com.example.commutingapp.R.id.TextViewSignUp;
 import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
 import static com.example.commutingapp.R.id.editLogin_TextPassword;
 import static com.example.commutingapp.R.id.editlogin_TextEmail;
-import static com.example.commutingapp.R.id.textViewEmail;
 import static com.example.commutingapp.R.layout.activity_sign_in;
 import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
 import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
@@ -56,7 +55,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressBar;
     private UserManager userManager;
-    private TextView emailTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +73,20 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     }
 
+    @Override
+    protected void onDestroy() {
+        if(noInternetDialog.isShowing()){
+            noInternetDialog.dismiss();
+        }
+        if(emailSentDialog.isShowing()){
+            emailSentDialog.dismiss();
+        }
+        super.onDestroy();
+    }
 
     public void GoToSettingsClicked(View view) {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
-
-
 
 
     public void SignUpTextClicked(View view) {
@@ -231,6 +238,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             Log.e("SignIn", e.getMessage().toUpperCase());
         }
     }
+
     private void initializeAttributes() {
         email = findViewById(editlogin_TextEmail);
         password = findViewById(editLogin_TextPassword);
@@ -243,7 +251,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
         emailSentDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
-        emailTextView = findViewById(textViewEmail);
+
 
     }
 
@@ -258,14 +266,20 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             return;
         }
         noInternetDialog.show();
+
     }
 
     private void showEmailSentDialog() {
+
         if (emailSentDialog.isShowing()) {
             emailSentDialog.dismiss();
             return;
         }
-        emailTextView.setText(email.getText().toString().trim());
+
         emailSentDialog.show();
+
+
     }
+
+
 }

@@ -19,4 +19,20 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
     }
 
+    @Test
+    public void test(){
+        new CountDownTimer(20000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.e(getClass().getName(),"Ticking");
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        }.start();
+    }
+
+
 }
