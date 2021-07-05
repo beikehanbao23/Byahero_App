@@ -73,6 +73,16 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     }
 
+    @Override
+    protected void onDestroy() {
+        if(noInternetDialog.isShowing()){
+            noInternetDialog.dismiss();
+        }
+        if(emailSentDialog.isShowing()){
+            emailSentDialog.dismiss();
+        }
+        super.onDestroy();
+    }
 
     public void GoToSettingsClicked(View view) {
         startActivity(new Intent(Settings.ACTION_SETTINGS));

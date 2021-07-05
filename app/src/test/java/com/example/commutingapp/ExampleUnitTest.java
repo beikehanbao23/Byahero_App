@@ -1,6 +1,8 @@
 package com.example.commutingapp;
 
 import android.content.res.Resources;
+import android.os.CountDownTimer;
+import android.util.Log;
 
 import org.junit.Test;
 
@@ -18,7 +20,17 @@ public class ExampleUnitTest {
     }
     @Test
     public void test(){
-    System.out.println(R.string.getNoInternetConnectionAtSignMessage);
+        new CountDownTimer(20000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.e(getClass().getName(),"Ticking");
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        }.start();
     }
 
 }

@@ -1,12 +1,11 @@
 package com.example.commutingapp;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -28,22 +27,35 @@ import Logger.CustomToastMessage;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 import ValidateUser.UserManager;
-import static com.example.commutingapp.R.id.*;
-import static com.example.commutingapp.R.string.*;
-import static com.example.commutingapp.R.layout.*;
+
+import static com.example.commutingapp.R.id.BackButton;
+import static com.example.commutingapp.R.id.CreateButton;
+import static com.example.commutingapp.R.id.LoadingProgressBar;
+import static com.example.commutingapp.R.id.TextView_AlreadyHaveAccount;
+import static com.example.commutingapp.R.id.TextView_LoginHere;
+import static com.example.commutingapp.R.id.editSignUpConfirmPassword;
+import static com.example.commutingapp.R.id.editTextSignUpEmailAddress;
+import static com.example.commutingapp.R.id.editTextSignUpPassword;
+import static com.example.commutingapp.R.id.textViewEmail;
+import static com.example.commutingapp.R.layout.activity_signup;
+import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
+import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
+import static com.example.commutingapp.R.string.getDoubleTappedMessage;
+import static com.example.commutingapp.R.string.getSendingEmailErrorMessage;
 
 
 public class Signup extends AppCompatActivity {
 
+    private final long twoMinutes = 120000;
     private EditText email, password, confirmPassword;
     private Button back_Button, createButton;
-    private TextView alreadyHaveAnAccount, loginHere ;
+    private TextView alreadyHaveAnAccount, loginHere;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressbar;
     private UserManager userManager;
     private Dialog noInternetDialog;
     private CustomToastMessage toastMessageBackButton;
-
+    private CountDownTimer verificationTimer;
 
 
     private void initializeAttributes() {
@@ -58,6 +70,17 @@ public class Signup extends AppCompatActivity {
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
 
         toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (noInternetDialog.isShowing()) {
+            noInternetDialog.dismiss();
+        }
+        if (verificationTimer != null) {
+            verificationTimer.cancel();
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -97,8 +120,8 @@ public class Signup extends AppCompatActivity {
     }
 
     public void backToSignInButton(View view) {
-      startActivity(new Intent(this,SignIn.class));
-      finish();
+        startActivity(new Intent(this, SignIn.class));
+        finish();
     }
 
 
@@ -122,7 +145,7 @@ public class Signup extends AppCompatActivity {
 
 
     public void retryButtonClicked(View view) {
-        if(connectionManager.PhoneHasInternetConnection() && noInternetDialog.isShowing()){
+        if (connectionManager.PhoneHasInternetConnection() && noInternetDialog.isShowing()) {
             noInternetDialog.dismiss();
         }
     }
@@ -130,16 +153,23 @@ public class Signup extends AppCompatActivity {
     public void GoToSettingsClicked(View view) {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
-    //TODO
-    public void resendEmailIsClicked(View view) {
-        FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                //show cutetoast
-                //start timer
-            }
-        });
-    }
 
+    //TODO fix later
+    public void resendEmailIsClicked(View view) {
+
+                FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
+                    //show cutetoast
+                    if(task.isSuccessful()){
+                        Log.e(getClass().getName(),"SUCCESS");
+                        return;
+                    }
+                    if(!task.isSuccessful()){
+
+                    }
+                });
+
+
+    }
 
 
     public void refreshButtonClicked(View view) {
@@ -151,13 +181,20 @@ public class Signup extends AppCompatActivity {
     }
 
 
+    private void startTimerForVerification() {
+        verificationTimer = new CountDownTimer(twoMinutes, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.e(getClass().getName(), "Ticking");
+            }
 
+            @Override
+            public void onFinish() {
 
+            }
+        }.start();
 
-
-
-
-
+    }
 
     private void signOutPreviousAccount() {
         FirebaseUserManager.getFirebaseAuth().signOut();
@@ -180,8 +217,6 @@ public class Signup extends AppCompatActivity {
             CuteToast.ct(this, getString(getSendingEmailErrorMessage), Toast.LENGTH_LONG, 3, true).show();
         });
     }
-
-
 
 
     private void ProceedToSignUp() {
@@ -248,7 +283,6 @@ public class Signup extends AppCompatActivity {
     }
 
 
-
     private void showMainScreen() {
 
         startActivity(new Intent(this, MainScreen.class));
@@ -268,13 +302,11 @@ public class Signup extends AppCompatActivity {
         setContentView(custom_emailsent_dialog);
         displayUsersEmailToTextView();
     }
-    private void displayUsersEmailToTextView(){
-    TextView emailTextView = findViewById(textViewEmail);
-    String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
-    emailTextView.setText(usersEmail);
+
+    private void displayUsersEmailToTextView() {
+        TextView emailTextView = findViewById(textViewEmail);
+        String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
+        emailTextView.setText(usersEmail);
     }
-
-
-
 
 }
