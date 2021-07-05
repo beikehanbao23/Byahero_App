@@ -41,7 +41,7 @@ public class Signup extends AppCompatActivity {
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressbar;
     private UserManager userManager;
-    private Dialog noInternetDialog, emailSentDialog;
+    private Dialog noInternetDialog;
     private CustomToastMessage toastMessageBackButton;
 
 
@@ -56,7 +56,6 @@ public class Signup extends AppCompatActivity {
         createButton = findViewById(CreateButton);
         circularProgressbar = findViewById(LoadingProgressBar);
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
-        emailSentDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
 
         toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
     }
@@ -70,7 +69,6 @@ public class Signup extends AppCompatActivity {
         initializeAttributes();
 
         noInternetDialog.setContentView(custom_no_internet_dialog);
-        emailSentDialog.setContentView(custom_emailsent_dialog);
         FirebaseUserManager.initializeFirebase();
 
     }
@@ -78,7 +76,17 @@ public class Signup extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        backToSignInButton(null);
+
+        new CustomBackButton(() -> {
+            if (backButton.isDoubleTapped()) {
+                toastMessageBackButton.hideToast();
+                super.onBackPressed();
+                return;
+            }
+            toastMessageBackButton.showToast();
+            backButton.registerFirstClick();
+        }).backButtonIsClicked();
+
     }
 
 
@@ -88,9 +96,6 @@ public class Signup extends AppCompatActivity {
         connectionManager = new ConnectionManager(this);
     }
 
-    /*
-    TODO recheck error message sign in
-     */
     public void backToSignInButton(View view) {
       startActivity(new Intent(this,SignIn.class));
       finish();
@@ -125,6 +130,7 @@ public class Signup extends AppCompatActivity {
     public void GoToSettingsClicked(View view) {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
+    //TODO
     public void resendEmailIsClicked(View view) {
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -134,6 +140,8 @@ public class Signup extends AppCompatActivity {
         });
     }
 
+
+
     public void refreshButtonClicked(View view) {
         FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
             if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
@@ -141,6 +149,11 @@ public class Signup extends AppCompatActivity {
             }
         });
     }
+
+
+
+
+
 
 
 
@@ -169,15 +182,6 @@ public class Signup extends AppCompatActivity {
     }
 
 
-    private void VerifyUserEmail() {
-
-        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-                showMainScreen();
-            }
-        });
-
-    }
 
 
     private void ProceedToSignUp() {
@@ -256,52 +260,20 @@ public class Signup extends AppCompatActivity {
             noInternetDialog.dismiss();
             return;
         }
+
         noInternetDialog.show();
     }
 
     private void showEmailSentDialog() {
-        if(emailSentDialog.isShowing()){
-            emailSentDialog.dismiss();
-            return;
-        }
-
-
-        emailSentDialog.show();
+        setContentView(custom_emailsent_dialog);
         displayUsersEmailToTextView();
-
-        if(emailSentDialogBackPressed()){
-            Log.e(getClass().getName(),"IT WORKS");
-        }
-
-
-
     }
     private void displayUsersEmailToTextView(){
-    TextView emailTextView = emailSentDialog.findViewById(textViewEmail);
+    TextView emailTextView = findViewById(textViewEmail);
     String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
     emailTextView.setText(usersEmail);
     }
 
-    private boolean emailSentDialogBackPressed(){
-
-        emailSentDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (backButton.isDoubleTapped()) {
-                        toastMessageBackButton.hideToast();
-                        backToSignInButton(null);
-                        return true;
-                    }
-                    toastMessageBackButton.showToast();
-                    backButton.registerFirstClick();
-
-                }
-                return false;
-            }
-        });
-        return false;
-    }
 
 
 
