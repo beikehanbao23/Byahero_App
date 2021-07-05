@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/white">
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/gifImageView"
@@ -48,14 +48,15 @@
         android:id="@+id/textViewEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="sampleEmail@gmail.com"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewWeSentAConfirmationEmailTo"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewWeSentAConfirmationEmailTo" />
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="20dp" />
 
     <TextView
         android:id="@+id/textView10"
@@ -65,6 +66,7 @@
         android:text="Check your email and click on the\n      verification link to continue."
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.533"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewEmail" />
 
@@ -73,11 +75,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
+        android:onClick="resendEmailIsClicked"
         android:text="Resend email"
         android:textColor="@color/blueForLoginButton"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:onClick="resendEmailIsClicked"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
@@ -90,8 +92,8 @@
         android:layout_width="179dp"
         android:layout_height="54dp"
         android:layout_marginBottom="12dp"
-        android:text="Refresh"
         android:onClick="refreshButtonClicked"
+        android:text="Refresh"
         app:layout_constraintBottom_toTopOf="@+id/textViewResendEmail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
