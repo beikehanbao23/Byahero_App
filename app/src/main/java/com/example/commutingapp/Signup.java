@@ -41,6 +41,8 @@ import static com.example.commutingapp.R.layout.activity_signup;
 import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
 import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
 import static com.example.commutingapp.R.string.getDoubleTappedMessage;
+import static com.example.commutingapp.R.string.getResendEmailFailedMessage;
+import static com.example.commutingapp.R.string.getResendEmailSuccessMessage;
 import static com.example.commutingapp.R.string.getSendingEmailErrorMessage;
 
 
@@ -158,13 +160,14 @@ public class Signup extends AppCompatActivity {
     public void resendEmailIsClicked(View view) {
 
                 FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
-                    //show cutetoast
+
+                    startTimerForVerification();
                     if(task.isSuccessful()){
-                        Log.e(getClass().getName(),"SUCCESS");
+                      CuteToast.ct(this,getString(getResendEmailSuccessMessage),Toast.LENGTH_SHORT,4,true).show();
                         return;
                     }
                     if(!task.isSuccessful()){
-
+                        CuteToast.ct(this,getString(getResendEmailFailedMessage),Toast.LENGTH_SHORT,2,true).show();
                     }
                 });
 
@@ -182,7 +185,7 @@ public class Signup extends AppCompatActivity {
 
 
     private void startTimerForVerification() {
-        verificationTimer = new CountDownTimer(twoMinutes, 1000) {
+        verificationTimer = new CountDownTimer(5000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 Log.e(getClass().getName(), "Ticking");
@@ -190,7 +193,7 @@ public class Signup extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-
+                Log.e(getClass().getName(), "Finished");
             }
         }.start();
 
