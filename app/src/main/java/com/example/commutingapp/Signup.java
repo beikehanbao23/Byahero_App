@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
@@ -35,7 +36,7 @@ public class Signup extends AppCompatActivity {
     private final long twoMinutes = 120000;
     private EditText email, password, confirmPassword;
     private Button back_Button, createButton;
-    private TextView alreadyHaveAnAccount, loginHere;
+    private TextView alreadyHaveAnAccount, loginHere, resendEmailTextView;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressbar;
     private UserManager userManager;
@@ -165,15 +166,19 @@ public class Signup extends AppCompatActivity {
             }
         });
     }
-
+    private void setDisplayForResendEmailTextView_OnTick(long secondsLeft){
+        TextView resendEmailTextView = findViewById(textViewResendEmail);
+        resendEmailTextView.setTextColor(ContextCompat.getColor(this,R.color.gray));
+        resendEmailTextView.setText("Resend verification in "+ secondsLeft+"s");
+        resendEmailTextView.setEnabled(false);
+    }
 
     private void startTimerForVerification() {
         verificationTimer = new CountDownTimer(twoMinutes, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                TextView emailTextView = findViewById(R.id.textViewResendEmail);
-                String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
-                emailTextView.setText(usersEmail);
+                long secondsLeft = millisUntilFinished/1000;
+                setDisplayForResendEmailTextView_OnTick(secondsLeft);
             }
 
             @Override
