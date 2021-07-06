@@ -10,7 +10,7 @@
         android:id="@+id/gifImageView"
         android:layout_width="0dp"
         android:layout_height="222dp"
-        android:src="@drawable/emailsent"
+        android:src="@drawable/emailsent2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -43,17 +43,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewConfirmYourEmailAddress" />
 
+    <include layout="@layout/circular_progressbar" />
+
     <TextView
         android:id="@+id/textViewEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="sampleEmail@gmail.com"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewWeSentAConfirmationEmailTo"
+        android:text="sampleEmail@gmail.com"
         android:textSize="14sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewWeSentAConfirmationEmailTo"
         tools:layout_editor_absoluteX="38dp"
         tools:layout_editor_absoluteY="20dp" />
 

@@ -38,7 +38,7 @@ public class Signup extends AppCompatActivity {
     private Button back_Button, createButton;
     private TextView alreadyHaveAnAccount, loginHere, resendEmailTextView;
     private ConnectionManager connectionManager;
-    private ProgressBar circularProgressbar;
+    private ProgressBar circularProgressbar, circularProgressBarForEmailSentDialog;
     private UserManager userManager;
     private Dialog noInternetDialog;
     private CustomToastMessage toastMessageBackButton;
@@ -54,6 +54,7 @@ public class Signup extends AppCompatActivity {
         back_Button = findViewById(BackButton);
         createButton = findViewById(CreateButton);
         circularProgressbar = findViewById(LoadingProgressBar);
+        circularProgressBarForEmailSentDialog = findViewById(LoadingProgressBar);
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
 
         toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
@@ -160,9 +161,16 @@ public class Signup extends AppCompatActivity {
 
 
     public void refreshButtonClicked(View view) {
+        circularProgressBarForEmailSentDialog.setVisibility(View.VISIBLE);
         FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
             if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+                circularProgressBarForEmailSentDialog.setVisibility(View.INVISIBLE);
                 showMainScreen();
+                return;
+            }
+            if(task.getException() != null){
+                circularProgressBarForEmailSentDialog.setVisibility(View.INVISIBLE);
+                handleTaskExceptionResults(task);
             }
         });
     }
@@ -256,7 +264,7 @@ public class Signup extends AppCompatActivity {
         });
     }
 
-    private void handleTaskExceptionResults(Task<AuthResult> task) {
+    private void handleTaskExceptionResults(Task<?> task) {
         try {
             throw task.getException();
         } catch (FirebaseNetworkException firebaseNetworkException) {
