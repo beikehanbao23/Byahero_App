@@ -7,9 +7,9 @@
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/gifImageViewNoInternet"
-        android:layout_width="361dp"
-        android:layout_height="427dp"
-        android:src="@drawable/no_internet"
+        android:layout_width="359dp"
+        android:layout_height="435dp"
+        android:src="@drawable/nointernetgif"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,5 +40,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/retryButton"
         app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="70dp"
+        android:text="                  Slow or no internet connection. \n Please check your internet settings and try again."
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/gifImageViewNoInternet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,5 +15,5 @@
     <string name="getResendEmailFailedMessage">Please check your inbox. A verification email is already sent to your email address.</string>
     <string name="getResendEmailSuccessMessage">New verification email has been sent to your email address.</string>
     <string name="getSendingEmailErrorMessage">There was an error trying to send the verification email. Please try again.</string>
-
+    <string name="getTextViewDisplayMessageAtNoInternetDialog">                  Slow or no internet connection. \n Please check your internet settings and try again.</string>
 </resources>
