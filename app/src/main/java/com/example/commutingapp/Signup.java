@@ -163,14 +163,12 @@ public class Signup extends AppCompatActivity {
         circularProgressBarForEmailSentDialog.setVisibility(View.VISIBLE);
         FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
             if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-                circularProgressBarForEmailSentDialog.setVisibility(View.INVISIBLE);
                 showMainScreen();
-                return;
             }
             if(task.getException() != null){
-                circularProgressBarForEmailSentDialog.setVisibility(View.INVISIBLE);
                 handleTaskExceptionResults(task);
             }
+            circularProgressBarForEmailSentDialog.setVisibility(View.INVISIBLE);
         });
     }
 
@@ -250,7 +248,6 @@ public class Signup extends AppCompatActivity {
                 FirebaseUserManager.getCurrentUser();
                 finishLoading();
                 sendEmailVerificationToUser();
-
                 return;
 
             }

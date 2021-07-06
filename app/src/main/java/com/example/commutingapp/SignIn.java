@@ -148,14 +148,12 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         circularProgressBarEmailSent.setVisibility(View.VISIBLE);
         FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
             if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
-                circularProgressBarEmailSent.setVisibility(View.INVISIBLE);
                 showMainScreen();
-                return;
             }
             if(task.getException() != null){
-                circularProgressBarEmailSent.setVisibility(View.INVISIBLE);
                 handleTaskExceptionResults(task);
             }
+            circularProgressBarEmailSent.setVisibility(View.INVISIBLE);
         });
     }
 
