@@ -76,36 +76,35 @@
         app:layout_constraintStart_toStartOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
+
     <TextView
         android:id="@+id/TextView_DontHaveAnAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="84dp"
         android:layout_marginEnd="48dp"
         android:onClick="SignUpTextClicked"
         android:text="Don't have an account?"
         android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="@+id/GoogleButton"
-        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintHorizontal_bias="0.716"
         app:layout_constraintStart_toStartOf="@+id/FacebookButton"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
         tools:ignore="OnClick" />
 
     <TextView
         android:id="@+id/TextViewSignUp"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginLeft="2dp"
-        android:text="Sign up"
         android:onClick="SignUpTextClicked"
+        android:text="Sign up here"
         android:textColor="@color/blue2"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/TextView_DontHaveAnAccount"
-        app:layout_constraintTop_toTopOf="@+id/TextView_DontHaveAnAccount" />
-
+        app:layout_constraintEnd_toEndOf="@+id/TextView_DontHaveAnAccount"
+        app:layout_constraintStart_toStartOf="@+id/TextView_DontHaveAnAccount"
+        app:layout_constraintTop_toBottomOf="@+id/TextView_DontHaveAnAccount" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/TextInputLayoutLoginEmail"
