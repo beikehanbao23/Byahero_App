@@ -38,7 +38,7 @@ public class Signup extends AppCompatActivity {
     private Button back_Button, createButton;
     private TextView alreadyHaveAnAccount, loginHere, resendEmailTextView;
     private ConnectionManager connectionManager;
-    private ProgressBar circularProgressbar, circularProgressBarForEmailSentDialog;
+    private ProgressBar circularProgressbar;
     private Dialog noInternetDialog;
     private CustomToastMessage toastMessageBackButton;
     private CountDownTimer verificationTimer;
@@ -53,7 +53,7 @@ public class Signup extends AppCompatActivity {
         back_Button = findViewById(BackButton);
         createButton = findViewById(CreateButton);
         circularProgressbar = findViewById(LoadingProgressBar);
-        circularProgressBarForEmailSentDialog = findViewById(LoadingProgressBar);
+
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
 
         toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
@@ -160,6 +160,7 @@ public class Signup extends AppCompatActivity {
 
 
     public void refreshButtonClicked(View view) {
+        ProgressBar circularProgressBarForEmailSentDialog = findViewById(LoadingProgressBar);
         circularProgressBarForEmailSentDialog.setVisibility(View.VISIBLE);
         FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
             if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
@@ -248,6 +249,7 @@ public class Signup extends AppCompatActivity {
                 FirebaseUserManager.getCurrentUser();
                 finishLoading();
                 sendEmailVerificationToUser();
+
                 return;
 
             }

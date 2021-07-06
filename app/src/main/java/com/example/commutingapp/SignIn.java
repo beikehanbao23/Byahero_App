@@ -41,7 +41,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private EditText email, password;
     private Button facebookButton, googleButton, loginButton;
-    private Dialog noInternetDialog, emailSentDialog;
+    private Dialog noInternetDialog;
     private TextView dontHaveAnAccountTextView,signUpTextView,resendEmailTextView;
     private CustomToastMessage toastMessageBackButton;
     private ConnectionManager connectionManager;
@@ -62,8 +62,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         FirebaseUserManager.initializeFirebase();
         noInternetDialog.setContentView(custom_no_internet_dialog);
-        emailSentDialog.setContentView(custom_emailsent_dialog);
-        circularProgressBarEmailSent = emailSentDialog.findViewById(LoadingProgressBar);
+
+
 
     }
 
@@ -72,9 +72,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         if(noInternetDialog.isShowing()){
             noInternetDialog.dismiss();
         }
-        if(emailSentDialog.isShowing()){
-            emailSentDialog.dismiss();
-        }
+
         if(verificationTimer != null){
             verificationTimer.cancel();
         }
@@ -145,12 +143,15 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
 
     public void refreshButtonClicked(View view) {
+
+        circularProgressBarEmailSent = findViewById(LoadingProgressBar);
         circularProgressBarEmailSent.setVisibility(View.VISIBLE);
         FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
             if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
                 showMainScreen();
             }
             if(task.getException() != null){
+
                 handleTaskExceptionResults(task);
             }
             circularProgressBarEmailSent.setVisibility(View.INVISIBLE);
@@ -287,8 +288,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             }
             CuteToast.ct(this, getString(getIncorrectEmailOrPasswordMessage), Toast.LENGTH_SHORT, 3, true).show();
         } catch (Exception e) {
+
             CuteToast.ct(this, e.getMessage(), Toast.LENGTH_SHORT, 3, true).show();
-            Log.e("SignIn", e.getMessage().toUpperCase());
+
         }
     }
 
@@ -304,7 +306,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
-        emailSentDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+
 
 
     }
@@ -325,17 +327,13 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private void showEmailSentDialog() {
 
-        if (emailSentDialog.isShowing()) {
-            emailSentDialog.dismiss();
-            return;
-        }
-
-        emailSentDialog.show();
+     setContentView(custom_emailsent_dialog);
         displayUsersEmailToTextView();
+
     }
 
     private void displayUsersEmailToTextView() {
-        TextView emailTextView = emailSentDialog.findViewById(textViewEmail);
+        TextView emailTextView = findViewById(textViewEmail);
         String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
         emailTextView.setText(usersEmail);
     }
