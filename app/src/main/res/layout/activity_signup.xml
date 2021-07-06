@@ -64,35 +64,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayoutSignUp_ConfirmPassword" />
 
+
     <TextView
         android:id="@+id/TextView_AlreadyHaveAccount"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
         android:onClick="backToSignInButton"
         android:text="Already have an account?"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="@+id/CreateButton"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayoutSignUp_ConfirmPassword"
+        app:layout_constraintStart_toStartOf="@+id/CreateButton"
         app:layout_constraintTop_toBottomOf="@+id/CreateButton" />
 
     <TextView
         android:id="@+id/TextView_LoginHere"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginLeft="2dp"
-        android:text="Login here"
+        android:layout_marginTop="2dp"
         android:onClick="backToSignInButton"
+        android:text="Login here"
         android:textColor="@color/blue2"
+        android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/TextView_AlreadyHaveAccount"
-        app:layout_constraintTop_toTopOf="@+id/TextView_AlreadyHaveAccount" />
-
+        app:layout_constraintEnd_toEndOf="@+id/TextView_AlreadyHaveAccount"
+        app:layout_constraintStart_toStartOf="@+id/TextView_AlreadyHaveAccount"
+        app:layout_constraintTop_toBottomOf="@+id/TextView_AlreadyHaveAccount" />
 
     <include
         layout="@layout/circular_progressbar"

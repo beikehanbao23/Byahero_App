@@ -39,7 +39,6 @@ public class Signup extends AppCompatActivity {
     private TextView alreadyHaveAnAccount, loginHere, resendEmailTextView;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressbar, circularProgressBarForEmailSentDialog;
-    private UserManager userManager;
     private Dialog noInternetDialog;
     private CustomToastMessage toastMessageBackButton;
     private CountDownTimer verificationTimer;
@@ -114,7 +113,7 @@ public class Signup extends AppCompatActivity {
 
 
     public void CreateButtonClicked(View view) {
-        userManager = new UserManager(getBaseContext(), email, password, confirmPassword);
+        UserManager userManager = new UserManager(getBaseContext(), email, password, confirmPassword);
         if (userManager.UserInputRequirementsFailedAtSignUp()) {
             return;
         }
