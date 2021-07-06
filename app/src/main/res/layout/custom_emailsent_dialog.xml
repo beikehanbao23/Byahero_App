@@ -37,8 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="We sent a confirmation email to:"
-        android:textSize="14sp
-"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +74,7 @@
         android:layout_height="wrap_content"
         android:onClick="resendEmailIsClicked"
         android:text="Resend verification"
-        android:textColor="@color/blueForLoginButton"
+        android:textColor="@color/blue2"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

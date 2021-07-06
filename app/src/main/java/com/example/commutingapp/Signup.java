@@ -141,7 +141,7 @@ public class Signup extends AppCompatActivity {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
 
-    //TODO fix later
+
     public void resendEmailIsClicked(View view) {
 
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
@@ -166,24 +166,44 @@ public class Signup extends AppCompatActivity {
             }
         });
     }
-    private void setDisplayForResendEmailTextView_OnTick(long secondsLeft){
-        TextView resendEmailTextView = findViewById(textViewResendEmail);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void setDisplayForResendEmailTextViewWhile_TimerOnTick(long secondsLeft){
         resendEmailTextView.setTextColor(ContextCompat.getColor(this,R.color.gray));
         resendEmailTextView.setText("Resend verification in "+ secondsLeft+"s");
         resendEmailTextView.setEnabled(false);
     }
 
+    private void setDisplayForResendEmailTextWhenTimerFinished(){
+        resendEmailTextView.setTextColor(ContextCompat.getColor(this,R.color.blue2));
+        resendEmailTextView.setText("Resend verification");
+        resendEmailTextView.setEnabled(true);
+    }
+
     private void startTimerForVerification() {
+        resendEmailTextView = findViewById(textViewResendEmail);
         verificationTimer = new CountDownTimer(twoMinutes, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long secondsLeft = millisUntilFinished/1000;
-                setDisplayForResendEmailTextView_OnTick(secondsLeft);
+                setDisplayForResendEmailTextViewWhile_TimerOnTick(secondsLeft);
             }
 
             @Override
             public void onFinish() {
-                Log.e(getClass().getName(), "Finished");
+                setDisplayForResendEmailTextWhenTimerFinished();
             }
         }.start();
 

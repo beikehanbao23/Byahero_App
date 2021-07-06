@@ -3,6 +3,7 @@ package com.example.commutingapp;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
@@ -40,11 +42,13 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private EditText email, password;
     private Button facebookButton, googleButton, loginButton;
     private Dialog noInternetDialog, emailSentDialog;
-    private TextView dontHaveAnAccountTextView, signUpTextView;
+    private TextView dontHaveAnAccountTextView,signUpTextView,resendEmailTextView;
     private CustomToastMessage toastMessageBackButton;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressBar;
     private UserManager userManager;
+    private CountDownTimer verificationTimer;
+    private final long twoMinutes = 120000;
 
 
     @Override
@@ -70,6 +74,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         }
         if(emailSentDialog.isShowing()){
             emailSentDialog.dismiss();
+        }
+        if(verificationTimer != null){
+            verificationTimer.cancel();
         }
         super.onDestroy();
     }
@@ -148,12 +155,62 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     //TODO fix later
     public void resendEmailIsClicked(View view) {
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
+            startTimerForVerification();
             if (task.isSuccessful()) {
-                //show cutetoast
-                //start timer
+                CuteToast.ct(this, getString(getResendEmailSuccessMessage), Toast.LENGTH_SHORT, 4, true).show();
+                return;
             }
+            CuteToast.ct(this, getString(getResendEmailFailedMessage), Toast.LENGTH_SHORT, 2, true).show();
+
         });
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void setDisplayForResendEmailTextViewWhile_TimerOnTick(long secondsLeft){
+        resendEmailTextView.setTextColor(ContextCompat.getColor(this,R.color.gray));
+        resendEmailTextView.setText("Resend verification in "+ secondsLeft+"s");
+        resendEmailTextView.setEnabled(false);
+    }
+
+    private void setDisplayForResendEmailTextWhenTimerFinished(){
+        resendEmailTextView.setTextColor(ContextCompat.getColor(this,R.color.blue2));
+        resendEmailTextView.setText("Resend verification");
+        resendEmailTextView.setEnabled(true);
+    }
+
+
+    private void startTimerForVerification(){
+        resendEmailTextView = findViewById(textViewResendEmail);
+        verificationTimer = new CountDownTimer(twoMinutes, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long secondsLeft = millisUntilFinished/1000;
+                setDisplayForResendEmailTextViewWhile_TimerOnTick(secondsLeft);
+            }
+
+            @Override
+            public void onFinish() {
+                setDisplayForResendEmailTextWhenTimerFinished();
+            }
+        }.start();
+
+    }
+
 
 
     private void ProceedToLogin() {
@@ -185,7 +242,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                 return;
             }
             showEmailSentDialog();
-            Log.e(getClass().getName(), "Email already sent please verify");
+
 
         });
     }
@@ -267,9 +324,12 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         }
 
         emailSentDialog.show();
-
-
+        displayUsersEmailToTextView();
     }
 
-
+    private void displayUsersEmailToTextView() {
+        TextView emailTextView = emailSentDialog.findViewById(textViewEmail);
+        String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
+        emailTextView.setText(usersEmail);
+    }
 }
