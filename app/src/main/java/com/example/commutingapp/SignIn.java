@@ -2,17 +2,15 @@ package com.example.commutingapp;
 
 import android.app.Dialog;
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
-import android.util.Log;
+
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -21,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.kinda.alert.KAlertDialog;
 import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
@@ -30,6 +29,7 @@ import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 import ValidateUser.UserManager;
+
 
 import static com.example.commutingapp.R.id.*;
 import static com.example.commutingapp.R.layout.*;
@@ -151,14 +151,13 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                 showMainScreen();
             }
             if(task.getException() != null){
-
                 handleTaskExceptionResults(task);
             }
             circularProgressBarEmailSent.setVisibility(View.INVISIBLE);
         });
     }
 
-    //TODO fix later
+    //TODO
     public void resendEmailIsClicked(View view) {
 
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
@@ -276,6 +275,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         signUpTextView.setEnabled(true);
     }
 
+
     private void handleTaskExceptionResults(Task<?> task) {
         try {
             throw task.getException();
@@ -283,14 +283,12 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             showNoInternetDialog();
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
             if (firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")) {
-                CuteToast.ct(this, getString(getDisabledAccountMessage), Toast.LENGTH_LONG, 3, true).show();
+                showErrorDialog("Oops..",getString(getDisabledAccountMessage));
                 return;
             }
-            CuteToast.ct(this, getString(getIncorrectEmailOrPasswordMessage), Toast.LENGTH_SHORT, 3, true).show();
+            showErrorDialog("Oops..",getString(getIncorrectEmailOrPasswordMessage));
         } catch (Exception e) {
-
-            CuteToast.ct(this, e.getMessage(), Toast.LENGTH_SHORT, 3, true).show();
-
+            showErrorDialog("Oops..",e.getMessage());
         }
     }
 
@@ -336,5 +334,13 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         TextView emailTextView = findViewById(textViewEmail);
         String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
         emailTextView.setText(usersEmail);
+    }
+    private void showErrorDialog(String title,String contextText){
+        KAlertDialog pDialog = new KAlertDialog(this, KAlertDialog.PROGRESS_TYPE);
+        pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+        pDialog.setTitleText("Loading");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
     }
 }

@@ -110,19 +110,20 @@
         android:id="@+id/TextInputLayoutLoginEmail"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
+        app:startIconDrawable="@drawable/ic_email"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="32dp"
         android:hint="Email"
-        app:startIconDrawable="@drawable/ic_email"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+      >
 
         <com.google.android.material.textfield.TextInputEditText
+
             android:id="@+id/editlogin_TextEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
