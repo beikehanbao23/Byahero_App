@@ -7,27 +7,41 @@ import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
-import com.kinda.alert.KAlertDialog;
-import com.rejowan.cutetoast.CuteToast;
-
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 import ValidateUser.UserManager;
+import id.ionbit.ionalert.IonAlert;
 
-import static com.example.commutingapp.R.id.*;
-import static com.example.commutingapp.R.layout.*;
-import static com.example.commutingapp.R.string.*;
-
+import static com.example.commutingapp.R.id.BackButton;
+import static com.example.commutingapp.R.id.CreateButton;
+import static com.example.commutingapp.R.id.LoadingProgressBar;
+import static com.example.commutingapp.R.id.TextView_AlreadyHaveAccount;
+import static com.example.commutingapp.R.id.TextView_LoginHere;
+import static com.example.commutingapp.R.id.editSignUpConfirmPassword;
+import static com.example.commutingapp.R.id.editTextSignUpEmailAddress;
+import static com.example.commutingapp.R.id.editTextSignUpPassword;
+import static com.example.commutingapp.R.id.textViewEmail;
+import static com.example.commutingapp.R.id.textViewResendEmail;
+import static com.example.commutingapp.R.layout.activity_signup;
+import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
+import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
+import static com.example.commutingapp.R.string.getDoubleTappedMessage;
+import static com.example.commutingapp.R.string.getResendEmailFailedMessage;
+import static com.example.commutingapp.R.string.getResendEmailSuccessMessage;
+import static com.example.commutingapp.R.string.getSendingEmailErrorMessage;
 
 
 public class Signup extends AppCompatActivity {
@@ -37,7 +51,7 @@ public class Signup extends AppCompatActivity {
     private Button back_Button, createButton;
     private TextView alreadyHaveAnAccount, loginHere, resendEmailTextView;
     private ConnectionManager connectionManager;
-    private ProgressBar circularProgressbar,circularProgressBarForEmailSentDialog;
+    private ProgressBar circularProgressbar, circularProgressBarForEmailSentDialog;
     private Dialog noInternetDialog;
     private CustomToastMessage toastMessageBackButton;
     private CountDownTimer verificationTimer;
@@ -144,10 +158,10 @@ public class Signup extends AppCompatActivity {
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
             startTimerForVerification();
             if (task.isSuccessful()) {
-                showSuccessDialog("New email sent",getString(getResendEmailSuccessMessage));
+                showSuccessDialog("New email sent", getString(getResendEmailSuccessMessage));
                 return;
             }
-            showWarningDialog("Please check your inbox",getString(getResendEmailFailedMessage));
+            showWarningDialog("Please check your inbox", getString(getResendEmailFailedMessage));
         });
 
 
@@ -155,13 +169,13 @@ public class Signup extends AppCompatActivity {
 
 
     public void refreshButtonClicked(View view) {
-         circularProgressBarForEmailSentDialog = findViewById(LoadingProgressBar);
+        circularProgressBarForEmailSentDialog = findViewById(LoadingProgressBar);
         circularProgressBarForEmailSentDialog.setVisibility(View.VISIBLE);
         FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
             if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
                 showMainScreen();
             }
-            if(task.getException() != null){
+            if (task.getException() != null) {
                 handleTaskExceptionResults(task);
             }
             circularProgressBarForEmailSentDialog.setVisibility(View.INVISIBLE);
@@ -169,27 +183,15 @@ public class Signup extends AppCompatActivity {
     }
 
 
+    private void setDisplayForResendEmailTextViewWhile_TimerOnTick(long secondsLeft) {
 
-
-
-
-
-
-
-
-
-
-
-
-    private void setDisplayForResendEmailTextViewWhile_TimerOnTick(long secondsLeft){
-
-        resendEmailTextView.setTextColor(ContextCompat.getColor(this,R.color.gray));
-        resendEmailTextView.setText("Resend verification in "+ secondsLeft+"s");
+        resendEmailTextView.setTextColor(ContextCompat.getColor(this, R.color.gray));
+        resendEmailTextView.setText("Resend verification in " + secondsLeft + "s");
         resendEmailTextView.setEnabled(false);
     }
 
-    private void setDisplayForResendEmailTextWhenTimerFinished(){
-        resendEmailTextView.setTextColor(ContextCompat.getColor(this,R.color.blue2));
+    private void setDisplayForResendEmailTextWhenTimerFinished() {
+        resendEmailTextView.setTextColor(ContextCompat.getColor(this, R.color.blue2));
         resendEmailTextView.setText("Resend verification");
         resendEmailTextView.setEnabled(true);
     }
@@ -199,7 +201,7 @@ public class Signup extends AppCompatActivity {
         verificationTimer = new CountDownTimer(twoMinutes, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                long secondsLeft = millisUntilFinished/1000;
+                long secondsLeft = millisUntilFinished / 1000;
                 setDisplayForResendEmailTextViewWhile_TimerOnTick(secondsLeft);
             }
 
@@ -229,7 +231,7 @@ public class Signup extends AppCompatActivity {
                 setEmailSentDialog();
                 return;
             }
-            showErrorDialog("Error",getString(getSendingEmailErrorMessage));
+            showErrorDialog("Error", getString(getSendingEmailErrorMessage));
         });
     }
 
@@ -264,7 +266,7 @@ public class Signup extends AppCompatActivity {
         } catch (FirebaseNetworkException firebaseNetworkException) {
             showNoInternetDialog();
         } catch (Exception ex) {
-            showErrorDialog("Error",task.getException().getMessage());
+            showErrorDialog("Error", task.getException().getMessage());
         }
     }
 
@@ -323,21 +325,23 @@ public class Signup extends AppCompatActivity {
         String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
         emailTextView.setText(usersEmail);
     }
-    private KAlertDialog customDialog(String title,String contextText, int type){
-        KAlertDialog alertDialog = new KAlertDialog(this, type);
+
+    private IonAlert customDialog(String title, String contextText, int type) {
+        IonAlert alertDialog = new IonAlert(this, type);
         alertDialog.setTitleText(title);
-        alertDialog.setContentText(contextText );
-
-       return alertDialog;
+        alertDialog.setContentText(contextText);
+        return alertDialog;
     }
 
-    private void showErrorDialog(String title,String contextText){
-        customDialog(title,contextText,KAlertDialog.ERROR_TYPE).show();
+    private void showErrorDialog(String title, String contextText) {
+        customDialog(title, contextText, IonAlert.ERROR_TYPE).show();
     }
-    private void showSuccessDialog(String title,String contentText){
-        customDialog(title,contentText,KAlertDialog.SUCCESS_TYPE).show();
+
+    private void showSuccessDialog(String title, String contentText) {
+        customDialog(title, contentText, IonAlert.SUCCESS_TYPE).show();
     }
-    private void showWarningDialog(String title,String contentText){
-        customDialog(title,contentText,KAlertDialog.WARNING_TYPE).show();
+
+    private void showWarningDialog(String title, String contentText) {
+        customDialog(title, contentText, IonAlert.WARNING_TYPE).show();
     }
 }

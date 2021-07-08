@@ -10,17 +10,11 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.*;
-
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.kinda.alert.KAlertDialog;
-import com.rejowan.cutetoast.CuteToast;
-
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
@@ -28,6 +22,7 @@ import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 import ValidateUser.UserManager;
+import id.ionbit.ionalert.IonAlert;
 
 
 import static com.example.commutingapp.R.id.*;
@@ -327,22 +322,23 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
      displayUsersEmailToTextView();
 
     }
-    private KAlertDialog customDialog(String title,String contextText, int type){
-        KAlertDialog alertDialog = new KAlertDialog(this, type);
+    private IonAlert customDialog(String title, String contextText, int type) {
+        IonAlert alertDialog = new IonAlert(this, type);
         alertDialog.setTitleText(title);
-        alertDialog.setContentText(contextText );
-
+        alertDialog.setContentText(contextText);
         return alertDialog;
     }
 
-    private void showErrorDialog(String title,String contextText){
-        customDialog(title,contextText,KAlertDialog.ERROR_TYPE).show();
+    private void showErrorDialog(String title, String contextText) {
+        customDialog(title, contextText, IonAlert.ERROR_TYPE).show();
     }
-    private void showSuccessDialog(String title,String contentText){
-        customDialog(title,contentText,KAlertDialog.SUCCESS_TYPE).show();
+
+    private void showSuccessDialog(String title, String contentText) {
+        customDialog(title, contentText, IonAlert.SUCCESS_TYPE).show();
     }
-    private void showWarningDialog(String title,String contentText){
-        customDialog(title,contentText,KAlertDialog.WARNING_TYPE).show();
+
+    private void showWarningDialog(String title, String contentText) {
+        customDialog(title, contentText, IonAlert.WARNING_TYPE).show();
     }
 
 
