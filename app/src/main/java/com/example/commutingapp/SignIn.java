@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.kinda.alert.KAlertDialog;
 import com.rejowan.cutetoast.CuteToast;
@@ -124,7 +123,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         ProceedToLogin();
     }
-    //TODO retest exceptions
+
 
 
     @Override
@@ -157,17 +156,16 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         });
     }
 
-    //TODO
+
     public void resendEmailIsClicked(View view) {
 
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
             startTimerForVerification();
             if (task.isSuccessful()) {
-                CuteToast.ct(this, getString(getResendEmailSuccessMessage), Toast.LENGTH_SHORT, 4, true).show();
+                showSuccessDialog("New email sent",getString(getResendEmailSuccessMessage));
                 return;
             }
-            CuteToast.ct(this, getString(getResendEmailFailedMessage), Toast.LENGTH_SHORT, 2, true).show();
-
+            showWarningDialog("Please check your inbox",getString(getResendEmailFailedMessage));
         });
     }
 
@@ -247,7 +245,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                 showMainScreen();
                 return;
             }
-            showEmailSentDialog();
+            setEmailSentDialog();
 
 
         });
@@ -323,22 +321,38 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     }
 
-    private void showEmailSentDialog() {
+    private void setEmailSentDialog() {
 
      setContentView(custom_emailsent_dialog);
-        displayUsersEmailToTextView();
+     displayUsersEmailToTextView();
 
     }
+    private KAlertDialog customDialog(String title,String contextText, int type){
+        KAlertDialog alertDialog = new KAlertDialog(this, type);
+        alertDialog.setTitleText(title);
+        alertDialog.setContentText(contextText );
+
+        return alertDialog;
+    }
+
+    private void showErrorDialog(String title,String contextText){
+        customDialog(title,contextText,KAlertDialog.ERROR_TYPE).show();
+    }
+    private void showSuccessDialog(String title,String contentText){
+        customDialog(title,contentText,KAlertDialog.SUCCESS_TYPE).show();
+    }
+    private void showWarningDialog(String title,String contentText){
+        customDialog(title,contentText,KAlertDialog.WARNING_TYPE).show();
+    }
+
+
 
     private void displayUsersEmailToTextView() {
         TextView emailTextView = findViewById(textViewEmail);
         String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
         emailTextView.setText(usersEmail);
     }
-    private void showErrorDialog(String title,String contextText){
-        new KAlertDialog(this, KAlertDialog.ERROR_TYPE)
-                .setTitleText(title)
-                .setContentText(contextText )
-                .show();
-    }
+
+
+
 }

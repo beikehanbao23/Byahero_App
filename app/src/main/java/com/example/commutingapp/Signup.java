@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.*;
@@ -15,7 +14,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
-import com.google.firebase.auth.AuthResult;
+import com.kinda.alert.KAlertDialog;
 import com.rejowan.cutetoast.CuteToast;
 
 import FirebaseUserManager.FirebaseUserManager;
@@ -139,18 +138,16 @@ public class Signup extends AppCompatActivity {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
 
-    //TODO
+
     public void resendEmailIsClicked(View view) {
 
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
-
             startTimerForVerification();
             if (task.isSuccessful()) {
-                CuteToast.ct(this, getString(getResendEmailSuccessMessage), Toast.LENGTH_SHORT, 4, true).show();
+                showSuccessDialog("New email sent",getString(getResendEmailSuccessMessage));
                 return;
             }
-            CuteToast.ct(this, getString(getResendEmailFailedMessage), Toast.LENGTH_SHORT, 2, true).show();
-
+            showWarningDialog("Please check your inbox",getString(getResendEmailFailedMessage));
         });
 
 
@@ -229,11 +226,10 @@ public class Signup extends AppCompatActivity {
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 clearInputs();
-                showEmailSentDialog();
+                setEmailSentDialog();
                 return;
             }
-            //TODO changing UI
-            CuteToast.ct(this, getString(getSendingEmailErrorMessage), Toast.LENGTH_LONG, 3, true).show();
+            showErrorDialog("Error",getString(getSendingEmailErrorMessage));
         });
     }
 
@@ -261,14 +257,14 @@ public class Signup extends AppCompatActivity {
 
         });
     }
-//TODO
+
     private void handleTaskExceptionResults(Task<?> task) {
         try {
             throw task.getException();
         } catch (FirebaseNetworkException firebaseNetworkException) {
             showNoInternetDialog();
         } catch (Exception ex) {
-            CuteToast.ct(this, task.getException().getMessage(), Toast.LENGTH_SHORT, 3, true).show();
+            showErrorDialog("Error",task.getException().getMessage());
         }
     }
 
@@ -317,7 +313,7 @@ public class Signup extends AppCompatActivity {
         noInternetDialog.show();
     }
 
-    private void showEmailSentDialog() {
+    private void setEmailSentDialog() {
         setContentView(custom_emailsent_dialog);
         displayUsersEmailToTextView();
     }
@@ -327,6 +323,21 @@ public class Signup extends AppCompatActivity {
         String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
         emailTextView.setText(usersEmail);
     }
+    private KAlertDialog customDialog(String title,String contextText, int type){
+        KAlertDialog alertDialog = new KAlertDialog(this, type);
+        alertDialog.setTitleText(title);
+        alertDialog.setContentText(contextText );
 
+       return alertDialog;
+    }
 
+    private void showErrorDialog(String title,String contextText){
+        customDialog(title,contextText,KAlertDialog.ERROR_TYPE).show();
+    }
+    private void showSuccessDialog(String title,String contentText){
+        customDialog(title,contentText,KAlertDialog.SUCCESS_TYPE).show();
+    }
+    private void showWarningDialog(String title,String contentText){
+        customDialog(title,contentText,KAlertDialog.WARNING_TYPE).show();
+    }
 }
