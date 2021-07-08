@@ -123,10 +123,10 @@
       >
 
         <com.google.android.material.textfield.TextInputEditText
-
             android:id="@+id/editlogin_TextEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:inputType="textEmailAddress"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -137,7 +137,6 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:hint="Password"
-
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         app:startIconDrawable="@drawable/ic_password"

@@ -336,11 +336,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         emailTextView.setText(usersEmail);
     }
     private void showErrorDialog(String title,String contextText){
-        KAlertDialog pDialog = new KAlertDialog(this, KAlertDialog.PROGRESS_TYPE);
-        pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-        pDialog.setTitleText("Loading");
-        pDialog.setCancelable(false);
-        pDialog.show();
-
+        new KAlertDialog(this, KAlertDialog.ERROR_TYPE)
+                .setTitleText(title)
+                .setContentText(contextText )
+                .show();
     }
 }
