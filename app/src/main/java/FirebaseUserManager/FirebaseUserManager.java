@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 
-public class FirebaseUserManager   extends AppCompatActivity {
+public class FirebaseUserManager    {
 
 
     private static FirebaseAuth firebaseAuth;

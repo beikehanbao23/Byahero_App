@@ -15,7 +15,7 @@ import MenuButtons.backButton;
 
 import static com.example.commutingapp.R.string.*;
 public class splashscreen extends AppCompatActivity implements BackButtonDoubleClicked {
-    private Handler handler;
+
     private final int delayInMillis = 700;
     private CustomToastMessage toastMessageBackButton;
 
@@ -25,7 +25,6 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splashscreen);
 
-        handler = new Handler();
 
         toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
 
@@ -43,8 +42,9 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
             return;
         }
 
-        handler.postDelayed(() -> {
+        new Handler().postDelayed(() -> {
             showSignIn();
+           // showIntroSliders();
         }, delayInMillis);
     }
 
@@ -64,7 +64,10 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
         startActivity(new Intent(this, SignIn.class));
         finish();
     }
-
+    private void showIntroSliders(){
+      //  startActivity(new Intent(this,IntroSliders.class));
+        finish();
+    }
     @Override
     public void backButtonClicked() {
 
