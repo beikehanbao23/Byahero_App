@@ -38,10 +38,10 @@ import static com.example.commutingapp.R.id.textViewResendEmail;
 import static com.example.commutingapp.R.layout.activity_signup;
 import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
 import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
-import static com.example.commutingapp.R.string.getDoubleTappedMessage;
-import static com.example.commutingapp.R.string.getResendEmailFailedMessage;
-import static com.example.commutingapp.R.string.getResendEmailSuccessMessage;
-import static com.example.commutingapp.R.string.getSendingEmailErrorMessage;
+import static com.example.commutingapp.R.string.doubleTappedMessage;
+import static com.example.commutingapp.R.string.resendEmailFailedMessage;
+import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
+import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
 
 
 public class Signup extends AppCompatActivity {
@@ -67,7 +67,7 @@ public class Signup extends AppCompatActivity {
         createButton = findViewById(CreateButton);
         circularProgressbar = findViewById(LoadingProgressBar);
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
-        toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
+        toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
     }
 
     @Override
@@ -158,10 +158,10 @@ public class Signup extends AppCompatActivity {
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
             startTimerForVerification();
             if (task.isSuccessful()) {
-                showSuccessDialog("New email sent", getString(getResendEmailSuccessMessage));
+                showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
                 return;
             }
-            showWarningDialog("Please check your inbox", getString(getResendEmailFailedMessage));
+            showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
         });
 
 
@@ -231,7 +231,7 @@ public class Signup extends AppCompatActivity {
                 setEmailSentDialog();
                 return;
             }
-            showErrorDialog("Error", getString(getSendingEmailErrorMessage));
+            showErrorDialog("Error", getString(sendingEmailErrorMessage));
         });
     }
 

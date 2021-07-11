@@ -13,7 +13,6 @@ import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 
-import static com.example.commutingapp.R.string.*;
 public class splashscreen extends AppCompatActivity implements BackButtonDoubleClicked {
 
     private final int delayInMillis = 700;
@@ -26,7 +25,7 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
         setContentView(R.layout.activity_splashscreen);
 
 
-        toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
+        toastMessageBackButton = new CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10);
 
 
         FirebaseUserManager.initializeFirebase();

@@ -40,13 +40,13 @@ public class User {
         String emailInput = email.getText().toString().trim();
 
         if (isNull(emailInput)) {
-            email.setError(context.getString(getFieldLeftBlankMessage));
+            email.setError(context.getString(fieldLeftBlankMessage));
             email.requestFocus();
             return true;
         }
 
         if (!validEmail()) {
-            email.setError(context.getString(getEmailIsInvalidMessage));
+            email.setError(context.getString(emailIsInvalidMessage));
             email.requestFocus();
             return true;
         }
@@ -59,18 +59,18 @@ public class User {
         String confirmPasswordInput = confirmPassword.getText().toString().trim();
 
         if (isNull(confirmPasswordInput)) {
-            confirmPassword.setError(context.getString(getFieldLeftBlankMessage));
+            confirmPassword.setError(context.getString(fieldLeftBlankMessage));
             confirmPassword.requestFocus();
             return true;
         }
         if (passwordIsNotMatch()) {
-            confirmPassword.setError(context.getString(getPasswordIsNotMatchMessage));
+            confirmPassword.setError(context.getString(passwordIsNotMatchMessage));
             confirmPassword.requestFocus();
             return true;
         }
 
         if (!isPasswordStrong()) {
-            confirmPassword.setError(context.getString(getPasswordIsWeakMessage));
+            confirmPassword.setError(context.getString(passwordIsWeakMessage));
             confirmPassword.requestFocus();
             return true;
 
@@ -83,7 +83,7 @@ public class User {
         String passwordInput = password.getText().toString().trim();
 
         if (isNull(passwordInput)) {
-            password.setError(context.getString(getFieldLeftBlankMessage));
+            password.setError(context.getString(fieldLeftBlankMessage));
             password.requestFocus();
             return true;
         }

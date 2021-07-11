@@ -12,7 +12,6 @@ import Logger.CustomToastMessage;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 import MenuButtons.BackButtonDoubleClicked;
-import static com.example.commutingapp.R.string.*;
 
 public class MainScreen extends AppCompatActivity implements BackButtonDoubleClicked {
 
@@ -25,7 +24,7 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
         setContentView(R.layout.activity_main_screen);
 
 
-        toastMessageBackButton = new CustomToastMessage(this,getString(getDoubleTappedMessage),10);
+        toastMessageBackButton = new CustomToastMessage(this,getString(R.string.doubleTappedMessage),10);
 
 
         FirebaseUserManager.initializeFirebase();

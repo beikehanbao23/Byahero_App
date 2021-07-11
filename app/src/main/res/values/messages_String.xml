@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="getFieldLeftBlankMessage">Field cannot be left blank.</string>
-    <string name="getNoInternetConnectionAtSignMessage">Unable to login. Please check your internet connection</string>
-    <string name="getDoubleTappedMessage">Tap again to exit</string>
-    <string name="getIncorrectEmailOrPasswordMessage">Email or password is incorrect</string>
-    <string name="getSomethingWentWrongMessage">We\'re sorry, Something went wrong. Please try again.</string>
-    <string name="getNameTooShortMessage">Name should be at least 3 characters long</string>
-    <string name="getNameHasSpecialCharactersMessage">Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.</string>
-    <string name="getEmailIsInvalidMessage">Email is invalid</string>
-    <string name="getPasswordIsNotMatchMessage">The specified password do not match.</string>
-    <string name="getPhoneNumberIsInvalidMessage">Phone number is invalid</string>
-    <string name="getPasswordIsWeakMessage">Password must contain at least 8 characters, including numbers or special characters.</string>
-    <string name="getDisabledAccountMessage">Account Disabled, our content monitors have determined that your behaviour has been in violation of our Terms of Service.</string>
-    <string name="getResendEmailFailedMessage">Please check your inbox. A verification email is already sent to your email address.</string>
-    <string name="getResendEmailSuccessMessage">New verification email has been sent to your email address.</string>
-    <string name="getSendingEmailErrorMessage">There was an error trying to send the verification email. Please try again.</string>
+    <string name="fieldLeftBlankMessage">Field cannot be left blank.</string>
+    <string name="noInternetConnectionAtSignMessage">Unable to login. Please check your internet connection</string>
+    <string name="doubleTappedMessage">Tap again to exit</string>
+    <string name="incorrectEmailOrPasswordMessage">Email or password is incorrect</string>
+    <string name="somethingWentWrongMessage">We\'re sorry, Something went wrong. Please try again.</string>
+    <string name="nameTooShortMessage">Name should be at least 3 characters long</string>
+    <string name="nameHasSpecialCharactersMessage">Name can only contain alphanumeric characters, spaces, periods, hyphens, and apostrophes.</string>
+    <string name="emailIsInvalidMessage">Email is invalid</string>
+    <string name="passwordIsNotMatchMessage">The specified password do not match.</string>
+    <string name="phoneNumberIsInvalidMessage">Phone number is invalid</string>
+    <string name="passwordIsWeakMessage">Password must contain at least 8 characters, including numbers or special characters.</string>
+    <string name="disabledAccountMessage">Account Disabled, our content monitors have determined that your behaviour has been in violation of our Terms of Service.</string>
+    <string name="resendEmailFailedMessage">Please check your inbox. A verification email is already sent to your email address.</string>
+    <string name="resendEmailSuccessMessage">New verification email has been sent to your email address.</string>
+    <string name="sendingEmailErrorMessage">There was an error trying to send the verification email. Please try again.</string>
+
+
+
+    <string name="headerTextChooseDestinationMessage">Choose your destination</string>
+    <string name="headerTextEnjoyTripsMessage">Enjoy your trips</string>
+    <string name="headerTextAccurateWeatherMessage">Accurate weather update</string>
+
+    <string name="descriptionTextChooseDestinationMessage">The road ahead may be long and winding but you’ll make it there safe and sound</string>
+    <string name="descriptionTextEnjoyTripMessage">You\'re going to have a blast on your cruise—enjoy every bit of it and have a safe trip.</string>
+    <string name="descriptionTextAccurateWeatherMessage">Sunshine is delicious, rain is refreshing, wind braces us up; there is really no such thing as bad weather, only different kinds of good weather.</string>
 
 </resources>

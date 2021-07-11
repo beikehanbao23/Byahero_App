@@ -20,7 +20,6 @@ import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
 import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
-import MenuButtons.backButton;
 import ValidateUser.UserManager;
 import id.ionbit.ionalert.IonAlert;
 
@@ -125,13 +124,13 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     public void backButtonClicked() {
 
         new CustomBackButton(() -> {
-            if (backButton.isDoubleTapped()) {
+            if (MenuButtons.backButton.isDoubleTapped()) {
                 toastMessageBackButton.hideToast();
                 super.onBackPressed();
                 return;
             }
             toastMessageBackButton.showToast();
-            backButton.registerFirstClick();
+            MenuButtons.backButton.registerFirstClick();
         }).backButtonIsClicked();
     }
 
@@ -157,10 +156,10 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
             startTimerForVerification();
             if (task.isSuccessful()) {
-                showSuccessDialog("New email sent",getString(getResendEmailSuccessMessage));
+                showSuccessDialog("New email sent",getString(resendEmailSuccessMessage));
                 return;
             }
-            showWarningDialog("Please check your inbox",getString(getResendEmailFailedMessage));
+            showWarningDialog("Please check your inbox",getString(resendEmailFailedMessage));
         });
     }
 
@@ -276,10 +275,10 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             showNoInternetDialog();
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
             if (firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")) {
-                showErrorDialog("Oops..",getString(getDisabledAccountMessage));
+                showErrorDialog("Oops..",getString(disabledAccountMessage));
                 return;
             }
-            showErrorDialog("Oops..",getString(getIncorrectEmailOrPasswordMessage));
+            showErrorDialog("Oops..",getString(incorrectEmailOrPasswordMessage));
         } catch (Exception e) {
             showErrorDialog("Oops..",e.getMessage());
         }
@@ -295,7 +294,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         signUpTextView = findViewById(TextViewSignUp);
         circularProgressBar = findViewById(LoadingProgressBar);
 
-        toastMessageBackButton = new CustomToastMessage(this, getString(getDoubleTappedMessage), 10);
+        toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
 
 
