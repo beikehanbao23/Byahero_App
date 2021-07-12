@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
+
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
@@ -72,12 +73,8 @@ public class Signup extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if (noInternetDialog.isShowing()) {
-            noInternetDialog.dismiss();
-        }
-        if (verificationTimer != null) {
-            verificationTimer.cancel();
-        }
+        closeInternetDialog();
+        removeVerificationTimer();
         super.onDestroy();
     }
 
@@ -182,6 +179,18 @@ public class Signup extends AppCompatActivity {
         });
     }
 
+
+    private void removeVerificationTimer() {
+        if (verificationTimer != null) {
+            verificationTimer.cancel();
+        }
+    }
+
+    private void closeInternetDialog() {
+        if (noInternetDialog.isShowing()) {
+            noInternetDialog.dismiss();
+        }
+    }
 
     private void setDisplayForResendEmailTextViewWhile_TimerOnTick(long secondsLeft) {
 
