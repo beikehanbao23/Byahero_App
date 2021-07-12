@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/imageViewDisplaySliders"
         android:layout_width="0dp"
         android:layout_height="368dp"
         android:layout_marginTop="16dp"
@@ -17,7 +17,7 @@
         app:srcCompat="@drawable/accurate_weather" />
 
     <TextView
-        android:id="@+id/headerTextView"
+        android:id="@+id/headerTextViewSliders"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -28,10 +28,10 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViewDisplaySliders" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/descriptionTextViewSliders"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -43,6 +43,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/headerTextViewSliders" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

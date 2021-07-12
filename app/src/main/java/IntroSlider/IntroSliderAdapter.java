@@ -1,8 +1,13 @@
 package IntroSlider;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.example.commutingapp.R;
@@ -10,34 +15,61 @@ import com.example.commutingapp.R;
 public class IntroSliderAdapter extends PagerAdapter {
 
 
-    private final Context context;
+    private Context context;
+    private ImageView photoDisplay;
+    private TextView headerTextDisplay,descriptionTextDisplay;
+
+    public IntroSliderAdapter(Context context) {
+        this.context = context;
+    }
     private final Integer[] headerText = {
             R.string.headerTextChooseDestinationMessage,
             R.string.headerTextEnjoyTripsMessage,
             R.string.headerTextAccurateWeatherMessage,
     };
+
+
     private final Integer[] descriptionText = {
             R.string.descriptionTextChooseDestinationMessage,
             R.string.descriptionTextEnjoyTripMessage,
             R.string.descriptionTextAccurateWeatherMessage
     };
+
+
     private final Integer[] imageDisplay = {
             R.drawable.selectroute,
             R.drawable.bus_gif,
             R.drawable.accurate_weather
     };
 
-    public IntroSliderAdapter(Context context) {
-        this.context = context;
-    }
+
 
     @Override
     public int getCount() {
-        return 0;
+        return descriptionText.length;
     }
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return false;
+        return view == (ConstraintLayout) object;
+    }
+
+
+    @Override
+    public Object instantiateItem( ViewGroup container, int position) {
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.placeholder_sliders,container,false);
+
+        photoDisplay = view.findViewById(R.id.imageViewDisplaySliders);
+        headerTextDisplay = view.findViewById(R.id.headerTextViewSliders);
+        descriptionTextDisplay = view.findViewById(R.id.descriptionTextViewSliders);
+
+        photoDisplay.setImageResource(imageDisplay[position]);
+        headerTextDisplay.setText(headerText[position]);
+        descriptionTextDisplay.setText(descriptionText[position]);
+
+        container.addView(view);
+     return view;
+
     }
 }
