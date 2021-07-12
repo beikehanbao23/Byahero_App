@@ -7,12 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.example.commutingapp.R;
 
-public class IntroSliderAdapter extends PagerAdapter {
+public class IntroSliderAdapter extends RecyclerView.Adapter {
 
 
     private Context context;
@@ -71,5 +73,21 @@ public class IntroSliderAdapter extends PagerAdapter {
         container.addView(view);
      return view;
 
+    }
+
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder( RecyclerView.ViewHolder holder, int position) {
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return 0;
     }
 }
