@@ -64,7 +64,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
+        
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(activity_sign_in);
         initializeAttributes();
