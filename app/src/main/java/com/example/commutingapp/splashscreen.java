@@ -40,11 +40,7 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
             showMainScreen();
             return;
         }
-
-        new Handler().postDelayed(() -> {
-            showSignIn();
-           // showIntroSliders();
-        }, delayInMillis);
+        new Handler().postDelayed(this::showIntroSliders, delayInMillis);
     }
 
 
@@ -59,14 +55,11 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
         finish();
     }
 
-    private void showSignIn() {
-        startActivity(new Intent(this, SignIn.class));
+    private void showIntroSliders() {
+        startActivity(new Intent(this, IntroSlider.class));
         finish();
     }
-    private void showIntroSliders(){
-      //  startActivity(new Intent(this,IntroSliders.class));
-        finish();
-    }
+
     @Override
     public void backButtonClicked() {
 

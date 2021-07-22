@@ -178,6 +178,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         if (verificationTimer != null) {
             verificationTimer.cancel();
         }
+        System.out.println();
     }
 
     private void closeInternetDialog() {
@@ -326,7 +327,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         displayUsersEmailToTextView();
 
     }
-
+    //TODO("Create class for this")
     private IonAlert customDialog(String title, String contextText, int type) {
         IonAlert alertDialog = new IonAlert(this, type);
         alertDialog.setTitleText(title);

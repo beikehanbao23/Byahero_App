@@ -1,4 +1,4 @@
-package AdaptersAndDataClass
+package Adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,8 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.commutingapp.R.drawable.*
 import com.example.commutingapp.R.layout.intro_sliders_adapter
 import com.example.commutingapp.R.string.*
+import kotlinx.android.synthetic.main.intro_sliders_adapter.view.*
 
-const val ITEM_COUNT = 3
+const val ITEMS_COUNT = 3
 
 /* Adapters provide a binding from an
  app-specific data set to views that are
@@ -25,24 +26,26 @@ class IntroSliderAdapter(val context: Context) :
     )
 
     private val headerText = arrayListOf<Int>(
+
         headerTextEnjoyTripsMessage,
         headerTextChooseDestinationMessage,
         headerTextAccurateWeatherMessage
     )
 
     private val descriptionText = arrayListOf<Int>(
+
         descriptionTextEnjoyTripMessage,
         descriptionTextChooseDestinationMessage,
         descriptionTextAccurateWeatherMessage
-    )
 
+    )
 
 
     /* A ViewHolder describes an
     item view and metadata about
     its place within the RecyclerView.*/
 
-    inner  class IntroSliderViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    inner class IntroSliderViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntroSliderViewHolder {
@@ -52,8 +55,16 @@ class IntroSliderAdapter(val context: Context) :
     }
 
     override fun onBindViewHolder(holder: IntroSliderViewHolder, position: Int) {
-      val image = images[position]
+
+        fun elements() = object {
+            val image = images[position]
+            val title = context.getString(headerText[position])
+            val description = context.getString(descriptionText[position])
+        }
+        holder.itemView.imageViewDisplaySliders.setImageResource(elements().image)
+        holder.itemView.headerTextViewSliders.text = elements().title
+        holder.itemView.descriptionTextViewSliders.text = elements().description
     }
 
-    override fun getItemCount() = ITEM_COUNT
+    override fun getItemCount() = ITEMS_COUNT
 }

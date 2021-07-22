@@ -18,6 +18,8 @@ import androidx.core.content.ContextCompat;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 
+import java.util.Objects;
+
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomToastMessage;
@@ -229,7 +231,7 @@ public class Signup extends AppCompatActivity {
 
     private boolean isUserCreatedNewAccount() {
         String userEmail = email.getText().toString().trim();
-        return !FirebaseUserManager.getFirebaseUser().getEmail().equals(userEmail);
+        return !Objects.equals(FirebaseUserManager.getFirebaseUser().getEmail(), userEmail);
     }
 
 
