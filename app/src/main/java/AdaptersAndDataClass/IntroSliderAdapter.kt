@@ -1,39 +1,59 @@
 package AdaptersAndDataClass
 
+import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.commutingapp.R
+import com.example.commutingapp.R.drawable.*
+import com.example.commutingapp.R.layout.intro_sliders_adapter
+import com.example.commutingapp.R.string.*
 
-class IntroSliderAdapter(private val introslides: List<IntroSlider_DC>) : RecyclerView.Adapter<IntroSliderAdapter.IntroSliderViewHolder>() {
+const val ITEM_COUNT = 3
+
+/* Adapters provide a binding from an
+ app-specific data set to views that are
+ displayed within a RecyclerView.*/
+
+class IntroSliderAdapter(val context: Context) :
+    RecyclerView.Adapter<IntroSliderAdapter.IntroSliderViewHolder>() {
+
+    private val images = arrayListOf<Int>(
+        enjoytrip,
+        selectroute,
+        accurate_weather
+    )
+
+    private val headerText = arrayListOf<Int>(
+        headerTextEnjoyTripsMessage,
+        headerTextChooseDestinationMessage,
+        headerTextAccurateWeatherMessage
+    )
+
+    private val descriptionText = arrayListOf<Int>(
+        descriptionTextEnjoyTripMessage,
+        descriptionTextChooseDestinationMessage,
+        descriptionTextAccurateWeatherMessage
+    )
 
 
-    inner class IntroSliderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val textTitle = view.findViewById<TextView>(R.id.headerTextViewSliders)
-        private val textDescription = view.findViewById<TextView>(R.id.descriptionTextViewSliders)
-        private val imageDisplay = view.findViewById<ImageView>(R.id.imageViewDisplaySliders)
+    /* A ViewHolder describes an
+    item view and metadata about
+    its place within the RecyclerView.*/
 
-    fun bind(introSlider:IntroSlider_DC){
-        textTitle.text = introSlider.title
-        textDescription.text = introSlider.description
-        imageDisplay.setImageResource(introSlider.icon)
-    }
+    inner  class IntroSliderViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntroSliderViewHolder {
-        TODO("Not yet implemented")
+        val view = LayoutInflater.from(parent.context)
+            .inflate(intro_sliders_adapter, parent, false)
+        return IntroSliderViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: IntroSliderViewHolder, position: Int) {
-        TODO("Not yet implemented")
+      val image = images[position]
     }
 
-    override fun getItemCount(): Int {
-        TODO("Not yet implemented")
-    }
+    override fun getItemCount() = ITEM_COUNT
 }
