@@ -14,10 +14,10 @@ class IntroSlider : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro_slider)
         viewPagerSliders.adapter = IntroSliderAdapter(this)
+        setupPageIndicators()
 
 
-    }
-
+    
     private fun setupPageIndicators() {
         val indicators = arrayOfNulls<ImageView>(3)
         val layoutParameters: LinearLayout.LayoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
@@ -31,7 +31,28 @@ class IntroSlider : AppCompatActivity() {
                 this?.layoutParams = layoutParameters
             }
             linearLayout_dotsIndicator.addView(indicators[counter])
+
         }
 
+
+        private fun setCurrentIndicator(index:Int){
+
+        }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
