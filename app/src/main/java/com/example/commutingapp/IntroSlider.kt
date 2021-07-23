@@ -76,7 +76,7 @@ private fun setupDisplay(indicators: Array<ImageView?>, layoutParameters: Linear
     private fun setInactiveIndicators(indicator:ImageView){
     indicator.setImageDrawable(ContextCompat.getDrawable(
         applicationContext,
-        R.drawable.ic_facebook))
+        R.drawable.inactive_indicator))
     }
 
 
