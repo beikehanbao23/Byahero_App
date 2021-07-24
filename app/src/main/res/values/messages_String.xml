@@ -21,9 +21,12 @@
     <string name="headerTextChooseDestinationMessage">Choose your destination</string>
     <string name="headerTextEnjoyTripsMessage">Enjoy your trips</string>
     <string name="headerTextAccurateWeatherMessage">Accurate weather update</string>
+    <string name="headerTextCreateAccountMessage">Create your account</string>
+
 
     <string name="descriptionTextChooseDestinationMessage">The road ahead may be long and winding but you’ll make it there safe and sound</string>
     <string name="descriptionTextEnjoyTripMessage">You\'re going to have a blast on your cruise—enjoy every bit of it and have a safe trip.</string>
     <string name="descriptionTextAccurateWeatherMessage">Wherever you go, no matter what the weather, always bring your own sunshine.</string>
+    <string name="descriptionTextCreateAccountMessage">Complete your profile in less than 5 minutes to get accurate results.</string>
 
 </resources>

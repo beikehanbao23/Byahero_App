@@ -14,19 +14,24 @@ class IntroSlider : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro_slider)
-        viewPagerSliders.adapter = IntroSliderAdapter(this)
-        setupPageIndicators()
+
+        setupIntroSliders()
+        setupIntroSliderPageIndicators()
+
         setCurrentIndicator(0)
     }
 
+    private fun setupIntroSliders(){
+        viewPagerSliders.adapter = IntroSliderAdapter(this)
+    }
 
-        private fun setupPageIndicators() {
-            val indicators = arrayOfNulls<ImageView>(3)
+        private fun setupIntroSliderPageIndicators() {
+            val indicators = arrayOfNulls<ImageView>(4)
             val layoutParameters: LinearLayout.LayoutParams =
                 LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
 
             layoutParameters.setMargins(8, 0, 8, 0)
-            setupDisplay(indicators,layoutParameters)
+            renderIndicators(indicators,layoutParameters)
 
 
         /*
@@ -40,7 +45,7 @@ class IntroSlider : AppCompatActivity() {
 
         }
 
-private fun setupDisplay(indicators: Array<ImageView?>, layoutParameters: LinearLayout.LayoutParams):Unit{
+private fun renderIndicators(indicators: Array<ImageView?>, layoutParameters: LinearLayout.LayoutParams):Unit{
 
     for (counter in indicators.indices) {
 
@@ -57,11 +62,7 @@ private fun setupDisplay(indicators: Array<ImageView?>, layoutParameters: Linear
         val counts = linearLayout_dotsIndicator.childCount
         for (counter in 0 until counts) {
             val imageView = linearLayout_dotsIndicator[counter] as ImageView
-            if(counter == index){
-                setActiveIndicators(imageView)
-                return
-            }
-            setInactiveIndicators(imageView)
+            if(counter == index) setActiveIndicators(imageView) else setInactiveIndicators(imageView)
         }
 
     }

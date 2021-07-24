@@ -9,10 +9,11 @@ import com.example.commutingapp.R.drawable.*
 import com.example.commutingapp.R.layout.intro_sliders_adapter
 import com.example.commutingapp.R.string.*
 import kotlinx.android.synthetic.main.intro_sliders_adapter.view.*
+
 /*
 This class setup the data that show in sliders
  */
-const val ITEMS_COUNT = 3
+const val ITEMS_COUNT = 4
 
 /* Adapters provide a binding from an
  app-specific data set to views that are
@@ -22,20 +23,22 @@ class IntroSliderAdapter(val context: Context) :
     RecyclerView.Adapter<IntroSliderAdapter.IntroSliderViewHolder>() {
 
     private val images = arrayListOf<Int>(
+        rocket,
         enjoytrip,
         selectroute,
         accurate_weather
+
     )
 
     private val headerText = arrayListOf<Int>(
-
+        headerTextCreateAccountMessage,
         headerTextEnjoyTripsMessage,
         headerTextChooseDestinationMessage,
         headerTextAccurateWeatherMessage
     )
 
     private val descriptionText = arrayListOf<Int>(
-
+        descriptionTextCreateAccountMessage,
         descriptionTextEnjoyTripMessage,
         descriptionTextChooseDestinationMessage,
         descriptionTextAccurateWeatherMessage

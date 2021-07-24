@@ -7,12 +7,12 @@
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/imageViewDisplaySliders"
-        android:layout_width="361dp"
-        android:layout_height="333dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="0dp"
+        android:layout_height="340dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/accurate_weather"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -20,23 +20,25 @@
         android:id="@+id/headerTextViewSliders"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+
+        android:layout_marginTop="324dp"
         android:fontFamily="sans-serif"
         android:text="@string/headerTextAccurateWeatherMessage"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/imageViewDisplaySliders"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageViewDisplaySliders" />
 
     <TextView
         android:id="@+id/descriptionTextViewSliders"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="16dp"
         android:text="@string/descriptionTextAccurateWeatherMessage"
         android:textAlignment="center"
@@ -46,5 +48,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerTextViewSliders" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
