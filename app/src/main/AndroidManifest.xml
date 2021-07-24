@@ -12,19 +12,23 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_byahero"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CommutingApp"
-        android:screenOrientation="portrait">
+        android:theme="@style/Theme.CommutingApp">
 
         <activity
-            android:name=".IntroSlider" />
+            android:name=".IntroSlider"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".MainScreen" />
+            android:name=".MainScreen"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".Signup" />
+            android:name=".Signup"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".SignIn" />
+            android:name=".SignIn"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".splashscreen">
+            android:name=".splashscreen"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

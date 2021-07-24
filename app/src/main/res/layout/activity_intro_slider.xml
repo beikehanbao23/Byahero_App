@@ -9,8 +9,8 @@
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerSliders"
-        android:layout_width="362dp"
-        android:layout_height="402dp"
+        android:layout_width="match_parent"
+        android:layout_height="508dp"
         android:layout_marginTop="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,13 +23,13 @@
     <Button
         android:id="@+id/skipButtonSliders"
         android:layout_width="77dp"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:background="@color/transparent"
         android:onClick="skipButtonSlidersIsClicked"
-        android:paddingStart="21dp"
+        android:paddingStart="17dp"
         android:text="SKIP"
         android:textColor="@color/black"
-        android:textSize="15sp"
+        android:textSize="17sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -38,24 +38,26 @@
 
     <Button
         android:id="@+id/backButtonSliders"
-        android:layout_width="75dp"
-        android:layout_height="35dp"
-        android:layout_marginBottom="5dp"
+        android:layout_width="91dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="12dp"
         android:background="@color/transparent"
         android:onClick="backButtonSlidersIsClicked"
         android:text="Back"
         android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/nextButtonSliders"
-        android:layout_width="75dp"
-        android:layout_height="35dp"
-        android:layout_marginBottom="5dp"
+        android:layout_width="91dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="12dp"
         android:background="@color/transparent"
         android:onClick="nextButtonSlidersIsClicked"
         android:text="Next"
+        android:textSize="16sp"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -69,7 +71,7 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"></LinearLayout>
 
 

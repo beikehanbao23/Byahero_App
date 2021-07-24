@@ -45,7 +45,11 @@ class IntroSlider : AppCompatActivity() {
 
         }
 
-private fun renderIndicators(indicators: Array<ImageView?>, layoutParameters: LinearLayout.LayoutParams):Unit{
+    override fun onBackPressed() {
+
+    }
+
+    private fun renderIndicators(indicators: Array<ImageView?>, layoutParameters: LinearLayout.LayoutParams):Unit{
 
     for (counter in indicators.indices) {
 

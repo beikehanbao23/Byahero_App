@@ -20,8 +20,8 @@
 
  <ImageView
      android:id="@+id/imageView3"
-     android:layout_width="174dp"
-     android:layout_height="168dp"
+     android:layout_width="212dp"
+     android:layout_height="220dp"
      android:background="@drawable/ic_applogo_byahero"
      app:layout_constraintBottom_toBottomOf="@+id/view2"
      app:layout_constraintEnd_toEndOf="parent"
