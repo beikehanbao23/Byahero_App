@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.intro_sliders_adapter.view.*
 /*
 This class setup the data that show in sliders
  */
-const val ITEMS_COUNT = 4
+ const val ITEMS_COUNT = 4
 
 /* Adapters provide a binding from an
  app-specific data set to views that are
@@ -71,5 +71,5 @@ class IntroSliderAdapter(val context: Context) :
         holder.itemView.descriptionTextViewSliders.text = elements().description
     }
 
-    override fun getItemCount() = ITEMS_COUNT
+    override  fun getItemCount() = ITEMS_COUNT
 }
