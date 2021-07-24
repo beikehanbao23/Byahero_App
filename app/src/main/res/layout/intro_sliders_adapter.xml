@@ -7,29 +7,29 @@
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/imageViewDisplaySliders"
-        android:layout_width="0dp"
-        android:layout_height="368dp"
+        android:layout_width="361dp"
+        android:layout_height="333dp"
         android:layout_marginTop="20dp"
+        android:src="@drawable/accurate_weather"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/accurate_weather" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/headerTextViewSliders"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:fontFamily="sans-serif"
         android:text="@string/headerTextAccurateWeatherMessage"
         android:textAlignment="center"
-        android:textSize="25sp"
-        android:textStyle="bold"
         android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewDisplaySliders"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewDisplaySliders" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/descriptionTextViewSliders"
@@ -41,7 +41,7 @@
         android:text="@string/descriptionTextAccurateWeatherMessage"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

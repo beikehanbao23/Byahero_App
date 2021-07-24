@@ -9,7 +9,9 @@ import com.example.commutingapp.R.drawable.*
 import com.example.commutingapp.R.layout.intro_sliders_adapter
 import com.example.commutingapp.R.string.*
 import kotlinx.android.synthetic.main.intro_sliders_adapter.view.*
-
+/*
+This class setup the data that show in sliders
+ */
 const val ITEMS_COUNT = 3
 
 /* Adapters provide a binding from an
