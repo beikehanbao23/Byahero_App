@@ -336,7 +336,7 @@ public class Signup extends AppCompatActivity {
         String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
         emailTextView.setText(usersEmail);
     }
-
+    //TODO Dafaq is this? create a class for this
     private IonAlert customDialog(String title, String contextText, int type) {
         IonAlert alertDialog = new IonAlert(this, type);
         alertDialog.setTitleText(title);

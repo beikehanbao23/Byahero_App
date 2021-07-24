@@ -1,6 +1,9 @@
 package com.example.commutingapp
 
 import Adapters.IntroSliderAdapter
+import Logger.CustomToastMessage
+import MenuButtons.CustomBackButton
+import MenuButtons.backButton
 import android.os.Bundle
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
@@ -11,27 +14,31 @@ import androidx.core.view.get
 import kotlinx.android.synthetic.main.activity_intro_slider.*
 
 class IntroSlider : AppCompatActivity() {
+
+    private lateinit var toastMessageBackButton: CustomToastMessage
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro_slider)
-
+        toastMessageBackButton =
+            CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10)
         setupIntroSliders()
         setupIntroSliderPageIndicators()
 
         setCurrentIndicator(0)
     }
 
-    private fun setupIntroSliders(){
+    private fun setupIntroSliders() {
         viewPagerSliders.adapter = IntroSliderAdapter(this)
     }
 
-        private fun setupIntroSliderPageIndicators() {
-            val indicators = arrayOfNulls<ImageView>(4)
-            val layoutParameters: LinearLayout.LayoutParams =
-                LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+    private fun setupIntroSliderPageIndicators() {
+        val indicators = arrayOfNulls<ImageView>(4)
+        val layoutParameters: LinearLayout.LayoutParams =
+            LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
 
-            layoutParameters.setMargins(8, 0, 8, 0)
-            renderIndicators(indicators,layoutParameters)
+        layoutParameters.setMargins(8, 0, 8, 0)
+        renderIndicators(indicators, layoutParameters)
 
 
         /*
@@ -43,45 +50,63 @@ class IntroSlider : AppCompatActivity() {
 
          */
 
-        }
+    }
 
     override fun onBackPressed() {
-
+        CustomBackButton {
+            if (backButton.isDoubleTapped()) {
+                toastMessageBackButton.hideToast()
+                super.onBackPressed()
+                return@CustomBackButton
+            }
+            toastMessageBackButton.showToast()
+            backButton.registerFirstClick()
+        }.backButtonIsClicked()
     }
 
-    private fun renderIndicators(indicators: Array<ImageView?>, layoutParameters: LinearLayout.LayoutParams):Unit{
+    private fun renderIndicators(
+        indicators: Array<ImageView?>,
+        layoutParameters: LinearLayout.LayoutParams
+    ): Unit {
 
-    for (counter in indicators.indices) {
+        for (counter in indicators.indices) {
 
-        indicators[counter] = ImageView(applicationContext)
-        indicators[counter]?.apply {
-            setInactiveIndicators(this)
-            layoutParams = layoutParameters
+            indicators[counter] = ImageView(applicationContext)
+            indicators[counter]?.apply {
+                setInactiveIndicators(this)
+                layoutParams = layoutParameters
+            }
+            linearLayout_dotsIndicator.addView(indicators[counter])
+
         }
-        linearLayout_dotsIndicator.addView(indicators[counter])
-
     }
-}
-    private fun setCurrentIndicator(index:Int) {
+
+    private fun setCurrentIndicator(index: Int) {
         val counts = linearLayout_dotsIndicator.childCount
         for (counter in 0 until counts) {
             val imageView = linearLayout_dotsIndicator[counter] as ImageView
-            if(counter == index) setActiveIndicators(imageView) else setInactiveIndicators(imageView)
+            if (counter == index) setActiveIndicators(imageView) else setInactiveIndicators(imageView)
         }
 
     }
 
-    private fun setActiveIndicators(imageView:ImageView){
-        imageView.setImageDrawable(ContextCompat.getDrawable(
-            applicationContext,
-            R.drawable.active_indicator))
+    private fun setActiveIndicators(imageView: ImageView) {
+        imageView.setImageDrawable(
+            ContextCompat.getDrawable(
+                applicationContext,
+                R.drawable.active_indicator
+            )
+        )
     }
 
 
-    private fun setInactiveIndicators(indicator:ImageView){
-    indicator.setImageDrawable(ContextCompat.getDrawable(
-        applicationContext,
-        R.drawable.inactive_indicator))
+    private fun setInactiveIndicators(indicator: ImageView) {
+        indicator.setImageDrawable(
+            ContextCompat.getDrawable(
+                applicationContext,
+                R.drawable.inactive_indicator
+            )
+        )
     }
 
 
