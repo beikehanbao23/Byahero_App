@@ -149,6 +149,8 @@ class IntroSlider : AppCompatActivity() {
         viewPagerSliders.currentItem -=1
     }
 
-    fun skipButtonSlidersIsClicked(view: View) {}
+    fun skipButtonSlidersIsClicked(view: View) {
+        showSignInForm()
+    }
 
 }
