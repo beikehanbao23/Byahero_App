@@ -36,6 +36,7 @@ class IntroSlider : AppCompatActivity() {
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
+                    transitionButtonName()
                     setCurrentIndicator(position)
                 }
 
@@ -131,19 +132,26 @@ class IntroSlider : AppCompatActivity() {
 
     fun nextButtonSlidersIsClicked(view: View) {
 
-        if (viewPagerSliders.currentItem < ITEMS_COUNT - 1) {
-            viewPagerSliders.currentItem += 1
+        if (notInLastSlide()) {
+            transitionButtonName()
+            moveToNextSlide()
             return
         }
         showSignInForm()
 
     }
 
-    fun showSignInForm() {
+    private fun notInLastSlide() = viewPagerSliders.currentItem < ITEMS_COUNT - 1
+    private fun moveToNextSlide(){ viewPagerSliders.currentItem += 1 }
+    private fun inLastSlide() = viewPagerSliders.currentItem == ITEMS_COUNT - 1
+    private fun transitionButtonName(){
+        if(inLastSlide()) nextButtonSliders.text = "Let's get started!" else nextButtonSliders.text = "Next"
+    }
+
+    private fun showSignInForm() {
         startActivity(Intent(this, SignIn::class.java))
         finish()
     }
-
 
 
     fun skipButtonSlidersIsClicked(view: View) {

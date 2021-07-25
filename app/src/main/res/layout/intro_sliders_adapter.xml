@@ -7,8 +7,8 @@
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/imageViewDisplaySliders"
-        android:layout_width="0dp"
-        android:layout_height="340dp"
+        android:layout_width="wrap_content"
+        android:layout_height="328dp"
         android:layout_marginTop="16dp"
         android:src="@drawable/accurate_weather"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,7 +21,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
 
-        android:layout_marginTop="324dp"
+        android:layout_marginTop="328dp"
         android:fontFamily="sans-serif"
         android:text="@string/headerTextAccurateWeatherMessage"
         android:textAlignment="center"
