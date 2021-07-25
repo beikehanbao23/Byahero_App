@@ -9,67 +9,55 @@
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerSliders"
-        android:layout_width="match_parent"
-        android:layout_height="508dp"
-        android:layout_marginTop="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
 
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/skipButtonSliders"
-        android:layout_width="77dp"
-        android:layout_height="40dp"
-        android:background="@color/transparent"
-        android:onClick="skipButtonSlidersIsClicked"
-        android:paddingStart="17dp"
-        android:text="SKIP"
-        android:textColor="@color/black"
-        android:textSize="17sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/backButtonSliders"
-        android:layout_width="92dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="5dp"
-        android:backgroundTint="@color/RoyalBlue"
-        android:onClick="backButtonSlidersIsClicked"
-        android:text="Back"
+        android:id="@+id/skipButtonSliders"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:background="@color/transparent"
+        android:onClick="skipButtonSlidersIsClicked"
+        android:paddingStart="17dp"
+        android:text="SKIP"
+
         android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nextButtonSliders" />
 
     <Button
         android:id="@+id/nextButtonSliders"
-        android:layout_width="92dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="5dp"
+        android:layout_width="195dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="101dp"
+        android:layout_marginEnd="100dp"
         android:backgroundTint="@color/RoyalBlue"
         android:onClick="nextButtonSlidersIsClicked"
         android:text="Next"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/viewPagerSliders"
+        app:layout_constraintVertical_bias="0.888" />
 
     <LinearLayout
         android:id="@+id/linearLayout_dotsIndicator"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
+        android:layout_height="20dp"
+        android:layout_marginBottom="6dp"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/nextButtonSliders"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"></LinearLayout>
