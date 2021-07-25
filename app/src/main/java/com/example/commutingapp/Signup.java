@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
+import Logger.CustomDialogs;
 import Logger.CustomToastMessage;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
@@ -58,7 +59,7 @@ public class Signup extends AppCompatActivity {
     private Dialog noInternetDialog;
     private CustomToastMessage toastMessageBackButton;
     private CountDownTimer verificationTimer;
-
+    private CustomDialogs customPopupDialog;
 
     private void initializeAttributes() {
         email = findViewById(editTextSignUpEmailAddress);
@@ -69,6 +70,7 @@ public class Signup extends AppCompatActivity {
         back_Button = findViewById(BackButton);
         createButton = findViewById(CreateButton);
         circularProgressbar = findViewById(LoadingProgressBar);
+        customPopupDialog = new CustomDialogs(this);
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
         toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
     }
@@ -157,10 +159,10 @@ public class Signup extends AppCompatActivity {
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
             startTimerForVerification();
             if (task.isSuccessful()) {
-                showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
+                customPopupDialog.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
                 return;
             }
-            showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
+            customPopupDialog.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
         });
 
 
@@ -242,7 +244,7 @@ public class Signup extends AppCompatActivity {
                 setEmailSentDialog();
                 return;
             }
-            showErrorDialog("Error", getString(sendingEmailErrorMessage));
+            customPopupDialog.showErrorDialog("Error", getString(sendingEmailErrorMessage));
         });
     }
 
@@ -277,7 +279,7 @@ public class Signup extends AppCompatActivity {
         } catch (FirebaseNetworkException firebaseNetworkException) {
             showNoInternetDialog();
         } catch (Exception ex) {
-            showErrorDialog("Error", task.getException().getMessage());
+            customPopupDialog.showErrorDialog("Error", task.getException().getMessage());
         }
     }
 
@@ -337,22 +339,5 @@ public class Signup extends AppCompatActivity {
         emailTextView.setText(usersEmail);
     }
     //TODO Dafaq is this? create a class for this
-    private IonAlert customDialog(String title, String contextText, int type) {
-        IonAlert alertDialog = new IonAlert(this, type);
-        alertDialog.setTitleText(title);
-        alertDialog.setContentText(contextText);
-        return alertDialog;
-    }
-
-    private void showErrorDialog(String title, String contextText) {
-        customDialog(title, contextText, IonAlert.ERROR_TYPE).show();
-    }
-
-    private void showSuccessDialog(String title, String contentText) {
-        customDialog(title, contentText, IonAlert.SUCCESS_TYPE).show();
-    }
-
-    private void showWarningDialog(String title, String contentText) {
-        customDialog(title, contentText, IonAlert.WARNING_TYPE).show();
-    }
+    
 }
