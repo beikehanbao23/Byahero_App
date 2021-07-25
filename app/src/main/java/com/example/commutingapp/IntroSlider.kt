@@ -144,10 +144,7 @@ class IntroSlider : AppCompatActivity() {
         finish()
     }
 
-    fun backButtonSlidersIsClicked(view: View) {
-        backButtonSliders.isEnabled = viewPagerSliders.currentItem != 0
-        viewPagerSliders.currentItem -=1
-    }
+
 
     fun skipButtonSlidersIsClicked(view: View) {
         showSignInForm()
