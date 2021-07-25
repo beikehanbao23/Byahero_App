@@ -4,7 +4,9 @@ import Adapters.IntroSliderAdapter
 import Logger.CustomToastMessage
 import MenuButtons.CustomBackButton
 import MenuButtons.backButton
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -21,17 +23,28 @@ const val ITEMS_COUNT = 4
 class IntroSlider : AppCompatActivity() {
 
     private lateinit var toastMessageBackButton: CustomToastMessage
+    private lateinit var preferences: SharedPreferences
+    private val preferedShowIntro = "IntroSlider_StateOfSlides"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro_slider)
+        preferences = getSharedPreferences("IntroSlider", Context.MODE_PRIVATE)
+
+        if (userHasAlreadySeenTheIntroSliders()) {
+            showSignInForm()
+        }
+
         toastMessageBackButton =
             CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10)
         setupIntroSliders()
         setupIntroSliderPageIndicators()
 
         setCurrentIndicator(0)
+        viewPagerSlideActionCallback()
+    }
 
+    private fun viewPagerSlideActionCallback(){
         with(viewPagerSliders, {
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
@@ -39,11 +52,11 @@ class IntroSlider : AppCompatActivity() {
                     transitionButtonName()
                     setCurrentIndicator(position)
                 }
-
-
             })
         })
     }
+    private fun userHasAlreadySeenTheIntroSliders() =
+        preferences.getBoolean(preferedShowIntro, false)
 
     private fun setupIntroSliders() {
         viewPagerSliders.adapter = IntroSliderAdapter(this)
@@ -132,20 +145,26 @@ class IntroSlider : AppCompatActivity() {
 
     fun nextButtonSlidersIsClicked(view: View) {
 
-        if (notInLastSlide()) {
+        if (slideHasNext()) {
             transitionButtonName()
             moveToNextSlide()
             return
         }
-        showSignInForm()
 
+        showSignInForm()
+        userIsDoneWithIntroSliders()
     }
 
-    private fun notInLastSlide() = viewPagerSliders.currentItem < ITEMS_COUNT - 1
-    private fun moveToNextSlide(){ viewPagerSliders.currentItem += 1 }
-    private fun inLastSlide() = viewPagerSliders.currentItem == ITEMS_COUNT - 1
-    private fun transitionButtonName(){
-        if(inLastSlide()) nextButtonSliders.text = "Let's get started!" else nextButtonSliders.text = "Next"
+    private fun slideHasNext() = viewPagerSliders.currentItem < ITEMS_COUNT - 1
+    private fun moveToNextSlide() {
+        viewPagerSliders.currentItem += 1
+    }
+
+    private fun slideIsLastSlide() = viewPagerSliders.currentItem == ITEMS_COUNT - 1
+
+    private fun transitionButtonName() {
+        if (slideIsLastSlide()) nextButtonSliders.text =
+            "Let's get started!" else nextButtonSliders.text = "Next"
     }
 
     private fun showSignInForm() {
@@ -153,9 +172,19 @@ class IntroSlider : AppCompatActivity() {
         finish()
     }
 
+    private fun userIsDoneWithIntroSliders() {
+
+        val editor = preferences.edit()
+        with(editor) {
+            putBoolean(preferedShowIntro, true)
+            apply()
+        }
+    }
+
 
     fun skipButtonSlidersIsClicked(view: View) {
         showSignInForm()
+        userIsDoneWithIntroSliders()
     }
 
 }

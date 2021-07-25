@@ -27,7 +27,6 @@ class IntroSliderAdapter(val context: Context) :
         enjoytrip,
         selectroute,
         accurate_weather
-
     )
 
     private val headerText = arrayListOf<Int>(
@@ -62,6 +61,7 @@ class IntroSliderAdapter(val context: Context) :
     override fun onBindViewHolder(holder: IntroSliderViewHolder, position: Int) {
 
         fun elements() = object {
+
             val image = images[position]
             val title = context.getString(headerText[position])
             val description = context.getString(descriptionText[position])
