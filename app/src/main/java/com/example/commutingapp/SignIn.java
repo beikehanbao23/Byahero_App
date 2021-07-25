@@ -21,11 +21,11 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
+import Logger.CustomDialogs;
 import Logger.CustomToastMessage;
 import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
 import ValidateUser.UserManager;
-import id.ionbit.ionalert.IonAlert;
 
 import static com.example.commutingapp.R.id.FacebookButton;
 import static com.example.commutingapp.R.id.GoogleButton;
@@ -59,7 +59,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private ProgressBar circularProgressBar, circularProgressBarEmailSent;
     private UserManager userManager;
     private CountDownTimer verificationTimer;
-
+    private CustomDialogs customPopupDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -166,10 +166,10 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
             startTimerForVerification();
             if (task.isSuccessful()) {
-                showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
+                customPopupDialog.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
                 return;
             }
-            showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
+            customPopupDialog.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
         });
     }
 
@@ -282,12 +282,12 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             showNoInternetDialog();
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
             if (firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")) {
-                showErrorDialog("Oops..", getString(disabledAccountMessage));
+                customPopupDialog.showErrorDialog("Oops..", getString(disabledAccountMessage));
                 return;
             }
-            showErrorDialog("Oops..", getString(incorrectEmailOrPasswordMessage));
+            customPopupDialog.showErrorDialog("Oops..", getString(incorrectEmailOrPasswordMessage));
         } catch (Exception e) {
-            showErrorDialog("Oops..", e.getMessage());
+            customPopupDialog.showErrorDialog("Oops..", e.getMessage());
         }
     }
 
@@ -300,7 +300,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
         signUpTextView = findViewById(TextViewSignUp);
         circularProgressBar = findViewById(LoadingProgressBar);
-
+        customPopupDialog = new CustomDialogs(this);
         toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
 
@@ -327,26 +327,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         displayUsersEmailToTextView();
 
     }
-    //TODO("Create class for this")
-    private IonAlert customDialog(String title, String contextText, int type) {
-        IonAlert alertDialog = new IonAlert(this, type);
-        alertDialog.setTitleText(title);
-        alertDialog.setContentText(contextText);
-        return alertDialog;
-    }
-
-    private void showErrorDialog(String title, String contextText) {
-        customDialog(title, contextText, IonAlert.ERROR_TYPE).show();
-    }
-
-    private void showSuccessDialog(String title, String contentText) {
-        customDialog(title, contentText, IonAlert.SUCCESS_TYPE).show();
-    }
-
-    private void showWarningDialog(String title, String contentText) {
-        customDialog(title, contentText, IonAlert.WARNING_TYPE).show();
-    }
-
 
     private void displayUsersEmailToTextView() {
         TextView emailTextView = findViewById(textViewEmail);
