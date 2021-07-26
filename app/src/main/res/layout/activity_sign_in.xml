@@ -47,9 +47,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/LogInButton" />
 
-    <Button
+    <com.facebook.login.widget.LoginButton
         android:id="@+id/FacebookButton"
         android:layout_width="145dp"
+
         android:layout_height="53dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="72dp"

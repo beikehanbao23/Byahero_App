@@ -338,6 +338,6 @@ public class Signup extends AppCompatActivity {
         String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
         emailTextView.setText(usersEmail);
     }
-    //TODO Dafaq is this? create a class for this
+
     
 }

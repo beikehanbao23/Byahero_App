@@ -2,7 +2,6 @@ package com.example.commutingapp;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.media.FaceDetector;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
@@ -15,7 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -23,7 +21,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,7 +28,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
@@ -69,7 +65,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private final long twoMinutes = 120000;
     private EditText email, password;
-    private Button facebookButton, googleButton, loginButton;
+    private Button  googleButton, loginButton;
     private LoginButton facebookLoginButton;
     private Dialog noInternetDialog;
     private TextView dontHaveAnAccountTextView, signUpTextView, resendEmailTextView;
@@ -81,6 +77,20 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private CustomDialogs customPopupDialog;
     private CallbackManager callbackManager;
     private final String TAG = getClass().getName();
+
+    private void initializeAttributes() {
+        email = findViewById(editlogin_TextEmail);
+        password = findViewById(editLogin_TextPassword);
+        loginButton = findViewById(LogInButton);
+        googleButton = findViewById(GoogleButton);
+        dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
+        signUpTextView = findViewById(TextViewSignUp);
+        circularProgressBar = findViewById(LoadingProgressBar);
+        customPopupDialog = new CustomDialogs(this);
+        toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
+        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,10 +105,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         noInternetDialog.setContentView(custom_no_internet_dialog);
         callbackManager = CallbackManager.Factory.create();
-
-        facebookLoginButton = (LoginButton) facebookButton;
+        facebookLoginButton = findViewById(FacebookButton);
         facebookLoginButton.setPermissions("email", "public_profile");
-
         facebookLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -128,7 +136,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                 if(task.isSuccessful()){
                     Log.d(TAG, "signInWithCredential:success");
                     FirebaseUserManager.getCurrentUser();
-                    //updateUi
+                    //get name of user
                     return;
                 }
                 Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -215,12 +223,12 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         circularProgressBarEmailSent = findViewById(LoadingProgressBar);
         circularProgressBarEmailSent.setVisibility(View.VISIBLE);
-        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(emailReload -> {
+            if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
                 showMainScreen();
             }
-            if (task.getException() != null) {
-                handleTaskExceptionResults(task);
+            if (emailReload.getException() != null) {
+                handleTaskExceptionResults(emailReload);
             }
             circularProgressBarEmailSent.setVisibility(View.INVISIBLE);
         });
@@ -250,7 +258,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         if (verificationTimer != null) {
             verificationTimer.cancel();
         }
-        System.out.println();
+
     }
 
     private void closeInternetDialog() {
@@ -312,14 +320,13 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
 
     private void VerifyUserEmail() {
-        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
+        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(emailReload -> {
 
-            if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+            if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
                 showMainScreen();
                 return;
             }
-            setEmailSentDialog();
-
+            showEmailSentDialog();
 
         });
     }
@@ -363,22 +370,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         }
     }
 
-    private void initializeAttributes() {
-        email = findViewById(editlogin_TextEmail);
-
-        password = findViewById(editLogin_TextPassword);
-        loginButton = findViewById(LogInButton);
-        facebookButton = findViewById(FacebookButton);
-        googleButton = findViewById(GoogleButton);
-        dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
-        signUpTextView = findViewById(TextViewSignUp);
-        circularProgressBar = findViewById(LoadingProgressBar);
-        customPopupDialog = new CustomDialogs(this);
-        toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
-        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
-
-
-    }
 
     private void showMainScreen() {
         startActivity(new Intent(this, MainScreen.class));
@@ -394,7 +385,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     }
 
-    private void setEmailSentDialog() {
+    private void showEmailSentDialog() {
 
         setContentView(custom_emailsent_dialog);
         displayUsersEmailToTextView();
