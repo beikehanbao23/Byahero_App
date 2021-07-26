@@ -18,9 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +31,7 @@ import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +79,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private CountDownTimer verificationTimer;
     private CustomDialogs customPopupDialog;
     private CallbackManager callbackManager;
-    private final String TAG = getClass().getName();
+    private final String TAG = "FacebookAuthentication";
+
 
     private void initializeAttributes() {
         email = findViewById(editlogin_TextEmail);
@@ -100,54 +104,67 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(activity_sign_in);
         initializeAttributes();
-
         FirebaseUserManager.initializeFirebase();
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
 
         noInternetDialog.setContentView(custom_no_internet_dialog);
-        callbackManager = CallbackManager.Factory.create();
+
+
         facebookLoginButton = findViewById(FacebookButton);
         facebookLoginButton.setPermissions("email", "public_profile");
-        facebookLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
+        facebookLoginButton.registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.e(TAG, "facebook:onSuccess:" + loginResult);
+                        handleFacebookAccessToken(loginResult.getAccessToken());
+                    }
 
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "facebook:onCancel");
-            }
+                    @Override
+                    public void onCancel() {
+                        Log.e(TAG, "facebook:onCancel");
+                    }
 
-            @Override
-            public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
-            }
-        });
+                    @Override
+                    public void onError(FacebookException error) {
+                        Log.e(TAG, "facebook:onError", error);
+                    }
+                });
+
+
+    //TODO fix later
+
+
+
+
     }
 
 
     private void handleFacebookAccessToken(AccessToken token){
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
+        Log.e(TAG, "handleFacebookAccessToken:" + token);
         AuthCredential authCredential = FacebookAuthProvider.getCredential(token.getToken());
-        FirebaseUserManager.getFirebaseAuth().signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    Log.d(TAG, "signInWithCredential:success");
-                    FirebaseUserManager.getCurrentUser();
-                    //get name of user
-                    return;
-                }
-                Log.w(TAG, "signInWithCredential:failure", task.getException());
-                customPopupDialog.showErrorDialog("Error","Authentication Failed.");
-            }
-        });
+        FirebaseUserManager.getFirebaseAuth().signInWithCredential(authCredential).addOnCompleteListener(this,
+                task -> {
+                    if(task.isSuccessful()){
+                        Log.e(TAG, "signInWithCredential:success");
+                        FirebaseUserManager.getCurrentUser();
+                        //get name of user
+                        return;
+                    }
+                    Log.e(TAG, "signInWithCredential:failure", task.getException());
+                    customPopupDialog.showErrorDialog("Error","Authentication Failed.");
+                });
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode,resultCode,data);
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+
+
+
 
     @Override
     protected void onDestroy() {

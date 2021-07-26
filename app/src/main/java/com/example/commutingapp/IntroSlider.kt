@@ -33,6 +33,7 @@ class IntroSlider : AppCompatActivity() {
 
         if (userHasAlreadySeenTheIntroSliders()) {
             showSignInForm()
+            return
         }
 
         toastMessageBackButton =
@@ -41,10 +42,10 @@ class IntroSlider : AppCompatActivity() {
         setupIntroSliderPageIndicators()
 
         setCurrentIndicator(0)
-        viewPagerSlideActionCallback()
+        implementViewPagerSlideActionCallback()
     }
 
-    private fun viewPagerSlideActionCallback(){
+    private fun implementViewPagerSlideActionCallback(){
         with(viewPagerSliders, {
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {

@@ -5,9 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <meta-data
-        android:name="com.facebook.sdk.ApplicationId"
-        android:value="@string/facebook_app_id" />
+
 
     <application
         android:allowBackup="true"
@@ -17,6 +15,11 @@
         android:roundIcon="@mipmap/ic_byahero"
         android:supportsRtl="true"
         android:theme="@style/Theme.CommutingApp">
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
 
         <activity
             android:name=".IntroSlider"

@@ -7,6 +7,9 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
+
 import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
 import MenuButtons.BackButtonDoubleClicked;
@@ -17,18 +20,24 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
 
     private final int delayInMillis = 700;
     private CustomToastMessage toastMessageBackButton;
+    private AccessTokenTracker facebooKAccessTokenTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splashscreen);
-
-
         toastMessageBackButton = new CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10);
-
-
         FirebaseUserManager.initializeFirebase();
+
+        facebooKAccessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+                if(currentAccessToken==null){
+                    FirebaseUserManager.getFirebaseAuth().signOut();
+                }
+            }
+        };
     }
 
     @Override
