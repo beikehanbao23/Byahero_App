@@ -35,7 +35,7 @@ public class CustomToastMessage {
     }
 
 
-    public CustomToastMessage() {
+     CustomToastMessage() {
 
     }
 

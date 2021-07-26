@@ -22,11 +22,7 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main_screen);
-
-
         toastMessageBackButton = new CustomToastMessage(this,getString(R.string.doubleTappedMessage),10);
-
-
         FirebaseUserManager.initializeFirebase();
 
     }

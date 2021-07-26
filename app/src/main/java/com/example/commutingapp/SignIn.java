@@ -2,23 +2,40 @@ package com.example.commutingapp;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.media.FaceDetector;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthCredential;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+
+import org.jetbrains.annotations.NotNull;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
@@ -28,11 +45,24 @@ import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
 import ValidateUser.UserManager;
 
-import static com.example.commutingapp.R.id.*;
-import static com.example.commutingapp.R.layout.*;
-import static com.example.commutingapp.R.string.*;
-
-
+import static com.example.commutingapp.R.id.FacebookButton;
+import static com.example.commutingapp.R.id.GoogleButton;
+import static com.example.commutingapp.R.id.LoadingProgressBar;
+import static com.example.commutingapp.R.id.LogInButton;
+import static com.example.commutingapp.R.id.TextViewSignUp;
+import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
+import static com.example.commutingapp.R.id.editLogin_TextPassword;
+import static com.example.commutingapp.R.id.editlogin_TextEmail;
+import static com.example.commutingapp.R.id.textViewEmail;
+import static com.example.commutingapp.R.id.textViewResendEmail;
+import static com.example.commutingapp.R.layout.activity_sign_in;
+import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
+import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
+import static com.example.commutingapp.R.string.disabledAccountMessage;
+import static com.example.commutingapp.R.string.doubleTappedMessage;
+import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
+import static com.example.commutingapp.R.string.resendEmailFailedMessage;
+import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
 
 
 public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked {
@@ -40,6 +70,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private final long twoMinutes = 120000;
     private EditText email, password;
     private Button facebookButton, googleButton, loginButton;
+    private LoginButton facebookLoginButton;
     private Dialog noInternetDialog;
     private TextView dontHaveAnAccountTextView, signUpTextView, resendEmailTextView;
     private CustomToastMessage toastMessageBackButton;
@@ -48,22 +79,66 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private UserManager userManager;
     private CountDownTimer verificationTimer;
     private CustomDialogs customPopupDialog;
-
-
+    private CallbackManager callbackManager;
+    private final String TAG = getClass().getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(activity_sign_in);
         initializeAttributes();
 
         FirebaseUserManager.initializeFirebase();
+
         noInternetDialog.setContentView(custom_no_internet_dialog);
+        callbackManager = CallbackManager.Factory.create();
+
+        facebookLoginButton = (LoginButton) facebookButton;
+        facebookLoginButton.setPermissions("email", "public_profile");
+
+        facebookLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook:onCancel");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.d(TAG, "facebook:onError", error);
+            }
+        });
+    }
 
 
+    private void handleFacebookAccessToken(AccessToken token){
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+        AuthCredential authCredential = FacebookAuthProvider.getCredential(token.getToken());
+        FirebaseUserManager.getFirebaseAuth().signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    Log.d(TAG, "signInWithCredential:success");
+                    FirebaseUserManager.getCurrentUser();
+                    //updateUi
+                    return;
+                }
+                Log.w(TAG, "signInWithCredential:failure", task.getException());
+                customPopupDialog.showErrorDialog("Error","Authentication Failed.");
+            }
+        });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -164,6 +239,12 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         });
     }
 
+    public void facebookButtonClicked(View view) {
+
+    }
+
+
+
 
     private void removeVerificationTimer() {
         if (verificationTimer != null) {
@@ -242,24 +323,24 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         });
     }
-
+    //TODO change this
     private void startLoading() {
         circularProgressBar.setVisibility(View.VISIBLE);
         email.setEnabled(false);
         password.setEnabled(false);
         loginButton.setEnabled(false);
-        facebookButton.setEnabled(false);
+      //  facebookButton.setEnabled(false);
         googleButton.setEnabled(false);
         dontHaveAnAccountTextView.setEnabled(false);
         signUpTextView.setEnabled(false);
     }
-
+    //TODO change this
     private void finishLoading() {
         circularProgressBar.setVisibility(View.INVISIBLE);
         email.setEnabled(true);
         password.setEnabled(true);
         loginButton.setEnabled(true);
-        facebookButton.setEnabled(true);
+       // facebookButton.setEnabled(true);
         googleButton.setEnabled(true);
         dontHaveAnAccountTextView.setEnabled(true);
         signUpTextView.setEnabled(true);
@@ -284,6 +365,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private void initializeAttributes() {
         email = findViewById(editlogin_TextEmail);
+
         password = findViewById(editLogin_TextPassword);
         loginButton = findViewById(LogInButton);
         facebookButton = findViewById(FacebookButton);
@@ -324,6 +406,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
         emailTextView.setText(usersEmail);
     }
+
 
 
 }
