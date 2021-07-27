@@ -21,11 +21,11 @@ public class FirebaseUserManager    {
         firebaseUser = firebaseAuth.getCurrentUser();
     }
 
-    public static FirebaseUser getFirebaseUser(){
+    public static FirebaseUser getFirebaseUserInstance(){
 
         return firebaseUser;
     }
-    public static FirebaseAuth getFirebaseAuth() {
+    public static FirebaseAuth getFirebaseAuthInstance() {
 
         return firebaseAuth;
     }

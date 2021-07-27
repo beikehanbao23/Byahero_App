@@ -13,28 +13,24 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.Arrays;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
@@ -68,8 +64,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private final long twoMinutes = 120000;
     private EditText email, password;
-    private Button  googleButton, loginButton;
-    private LoginButton facebookLoginButton;
+    private Button  googleButton, loginButton, facebookButton;
     private Dialog noInternetDialog;
     private TextView dontHaveAnAccountTextView, signUpTextView, resendEmailTextView;
     private CustomToastMessage toastMessageBackButton;
@@ -93,7 +88,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         customPopupDialog = new CustomDialogs(this);
         toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
-        facebookLoginButton = findViewById(FacebookButton);
+        facebookButton = findViewById(FacebookButton);
     }
 
     @Override
@@ -107,15 +102,14 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         FirebaseUserManager.initializeFirebase();
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
-
         noInternetDialog.setContentView(custom_no_internet_dialog);
 
 
+    }
 
-
-
-        facebookLoginButton.setPermissions("email", "public_profile");
-        facebookLoginButton.registerCallback(callbackManager,
+    public void FacebookButtonIsClicked(View view) {
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
+        LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
@@ -134,14 +128,12 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                     }
                 });
 
-
     }
-
 
     private void handleFacebookAccessToken(AccessToken token){
         Log.e(TAG, "handleFacebookAccessToken:" + token);
         AuthCredential authCredential = FacebookAuthProvider.getCredential(token.getToken());
-        FirebaseUserManager.getFirebaseAuth().signInWithCredential(authCredential).addOnCompleteListener(this,
+        FirebaseUserManager.getFirebaseAuthInstance().signInWithCredential(authCredential).addOnCompleteListener(this,
                 task -> {
                     if(task.isSuccessful()){
                         Log.e(TAG, "signInWithCredential:success");
@@ -240,8 +232,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         circularProgressBarEmailSent = findViewById(LoadingProgressBar);
         circularProgressBarEmailSent.setVisibility(View.VISIBLE);
-        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(emailReload -> {
-            if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+        FirebaseUserManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
+            if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
                 showMainScreen();
             }
             if (emailReload.getException() != null) {
@@ -254,7 +246,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     public void resendEmailIsClicked(View view) {
 
-        FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
+        FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
             startTimerForVerification();
             if (task.isSuccessful()) {
                 customPopupDialog.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
@@ -321,7 +313,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         String userPassword = password.getText().toString().trim();
 
         startLoading();
-        FirebaseUserManager.getFirebaseAuth().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, signInTask -> {
+        FirebaseUserManager.getFirebaseAuthInstance().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, signInTask -> {
             if (signInTask.isSuccessful()) {
                 FirebaseUserManager.getCurrentUser();
                 VerifyUserEmail();
@@ -337,9 +329,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
 
     private void VerifyUserEmail() {
-        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(emailReload -> {
+        FirebaseUserManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
 
-            if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+            if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
                 showMainScreen();
                 return;
             }
@@ -347,24 +339,24 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         });
     }
-    //TODO change this
+
     private void startLoading() {
         circularProgressBar.setVisibility(View.VISIBLE);
         email.setEnabled(false);
         password.setEnabled(false);
         loginButton.setEnabled(false);
-      //  facebookButton.setEnabled(false);
+        facebookButton.setEnabled(false);
         googleButton.setEnabled(false);
         dontHaveAnAccountTextView.setEnabled(false);
         signUpTextView.setEnabled(false);
     }
-    //TODO change this
+
     private void finishLoading() {
         circularProgressBar.setVisibility(View.INVISIBLE);
         email.setEnabled(true);
         password.setEnabled(true);
         loginButton.setEnabled(true);
-       // facebookButton.setEnabled(true);
+        facebookButton.setEnabled(true);
         googleButton.setEnabled(true);
         dontHaveAnAccountTextView.setEnabled(true);
         signUpTextView.setEnabled(true);
@@ -411,7 +403,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private void displayUsersEmailToTextView() {
         TextView emailTextView = findViewById(textViewEmail);
-        String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
+        String usersEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
         emailTextView.setText(usersEmail);
     }
 

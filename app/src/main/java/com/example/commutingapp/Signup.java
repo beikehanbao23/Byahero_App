@@ -27,7 +27,6 @@ import Logger.CustomToastMessage;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
 import ValidateUser.UserManager;
-import id.ionbit.ionalert.IonAlert;
 
 import static com.example.commutingapp.R.id.BackButton;
 import static com.example.commutingapp.R.id.CreateButton;
@@ -156,7 +155,7 @@ public class Signup extends AppCompatActivity {
 
     public void resendEmailIsClicked(View view) {
 
-        FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
+        FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
             startTimerForVerification();
             if (task.isSuccessful()) {
                 customPopupDialog.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
@@ -172,8 +171,8 @@ public class Signup extends AppCompatActivity {
     public void refreshButtonClicked(View view) {
         circularProgressBarForEmailSentDialog = findViewById(LoadingProgressBar);
         circularProgressBarForEmailSentDialog.setVisibility(View.VISIBLE);
-        FirebaseUserManager.getFirebaseUser().reload().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+        FirebaseUserManager.getFirebaseUserInstance().reload().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
                 showMainScreen();
             }
             if (task.getException() != null) {
@@ -228,17 +227,17 @@ public class Signup extends AppCompatActivity {
 
     private void signOutPreviousAccount() {
 
-        FirebaseUserManager.getFirebaseAuth().signOut();
+        FirebaseUserManager.getFirebaseAuthInstance().signOut();
     }
 
     private boolean isUserCreatedNewAccount() {
         String userEmail = email.getText().toString().trim();
-        return !Objects.equals(FirebaseUserManager.getFirebaseUser().getEmail(), userEmail);
+        return !Objects.equals(FirebaseUserManager.getFirebaseUserInstance().getEmail(), userEmail);
     }
 
 
     private void sendEmailVerificationToUser() {
-        FirebaseUserManager.getFirebaseUser().sendEmailVerification().addOnCompleteListener(task -> {
+        FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 clearInputs();
                 setEmailSentDialog();
@@ -254,7 +253,7 @@ public class Signup extends AppCompatActivity {
         String userConfirmPassword = confirmPassword.getText().toString().trim();
 
         startLoading();
-        FirebaseUserManager.getFirebaseAuth().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
+        FirebaseUserManager.getFirebaseAuthInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
 
             if (task.isSuccessful()) {
                 FirebaseUserManager.getCurrentUser();
@@ -335,7 +334,7 @@ public class Signup extends AppCompatActivity {
 
     private void displayUsersEmailToTextView() {
         TextView emailTextView = findViewById(textViewEmail);
-        String usersEmail = FirebaseUserManager.getFirebaseUser().getEmail();
+        String usersEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
         emailTextView.setText(usersEmail);
     }
 

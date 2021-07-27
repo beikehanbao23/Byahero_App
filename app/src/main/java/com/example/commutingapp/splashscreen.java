@@ -34,7 +34,7 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
                 if(currentAccessToken==null){
-                    FirebaseUserManager.getFirebaseAuth().signOut();
+                    FirebaseUserManager.getFirebaseAuthInstance().signOut();
                 }
             }
         };
@@ -45,7 +45,7 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
         super.onStart();
 
         FirebaseUserManager.getCurrentUser();
-        if (FirebaseUserManager.isUserAlreadySignedIn() && FirebaseUserManager.getFirebaseUser().isEmailVerified()) {
+        if (FirebaseUserManager.isUserAlreadySignedIn() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
             showMainScreen();
             return;
         }
