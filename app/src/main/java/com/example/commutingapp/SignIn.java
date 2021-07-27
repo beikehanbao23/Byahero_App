@@ -93,7 +93,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         customPopupDialog = new CustomDialogs(this);
         toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
         noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
-
+        facebookLoginButton = findViewById(FacebookButton);
     }
 
     @Override
@@ -111,7 +111,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         noInternetDialog.setContentView(custom_no_internet_dialog);
 
 
-        facebookLoginButton = findViewById(FacebookButton);
+
+
+
         facebookLoginButton.setPermissions("email", "public_profile");
         facebookLoginButton.registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
@@ -133,11 +135,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                 });
 
 
-    //TODO fix later
-
-
-
-
     }
 
 
@@ -156,6 +153,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                     customPopupDialog.showErrorDialog("Error","Authentication Failed.");
                 });
     }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode,resultCode,data);
