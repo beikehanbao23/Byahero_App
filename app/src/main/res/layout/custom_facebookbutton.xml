@@ -7,24 +7,36 @@
     android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="100dp"
-        android:layout_height="45dp"
+
+        android:id="@+id/cardViewLogin"
+        android:layout_width="234dp"
+        android:layout_height="84dp"
         android:layout_gravity="center"
-        facebook:cardCornerRadius="19dp"
-        >
 
-    <com.facebook.login.widget.LoginButton
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/FacebookButton"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
+        app:cardCornerRadius="22dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
 
+        <Button
+            android:id="@+id/LogInButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="65dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="65dp"
+            android:backgroundTint="@color/blue2"
+            android:onClick="SignInButtonIsClicked"
+            android:text="Log in"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextInputLayoutLoginPassword"
+            app:layout_constraintVertical_bias="0.05" />
 
-        facebook:com_facebook_login_text="Facebook"
-        facebook:com_facebook_logout_text="Sign out"
-        tools:layout_editor_absoluteX="-4dp"
-        tools:layout_editor_absoluteY="72dp" />
 
     </androidx.cardview.widget.CardView>
+
 </merge>
