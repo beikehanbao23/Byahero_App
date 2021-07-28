@@ -2,9 +2,13 @@ package com.example.commutingapp;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -31,6 +35,8 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import FirebaseUserManager.FirebaseUserManager;
@@ -109,8 +115,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     }
 
     public void FacebookButtonIsClicked(View view) {
+        //TODO refactor
 
-        removePreviousToken();
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
@@ -128,11 +134,12 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                     @Override
                     public void onError(FacebookException error) {
                         Log.e(TAG, "facebook:onError", error);
-
-
+                        if(error instanceof FacebookAuthorizationException){
+                            removePreviousToken();
+                            FacebookButtonIsClicked(null);
+                        }
                     }
                 });
-
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -162,6 +169,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private void removePreviousToken(){
         if (AccessToken.getCurrentAccessToken() != null) {
             LoginManager.getInstance().logOut();
+            Log.e(TAG,"RemovingToken");
         }
     }
 

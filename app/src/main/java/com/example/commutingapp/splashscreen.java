@@ -32,11 +32,11 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
     }
 
     private void checkFacebookTokenIfExpired(){
-
+        
         new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-                if (currentAccessToken == null || oldAccessToken.isExpired()) {
+                if (currentAccessToken == null) {
                     FirebaseUserManager.getFirebaseAuthInstance().signOut();
                 }
             }

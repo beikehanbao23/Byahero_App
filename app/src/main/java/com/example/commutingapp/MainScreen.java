@@ -64,14 +64,8 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
 
     //TODO
     private void signOutUser(){
-        if (AccessToken.getCurrentAccessToken() != null) {
-            LoginManager.getInstance().logOut();
-            return;
-        }
-        if(FirebaseUserManager.isUserAlreadySignedIn()) {
-            FirebaseUserManager.getFirebaseAuthInstance().signOut();
-            return;
-        }
+        LoginManager.getInstance().logOut();
+        FirebaseUserManager.getFirebaseAuthInstance().signOut();
         startActivity(new Intent(this, SignIn.class));
         finish();
     }
