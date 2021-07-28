@@ -3,6 +3,7 @@ package com.example.commutingapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +38,7 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
                 if (currentAccessToken == null) {
+                    Log.e("Splashscreen","token expired");
                     FirebaseUserManager.getFirebaseAuthInstance().signOut();
                 }
             }

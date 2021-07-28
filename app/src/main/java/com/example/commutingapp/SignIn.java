@@ -109,7 +109,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         noInternetDialog.setContentView(custom_no_internet_dialog);
-
+        removePreviousToken();
 
 
     }
