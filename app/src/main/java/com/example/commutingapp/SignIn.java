@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
@@ -104,9 +105,12 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         noInternetDialog.setContentView(custom_no_internet_dialog);
 
 
+
     }
 
     public void FacebookButtonIsClicked(View view) {
+
+        removePreviousToken();
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
@@ -124,6 +128,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                     @Override
                     public void onError(FacebookException error) {
                         Log.e(TAG, "facebook:onError", error);
+
+
                     }
                 });
 
@@ -153,6 +159,11 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void removePreviousToken(){
+        if (AccessToken.getCurrentAccessToken() != null) {
+            LoginManager.getInstance().logOut();
+        }
+    }
 
 
     @Override
@@ -270,7 +281,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             noInternetDialog.dismiss();
         }
     }
-
+    //TODO FIX THIS
     private void setDisplayForResendEmailTextViewToNotClickable(long secondsLeft) {
         resendEmailTextView.setTextColor(ContextCompat.getColor(this, R.color.gray));
         resendEmailTextView.setText("Resend verification in " + secondsLeft + "s");
