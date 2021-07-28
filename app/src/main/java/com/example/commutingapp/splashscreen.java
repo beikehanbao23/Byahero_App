@@ -20,7 +20,6 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
 
     private final int delayInMillis = 700;
     private CustomToastMessage toastMessageBackButton;
-    private AccessTokenTracker facebooKAccessTokenTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +28,15 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
         setContentView(R.layout.activity_splashscreen);
         toastMessageBackButton = new CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10);
         FirebaseUserManager.initializeFirebase();
+        checkFacebookTokenIfExpired();
+    }
 
-        facebooKAccessTokenTracker = new AccessTokenTracker() {
+    private void checkFacebookTokenIfExpired(){
+
+        new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-                if(currentAccessToken==null){
+                if (currentAccessToken == null || oldAccessToken.isExpired()) {
                     FirebaseUserManager.getFirebaseAuthInstance().signOut();
                 }
             }

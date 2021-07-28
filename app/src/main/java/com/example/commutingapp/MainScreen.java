@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
+
 import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
 import MenuButtons.CustomBackButton;
@@ -24,10 +27,20 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
         setContentView(R.layout.activity_main_screen);
         toastMessageBackButton = new CustomToastMessage(this,getString(R.string.doubleTappedMessage),10);
         FirebaseUserManager.initializeFirebase();
-
+        checkFacebookTokenIfExpired();
     }
 
+    private void checkFacebookTokenIfExpired(){
 
+       new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+                if (currentAccessToken == null || oldAccessToken.isExpired()) {
+                    signOutUser();
+                }
+            }
+        };
+    }
 
     public void LogoutButtonClicked(View view) {
        signOutUser();

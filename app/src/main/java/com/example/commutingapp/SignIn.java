@@ -23,12 +23,12 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 
@@ -63,8 +63,9 @@ import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
 public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked {
 
     private final long twoMinutes = 120000;
+    private final String TAG = "FacebookAuthentication";
     private EditText email, password;
-    private Button  googleButton, loginButton, facebookButton;
+    private Button googleButton, loginButton, facebookButton;
     private Dialog noInternetDialog;
     private TextView dontHaveAnAccountTextView, signUpTextView, resendEmailTextView;
     private CustomToastMessage toastMessageBackButton;
@@ -74,8 +75,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private CountDownTimer verificationTimer;
     private CustomDialogs customPopupDialog;
     private CallbackManager callbackManager;
-    private final String TAG = "FacebookAuthentication";
-
 
     private void initializeAttributes() {
         email = findViewById(editlogin_TextEmail);
@@ -130,31 +129,29 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     }
 
-    private void handleFacebookAccessToken(AccessToken token){
+    private void handleFacebookAccessToken(AccessToken token) {
         Log.e(TAG, "handleFacebookAccessToken:" + token);
         AuthCredential authCredential = FacebookAuthProvider.getCredential(token.getToken());
         FirebaseUserManager.getFirebaseAuthInstance().signInWithCredential(authCredential).addOnCompleteListener(this,
                 task -> {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         Log.e(TAG, "signInWithCredential:success");
                         FirebaseUserManager.getCurrentUser();
-                        //get name of user
+                        showMainScreen();
                         return;
                     }
                     Log.e(TAG, "signInWithCredential:failure", task.getException());
-                    customPopupDialog.showErrorDialog("Error","Authentication Failed.");
+                    customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
                 });
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        callbackManager.onActivityResult(requestCode,resultCode,data);
+        Log.e(TAG, "Calling:: onActivityResult");
+        callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-
 
 
 
@@ -259,8 +256,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     public void facebookButtonClicked(View view) {
 
     }
-
-
 
 
     private void removeVerificationTimer() {
@@ -406,7 +401,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         String usersEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
         emailTextView.setText(usersEmail);
     }
-
 
 
 }

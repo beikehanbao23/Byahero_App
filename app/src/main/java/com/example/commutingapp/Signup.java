@@ -50,6 +50,7 @@ import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
 public class Signup extends AppCompatActivity {
 
     private final long twoMinutes = 120000;
+    private final long oneSecondInMillis = 1000;
     private EditText email, password, confirmPassword;
     private Button back_Button, createButton;
     private TextView alreadyHaveAnAccount, loginHere, resendEmailTextView;
@@ -210,10 +211,10 @@ public class Signup extends AppCompatActivity {
 
     private void startTimerForVerification() {
         resendEmailTextView = findViewById(textViewResendEmail);
-        verificationTimer = new CountDownTimer(twoMinutes, 1000) {
+        verificationTimer = new CountDownTimer(twoMinutes, oneSecondInMillis) {
             @Override
             public void onTick(long millisUntilFinished) {
-                long secondsLeft = millisUntilFinished / 1000;
+                long secondsLeft = millisUntilFinished / oneSecondInMillis;
                 setDisplayForResendEmailTextViewWhile_TimerOnTick(secondsLeft);
             }
 
