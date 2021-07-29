@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
@@ -14,11 +13,11 @@
         android:roundIcon="@mipmap/ic_byahero"
         android:supportsRtl="true"
         android:theme="@style/Theme.CommutingApp">
+        <activity android:name=".TokenExpired"></activity>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -26,35 +25,27 @@
         <activity
             android:name=".IntroSlider"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".MainScreen"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Signup"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".SignIn"
             android:screenOrientation="portrait" />
-
-
         <activity
             android:name=".NoInternet"
             android:screenOrientation="portrait" />
-
-
         <activity
             android:name=".splashscreen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
     </application>
 
 </manifest>
