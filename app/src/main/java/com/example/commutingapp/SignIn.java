@@ -1,5 +1,6 @@
 package com.example.commutingapp;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import Logger.CustomDialogs;
 import Logger.CustomToastMessage;
 import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
+import Screen.ScreenDimension;
 import ValidateUser.UserManager;
 
 import static com.example.commutingapp.R.id.FacebookButton;
@@ -77,6 +79,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private CustomDialogs customPopupDialog;
     private CallbackManager callbackManager;
 
+
     private void initializeAttributes() {
         email = findViewById(editlogin_TextEmail);
         password = findViewById(editLogin_TextPassword);
@@ -95,7 +98,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         super.onCreate(savedInstanceState);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        new ScreenDimension(getWindow()).windowToFullScreen();
         setContentView(activity_sign_in);
         initializeAttributes();
         FirebaseUserManager.initializeFirebase();

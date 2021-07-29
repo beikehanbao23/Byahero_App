@@ -4,6 +4,7 @@ import Adapters.IntroSliderAdapter
 import Logger.CustomToastMessage
 import MenuButtons.CustomBackButton
 import MenuButtons.backButton
+import Screen.ScreenDimension
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -27,6 +28,7 @@ class IntroSlider : AppCompatActivity() {
     private val preferedShowIntro = "IntroSlider_StateOfSlides"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ScreenDimension(window).windowToFullScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro_slider)
         preferences = getSharedPreferences("IntroSlider", Context.MODE_PRIVATE)

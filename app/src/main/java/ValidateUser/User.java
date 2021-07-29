@@ -98,7 +98,7 @@ public class User {
     }
 
     private boolean isPasswordStrong() {
-        return confirmPassword.getText().toString().trim().toCharArray().length >= 8 && (RegexValidation.isNumeric(confirmPassword.getText().toString().trim()) || RegexValidation.isSpecialCharacters(confirmPassword.getText().toString().trim()));
+        return confirmPassword.getText().toString().trim().toCharArray().length >= 8 && (RegexValidation.hasNumeric(confirmPassword.getText().toString().trim()) || RegexValidation.hasSpecialCharacters(confirmPassword.getText().toString().trim()));
     }
 
     private boolean validEmail() {

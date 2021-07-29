@@ -1,12 +1,10 @@
 package com.example.commutingapp;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -26,6 +24,7 @@ import Logger.CustomDialogs;
 import Logger.CustomToastMessage;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
+import Screen.ScreenDimension;
 import ValidateUser.UserManager;
 
 import static com.example.commutingapp.R.id.BackButton;
@@ -40,7 +39,6 @@ import static com.example.commutingapp.R.id.textViewEmail;
 import static com.example.commutingapp.R.id.textViewResendEmail;
 import static com.example.commutingapp.R.layout.activity_signup;
 import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
-import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
 import static com.example.commutingapp.R.string.doubleTappedMessage;
 import static com.example.commutingapp.R.string.resendEmailFailedMessage;
 import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
@@ -83,7 +81,7 @@ public class Signup extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        new ScreenDimension(getWindow()).windowToFullScreen();
         setContentView(activity_signup);
         initializeAttributes();
 
@@ -140,8 +138,6 @@ public class Signup extends AppCompatActivity {
     }
 
 
-
-
     public void GoToSettingsClicked(View view) {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
@@ -182,7 +178,6 @@ public class Signup extends AppCompatActivity {
             verificationTimer.cancel();
         }
     }
-
 
 
     private void setDisplayForResendEmailTextViewWhile_TimerOnTick(long secondsLeft) {
@@ -309,7 +304,7 @@ public class Signup extends AppCompatActivity {
     }
 
     private void showNoInternetDialog() {
-      startActivity(new Intent(this,NoInternet.class));
+        startActivity(new Intent(this, NoInternet.class));
     }
 
     private void setEmailSentDialog() {
@@ -323,5 +318,5 @@ public class Signup extends AppCompatActivity {
         emailTextView.setText(usersEmail);
     }
 
-    
+
 }

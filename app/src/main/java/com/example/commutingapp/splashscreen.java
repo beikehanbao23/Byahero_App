@@ -16,6 +16,7 @@ import Logger.CustomToastMessage;
 import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
+import Screen.ScreenDimension;
 
 public class splashscreen extends AppCompatActivity implements BackButtonDoubleClicked {
 
@@ -25,7 +26,7 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        new ScreenDimension(getWindow()).windowToFullScreen();
         setContentView(R.layout.activity_splashscreen);
         toastMessageBackButton = new CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10);
         FirebaseUserManager.initializeFirebase();

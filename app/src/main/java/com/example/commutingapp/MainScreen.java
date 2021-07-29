@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +18,7 @@ import Logger.CustomToastMessage;
 import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
 import MenuButtons.backButton;
+import Screen.ScreenDimension;
 
 public class MainScreen extends AppCompatActivity implements BackButtonDoubleClicked {
 
@@ -28,7 +28,7 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        new ScreenDimension(getWindow()).windowToFullScreen();
         setContentView(R.layout.activity_main_screen);
         toastMessageBackButton = new CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10);
         nameTextView = findViewById(R.id.nameTextView);
@@ -48,13 +48,14 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
             }
         }
     }
+
     //TODO Add popup dialog here
     private void checkFacebookTokenIfExpired() {
         new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
                 if (currentAccessToken == null) {
-                //show no token dialog
+                    //show no token dialog
                     Log.e(getClass().getName(), "Token is Expired");
                 }
 
@@ -74,15 +75,13 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
 
     private void putUserToLoginFlowAgain() {
         signOutAccount();
-       showSignInForm();
+        showSignInForm();
     }
-    private void showSignInForm(){
+
+    private void showSignInForm() {
         startActivity(new Intent(this, SignIn.class));
         finish();
     }
-
-
-
 
 
     @Override
