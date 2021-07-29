@@ -2,13 +2,9 @@ package com.example.commutingapp;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -33,10 +30,7 @@ import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseUser;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import FirebaseUserManager.FirebaseUserManager;
@@ -73,7 +67,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private final String TAG = "FacebookAuthentication";
     private EditText email, password;
     private Button googleButton, loginButton, facebookButton;
-    private Dialog noInternetDialog;
+
     private TextView dontHaveAnAccountTextView, signUpTextView, resendEmailTextView;
     private CustomToastMessage toastMessageBackButton;
     private ConnectionManager connectionManager;
@@ -93,7 +87,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         circularProgressBar = findViewById(LoadingProgressBar);
         customPopupDialog = new CustomDialogs(this);
         toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
-        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
         facebookButton = findViewById(FacebookButton);
     }
 
@@ -108,18 +101,19 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         FirebaseUserManager.initializeFirebase();
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
-        noInternetDialog.setContentView(custom_no_internet_dialog);
         removePreviousToken();
 
 
     }
 
     public void FacebookButtonIsClicked(View view) {
-        //TODO refactor
+        loginUsingFacebook();
+    }
+
+    public void loginUsingFacebook(){
 
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
-        LoginManager.getInstance().registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         Log.e(TAG, "facebook:onSuccess:" + loginResult);
@@ -134,13 +128,18 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                     @Override
                     public void onError(FacebookException error) {
                         Log.e(TAG, "facebook:onError", error);
+                        //TODO catch internet exception
                         if(error instanceof FacebookAuthorizationException){
                             removePreviousToken();
-                            FacebookButtonIsClicked(null);
+                            loginUsingFacebook();
                         }
                     }
                 });
     }
+
+
+
+
 
     private void handleFacebookAccessToken(AccessToken token) {
         Log.e(TAG, "handleFacebookAccessToken:" + token);
@@ -176,14 +175,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     @Override
     protected void onDestroy() {
-        closeInternetDialog();
         removeVerificationTimer();
-
         super.onDestroy();
-    }
-
-    public void GoToSettingsClicked(View view) {
-        startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
 
 
@@ -198,13 +191,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         connectionManager = new ConnectionManager(this);
     }
 
-
-    public void retryButtonClicked(View view) {
-        if (connectionManager.PhoneHasInternetConnection() && noInternetDialog.isShowing()) {
-            noInternetDialog.dismiss();
-        }
-
-    }
 
 
     @Override
@@ -272,9 +258,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         });
     }
 
-    public void facebookButtonClicked(View view) {
 
-    }
 
 
     private void removeVerificationTimer() {
@@ -284,11 +268,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     }
 
-    private void closeInternetDialog() {
-        if (noInternetDialog.isShowing()) {
-            noInternetDialog.dismiss();
-        }
-    }
     //TODO FIX THIS
     private void setDisplayForResendEmailTextViewToNotClickable(long secondsLeft) {
         resendEmailTextView.setTextColor(ContextCompat.getColor(this, R.color.gray));
@@ -381,7 +360,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         try {
             throw task.getException();
         } catch (FirebaseNetworkException firebaseNetworkException) {
-            showNoInternetDialog();
+           showNoInternetDialog();
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
             if (firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")) {
                 customPopupDialog.showErrorDialog("Oops..", getString(disabledAccountMessage));
@@ -400,13 +379,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     }
 
     private void showNoInternetDialog() {
-        if (noInternetDialog.isShowing()) {
-            noInternetDialog.dismiss();
-            return;
-        }
-        noInternetDialog.show();
-
+      startActivity(new Intent(this,NoInternet.class));
     }
+
 
     private void showEmailSentDialog() {
 

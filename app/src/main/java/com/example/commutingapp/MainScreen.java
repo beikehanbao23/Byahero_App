@@ -35,7 +35,7 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
         FirebaseUserManager.initializeFirebase();
         checkFacebookTokenIfExpired();
         setNameToTextView();
-        Log.e("WATCH THIS","EXECUTING AGAIN");
+
     }
 
     private void setNameToTextView() {
@@ -54,7 +54,7 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
                 if (currentAccessToken == null) {
-                //Add dialog
+                //show no token dialog
                     Log.e(getClass().getName(), "Token is Expired");
                 }
 
