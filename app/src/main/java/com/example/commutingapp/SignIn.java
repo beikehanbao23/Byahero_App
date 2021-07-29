@@ -33,6 +33,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
@@ -49,6 +50,7 @@ import static com.example.commutingapp.R.id.LoadingProgressBar;
 import static com.example.commutingapp.R.id.LogInButton;
 import static com.example.commutingapp.R.id.TextViewSignUp;
 import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
+import static com.example.commutingapp.R.id.custom;
 import static com.example.commutingapp.R.id.editLogin_TextPassword;
 import static com.example.commutingapp.R.id.editlogin_TextEmail;
 import static com.example.commutingapp.R.id.textViewEmail;
@@ -131,11 +133,17 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                     @Override
                     public void onError(FacebookException error) {
                         Log.e(TAG, "facebook:onError", error);
-                        //TODO catch internet exception
-                        if(error instanceof FacebookAuthorizationException){
-                            removePreviousToken();
-                            loginUsingFacebook();
+
+                        if(Objects.equals(error.getMessage(), "CONNECTION_FAILURE: CONNECTION_FAILURE")){
+                            showNoInternetDialog();
+                            return;
                         }
+
+                        String errorMessage = error.getMessage();
+                        customPopupDialog.showErrorDialog("Error",errorMessage);
+                        removePreviousToken();
+
+
                     }
                 });
     }
