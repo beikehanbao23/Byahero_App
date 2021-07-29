@@ -56,7 +56,7 @@ public class Signup extends AppCompatActivity {
     private TextView alreadyHaveAnAccount, loginHere, resendEmailTextView;
     private ConnectionManager connectionManager;
     private ProgressBar circularProgressbar, circularProgressBarForEmailSentDialog;
-    private Dialog noInternetDialog;
+
     private CustomToastMessage toastMessageBackButton;
     private CountDownTimer verificationTimer;
     private CustomDialogs customPopupDialog;
@@ -71,13 +71,11 @@ public class Signup extends AppCompatActivity {
         createButton = findViewById(CreateButton);
         circularProgressbar = findViewById(LoadingProgressBar);
         customPopupDialog = new CustomDialogs(this);
-        noInternetDialog = new Dialog(this, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
         toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
     }
 
     @Override
     protected void onDestroy() {
-        closeInternetDialog();
         removeVerificationTimer();
         super.onDestroy();
     }
@@ -87,10 +85,9 @@ public class Signup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(activity_signup);
-
         initializeAttributes();
 
-        noInternetDialog.setContentView(custom_no_internet_dialog);
+
         FirebaseUserManager.initializeFirebase();
 
     }
@@ -143,11 +140,7 @@ public class Signup extends AppCompatActivity {
     }
 
 
-    public void retryButtonClicked(View view) {
-        if (connectionManager.PhoneHasInternetConnection() && noInternetDialog.isShowing()) {
-            noInternetDialog.dismiss();
-        }
-    }
+
 
     public void GoToSettingsClicked(View view) {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
@@ -190,11 +183,7 @@ public class Signup extends AppCompatActivity {
         }
     }
 
-    private void closeInternetDialog() {
-        if (noInternetDialog.isShowing()) {
-            noInternetDialog.dismiss();
-        }
-    }
+
 
     private void setDisplayForResendEmailTextViewWhile_TimerOnTick(long secondsLeft) {
 
@@ -320,12 +309,7 @@ public class Signup extends AppCompatActivity {
     }
 
     private void showNoInternetDialog() {
-        if (noInternetDialog.isShowing()) {
-            noInternetDialog.dismiss();
-            return;
-        }
-
-        noInternetDialog.show();
+      startActivity(new Intent(this,NoInternet.class));
     }
 
     private void setEmailSentDialog() {
