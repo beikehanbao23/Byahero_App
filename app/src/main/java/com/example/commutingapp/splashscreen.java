@@ -20,7 +20,7 @@ import Screen.ScreenDimension;
 
 public class splashscreen extends AppCompatActivity implements BackButtonDoubleClicked {
 
-    private final int delayInMillis = 700;
+    private final int delayInMillis = 1000;
     private CustomToastMessage toastMessageBackButton;
 
     @Override
