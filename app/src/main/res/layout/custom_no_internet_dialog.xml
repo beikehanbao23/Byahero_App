@@ -29,7 +29,6 @@
         app:layout_constraintTop_toBottomOf="@+id/gifImageViewNoInternet" />
 
     <TextView
-        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="70dp"
@@ -41,7 +40,6 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="37dp"
         android:layout_marginTop="2dp"
