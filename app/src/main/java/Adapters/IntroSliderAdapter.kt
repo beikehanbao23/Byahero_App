@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.intro_sliders_adapter.view.*
 /*
 This class setup the data that show in sliders
  */
- const val ITEMS_COUNT = 4
+const val ITEMS_COUNT = 4
 
 /* Adapters provide a binding from an
  app-specific data set to views that are
@@ -25,7 +25,7 @@ class IntroSliderAdapter(val context: Context) :
     private val images = arrayListOf<Int>(
         rocket,
         enjoytrip,
-        selectroute,
+        point,
         accurate_weather
     )
 
@@ -60,16 +60,18 @@ class IntroSliderAdapter(val context: Context) :
 
     override fun onBindViewHolder(holder: IntroSliderViewHolder, position: Int) {
 
-        fun elements() = object {
 
-            val image = images[position]
-            val title = context.getString(headerText[position])
-            val description = context.getString(descriptionText[position])
-        }
-        holder.itemView.imageViewDisplaySliders.setImageResource(elements().image)
-        holder.itemView.headerTextViewSliders.text = elements().title
-        holder.itemView.descriptionTextViewSliders.text = elements().description
+        holder.itemView.imageViewDisplaySliders.setImageResource(elements(position).image)
+        holder.itemView.headerTextViewSliders.text = elements(position).title
+        holder.itemView.descriptionTextViewSliders.text = elements(position).description
     }
 
-    override  fun getItemCount() = ITEMS_COUNT
+    private fun elements(position: Int) = object {
+
+        val image = images[position]
+        val title = context.getString(headerText[position])
+        val description = context.getString(descriptionText[position])
+    }
+
+    override fun getItemCount() = ITEMS_COUNT
 }
