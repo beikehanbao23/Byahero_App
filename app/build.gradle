@@ -12,7 +12,8 @@ android {
 
     defaultConfig {
         applicationId "com.example.commutingapp"
-        minSdkVersion 21
+        minSdkVersion 24
+        //last minSdkVersion is 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"

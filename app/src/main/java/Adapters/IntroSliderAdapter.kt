@@ -13,6 +13,8 @@ import kotlinx.android.synthetic.main.intro_sliders_adapter.view.*
 /*
 This class setup the data that show in sliders
  */
+
+
 const val ITEMS_COUNT = 4
 
 /* Adapters provide a binding from an
@@ -21,6 +23,7 @@ const val ITEMS_COUNT = 4
 
 class IntroSliderAdapter(val context: Context) :
     RecyclerView.Adapter<IntroSliderAdapter.IntroSliderViewHolder>() {
+
 
     private val images = arrayListOf<Int>(
         rocket,

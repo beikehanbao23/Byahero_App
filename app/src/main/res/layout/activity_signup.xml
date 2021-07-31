@@ -6,12 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".Signup">
 
+
+    <include
+        android:id="@+id/include3"
+        layout="@layout/application_icon_display"
+        android:layout_width="110dp"
+        android:layout_height="115dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.079" />
+
     <Button
         android:id="@+id/BackButton"
         android:layout_width="58dp"
         android:layout_height="35dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:onClick="backToSignInButton"
         app:backgroundTint="@color/white"
         app:icon="@drawable/ic_backbutton"
@@ -24,18 +37,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="84dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="84dp"
+        android:layout_marginBottom="456dp"
         android:fontFamily="sans-serif-medium"
         android:text="Let's Get Started!"
         android:textColor="@color/black"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.157" />
+        app:layout_constraintTop_toBottomOf="@+id/include3"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView6"
@@ -44,18 +59,19 @@
         android:layout_marginStart="84dp"
         android:layout_marginTop="4dp"
         android:text="Create an account to Byahero"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@+id/textView5"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.937"
         app:layout_constraintStart_toStartOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
     <Button
         android:id="@+id/CreateButton"
-        android:layout_width="165dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="99dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="99dp"
+        android:layout_width="0dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="85dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="85dp"
         android:backgroundTint="@color/blue2"
         android:onClick="CreateButtonClicked"
         android:text="Create"
@@ -69,7 +85,7 @@
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="17dp"
         android:onClick="backToSignInButton"
         android:text="Already have an account?"
         android:textColor="@color/black"
@@ -102,7 +118,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="32dp"
         android:hint="Email"
         app:layout_constraintEnd_toEndOf="parent"

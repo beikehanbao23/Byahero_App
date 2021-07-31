@@ -13,6 +13,9 @@ import com.facebook.AccessTokenTracker;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.UserInfo;
 
+import java.util.*;
+
+
 import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
 import MenuButtons.BackButtonDoubleClicked;
@@ -37,7 +40,7 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
         setNameToTextView();
 
     }
-
+    //TODO Refactor this
     private void setNameToTextView() {
         for (UserInfo userInfo : FirebaseUserManager.getFirebaseUserInstance().getProviderData()) {
             if (userInfo.getProviderId().equals("facebook.com")) {
@@ -47,6 +50,20 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
                 //TODO filter email address
             }
         }
+    }
+    private void displayEmail(){
+        String email = FirebaseUserManager.getFirebaseUserInstance().getEmail();
+        nameTextView.setText(filterEmail(email));
+    }
+    private String filterEmail(String email){
+        List<String> list = new ArrayList<String>();
+        list.add("@gmail.com");
+        list.add("@protonmail.ch");
+        list.add("@yahoo.com");
+
+        //while(list.is)
+
+
     }
 
     //TODO Add popup dialog here

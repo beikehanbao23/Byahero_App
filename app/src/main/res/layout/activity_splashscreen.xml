@@ -7,27 +7,30 @@
     tools:context=".splashscreen">
 
 
- <ImageView
-     android:id="@+id/imageView2"
-     android:layout_width="213dp"
-     android:layout_height="220dp"
-     android:background="@drawable/app_icon"
+ <include
+     android:id="@+id/include2"
+     layout="@layout/application_icon_display"
+     android:layout_width="212dp"
+     android:layout_height="221dp"
+     android:layout_gravity="center"
      app:layout_constraintBottom_toBottomOf="parent"
      app:layout_constraintEnd_toEndOf="parent"
+     app:layout_constraintHorizontal_bias="0.495"
+
      app:layout_constraintStart_toStartOf="parent"
      app:layout_constraintTop_toTopOf="parent"
-     app:layout_constraintVertical_bias="0.498" />
+     app:layout_constraintVertical_bias="0.381" />
 
  <ImageView
      android:id="@+id/imageView3"
-     android:layout_width="222dp"
-     android:layout_height="46dp"
+     android:layout_width="178dp"
+     android:layout_height="36dp"
      android:layout_marginStart="70dp"
-     android:layout_marginEnd="71dp"
-     android:layout_marginBottom="164dp"
-     app:layout_constraintBottom_toBottomOf="parent"
+     android:layout_marginTop="8dp"
+     android:layout_marginEnd="70dp"
      app:layout_constraintEnd_toEndOf="parent"
      app:layout_constraintStart_toStartOf="parent"
+     app:layout_constraintTop_toBottomOf="@+id/include2"
      app:srcCompat="@drawable/app_text_title_transparent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
