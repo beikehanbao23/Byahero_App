@@ -10,14 +10,15 @@
     <include
         android:id="@+id/include3"
         layout="@layout/application_icon_display"
-        android:layout_width="120dp"
-        android:layout_height="125dp"
+        android:layout_width="125dp"
+        android:layout_height="130dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="435dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.059" />
+        app:layout_constraintVertical_bias="0.212" />
 
     <Button
         android:id="@+id/BackButton"
@@ -67,13 +68,13 @@
         android:layout_width="0dp"
         android:layout_height="58dp"
         android:layout_marginStart="85dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="85dp"
         android:backgroundTint="@color/blue2"
         android:onClick="CreateButtonClicked"
         android:text="Create"
-        android:textSize="16sp"
         android:textAlignment="center"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayoutSignUp_ConfirmPassword" />
@@ -84,7 +85,7 @@
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="10dp"
         android:onClick="backToSignInButton"
         android:text="Already have an account?"
         android:textColor="@color/black"
@@ -117,13 +118,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="78dp"
         android:layout_marginEnd="32dp"
         android:hint="Email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/include3"
         app:startIconDrawable="@drawable/ic_email">
 
         <com.google.android.material.textfield.TextInputEditText
