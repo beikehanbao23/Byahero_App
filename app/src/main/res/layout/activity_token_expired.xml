@@ -8,15 +8,18 @@
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/imageView5"
-        android:layout_width="392dp"
-        android:layout_height="345dp"
+        android:layout_width="299dp"
+        android:layout_height="273dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="39dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="230dp"
+        android:src="@drawable/hourglass"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/hourglass" />
+        app:layout_constraintVertical_bias="0.348" />
 
     <TextView
         android:id="@+id/textView3"
@@ -48,16 +51,15 @@
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <Button
-        android:layout_width="205dp"
+        android:layout_width="0dp"
         android:layout_height="61dp"
-        android:layout_marginStart="130dp"
+        android:layout_marginStart="85dp"
         android:layout_marginTop="48dp"
-        android:layout_marginEnd="130dp"
+        android:layout_marginEnd="85dp"
         android:backgroundTint="@color/Blue"
         android:onClick="OkButtonIsClicked"
         android:text="Ok"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />

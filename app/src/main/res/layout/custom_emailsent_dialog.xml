@@ -10,13 +10,14 @@
         android:id="@+id/gifImageView"
         android:layout_width="0dp"
         android:layout_height="222dp"
+        android:layout_marginBottom="310dp"
         android:src="@drawable/emailsent2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.169" />
+        app:layout_constraintVertical_bias="0.564" />
 
     <TextView
         android:id="@+id/textViewConfirmYourEmailAddress"
@@ -86,12 +87,16 @@
 
     <Button
         android:id="@+id/refreshButton"
-        android:layout_width="179dp"
-        android:layout_height="54dp"
+        android:layout_width="0dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="85dp"
         android:layout_marginTop="15dp"
+        android:layout_marginEnd="85dp"
         android:layout_marginBottom="92dp"
+        android:backgroundTint="@color/blue2"
         android:onClick="refreshButtonClicked"
         android:text="Refresh"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
