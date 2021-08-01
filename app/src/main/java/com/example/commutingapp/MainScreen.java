@@ -39,28 +39,25 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
 
         FirebaseUserManager.initializeFirebase();
         checkFacebookTokenIfExpired();
-
+       displayName();
 
     }
 
-    //TODO Refactor this
+
     private String getName() {
         for (UserInfo userInfo : FirebaseUserManager.getFirebaseUserInstance().getProviderData()) {
-            if (userInfo.getProviderId().equals("facebook.com")) {
+            if (userInfo.equals("facebook.com")) {
                 return FirebaseUserManager.getFirebaseUserInstance().getDisplayName();
             }
-
-            }
-        return "";
+        }
+        return getFilteredEmail(FirebaseUserManager.getFirebaseUserInstance().getEmail());
     }
+    private void displayName() {
+      nameTextView.setText(getName());
+      Log.e("Result from getName ",getName());
 
-    private void displayEmail() {
-        String email = FirebaseUserManager.getFirebaseUserInstance().getEmail();
-        nameTextView.setText(getFilteredEmail(email));
     }
-
     private String getFilteredEmail(String userEmail) {
-
 
         List<String> emailLists = getEmailExtensions();
         if (userEmail != null) {
@@ -74,17 +71,15 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
 
     return userEmail;
     }
-
-    //TODO ADD MORE
     private List<String> getEmailExtensions() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("@gmail.com");
         list.add("@protonmail.ch");
         list.add("@yahoo.com");
+        list.add("@hotmail.com");
+        list.add("@outlook.com");
         return list;
     }
-
-    //TODO Add popup dialog here
     private void checkFacebookTokenIfExpired() {
         new AccessTokenTracker() {
             @Override
@@ -97,26 +92,14 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
             }
         };
     }
-
     public void LogoutButtonClicked(View view) {
         Log.e(getClass().getName(), "Logging out!");
         putUserToLoginFlow();
     }
-
     private void signOutAccount() {
         LoginManager.getInstance().logOut();
         FirebaseUserManager.getFirebaseAuthInstance().signOut();
     }
-
-
-
-
-
-
-
-
-
-
     private void putUserToLoginFlow() {
         signOutAccount();
         showSignInForm();
