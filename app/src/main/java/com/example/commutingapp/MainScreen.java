@@ -35,22 +35,23 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
         setContentView(R.layout.activity_main_screen);
         toastMessageBackButton = new CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10);
         nameTextView = findViewById(R.id.nameTextView);
+
+
         FirebaseUserManager.initializeFirebase();
         checkFacebookTokenIfExpired();
-        setNameToTextView();
+
 
     }
 
     //TODO Refactor this
-    private void setNameToTextView() {
+    private String getName() {
         for (UserInfo userInfo : FirebaseUserManager.getFirebaseUserInstance().getProviderData()) {
             if (userInfo.getProviderId().equals("facebook.com")) {
-                Log.e("MAINSCREEN:", "User is signed in with Facebook");
-                nameTextView.setText(FirebaseUserManager.getFirebaseUserInstance().getDisplayName());
-            } else {
-                //TODO filter email address
+                return FirebaseUserManager.getFirebaseUserInstance().getDisplayName();
             }
-        }
+
+            }
+        return "";
     }
 
     private void displayEmail() {
@@ -89,7 +90,7 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
                 if (currentAccessToken == null) {
-                    //show no token dialog
+                    showExpiredTokenDialog();
                     Log.e(getClass().getName(), "Token is Expired");
                 }
 
@@ -99,7 +100,7 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
 
     public void LogoutButtonClicked(View view) {
         Log.e(getClass().getName(), "Logging out!");
-        putUserToLoginFlowAgain();
+        putUserToLoginFlow();
     }
 
     private void signOutAccount() {
@@ -107,22 +108,31 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
         FirebaseUserManager.getFirebaseAuthInstance().signOut();
     }
 
-    private void putUserToLoginFlowAgain() {
+
+
+
+
+
+
+
+
+
+    private void putUserToLoginFlow() {
         signOutAccount();
         showSignInForm();
     }
-
     private void showSignInForm() {
         startActivity(new Intent(this, SignIn.class));
         finish();
     }
-
-
+    private void showExpiredTokenDialog(){
+        startActivity(new Intent(this,TokenExpired.class));
+        finish();
+    }
     @Override
     public void onBackPressed() {
         backButtonClicked();
     }
-
     @Override
     public void backButtonClicked() {
         new CustomBackButton(() -> {
