@@ -40,7 +40,7 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
                 if (currentAccessToken == null) {
                     Log.e("Splashscreen","token expired");
-                    //show expired token dialog
+                    showExpiredTokenDialog();
                 }
             }
         };
@@ -74,7 +74,7 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
         startActivity(new Intent(this, IntroSlider.class));
         finish();
     }
-    private void showExpiredTokenForm(){
+    private void showExpiredTokenDialog(){
         startActivity(new Intent(this,TokenExpired.class));
         finish();
     }
