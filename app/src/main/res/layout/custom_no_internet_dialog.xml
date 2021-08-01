@@ -9,21 +9,23 @@
         android:id="@+id/gifImageViewNoInternet"
         android:layout_width="359dp"
         android:layout_height="435dp"
+        android:layout_marginBottom="125dp"
         android:src="@drawable/nointernetgif"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.506"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.393" />
 
     <Button
         android:id="@+id/retryButton"
         android:layout_width="184dp"
-        android:layout_height="71dp"
+        android:layout_height="58dp"
         android:onClick="retryButtonClicked"
         android:text="RETRY"
         android:backgroundTint="@color/Blue"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gifImageViewNoInternet" />
@@ -35,9 +37,9 @@
         android:text="                  Slow or no internet connection. \n Please check your internet settings and try again."
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/gifImageViewNoInternet"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/gifImageViewNoInternet"
         app:layout_constraintHorizontal_bias="0.509"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@id/gifImageViewNoInternet" />
 
     <Button
         android:layout_width="wrap_content"
@@ -47,7 +49,7 @@
         android:onClick="GoToSettingsClicked"
         android:text="Go to settings"
         android:textColor="@color/black"
-        android:textSize="15sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
