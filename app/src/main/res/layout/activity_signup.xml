@@ -10,14 +10,14 @@
     <include
         android:id="@+id/include3"
         layout="@layout/application_icon_display"
-        android:layout_width="110dp"
-        android:layout_height="115dp"
+        android:layout_width="120dp"
+        android:layout_height="125dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.079" />
+        app:layout_constraintVertical_bias="0.059" />
 
     <Button
         android:id="@+id/BackButton"
@@ -39,18 +39,15 @@
         android:layout_marginStart="84dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="84dp"
-        android:layout_marginBottom="456dp"
         android:fontFamily="sans-serif-medium"
         android:text="Let's Get Started!"
         android:textColor="@color/black"
         android:textSize="22sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include3"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/include3" />
 
     <TextView
         android:id="@+id/textView6"
@@ -75,6 +72,8 @@
         android:backgroundTint="@color/blue2"
         android:onClick="CreateButtonClicked"
         android:text="Create"
+        android:textSize="16sp"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayoutSignUp_ConfirmPassword" />

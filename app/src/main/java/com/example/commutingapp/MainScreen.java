@@ -13,8 +13,8 @@ import com.facebook.AccessTokenTracker;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.UserInfo;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
@@ -40,6 +40,7 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
         setNameToTextView();
 
     }
+
     //TODO Refactor this
     private void setNameToTextView() {
         for (UserInfo userInfo : FirebaseUserManager.getFirebaseUserInstance().getProviderData()) {
@@ -51,19 +52,35 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
             }
         }
     }
-    private void displayEmail(){
+
+    private void displayEmail() {
         String email = FirebaseUserManager.getFirebaseUserInstance().getEmail();
-        nameTextView.setText(filterEmail(email));
+        nameTextView.setText(getFilteredEmail(email));
     }
-    private String filterEmail(String email){
+
+    private String getFilteredEmail(String userEmail) {
+
+
+        List<String> emailLists = getEmailExtensions();
+        if (userEmail != null) {
+            for (int counter = 0; counter < emailLists.size(); ++counter) {
+                String emailExtension = emailLists.get(counter);
+                if (userEmail.contains(emailExtension)) {
+                    return userEmail.replaceAll(emailExtension, "");
+                }
+            }
+        }
+
+    return userEmail;
+    }
+
+    //TODO ADD MORE
+    private List<String> getEmailExtensions() {
         List<String> list = new ArrayList<String>();
         list.add("@gmail.com");
         list.add("@protonmail.ch");
         list.add("@yahoo.com");
-
-        //while(list.is)
-
-
+        return list;
     }
 
     //TODO Add popup dialog here
