@@ -36,7 +36,6 @@ import static com.example.commutingapp.R.id.editSignUpConfirmPassword;
 import static com.example.commutingapp.R.id.editTextSignUpEmailAddress;
 import static com.example.commutingapp.R.id.editTextSignUpPassword;
 import static com.example.commutingapp.R.id.textViewEmail;
-import static com.example.commutingapp.R.id.textViewResendEmail;
 import static com.example.commutingapp.R.layout.activity_signup;
 import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
 import static com.example.commutingapp.R.string.doubleTappedMessage;
@@ -186,7 +185,7 @@ public class Signup extends AppCompatActivity {
     }
 
     private void startTimerForVerification() {
-        resendEmailTextView = findViewById(textViewResendEmail);
+       // resendEmailTextView = findViewById(textViewResendEmail);
         verificationTimer = new CountDownTimer(twoMinutes, oneSecondInMillis) {
             @Override
             public void onTick(long millisUntilFinished) {

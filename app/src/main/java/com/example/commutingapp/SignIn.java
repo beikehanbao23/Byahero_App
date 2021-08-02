@@ -1,26 +1,17 @@
 package com.example.commutingapp;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
@@ -31,10 +22,8 @@ import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-
 import java.util.Arrays;
 import java.util.Objects;
-
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomDialogs;
@@ -43,41 +32,21 @@ import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
 import Screen.ScreenDimension;
 import ValidateUser.UserManager;
-
-import static com.example.commutingapp.R.id.FacebookButton;
-import static com.example.commutingapp.R.id.GoogleButton;
-import static com.example.commutingapp.R.id.LoadingProgressBar;
-import static com.example.commutingapp.R.id.LogInButton;
-import static com.example.commutingapp.R.id.TextViewSignUp;
-import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
-import static com.example.commutingapp.R.id.custom;
-import static com.example.commutingapp.R.id.editLogin_TextPassword;
-import static com.example.commutingapp.R.id.editlogin_TextEmail;
-import static com.example.commutingapp.R.id.textViewEmail;
-import static com.example.commutingapp.R.id.textViewResendEmail;
+import static com.example.commutingapp.R.id.*;
 import static com.example.commutingapp.R.layout.activity_sign_in;
-import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
-import static com.example.commutingapp.R.layout.custom_no_internet_dialog;
-import static com.example.commutingapp.R.string.disabledAccountMessage;
-import static com.example.commutingapp.R.string.doubleTappedMessage;
-import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
-import static com.example.commutingapp.R.string.resendEmailFailedMessage;
-import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
+import static com.example.commutingapp.R.string.*;
 
 
 public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked {
 
-    private final long twoMinutes = 120000;
     private final String TAG = "FacebookAuthentication";
     private EditText email, password;
     private Button googleButton, loginButton, facebookButton;
-
-    private TextView dontHaveAnAccountTextView, signUpTextView, resendEmailTextView;
+    private TextView dontHaveAnAccountTextView, signUpTextView;
     private CustomToastMessage toastMessageBackButton;
     private ConnectionManager connectionManager;
-    private ProgressBar circularProgressBar, circularProgressBarEmailSent;
+    private ProgressBar circularProgressBar;
     private UserManager userManager;
-    private CountDownTimer verificationTimer;
     private CustomDialogs customPopupDialog;
     private CallbackManager callbackManager;
 
@@ -107,7 +76,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
 
-        removePreviousToken();
+        removeFacebookPreviousToken();
 
 
     }
@@ -142,7 +111,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                         }
 
                         customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(error.getMessage()));
-                        removePreviousToken();
+                        removeFacebookPreviousToken();
 
 
                     }
@@ -174,7 +143,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void removePreviousToken(){
+    private void removeFacebookPreviousToken(){
         if (AccessToken.getCurrentAccessToken() != null) {
             LoginManager.getInstance().logOut();
             Log.e(TAG,"RemovingToken");
@@ -184,7 +153,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     @Override
     protected void onDestroy() {
-        removeVerificationTimer();
         LoginManager.getInstance().unregisterCallback(callbackManager);
         super.onDestroy();
     }
@@ -233,71 +201,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             toastMessageBackButton.showToast();
             MenuButtons.backButton.registerFirstClick();
         }).backButtonIsClicked();
-    }
-
-
-    public void refreshButtonClicked(View view) {
-
-        circularProgressBarEmailSent = findViewById(LoadingProgressBar);
-        circularProgressBarEmailSent.setVisibility(View.VISIBLE);
-        FirebaseUserManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
-            if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
-                showMainScreen();
-            }
-            if (emailReload.getException() != null) {
-                handleTaskExceptionResults(emailReload);
-            }
-            circularProgressBarEmailSent.setVisibility(View.INVISIBLE);
-        });
-    }
-
-
-    public void resendEmailIsClicked(View view) {
-
-        FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
-            startTimerForVerification();
-            if (task.isSuccessful()) {
-                customPopupDialog.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
-                return;
-            }
-            customPopupDialog.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
-        });
-    }
-
-    private void removeVerificationTimer() {
-        if (verificationTimer != null) {
-            verificationTimer.cancel();
-        }
-
-    }
-
-    private void setDisplayForResendEmailTextViewToNotClickable(long secondsLeft) {
-        resendEmailTextView.setTextColor(ContextCompat.getColor(this, R.color.gray));
-        resendEmailTextView.setText("Resend verification in " + secondsLeft + "s");
-        resendEmailTextView.setEnabled(false);
-    }
-
-    private void setDisplayForResendEmailTextToDefault() {
-        resendEmailTextView.setTextColor(ContextCompat.getColor(this, R.color.blue2));
-        resendEmailTextView.setText("Resend verification");
-        resendEmailTextView.setEnabled(true);
-    }
-
-    private void startTimerForVerification() {
-        resendEmailTextView = findViewById(textViewResendEmail);
-        verificationTimer = new CountDownTimer(twoMinutes, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long secondsLeft = millisUntilFinished / 1000;
-                setDisplayForResendEmailTextViewToNotClickable(secondsLeft);
-            }
-
-            @Override
-            public void onFinish() {
-                setDisplayForResendEmailTextToDefault();
-            }
-        }.start();
-
     }
 
     private void ProceedToLogin() {
@@ -377,21 +280,14 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     }
 
     private void showNoInternetDialog() {
+
       startActivity(new Intent(this,NoInternet.class));
     }
 
     private void showEmailSentDialog() {
 
-        setContentView(custom_emailsent_dialog);
-        displayUsersEmailToTextView();
-
+      startActivity(new Intent(this,EmailSent.class));
+      finish();
     }
-
-    private void displayUsersEmailToTextView() {
-        TextView emailTextView = findViewById(textViewEmail);
-        String usersEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
-        emailTextView.setText(usersEmail);
-    }
-
 
 }
