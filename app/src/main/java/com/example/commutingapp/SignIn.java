@@ -123,6 +123,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         Log.e(TAG, "facebook:onSuccess:" + loginResult);
+                        startLoading();
                         handleFacebookAccessToken(loginResult.getAccessToken());
                     }
 
@@ -140,18 +141,13 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                             return;
                         }
 
-                        String errorMessage = error.getMessage();
-                        customPopupDialog.showErrorDialog("Error",errorMessage);
+                        customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(error.getMessage()));
                         removePreviousToken();
 
 
                     }
                 });
     }
-
-
-
-
 
     private void handleFacebookAccessToken(AccessToken token) {
         Log.e(TAG, "handleFacebookAccessToken:" + token);
@@ -165,11 +161,11 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                         showMainScreen();
                         return;
                     }
-                    Log.e(TAG, "signInWithCredential:failure", task.getException());
-                    customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
+                       finishLoading();
+                        customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
+
                 });
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -205,13 +201,10 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         connectionManager = new ConnectionManager(this);
     }
 
-
-
     @Override
     public void onBackPressed() {
         backButtonClicked();
     }
-
 
     public void SignInButtonIsClicked(View view) {
 
@@ -227,8 +220,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         ProceedToLogin();
     }
-
-
     
     @Override
     public void backButtonClicked() {
@@ -273,9 +264,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         });
     }
 
-
-
-
     private void removeVerificationTimer() {
         if (verificationTimer != null) {
             verificationTimer.cancel();
@@ -283,7 +271,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     }
 
-    //TODO FIX THIS
     private void setDisplayForResendEmailTextViewToNotClickable(long secondsLeft) {
         resendEmailTextView.setTextColor(ContextCompat.getColor(this, R.color.gray));
         resendEmailTextView.setText("Resend verification in " + secondsLeft + "s");
@@ -295,7 +282,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         resendEmailTextView.setText("Resend verification");
         resendEmailTextView.setEnabled(true);
     }
-
 
     private void startTimerForVerification() {
         resendEmailTextView = findViewById(textViewResendEmail);
@@ -313,7 +299,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         }.start();
 
     }
-
 
     private void ProceedToLogin() {
 
@@ -370,7 +355,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         signUpTextView.setEnabled(true);
     }
 
-
     private void handleTaskExceptionResults(Task<?> task) {
         try {
             throw task.getException();
@@ -387,7 +371,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         }
     }
 
-
     private void showMainScreen() {
         startActivity(new Intent(this, MainScreen.class));
         finish();
@@ -396,7 +379,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private void showNoInternetDialog() {
       startActivity(new Intent(this,NoInternet.class));
     }
-
 
     private void showEmailSentDialog() {
 
