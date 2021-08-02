@@ -41,6 +41,9 @@
             android:name=".NoInternet"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".EmailSent"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".splashscreen"
             android:screenOrientation="portrait">
             <intent-filter>
