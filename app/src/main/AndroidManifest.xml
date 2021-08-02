@@ -25,7 +25,6 @@
         <activity
             android:name=".TokenExpired"
             android:screenOrientation="portrait"/>
-
         <activity
             android:name=".IntroSlider"
             android:screenOrientation="portrait" />
