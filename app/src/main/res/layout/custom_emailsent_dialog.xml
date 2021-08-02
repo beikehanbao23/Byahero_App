@@ -17,7 +17,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.564" />
+        app:layout_constraintVertical_bias="0.446" />
 
     <TextView
         android:id="@+id/textViewConfirmYourEmailAddress"
@@ -67,23 +67,11 @@
         android:layout_marginTop="8dp"
         android:text="Check your email and click on \nthe verification link to continue."
         android:textSize="14sp"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewEmail" />
 
-    <TextView
-        android:id="@+id/textViewResendEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="resendEmailIsClicked"
-        android:text="Resend verification"
-        android:textColor="@color/blue2"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/refreshButton" />
 
     <Button
         android:id="@+id/refreshButton"
@@ -103,5 +91,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10"
         app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="43dp"
+        android:layout_marginTop="68dp"
+        android:background="@color/transparent"
+        android:onClick="resendEmailIsClicked"
+        android:text="Resend verification"
+        android:textColor="@color/blue2"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/refreshButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
