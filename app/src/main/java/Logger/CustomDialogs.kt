@@ -22,9 +22,4 @@ class CustomDialogs(val context:Context) {
     fun showWarningDialog(title: String, contentText: String) {
         dialogOf(title, contentText, IonAlert.WARNING_TYPE).show()
     }
-
-
-
-
-
 }

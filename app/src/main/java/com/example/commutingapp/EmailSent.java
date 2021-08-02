@@ -19,19 +19,29 @@ import java.util.Objects;
 
 import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomDialogs;
-import static com.example.commutingapp.R.id.*;
-import static com.example.commutingapp.R.string.*;
-import static com.example.commutingapp.R.layout.*;
+import Logger.CustomToastMessage;
+import MenuButtons.BackButtonDoubleClicked;
+import MenuButtons.CustomBackButton;
 
-public class EmailSent extends AppCompatActivity {
+import static com.example.commutingapp.R.id.LoadingProgressBar;
+import static com.example.commutingapp.R.id.ResendVerificationButton;
+import static com.example.commutingapp.R.id.textViewEmail;
+import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
+import static com.example.commutingapp.R.string.disabledAccountMessage;
+import static com.example.commutingapp.R.string.doubleTappedMessage;
+import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
+import static com.example.commutingapp.R.string.resendEmailFailedMessage;
+import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
 
+public class EmailSent extends AppCompatActivity implements BackButtonDoubleClicked {
+
+    private final long twoMinutes = 120000;
     private ProgressBar circularProgressBar;
     private CustomDialogs customPopupDialog;
     private Button resendVerificationButton;
     private CountDownTimer verificationTimer;
-    private final long twoMinutes = 120000;
     private TextView emailDisplay;
-
+    private CustomToastMessage toastMessageBackButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,21 +51,38 @@ public class EmailSent extends AppCompatActivity {
         customPopupDialog = new CustomDialogs(this);
         resendVerificationButton = findViewById(ResendVerificationButton);
         emailDisplay = findViewById(textViewEmail);
-
+        toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
 
 
         displayUserEmail();
     }
 
 
-
-
-    private void displayUserEmail(){
-    String userEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
-
-    if(Objects.equals(userEmail, null)){
-        throw new RuntimeException("Email is Null");
+    @Override
+    public void onBackPressed() {
+        backButtonClicked();
     }
+
+    @Override
+    public void backButtonClicked() {
+
+        new CustomBackButton(() -> {
+            if (MenuButtons.backButton.isDoubleTapped()) {
+                toastMessageBackButton.hideToast();
+                super.onBackPressed();
+                return;
+            }
+            toastMessageBackButton.showToast();
+            MenuButtons.backButton.registerFirstClick();
+        }).backButtonIsClicked();
+    }
+
+    private void displayUserEmail() {
+        String userEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
+
+        if (Objects.equals(userEmail, null)) {
+            throw new RuntimeException("Email is Null");
+        }
         emailDisplay.setText(userEmail);
     }
 
@@ -72,6 +99,7 @@ public class EmailSent extends AppCompatActivity {
             circularProgressBar.setVisibility(View.INVISIBLE);
         });
     }
+
     private void handleTaskExceptionResults(Task<?> task) {
         try {
             throw task.getException();
@@ -87,6 +115,7 @@ public class EmailSent extends AppCompatActivity {
             customPopupDialog.showErrorDialog("Oops..", e.getMessage());
         }
     }
+
     public void resendEmailIsClicked(View view) {
         FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
             startTimerForVerification();
@@ -97,16 +126,19 @@ public class EmailSent extends AppCompatActivity {
             customPopupDialog.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
         });
     }
+
     private void DisplayWhenVerificationTimerStarts(long secondsLeft) {
         resendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.gray));
         resendVerificationButton.setText("Resend verification in " + secondsLeft + "s");
         resendVerificationButton.setEnabled(false);
     }
+
     private void DisplayWhenVerificationTimerIsFinished() {
         resendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.blue2));
         resendVerificationButton.setText("Resend verification");
         resendVerificationButton.setEnabled(true);
     }
+
     private void startTimerForVerification() {
 
         verificationTimer = new CountDownTimer(twoMinutes, 1000) {
@@ -123,21 +155,25 @@ public class EmailSent extends AppCompatActivity {
         }.start();
 
     }
+
     private void removeVerificationTimer() {
         if (verificationTimer != null) {
             verificationTimer.cancel();
         }
 
     }
+
     private void showNoInternetDialog() {
 
         startActivity(new Intent(this, NoInternet.class));
     }
+
     private void showMainScreen() {
 
-        startActivity(new Intent(this,MainScreen.class));
+        startActivity(new Intent(this, MainScreen.class));
         finish();
     }
+
     @Override
     protected void onDestroy() {
         removeVerificationTimer();
@@ -145,12 +181,6 @@ public class EmailSent extends AppCompatActivity {
     }
 
     /*
-
-    2. threads
-    3. timer
-    4. add functionality to two buttons
-    5. add colors of Resend Verification button
-    6. add Start and FinishLoading
-    7. remove verification timer in onDestroy Method
+    add threads
      */
 }

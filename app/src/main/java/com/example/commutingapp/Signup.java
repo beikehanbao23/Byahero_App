@@ -35,9 +35,7 @@ import static com.example.commutingapp.R.id.TextView_LoginHere;
 import static com.example.commutingapp.R.id.editSignUpConfirmPassword;
 import static com.example.commutingapp.R.id.editTextSignUpEmailAddress;
 import static com.example.commutingapp.R.id.editTextSignUpPassword;
-import static com.example.commutingapp.R.id.textViewEmail;
 import static com.example.commutingapp.R.layout.activity_signup;
-import static com.example.commutingapp.R.layout.custom_emailsent_dialog;
 import static com.example.commutingapp.R.string.doubleTappedMessage;
 import static com.example.commutingapp.R.string.resendEmailFailedMessage;
 import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
@@ -46,16 +44,13 @@ import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
 
 public class Signup extends AppCompatActivity {
 
-    private final long twoMinutes = 120000;
-    private final long oneSecondInMillis = 1000;
+
     private EditText email, password, confirmPassword;
     private Button back_Button, createButton;
-    private TextView alreadyHaveAnAccount, loginHere, resendEmailTextView;
+    private TextView alreadyHaveAnAccount, loginHere;
     private ConnectionManager connectionManager;
-    private ProgressBar circularProgressbar, circularProgressBarForEmailSentDialog;
-
+    private ProgressBar circularProgressbar;
     private CustomToastMessage toastMessageBackButton;
-    private CountDownTimer verificationTimer;
     private CustomDialogs customPopupDialog;
 
     private void initializeAttributes() {
@@ -73,7 +68,7 @@ public class Signup extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        removeVerificationTimer();
+
         super.onDestroy();
     }
 
@@ -137,85 +132,20 @@ public class Signup extends AppCompatActivity {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
 
-    public void resendEmailIsClicked(View view) {
-
-        FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
-            startTimerForVerification();
-            if (task.isSuccessful()) {
-                customPopupDialog.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
-                return;
-            }
-            customPopupDialog.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
-        });
-
-
-    }
-
-    public void refreshButtonClicked(View view) {
-        circularProgressBarForEmailSentDialog = findViewById(LoadingProgressBar);
-        circularProgressBarForEmailSentDialog.setVisibility(View.VISIBLE);
-        FirebaseUserManager.getFirebaseUserInstance().reload().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
-                showMainScreen();
-            }
-            if (task.getException() != null) {
-                handleTaskExceptionResults(task);
-            }
-            circularProgressBarForEmailSentDialog.setVisibility(View.INVISIBLE);
-        });
-    }
-
-    private void removeVerificationTimer() {
-        if (verificationTimer != null) {
-            verificationTimer.cancel();
-        }
-    }
-
-    private void setDisplayForResendEmailTextViewWhile_TimerOnTick(long secondsLeft) {
-
-        resendEmailTextView.setTextColor(ContextCompat.getColor(this, R.color.gray));
-        resendEmailTextView.setText("Resend verification in " + secondsLeft + "s");
-        resendEmailTextView.setEnabled(false);
-    }
-
-    private void setDisplayForResendEmailTextWhenTimerFinished() {
-        resendEmailTextView.setTextColor(ContextCompat.getColor(this, R.color.blue2));
-        resendEmailTextView.setText("Resend verification");
-        resendEmailTextView.setEnabled(true);
-    }
-
-    private void startTimerForVerification() {
-       // resendEmailTextView = findViewById(textViewResendEmail);
-        verificationTimer = new CountDownTimer(twoMinutes, oneSecondInMillis) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long secondsLeft = millisUntilFinished / oneSecondInMillis;
-                setDisplayForResendEmailTextViewWhile_TimerOnTick(secondsLeft);
-            }
-
-            @Override
-            public void onFinish() {
-                setDisplayForResendEmailTextWhenTimerFinished();
-            }
-        }.start();
-
-    }
-
     private void signOutPreviousAccount() {
-
         FirebaseUserManager.getFirebaseAuthInstance().signOut();
     }
 
     private boolean isUserCreatedNewAccount() {
-        String userEmail = email.getText().toString().trim();
-        return !Objects.equals(FirebaseUserManager.getFirebaseUserInstance().getEmail(), userEmail);
+        String currentEmail = email.getText().toString().trim();
+        String previousEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
+        return !Objects.equals(previousEmail, currentEmail);
     }
 
     private void sendEmailVerificationToUser() {
         FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                clearInputs();
-                setEmailSentDialog();
+                showEmailSentDialog();
                 return;
             }
             customPopupDialog.showErrorDialog("Error", getString(sendingEmailErrorMessage));
@@ -268,12 +198,6 @@ public class Signup extends AppCompatActivity {
 
     }
 
-    private void clearInputs() {
-        email.setText("");
-        password.setText("");
-        confirmPassword.setText("");
-    }
-
     private void finishLoading() {
         circularProgressbar.setVisibility(View.INVISIBLE);
         email.setEnabled(true);
@@ -285,25 +209,14 @@ public class Signup extends AppCompatActivity {
         createButton.setEnabled(true);
     }
 
-    private void showMainScreen() {
-
-        startActivity(new Intent(this, MainScreen.class));
-        finish();
-    }
-
     private void showNoInternetDialog() {
+
         startActivity(new Intent(this, NoInternet.class));
     }
 
-    private void setEmailSentDialog() {
-        setContentView(custom_emailsent_dialog);
-        displayUsersEmailToTextView();
-    }
-
-    private void displayUsersEmailToTextView() {
-        TextView emailTextView = findViewById(textViewEmail);
-        String usersEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
-        emailTextView.setText(usersEmail);
+    private void showEmailSentDialog() {
+        startActivity(new Intent(this, EmailSent.class));
+        finish();
     }
 
 

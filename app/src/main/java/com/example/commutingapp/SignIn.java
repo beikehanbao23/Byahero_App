@@ -2,14 +2,15 @@ package com.example.commutingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -22,8 +23,10 @@ import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+
 import java.util.Arrays;
 import java.util.Objects;
+
 import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomDialogs;
@@ -32,9 +35,19 @@ import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
 import Screen.ScreenDimension;
 import ValidateUser.UserManager;
-import static com.example.commutingapp.R.id.*;
+
+import static com.example.commutingapp.R.id.FacebookButton;
+import static com.example.commutingapp.R.id.GoogleButton;
+import static com.example.commutingapp.R.id.LoadingProgressBar;
+import static com.example.commutingapp.R.id.LogInButton;
+import static com.example.commutingapp.R.id.TextViewSignUp;
+import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
+import static com.example.commutingapp.R.id.editLogin_TextPassword;
+import static com.example.commutingapp.R.id.editlogin_TextEmail;
 import static com.example.commutingapp.R.layout.activity_sign_in;
-import static com.example.commutingapp.R.string.*;
+import static com.example.commutingapp.R.string.disabledAccountMessage;
+import static com.example.commutingapp.R.string.doubleTappedMessage;
+import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
 
 
 public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked {
@@ -85,37 +98,37 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         loginUsingFacebook();
     }
 
-    public void loginUsingFacebook(){
+    public void loginUsingFacebook() {
 
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        Log.e(TAG, "facebook:onSuccess:" + loginResult);
-                        startLoading();
-                        handleFacebookAccessToken(loginResult.getAccessToken());
-                    }
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.e(TAG, "facebook:onSuccess:" + loginResult);
+                startLoading();
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
 
-                    @Override
-                    public void onCancel() {
-                        Log.e(TAG, "facebook:onCancel");
-                    }
+            @Override
+            public void onCancel() {
+                Log.e(TAG, "facebook:onCancel");
+            }
 
-                    @Override
-                    public void onError(FacebookException error) {
-                        Log.e(TAG, "facebook:onError", error);
+            @Override
+            public void onError(FacebookException error) {
+                Log.e(TAG, "facebook:onError", error);
 
-                        if(Objects.equals(error.getMessage(), "CONNECTION_FAILURE: CONNECTION_FAILURE")){
-                            showNoInternetDialog();
-                            return;
-                        }
+                if (Objects.equals(error.getMessage(), "CONNECTION_FAILURE: CONNECTION_FAILURE")) {
+                    showNoInternetDialog();
+                    return;
+                }
 
-                        customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(error.getMessage()));
-                        removeFacebookPreviousToken();
+                customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(error.getMessage()));
+                removeFacebookPreviousToken();
 
 
-                    }
-                });
+            }
+        });
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -130,8 +143,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                         showMainScreen();
                         return;
                     }
-                       finishLoading();
-                        customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
+                    finishLoading();
+                    customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
 
                 });
     }
@@ -143,10 +156,10 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void removeFacebookPreviousToken(){
+    private void removeFacebookPreviousToken() {
         if (AccessToken.getCurrentAccessToken() != null) {
             LoginManager.getInstance().logOut();
-            Log.e(TAG,"RemovingToken");
+            Log.e(TAG, "RemovingToken");
         }
     }
 
@@ -188,7 +201,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         ProceedToLogin();
     }
-    
+
     @Override
     public void backButtonClicked() {
 
@@ -262,7 +275,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         try {
             throw task.getException();
         } catch (FirebaseNetworkException firebaseNetworkException) {
-           showNoInternetDialog();
+            showNoInternetDialog();
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
             if (firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")) {
                 customPopupDialog.showErrorDialog("Oops..", getString(disabledAccountMessage));
@@ -281,13 +294,13 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private void showNoInternetDialog() {
 
-      startActivity(new Intent(this,NoInternet.class));
+        startActivity(new Intent(this, NoInternet.class));
     }
 
     private void showEmailSentDialog() {
 
-      startActivity(new Intent(this,EmailSent.class));
-      finish();
+        startActivity(new Intent(this, EmailSent.class));
+        finish();
     }
 
 }
