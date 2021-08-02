@@ -2,7 +2,7 @@ package ValidateUser;
 
 import java.util.regex.Pattern;
 
-public class RegexValidation {
+public class InputValidationRegex {
     public static boolean hasNumeric(String input){
         return Pattern.compile("[0-9]").matcher(input).find();
     }
