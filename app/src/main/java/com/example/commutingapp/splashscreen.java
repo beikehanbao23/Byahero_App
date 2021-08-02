@@ -6,10 +6,14 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
+import com.google.firebase.auth.FirebaseAuth;
+
+import org.jetbrains.annotations.NotNull;
 
 import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
@@ -22,7 +26,8 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
 
     private final int delayInMillis = 1000;
     private CustomToastMessage toastMessageBackButton;
-
+    private FirebaseAuth.AuthStateListener firebaseAuthListeners;
+    private AccessTokenTracker tokenTracker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,16 +37,29 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
         FirebaseUserManager.initializeFirebase();
         checkFacebookTokenIfExpired();
     }
+/*
+private void setFirebaseAuthListeners(){
+    firebaseAuthListeners = new FirebaseAuth.AuthStateListener() {
+        @Override
+        public void onAuthStateChanged(@NonNull @NotNull FirebaseAuth firebaseAuth) {
+            if(!FirebaseUserManager.isUserAlreadySignedIn()){
 
+            }
+        }
+    }
+}
+
+ */
     private void checkFacebookTokenIfExpired(){
-        //TODO
-        new AccessTokenTracker() {
+        //TODO debug after sign out it appears
+        tokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
                 if (currentAccessToken == null) {
                     Log.e("Splashscreen","token expired");
                     showExpiredTokenDialog();
                 }
+
             }
         };
     }
@@ -93,6 +111,12 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
 
     
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        tokenTracker.stopTracking();
+        super.onDestroy();
     }
 }
 

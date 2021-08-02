@@ -39,24 +39,25 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
 
         FirebaseUserManager.initializeFirebase();
         checkFacebookTokenIfExpired();
-       displayName();
+        displayName();
 
     }
 
 
     private String getName() {
         for (UserInfo userInfo : FirebaseUserManager.getFirebaseUserInstance().getProviderData()) {
-            if (userInfo.equals("facebook.com")) {
+            if (userInfo.getProviderId().equals("facebook.com")) {
                 return FirebaseUserManager.getFirebaseUserInstance().getDisplayName();
             }
         }
         return getFilteredEmail(FirebaseUserManager.getFirebaseUserInstance().getEmail());
     }
-    private void displayName() {
-      nameTextView.setText(getName());
-      Log.e("Result from getName ",getName());
 
+    private void displayName() {
+        nameTextView.setText(getName());
     }
+
+
     private String getFilteredEmail(String userEmail) {
 
         List<String> emailLists = getEmailExtensions();
@@ -69,8 +70,9 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
             }
         }
 
-    return userEmail;
+        return userEmail;
     }
+
     private List<String> getEmailExtensions() {
         List<String> list = new ArrayList<>();
         list.add("@gmail.com");
@@ -80,6 +82,7 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
         list.add("@outlook.com");
         return list;
     }
+
     private void checkFacebookTokenIfExpired() {
         new AccessTokenTracker() {
             @Override
@@ -92,30 +95,37 @@ public class MainScreen extends AppCompatActivity implements BackButtonDoubleCli
             }
         };
     }
+
     public void LogoutButtonClicked(View view) {
         Log.e(getClass().getName(), "Logging out!");
         putUserToLoginFlow();
     }
+
     private void signOutAccount() {
         LoginManager.getInstance().logOut();
         FirebaseUserManager.getFirebaseAuthInstance().signOut();
     }
+
     private void putUserToLoginFlow() {
         signOutAccount();
         showSignInForm();
     }
+
     private void showSignInForm() {
         startActivity(new Intent(this, SignIn.class));
         finish();
     }
-    private void showExpiredTokenDialog(){
-        startActivity(new Intent(this,TokenExpired.class));
+
+    private void showExpiredTokenDialog() {
+        startActivity(new Intent(this, TokenExpired.class));
         finish();
     }
+
     @Override
     public void onBackPressed() {
         backButtonClicked();
     }
+
     @Override
     public void backButtonClicked() {
         new CustomBackButton(() -> {

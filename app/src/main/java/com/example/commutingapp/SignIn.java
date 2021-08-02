@@ -106,6 +106,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         FirebaseUserManager.initializeFirebase();
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
+
         removePreviousToken();
 
 
@@ -154,6 +155,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private void handleFacebookAccessToken(AccessToken token) {
         Log.e(TAG, "handleFacebookAccessToken:" + token);
+
         AuthCredential authCredential = FacebookAuthProvider.getCredential(token.getToken());
         FirebaseUserManager.getFirebaseAuthInstance().signInWithCredential(authCredential).addOnCompleteListener(this,
                 task -> {
@@ -187,6 +189,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     @Override
     protected void onDestroy() {
         removeVerificationTimer();
+        LoginManager.getInstance().unregisterCallback(callbackManager);
         super.onDestroy();
     }
 
