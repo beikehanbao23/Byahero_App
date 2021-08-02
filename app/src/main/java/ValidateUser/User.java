@@ -94,15 +94,22 @@ public class User {
 
 
     private boolean passwordIsNotMatch() {
-        return (!password.getText().toString().trim().equals(confirmPassword.getText().toString().trim()));
+        String userPassword = password.getText().toString().trim();
+        String userConfirmPassword = confirmPassword.getText().toString().trim();
+        return (!userPassword.equals(userConfirmPassword));
     }
 
     private boolean isPasswordStrong() {
-        return confirmPassword.getText().toString().trim().toCharArray().length >= 8 && (RegexValidation.hasNumeric(confirmPassword.getText().toString().trim()) || RegexValidation.hasSpecialCharacters(confirmPassword.getText().toString().trim()));
+        String userConfirmPassword = confirmPassword.getText().toString().trim();
+
+        return userConfirmPassword.toCharArray().length >= 8 &&
+                (InputValidationRegex.hasNumeric(userConfirmPassword) ||
+                        InputValidationRegex.hasSpecialCharacters(userConfirmPassword));
     }
 
     private boolean validEmail() {
-        return Patterns.EMAIL_ADDRESS.matcher(email.getText().toString().trim()).matches();
+        String userEmail = email.getText().toString().trim();
+        return Patterns.EMAIL_ADDRESS.matcher(userEmail).matches();
     }
 
 
