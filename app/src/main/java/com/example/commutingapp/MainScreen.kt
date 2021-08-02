@@ -32,8 +32,15 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
         displayName()
     }
 
+
+
+
+
+
+
+
     private val name: String?
-        private get() {
+        get() {
             for (userInfo in FirebaseUserManager.getFirebaseUserInstance().providerData) {
                 if (userInfo.providerId == "facebook.com") {
                     return FirebaseUserManager.getFirebaseUserInstance().displayName
@@ -60,7 +67,7 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
     }
 
     private val emailExtensions: List<String>
-        private get() {
+        get() {
             val list: MutableList<String> = ArrayList()
             list.add("@gmail.com")
             list.add("@protonmail.ch")

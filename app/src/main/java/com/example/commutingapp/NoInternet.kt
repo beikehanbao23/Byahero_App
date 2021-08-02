@@ -19,7 +19,6 @@ class NoInternet : AppCompatActivity() {
         setContentView(R.layout.custom_no_internet_dialog)
     }
 
-
     override fun onStart() {
         super.onStart()
         connectionManager = ConnectionManager(this)

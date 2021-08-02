@@ -27,7 +27,6 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
     private final int delayInMillis = 1000;
     private CustomToastMessage toastMessageBackButton;
     private FirebaseAuth.AuthStateListener firebaseAuthListeners;
-    private AccessTokenTracker tokenTracker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,35 +34,8 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
         setContentView(R.layout.activity_splashscreen);
         toastMessageBackButton = new CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10);
         FirebaseUserManager.initializeFirebase();
-        checkFacebookTokenIfExpired();
+
     }
-/*
-private void setFirebaseAuthListeners(){
-    firebaseAuthListeners = new FirebaseAuth.AuthStateListener() {
-        @Override
-        public void onAuthStateChanged(@NonNull @NotNull FirebaseAuth firebaseAuth) {
-            if(!FirebaseUserManager.isUserAlreadySignedIn()){
-
-            }
-        }
-    }
-}
-
- */
-    private void checkFacebookTokenIfExpired(){
-        //TODO debug after sign out it appears
-        tokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-                if (currentAccessToken == null) {
-                    Log.e("Splashscreen","token expired");
-                    showExpiredTokenDialog();
-                }
-
-            }
-        };
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -75,25 +47,16 @@ private void setFirebaseAuthListeners(){
         }
         new Handler().postDelayed(this::showIntroSliders, delayInMillis);
     }
-
-
     @Override
     public void onBackPressed() {
         backButtonClicked();
     }
-
-
     private void showMainScreen() {
         startActivity(new Intent(this, MainScreen.class));
         finish();
     }
-
     private void showIntroSliders() {
         startActivity(new Intent(this, IntroSlider.class));
-        finish();
-    }
-    private void showExpiredTokenDialog(){
-        startActivity(new Intent(this,TokenExpired.class));
         finish();
     }
     @Override
@@ -112,10 +75,8 @@ private void setFirebaseAuthListeners(){
     
 
     }
-
     @Override
     protected void onDestroy() {
-        tokenTracker.stopTracking();
         super.onDestroy();
     }
 }

@@ -90,7 +90,6 @@ public class Signup extends AppCompatActivity {
 
     }
 
-
     @Override
     public void onBackPressed() {
 
@@ -106,7 +105,6 @@ public class Signup extends AppCompatActivity {
 
     }
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -117,7 +115,6 @@ public class Signup extends AppCompatActivity {
         startActivity(new Intent(this, SignIn.class));
         finish();
     }
-
 
     public void CreateButtonClicked(View view) {
         UserManager userManager = new UserManager(getBaseContext(), email, password, confirmPassword);
@@ -137,11 +134,9 @@ public class Signup extends AppCompatActivity {
         ProceedToSignUp();
     }
 
-
     public void GoToSettingsClicked(View view) {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
-
 
     public void resendEmailIsClicked(View view) {
 
@@ -157,7 +152,6 @@ public class Signup extends AppCompatActivity {
 
     }
 
-
     public void refreshButtonClicked(View view) {
         circularProgressBarForEmailSentDialog = findViewById(LoadingProgressBar);
         circularProgressBarForEmailSentDialog.setVisibility(View.VISIBLE);
@@ -172,13 +166,11 @@ public class Signup extends AppCompatActivity {
         });
     }
 
-
     private void removeVerificationTimer() {
         if (verificationTimer != null) {
             verificationTimer.cancel();
         }
     }
-
 
     private void setDisplayForResendEmailTextViewWhile_TimerOnTick(long secondsLeft) {
 
@@ -220,7 +212,6 @@ public class Signup extends AppCompatActivity {
         return !Objects.equals(FirebaseUserManager.getFirebaseUserInstance().getEmail(), userEmail);
     }
 
-
     private void sendEmailVerificationToUser() {
         FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -231,7 +222,6 @@ public class Signup extends AppCompatActivity {
             customPopupDialog.showErrorDialog("Error", getString(sendingEmailErrorMessage));
         });
     }
-
 
     private void ProceedToSignUp() {
         String userEmail = email.getText().toString().trim();
@@ -295,7 +285,6 @@ public class Signup extends AppCompatActivity {
         back_Button.setEnabled(true);
         createButton.setEnabled(true);
     }
-
 
     private void showMainScreen() {
 
