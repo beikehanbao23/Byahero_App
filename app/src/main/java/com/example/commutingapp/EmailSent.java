@@ -39,7 +39,7 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
     private TextView emailDisplay;
     private CustomToastMessage toastMessageBackButton;
 
-    private boolean exitThread;
+    private volatile boolean exitThread;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
