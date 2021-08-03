@@ -32,7 +32,7 @@ import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
 public class EmailSent extends AppCompatActivity implements BackButtonDoubleClicked {
 
     private final long twoMinutes = 120000;
-    private ProgressBar circularProgressBar;
+    private final long threadInterval = 2000;
     private CustomDialogs customPopupDialog;
     private Button resendVerificationButton;
     private CountDownTimer verificationTimer;
@@ -44,7 +44,7 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(custom_emailsent_dialog);
-        circularProgressBar = findViewById(LoadingProgressBar);
+
         customPopupDialog = new CustomDialogs(this);
         resendVerificationButton = findViewById(ResendVerificationButton);
         emailDisplay = findViewById(textViewEmail);
@@ -80,7 +80,7 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
 
                      }
                      try {
-                         Thread.sleep(2000);
+                         Thread.sleep(threadInterval);
                      } catch (InterruptedException e) {
                          e.printStackTrace();
                      }
@@ -121,20 +121,6 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
             throw new RuntimeException("Email is Null");
         }
         emailDisplay.setText(userEmail);
-    }
-
-    public void refreshButtonClicked(View view) {
-        circularProgressBar.setVisibility(View.VISIBLE);
-        FirebaseUserManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
-            if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
-                showMainScreen();
-            }
-            if (emailReload.getException() != null) {
-                String message = emailReload.getException().getMessage();
-                customPopupDialog.showErrorDialog("ERROR", Objects.requireNonNull(message));
-            }
-            circularProgressBar.setVisibility(View.INVISIBLE);
-        });
     }
 
     public void resendEmailIsClicked(View view) {
