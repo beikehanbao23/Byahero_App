@@ -18,11 +18,17 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -52,6 +58,7 @@ import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
 
 public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked {
 
+    private static final int RC_SIGN_IN = 123;
     private final String TAG = "FacebookAuthentication";
     private EditText email, password;
     private Button googleButton, loginButton, facebookButton;
@@ -62,7 +69,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private UserManager userManager;
     private CustomDialogs customPopupDialog;
     private CallbackManager callbackManager;
-
+    private GoogleSignInClient mGoogleSignInClient;
 
     private void initializeAttributes() {
         email = findViewById(editlogin_TextEmail);
@@ -90,7 +97,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         callbackManager = CallbackManager.Factory.create();
 
         removeFacebookPreviousToken();
-
+        createRequestSignOptionsGoogle();
 
     }
 
@@ -132,21 +139,20 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
-        Log.e(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential authCredential = FacebookAuthProvider.getCredential(token.getToken());
-        FirebaseUserManager.getFirebaseAuthInstance().signInWithCredential(authCredential).addOnCompleteListener(this,
-                task -> {
-                    if (task.isSuccessful()) {
-                        Log.e(TAG, "signInWithCredential:success");
-                        FirebaseUserManager.getCurrentUser();
-                        showMainScreen();
-                        return;
-                    }
-                    finishLoading();
-                    customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
-
-                });
+        FirebaseUserManager.getFirebaseAuthInstance().signInWithCredential(authCredential).
+                addOnCompleteListener(this,
+                        task -> {
+                            if (task.isSuccessful()) {
+                                Log.e(TAG, "signInWithCredential:success");
+                                FirebaseUserManager.getCurrentUser();
+                                showMainScreen();
+                                return;
+                            }
+                            finishLoading();
+                            customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
+                        });
     }
 
     @Override
@@ -154,6 +160,37 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         Log.e(TAG, "Calling:: onActivityResult");
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
+            //TODO read documentation
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
+                handleGoogleAccessToken(account.getIdToken());
+            } catch (ApiException e) {
+                //TODO fix later, error catched when cancel the choose account dialog
+                customPopupDialog.showErrorDialog("ERROR", Objects.requireNonNull(e.getMessage()));
+
+            }
+        }
+    }
+
+    private void handleGoogleAccessToken(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        FirebaseUserManager.getFirebaseAuthInstance().signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+
+                        Log.d(TAG, "signInWithCredential:success");
+                        FirebaseUserManager.getCurrentUser();
+                        showMainScreen();
+                        return;
+                    }
+                    customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
+                    Log.w(TAG, "signInWithCredential:failure", task.getException());
+                });
     }
 
     private void removeFacebookPreviousToken() {
@@ -303,4 +340,22 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         finish();
     }
 
+    public void googleButtonIsClicked(View view) {
+        signIn();
+    }
+
+    private void signIn() {
+
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+    //TODO read docu about this
+    private void createRequestSignOptionsGoogle() {
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+    }
 }
