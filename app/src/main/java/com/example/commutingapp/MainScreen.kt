@@ -12,14 +12,12 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.facebook.AccessToken
-import com.facebook.AccessTokenTracker
 import com.facebook.login.LoginManager
 import java.util.*
 
 class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
     private var toastMessageBackButton: CustomToastMessage? = null
-    private var nameTextView: TextView? = null
+    private lateinit var nameTextView: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ScreenDimension(window).windowToFullScreen()
@@ -28,7 +26,6 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
             CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10)
         nameTextView = findViewById(R.id.nameTextView)
         FirebaseUserManager.initializeFirebase()
-        checkFacebookTokenIfExpired()
         displayName()
     }
 
@@ -38,11 +35,11 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
 
 
 
-
+    //todo fix later
     private val name: String?
         get() {
             for (userInfo in FirebaseUserManager.getFirebaseUserInstance().providerData) {
-                if (userInfo.providerId == "facebook.com") {
+                if (userInfo.providerId == "facebook.com" || userInfo.providerId == "google.com") {
                     return FirebaseUserManager.getFirebaseUserInstance().displayName
                 }
             }
@@ -50,7 +47,7 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
         }
 
     private fun displayName() {
-        nameTextView!!.text = name
+        nameTextView.text = name
     }
 
     private fun getFilteredEmail(userEmail: String?): String? {
@@ -76,7 +73,7 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
             list.add("@outlook.com")
             return list
         }
-
+/*
     private fun checkFacebookTokenIfExpired() {
         object : AccessTokenTracker() {
             override fun onCurrentAccessTokenChanged(
@@ -84,6 +81,7 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
                 currentAccessToken: AccessToken
             ) {
                 if (currentAccessToken == null) {
+                    signOutAccount();
                     showExpiredTokenDialog()
                     Log.e(javaClass.name, "Token is Expired")
                 }
@@ -91,12 +89,14 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
         }
     }
 
+ */
     fun LogoutButtonClicked(view: View?) {
         Log.e(javaClass.name, "Logging out!")
         putUserToLoginFlow()
     }
 
     private fun signOutAccount() {
+        Log.e("Logout status:","SUCCESS");
         LoginManager.getInstance().logOut()
         FirebaseUserManager.getFirebaseAuthInstance().signOut()
     }
