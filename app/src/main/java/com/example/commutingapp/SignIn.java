@@ -167,17 +167,18 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
-                handleGoogleAccessToken(account.getIdToken());
+                authenticateFirebaseWithGoogle(account.getIdToken());
             } catch (ApiException e) {
                 //TODO fix later, error catched when cancel the choose account dialog
-                customPopupDialog.showErrorDialog("ERROR", Objects.requireNonNull(e.getMessage()));
+                customPopupDialog.showErrorDialog("ERROR", "ApiException:Remove this later");
 
             }
         }
     }
 
-    private void handleGoogleAccessToken(String idToken) {
+    private void authenticateFirebaseWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         FirebaseUserManager.getFirebaseAuthInstance().signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {

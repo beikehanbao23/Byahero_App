@@ -169,7 +169,6 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
         }
 
     }
-    //TODO Catch exception internet failure
 
     private void showMainScreen() {
 
@@ -185,7 +184,4 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
         super.onDestroy();
     }
 
-    /*
-    add threads
-     */
 }
