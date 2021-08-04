@@ -39,7 +39,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.19" />
+        app:layout_constraintVertical_bias="0.384" />
 
     <Button
         android:id="@+id/LogInButton"
@@ -67,7 +67,7 @@
         android:textAlignment="center"
         android:textColor="@color/blurText"
 
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
@@ -87,7 +87,8 @@
         android:text="Google"
         android:textAlignment="center"
         android:textSize="14sp"
-
+        android:textColor="@color/white"
+        android:onClick="googleButtonIsClicked"
         app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.03"
@@ -99,7 +100,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
-        android:layout_marginTop="73dp"
+        android:layout_marginTop="82dp"
         android:layout_marginEnd="60dp"
         android:onClick="SignUpTextClicked"
         android:text="Don't have an account?"
