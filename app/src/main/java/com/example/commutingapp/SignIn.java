@@ -60,6 +60,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private static final int RC_SIGN_IN = 123;
     private final String TAG = "FacebookAuthentication";
+    private final String FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE";
     private EditText email, password;
     private Button googleButton, loginButton, facebookButton;
     private TextView dontHaveAnAccountTextView, signUpTextView;
@@ -125,7 +126,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             public void onError(FacebookException error) {
                 Log.e(TAG, "facebook:onError", error);
 
-                if (Objects.equals(error.getMessage(), "CONNECTION_FAILURE: CONNECTION_FAILURE")) {
+                if (Objects.equals(error.getMessage(), FACEBOOK_CONNECTION_FAILURE)) {
                     showNoInternetDialog();
                     return;
                 }
@@ -160,7 +161,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         Log.e(TAG, "Calling:: onActivityResult");
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-            //TODO read documentation
 
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -227,8 +227,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     public void SignInButtonIsClicked(View view) {
 
-        userManager = new UserManager(getBaseContext(), email, password);
-        if (userManager.UserInputRequirementsFailedAtSignIn()) {
+        userManager = new UserManager(getBaseContext(), email, password,null);
+        if (userManager.userInputRequirementsFailedAtSignIn()) {
             return;
         }
 
@@ -350,7 +350,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-    //TODO read docu about this
     private void createRequestSignOptionsGoogle() {
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
