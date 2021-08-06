@@ -2,33 +2,20 @@ package ValidateUser
 
 import android.content.Context
 import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
 
-class UserManager : User {
-    constructor(
-        appCompatActivity: AppCompatActivity?,
-        context: Context?,
-        email: EditText?,
-        password: EditText?,
-        confirmPassword: EditText?
-    ) : super(email, password, confirmPassword) {
-        setContext(context)
+class UserManager(
+    context: Context,
+    email: EditText,
+    password: EditText,
+    confirmPassword: EditText?
+) : User(context, email, password, confirmPassword) {
+
+
+    fun userInputRequirementsFailedAtSignUp(): Boolean {
+        return super.validateEmailFailed() || super.validatePasswordFailed() || super.validateConfirmPasswordFailed()
     }
 
-    constructor(
-        appCompatActivity: AppCompatActivity?,
-        context: Context?,
-        email: EditText?,
-        password: EditText?
-    ) : super(email, password) {
-        setContext(context)
-    }
-
-    fun UserInputRequirementsFailedAtSignUp(): Boolean {
-        return validateEmailFailed() || validatePasswordFailed() || validateConfirmPasswordFailed()
-    }
-
-    fun UserInputRequirementsFailedAtSignIn(): Boolean {
-        return validateEmailFailed() || validatePasswordFailed()
+    fun userInputRequirementsFailedAtSignIn(): Boolean {
+        return super.validateEmailFailed() || super.validatePasswordFailed()
     }
 }
