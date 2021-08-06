@@ -10,9 +10,11 @@ import com.example.commutingapp.R.layout.intro_sliders_adapter
 import com.example.commutingapp.R.string.*
 import kotlinx.android.synthetic.main.intro_sliders_adapter.view.*
 
+
 /*
 This class setup the data that show in sliders
  */
+
 
 
 const val ITEMS_COUNT = 4
@@ -21,7 +23,7 @@ const val ITEMS_COUNT = 4
  app-specific data set to views that are
  displayed within a RecyclerView.*/
 
-class IntroSliderAdapter(val context: Context) :
+class IntroSliderAdapter(val inflater: LayoutInflater,val _context: Context) :
     RecyclerView.Adapter<IntroSliderAdapter.IntroSliderViewHolder>() {
 
 
@@ -31,14 +33,12 @@ class IntroSliderAdapter(val context: Context) :
         point,
         accurate_weather
     )
-
     private val headerText = arrayListOf<Int>(
         headerTextCreateAccountMessage,
         headerTextEnjoyTripsMessage,
         headerTextChooseDestinationMessage,
         headerTextAccurateWeatherMessage
     )
-
     private val descriptionText = arrayListOf<Int>(
         descriptionTextCreateAccountMessage,
         descriptionTextEnjoyTripMessage,
@@ -47,34 +47,32 @@ class IntroSliderAdapter(val context: Context) :
 
     )
 
-
     /* A ViewHolder describes an
     item view and metadata about
     its place within the RecyclerView.*/
 
     inner class IntroSliderViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntroSliderViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(intro_sliders_adapter, parent, false)
+
         return IntroSliderViewHolder(view)
     }
 
+
     override fun onBindViewHolder(holder: IntroSliderViewHolder, position: Int) {
-
-
         holder.itemView.imageViewDisplaySliders.setImageResource(elements(position).image)
-        holder.itemView.headerTextViewSliders.text = elements(position).title
+        holder.itemView.headerTextViewSliders.text = elements(position).header
         holder.itemView.descriptionTextViewSliders.text = elements(position).description
+
     }
 
     private fun elements(position: Int) = object {
 
         val image = images[position]
-        val title = context.getString(headerText[position])
-        val description = context.getString(descriptionText[position])
+        val header = _context.getString(headerText[position])
+        val description = _context.getString(descriptionText[position])
     }
-
     override fun getItemCount() = ITEMS_COUNT
 }
