@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.commutingapp.R.drawable.*
-import com.example.commutingapp.R.layout.intro_sliders_adapter
 import com.example.commutingapp.R.string.*
-import kotlinx.android.synthetic.main.intro_sliders_adapter.view.*
+import com.example.commutingapp.databinding.IntroSlidersAdapterBinding
 
 
 /*
@@ -26,7 +25,7 @@ const val ITEMS_COUNT = 4
 class IntroSliderAdapter(val inflater: LayoutInflater,val _context: Context) :
     RecyclerView.Adapter<IntroSliderAdapter.IntroSliderViewHolder>() {
 
-
+    private lateinit var binding: IntroSlidersAdapterBinding
     private val images = arrayListOf<Int>(
         rocket,
         enjoytrip,
@@ -51,21 +50,22 @@ class IntroSliderAdapter(val inflater: LayoutInflater,val _context: Context) :
     item view and metadata about
     its place within the RecyclerView.*/
 
-    inner class IntroSliderViewHolder(view: View) : RecyclerView.ViewHolder(view)
-
+    inner class IntroSliderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        fun bindAttributes(position: Int){
+            binding.imageViewDisplaySliders.setImageResource(elements(position).image)
+            binding.headerTextViewSliders.text = elements(position).header
+            binding.descriptionTextViewSliders.text = elements(position).description
+        }
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntroSliderViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(intro_sliders_adapter, parent, false)
 
-        return IntroSliderViewHolder(view)
+         binding = IntroSlidersAdapterBinding.inflate(inflater,parent,false);
+        return IntroSliderViewHolder(binding.root)
     }
 
 
     override fun onBindViewHolder(holder: IntroSliderViewHolder, position: Int) {
-        holder.itemView.imageViewDisplaySliders.setImageResource(elements(position).image)
-        holder.itemView.headerTextViewSliders.text = elements(position).header
-        holder.itemView.descriptionTextViewSliders.text = elements(position).description
-
+        holder.bindAttributes(position)
     }
 
     private fun elements(position: Int) = object {
