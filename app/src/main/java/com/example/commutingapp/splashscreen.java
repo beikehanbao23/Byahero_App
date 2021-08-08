@@ -26,7 +26,6 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
 
     private final int delayInMillis = 1000;
     private CustomToastMessage toastMessageBackButton;
-    private FirebaseAuth.AuthStateListener firebaseAuthListeners;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
