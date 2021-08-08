@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -51,8 +52,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private static final int RC_SIGN_IN = 123;
     private final String TAG = "FacebookAuthentication";
     private final String FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE";
+    private final String GOOGLE_CONNECTION_FAILURE = ":7";
     private CustomDialogs customPopupDialog;
-    private CallbackManager callbackManager;
+    private CallbackManager facebookCallBackManager;
     private GoogleSignInClient mGoogleSignInClient;
     private CustomToastMessage toastMessageBackButton;
     private ActivitySignInBinding activitySignInBinding;
@@ -78,7 +80,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         initializeAttributes();
         FirebaseUserManager.initializeFirebase();
         FacebookSdk.sdkInitialize(getApplicationContext());
-        callbackManager = CallbackManager.Factory.create();
+        facebookCallBackManager = CallbackManager.Factory.create();
 
         removeFacebookPreviousToken();
         createRequestSignOptionsGoogle();
@@ -92,10 +94,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     public void loginUsingFacebook() {
 
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        LoginManager.getInstance().registerCallback(facebookCallBackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.e(TAG, "facebook:onSuccess:" + loginResult);
                 showLoading();
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
@@ -107,21 +108,19 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
             @Override
             public void onError(FacebookException error) {
-                Log.e(TAG, "facebook:onError", error);
-
-                if (Objects.equals(error.getMessage(), FACEBOOK_CONNECTION_FAILURE)) {
-                    showNoInternetDialog();
-                    return;
-                }
-
-                customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(error.getMessage()));
-                removeFacebookPreviousToken();
-
-
+                handleFacebookException(error);
             }
         });
     }
 
+    private void handleFacebookException(Exception error){
+        if (Objects.equals(error.getMessage(), FACEBOOK_CONNECTION_FAILURE)) {
+            showNoInternetDialog();
+            return;
+        }
+        customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(error.getMessage()));
+        removeFacebookPreviousToken();
+    }
     private void handleFacebookAccessToken(AccessToken token) {
 
         AuthCredential authCredential = FacebookAuthProvider.getCredential(token.getToken());
@@ -129,7 +128,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                 addOnCompleteListener(this,
                         task -> {
                             if (task.isSuccessful()) {
-                                Log.e(TAG, "signInWithCredential:success");
                                 FirebaseUserManager.getCurrentUser();
                                 showMainScreen();
                                 return;
@@ -139,55 +137,77 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                         });
     }
 
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e(TAG, "Calling:: onActivityResult");
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
 
+        super.onActivityResult(requestCode, resultCode, data);
+        handleFacebookSignInCallback(requestCode, resultCode, data);
+        handleGoogleSignInCallback(requestCode, data);
+
+    }
+    private void handleFacebookSignInCallback(int requestCode,int resultCode, Intent data){
+        facebookCallBackManager.onActivityResult(requestCode, resultCode, data);
+    }
+    private void handleGoogleSignInCallback(int requestCode, Intent data){
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-
-                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
                 authenticateFirebaseWithGoogle(account.getIdToken());
             } catch (ApiException e) {
-                //TODO fix later, error catched when cancel the choose account dialog
-                customPopupDialog.showErrorDialog("ERROR", "ApiException:Remove this later");
-
+                handleGoogleException(e);
             }
         }
     }
+    private void handleGoogleException(ApiException error){
 
+        if(error.getStatus().isCanceled()){
+            return;
+        }
+        if(!error.getStatus().isSuccess() && !new ConnectionManager(this).PhoneHasInternetConnection()){
+            showNoInternetDialog();
+            return;
+        }
+         customPopupDialog.showErrorDialog("ERROR","Authentication Failed.");
+    }
+
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+    private void createRequestSignOptionsGoogle() {
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+    }
     private void authenticateFirebaseWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         FirebaseUserManager.getFirebaseAuthInstance().signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-
-                        Log.d(TAG, "signInWithCredential:success");
                         FirebaseUserManager.getCurrentUser();
                         showMainScreen();
                         return;
                     }
                     customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
-                    Log.w(TAG, "signInWithCredential:failure", task.getException());
                 });
     }
 
     private void removeFacebookPreviousToken() {
         if (AccessToken.getCurrentAccessToken() != null) {
             LoginManager.getInstance().logOut();
-            Log.e(TAG, "RemovingToken");
         }
     }
 
 
     @Override
     protected void onDestroy() {
-        LoginManager.getInstance().unregisterCallback(callbackManager);
+        LoginManager.getInstance().unregisterCallback(facebookCallBackManager);
         super.onDestroy();
     }
 
@@ -246,7 +266,9 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         String userPassword = activitySignInBinding.editLoginTextPassword.getText().toString().trim();
 
         showLoading();
-        FirebaseUserManager.getFirebaseAuthInstance().signInWithEmailAndPassword(email, userPassword).addOnCompleteListener(this, signInTask -> {
+        FirebaseUserManager.getFirebaseAuthInstance().signInWithEmailAndPassword(
+                email,
+                userPassword).addOnCompleteListener(this, signInTask -> {
             if (signInTask.isSuccessful()) {
                 FirebaseUserManager.getCurrentUser();
                 VerifyUserEmail();
@@ -254,7 +276,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             }
             if (signInTask.getException() != null) {
                 finishLoading();
-                handleTaskExceptionResults(signInTask);
+                handleFirebaseSignInAuthentication(signInTask);
             }
         });
 
@@ -276,7 +298,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private void showLoading() {
         setLoading(false,View.VISIBLE);
     }
-
     private void finishLoading() {
         setLoading(true,View.INVISIBLE);
     }
@@ -291,7 +312,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         activitySignInBinding.TextViewSignUp.setEnabled(visible);
     }
 
-    private void handleTaskExceptionResults(Task<?> task) {
+    private void handleFirebaseSignInAuthentication(Task<?> task) {
         try {
             throw task.getException();
         } catch (FirebaseNetworkException firebaseNetworkException) {
@@ -327,17 +348,5 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         signIn();
     }
 
-    private void signIn() {
 
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-    private void createRequestSignOptionsGoogle() {
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
-    }
 }
