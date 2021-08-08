@@ -55,7 +55,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private CallbackManager callbackManager;
     private GoogleSignInClient mGoogleSignInClient;
     private CustomToastMessage toastMessageBackButton;
-    private ConnectionManager connectionManager;
     private ActivitySignInBinding activitySignInBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
 
@@ -201,7 +200,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     @Override
     protected void onStart() {
         super.onStart();
-        connectionManager = new ConnectionManager(this);
+
     }
 
     @Override
@@ -216,7 +215,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             return;
         }
 
-        if (!connectionManager.PhoneHasInternetConnection()) {
+        if (!new ConnectionManager(this).PhoneHasInternetConnection()) {
             showNoInternetDialog();
             return;
         }
