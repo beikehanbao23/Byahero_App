@@ -210,7 +210,10 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     public void SignInButtonIsClicked(View view) {
 
-        UserManager userManager = new UserManager(getBaseContext(), activitySignInBinding.editloginTextEmail, activitySignInBinding.editLoginTextPassword, null);
+        UserManager userManager = new UserManager(this,
+                activitySignInBinding.editloginTextEmail,
+                activitySignInBinding.editLoginTextPassword,
+                null);
         if (userManager.userInputRequirementsFailedAtSignIn()) {
             return;
         }

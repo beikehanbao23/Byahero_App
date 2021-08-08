@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.commutingapp.databinding.ActivitySignupBinding;
+import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 
@@ -25,15 +23,6 @@ import MenuButtons.backButton;
 import Screen.ScreenDimension;
 import ValidateUser.UserManager;
 
-import static com.example.commutingapp.R.id.BackButton;
-import static com.example.commutingapp.R.id.CreateButton;
-import static com.example.commutingapp.R.id.LoadingProgressBar;
-import static com.example.commutingapp.R.id.TextView_AlreadyHaveAccount;
-import static com.example.commutingapp.R.id.TextView_LoginHere;
-import static com.example.commutingapp.R.id.editSignUpConfirmPassword;
-import static com.example.commutingapp.R.id.editTextSignUpEmailAddress;
-import static com.example.commutingapp.R.id.editTextSignUpPassword;
-import static com.example.commutingapp.R.layout.activity_signup;
 import static com.example.commutingapp.R.string.doubleTappedMessage;
 import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
 
@@ -41,23 +30,14 @@ import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
 public class Signup extends AppCompatActivity {
 
 
-    private EditText email, password, confirmPassword;
-    private Button back_Button, createButton;
-    private TextView alreadyHaveAnAccount, loginHere;
-    private ConnectionManager connectionManager;
-    private ProgressBar circularProgressbar;
+
+
     private CustomToastMessage toastMessageBackButton;
     private CustomDialogs customPopupDialog;
-
+    private ActivitySignupBinding activitySignupBinding;
+    private CircularProgressbarBinding circularProgressbarBinding;
     private void initializeAttributes() {
-        email = findViewById(editTextSignUpEmailAddress);
-        password = findViewById(editTextSignUpPassword);
-        confirmPassword = findViewById(editSignUpConfirmPassword);
-        alreadyHaveAnAccount = findViewById(TextView_AlreadyHaveAccount);
-        loginHere = findViewById(TextView_LoginHere);
-        back_Button = findViewById(BackButton);
-        createButton = findViewById(CreateButton);
-        circularProgressbar = findViewById(LoadingProgressBar);
+
         customPopupDialog = new CustomDialogs(this);
         toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
     }
@@ -72,7 +52,9 @@ public class Signup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         new ScreenDimension(getWindow()).windowToFullScreen();
-        setContentView(activity_signup);
+        activitySignupBinding = ActivitySignupBinding.inflate(getLayoutInflater());
+        circularProgressbarBinding = CircularProgressbarBinding.bind(activitySignupBinding.getRoot());
+        setContentView(activitySignupBinding.getRoot());
         initializeAttributes();
 
 
@@ -98,7 +80,7 @@ public class Signup extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        connectionManager = new ConnectionManager(this);
+
     }
 
     public void backToSignInButton(View view) {
@@ -107,11 +89,14 @@ public class Signup extends AppCompatActivity {
     }
 
     public void CreateButtonClicked(View view) {
-        UserManager userManager = new UserManager(this, email, password, confirmPassword);
+        UserManager userManager = new UserManager(this,
+                activitySignupBinding.editTextSignUpEmailAddress,
+                activitySignupBinding.editTextSignUpPassword,
+                activitySignupBinding.editTextSignUpConfirmPassword);
         if (userManager.userInputRequirementsFailedAtSignUp()) {
             return;
         }
-        if (!connectionManager.PhoneHasInternetConnection()) {
+        if (!new ConnectionManager(this).PhoneHasInternetConnection()) {
             showNoInternetDialog();
             return;
         }
@@ -133,7 +118,7 @@ public class Signup extends AppCompatActivity {
     }
 
     private boolean isUserCreatedNewAccount() {
-        String currentEmail = email.getText().toString().trim();
+        String currentEmail = Objects.requireNonNull(activitySignupBinding.editTextSignUpEmailAddress.getText()).toString().trim();
         String previousEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
         return !Objects.equals(previousEmail, currentEmail);
     }
@@ -149,8 +134,8 @@ public class Signup extends AppCompatActivity {
     }
 
     private void ProceedToSignUp() {
-        String userEmail = email.getText().toString().trim();
-        String userConfirmPassword = confirmPassword.getText().toString().trim();
+        String userEmail = Objects.requireNonNull(activitySignupBinding.editTextSignUpEmailAddress.getText()).toString().trim();
+        String userConfirmPassword = Objects.requireNonNull(activitySignupBinding.editTextSignUpConfirmPassword.getText()).toString().trim();
 
         startLoading();
         FirebaseUserManager.getFirebaseAuthInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
@@ -174,37 +159,34 @@ public class Signup extends AppCompatActivity {
 
     private void handleTaskExceptionResults(Task<?> task) {
         try {
-            throw task.getException();
+            throw Objects.requireNonNull(task.getException());
         } catch (FirebaseNetworkException firebaseNetworkException) {
             showNoInternetDialog();
         } catch (Exception ex) {
-            customPopupDialog.showErrorDialog("Error", task.getException().getMessage());
+            customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(task.getException().getMessage()));
         }
     }
 
     private void startLoading() {
-        circularProgressbar.setVisibility(View.VISIBLE);
-        email.setEnabled(false);
-        password.setEnabled(false);
-        confirmPassword.setEnabled(false);
-        alreadyHaveAnAccount.setEnabled(false);
-        loginHere.setEnabled(false);
-        back_Button.setEnabled(false);
-        createButton.setEnabled(false);
 
+        setLoading(false,View.VISIBLE);
     }
 
     private void finishLoading() {
-        circularProgressbar.setVisibility(View.INVISIBLE);
-        email.setEnabled(true);
-        password.setEnabled(true);
-        confirmPassword.setEnabled(true);
-        alreadyHaveAnAccount.setEnabled(true);
-        loginHere.setEnabled(true);
-        back_Button.setEnabled(true);
-        createButton.setEnabled(true);
+
+     setLoading(true,View.INVISIBLE);
     }
 
+    private void setLoading(boolean visible, int progressBarVisibility){
+        circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
+        activitySignupBinding.editTextSignUpEmailAddress.setEnabled(visible);
+        activitySignupBinding.editTextSignUpPassword.setEnabled(visible);
+        activitySignupBinding.editTextSignUpConfirmPassword.setEnabled(visible);
+        activitySignupBinding.TextViewAlreadyHaveAccount.setEnabled(visible);
+        activitySignupBinding.TextViewLoginHere.setEnabled(visible);
+        activitySignupBinding.BackButton.setEnabled(visible);
+        activitySignupBinding.CreateButton.setEnabled(visible);
+    }
     private void showNoInternetDialog() {
 
         startActivity(new Intent(this, NoInternet.class));
