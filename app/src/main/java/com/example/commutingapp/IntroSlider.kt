@@ -1,6 +1,6 @@
 package com.example.commutingapp
 
-import Adapters.IntroSliderAdapter
+import  Adapters.IntroSliderAdapter
 import Logger.CustomToastMessage
 import MenuButtons.CustomBackButton
 import MenuButtons.backButton
@@ -17,22 +17,27 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.viewpager2.widget.ViewPager2
-import kotlinx.android.synthetic.main.activity_intro_slider.*
+import com.example.commutingapp.databinding.ActivityIntroSliderBinding
+
 
 const val ITEMS_COUNT = 4
+const val DEFAULT_INDICATOR_POSITION = 0
 
 class IntroSlider : AppCompatActivity() {
 
     private lateinit var toastMessageBackButton: CustomToastMessage
     private lateinit var preferences: SharedPreferences
     private val preferedShowIntro = "IntroSlider_StateOfSlides"
+    private var binding: ActivityIntroSliderBinding? = null
+    private lateinit var introSliderAdapter: IntroSliderAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ScreenDimension(window).windowToFullScreen()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_intro_slider)
+        binding = ActivityIntroSliderBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
         preferences = getSharedPreferences("IntroSlider", Context.MODE_PRIVATE)
-
+        introSliderAdapter = IntroSliderAdapter(layoutInflater,this)
         if (userHasAlreadySeenTheIntroSliders()) {
             showSignInForm()
             return
@@ -40,16 +45,16 @@ class IntroSlider : AppCompatActivity() {
 
         toastMessageBackButton =
             CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10)
-        setupIntroSliders()
+        setupIntroSlidersAttributes()
         setupIntroSliderPageIndicators()
 
-        setCurrentIndicator(0)
+        setCurrentIndicator(DEFAULT_INDICATOR_POSITION)
         implementViewPagerSlideActionCallback()
     }
 
     private fun implementViewPagerSlideActionCallback(){
-        with(viewPagerSliders, {
-            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        with(binding?.viewPagerSliders, {
+            this?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     transitionButtonName()
@@ -61,8 +66,9 @@ class IntroSlider : AppCompatActivity() {
     private fun userHasAlreadySeenTheIntroSliders() =
         preferences.getBoolean(preferedShowIntro, false)
 
-    private fun setupIntroSliders() {
-        viewPagerSliders.adapter = IntroSliderAdapter(this)
+    private fun setupIntroSlidersAttributes() {
+
+        binding?.viewPagerSliders?.adapter = introSliderAdapter
     }
 
     private fun setupIntroSliderPageIndicators() {
@@ -73,15 +79,7 @@ class IntroSlider : AppCompatActivity() {
         layoutParameters.setMargins(8, 0, 8, 0)
         renderIndicators(indicators, layoutParameters)
 
-
-        /*
-            also - add more, extension
-            apply - use attributes of object
-            let - null checks
-            with - implicit object names
-            run - to implicit this and return type R
-
-         */
+        
 
     }
 
@@ -98,16 +96,16 @@ class IntroSlider : AppCompatActivity() {
                 setInactiveIndicators(this)
                 layoutParams = layoutParameters
             }
-            linearLayout_dotsIndicator.addView(indicators[counter])
+            binding?.linearLayoutDotsIndicator?.addView(indicators[counter])
 
         }
     }
 
     private fun setCurrentIndicator(index: Int) {
-        val counts = linearLayout_dotsIndicator.childCount
-        for (counter in 0 until counts) {
+        val counts = binding?.linearLayoutDotsIndicator?.childCount
+        for (counter in 0 until counts!!) {
 
-            val imageView = linearLayout_dotsIndicator[counter] as ImageView
+            val imageView = binding?.linearLayoutDotsIndicator?.get(counter) as ImageView
             if (counter == index) setActiveIndicators(imageView) else setInactiveIndicators(
                 imageView
             )
@@ -158,16 +156,16 @@ class IntroSlider : AppCompatActivity() {
         userIsDoneWithIntroSliders()
     }
 
-    private fun slideHasNext() = viewPagerSliders.currentItem < ITEMS_COUNT - 1
+    private fun slideHasNext() = binding?.viewPagerSliders?.currentItem!! < ITEMS_COUNT - 1
     private fun moveToNextSlide() {
-        viewPagerSliders.currentItem += 1
+        binding?.viewPagerSliders?.currentItem?.inc()
     }
 
-    private fun slideIsLastSlide() = viewPagerSliders.currentItem == ITEMS_COUNT - 1
+    private fun slideIsLastSlide() = binding?.viewPagerSliders?.currentItem == ITEMS_COUNT - 1
 
     private fun transitionButtonName() {
-        if (slideIsLastSlide()) nextButtonSliders.text =
-            "Let's get started!" else nextButtonSliders.text = "Next"
+        if (slideIsLastSlide()) binding?.nextButtonSliders?.text =
+            "Let's get started!" else binding?.nextButtonSliders?.text = "Next"
     }
 
     private fun showSignInForm() {
@@ -182,6 +180,12 @@ class IntroSlider : AppCompatActivity() {
             putBoolean(preferedShowIntro, true)
             apply()
         }
+    }
+
+    override fun onDestroy() {
+        introSliderAdapter.destroyIntroSliderAdapterBinding()
+        binding = null
+        super.onDestroy()
     }
 
 
