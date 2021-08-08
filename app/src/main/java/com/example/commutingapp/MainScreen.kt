@@ -79,7 +79,6 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
     }
 
     private fun signOutAccount() {
-        Log.e("Logout status:","SUCCESS");
         LoginManager.getInstance().logOut()
         FirebaseUserManager.getFirebaseAuthInstance().signOut()
     }
