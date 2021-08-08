@@ -10,22 +10,16 @@ import com.example.commutingapp.R.string.*
 import com.example.commutingapp.databinding.IntroSlidersAdapterBinding
 
 
-/*
-This class setup the data that show in sliders
- */
-
-
-
 const val ITEMS_COUNT = 4
 
 /* Adapters provide a binding from an
  app-specific data set to views that are
  displayed within a RecyclerView.*/
 
-class IntroSliderAdapter(val inflater: LayoutInflater,val _context: Context) :
+class IntroSliderAdapter(val inflater: LayoutInflater, val _context: Context) :
     RecyclerView.Adapter<IntroSliderAdapter.IntroSliderViewHolder>() {
 
-    private lateinit var binding: IntroSlidersAdapterBinding
+    private var binding: IntroSlidersAdapterBinding? = null
     private val images = arrayListOf<Int>(
         rocket,
         enjoytrip,
@@ -46,21 +40,42 @@ class IntroSliderAdapter(val inflater: LayoutInflater,val _context: Context) :
 
     )
 
+
+    /*
+    Executing a lambda on non-null objects: let
+
+    Introducing an expression as a variable in local scope: let
+
+    Object configuration: apply
+
+    Object configuration and computing the result: run
+
+    Running statements where an expression is required: non-extension run
+
+    Additional effects: also
+
+    Grouping function calls on an object: with
+
+     */
     /* A ViewHolder describes an
     item view and metadata about
     its place within the RecyclerView.*/
 
     inner class IntroSliderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bindAttributes(position: Int){
-            binding.imageViewDisplaySliders.setImageResource(elements(position).image)
-            binding.headerTextViewSliders.text = elements(position).header
-            binding.descriptionTextViewSliders.text = elements(position).description
+
+        fun bindAttributes(position: Int) {
+            binding?.imageViewDisplaySliders?.setImageResource(elements(position).image)
+            binding?.headerTextViewSliders?.text = elements(position).header
+            binding?.descriptionTextViewSliders?.text = elements(position).description
         }
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntroSliderViewHolder {
 
-         binding = IntroSlidersAdapterBinding.inflate(inflater,parent,false);
-        return IntroSliderViewHolder(binding.root)
+        binding = IntroSlidersAdapterBinding.inflate(inflater, parent, false)
+
+        return IntroSliderViewHolder(binding!!.root)
+
     }
 
 
@@ -74,5 +89,10 @@ class IntroSliderAdapter(val inflater: LayoutInflater,val _context: Context) :
         val header = _context.getString(headerText[position])
         val description = _context.getString(descriptionText[position])
     }
+
     override fun getItemCount() = ITEMS_COUNT
+
+    fun destroyIntroSliderAdapterBinding() {
+        binding = null
+    }
 }
