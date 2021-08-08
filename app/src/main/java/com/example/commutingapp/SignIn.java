@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.commutingapp.databinding.ActivitySignInBinding;
+import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -42,15 +40,7 @@ import MenuButtons.CustomBackButton;
 import Screen.ScreenDimension;
 import ValidateUser.UserManager;
 
-import static com.example.commutingapp.R.id.FacebookButton;
-import static com.example.commutingapp.R.id.GoogleButton;
-import static com.example.commutingapp.R.id.LoadingProgressBar;
-import static com.example.commutingapp.R.id.LogInButton;
-import static com.example.commutingapp.R.id.TextViewSignUp;
-import static com.example.commutingapp.R.id.TextView_DontHaveAnAccount;
-import static com.example.commutingapp.R.id.editLogin_TextPassword;
-import static com.example.commutingapp.R.id.editlogin_TextEmail;
-import static com.example.commutingapp.R.layout.activity_sign_in;
+
 import static com.example.commutingapp.R.string.disabledAccountMessage;
 import static com.example.commutingapp.R.string.doubleTappedMessage;
 import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
@@ -61,28 +51,18 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private static final int RC_SIGN_IN = 123;
     private final String TAG = "FacebookAuthentication";
     private final String FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE";
-    private EditText email, password;
-    private Button googleButton, loginButton, facebookButton;
-    private TextView dontHaveAnAccountTextView, signUpTextView;
-    private CustomToastMessage toastMessageBackButton;
-    private ConnectionManager connectionManager;
-    private ProgressBar circularProgressBar;
-    private UserManager userManager;
     private CustomDialogs customPopupDialog;
     private CallbackManager callbackManager;
     private GoogleSignInClient mGoogleSignInClient;
+    private CustomToastMessage toastMessageBackButton;
+    private ConnectionManager connectionManager;
+    private ActivitySignInBinding activitySignInBinding;
+    private CircularProgressbarBinding circularProgressbarBinding;
 
     private void initializeAttributes() {
-        email = findViewById(editlogin_TextEmail);
-        password = findViewById(editLogin_TextPassword);
-        loginButton = findViewById(LogInButton);
-        googleButton = findViewById(GoogleButton);
-        dontHaveAnAccountTextView = findViewById(TextView_DontHaveAnAccount);
-        signUpTextView = findViewById(TextViewSignUp);
-        circularProgressBar = findViewById(LoadingProgressBar);
         customPopupDialog = new CustomDialogs(this);
         toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
-        facebookButton = findViewById(FacebookButton);
+
     }
 
     @Override
@@ -90,8 +70,12 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
         super.onCreate(savedInstanceState);
 
+        activitySignInBinding = ActivitySignInBinding.inflate(getLayoutInflater());
+        circularProgressbarBinding = CircularProgressbarBinding.bind(activitySignInBinding.getRoot());
         new ScreenDimension(getWindow()).windowToFullScreen();
-        setContentView(activity_sign_in);
+
+        setContentView(activitySignInBinding.getRoot());
+
         initializeAttributes();
         FirebaseUserManager.initializeFirebase();
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -113,7 +97,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.e(TAG, "facebook:onSuccess:" + loginResult);
-                startLoading();
+                showLoading();
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
@@ -227,7 +211,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     public void SignInButtonIsClicked(View view) {
 
-        userManager = new UserManager(getBaseContext(), email, password,null);
+        UserManager userManager = new UserManager(getBaseContext(), activitySignInBinding.editloginTextEmail, activitySignInBinding.editLoginTextPassword, null);
         if (userManager.userInputRequirementsFailedAtSignIn()) {
             return;
         }
@@ -256,11 +240,11 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private void ProceedToLogin() {
 
-        String userUsername = email.getText().toString().trim();
-        String userPassword = password.getText().toString().trim();
+        String email = activitySignInBinding.editloginTextEmail.getText().toString().trim();
+        String userPassword = activitySignInBinding.editLoginTextPassword.getText().toString().trim();
 
-        startLoading();
-        FirebaseUserManager.getFirebaseAuthInstance().signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, signInTask -> {
+        showLoading();
+        FirebaseUserManager.getFirebaseAuthInstance().signInWithEmailAndPassword(email, userPassword).addOnCompleteListener(this, signInTask -> {
             if (signInTask.isSuccessful()) {
                 FirebaseUserManager.getCurrentUser();
                 VerifyUserEmail();
@@ -287,26 +271,22 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         });
     }
 
-    private void startLoading() {
-        circularProgressBar.setVisibility(View.VISIBLE);
-        email.setEnabled(false);
-        password.setEnabled(false);
-        loginButton.setEnabled(false);
-        facebookButton.setEnabled(false);
-        googleButton.setEnabled(false);
-        dontHaveAnAccountTextView.setEnabled(false);
-        signUpTextView.setEnabled(false);
+    private void showLoading() {
+        setLoading(false,View.VISIBLE);
     }
 
     private void finishLoading() {
-        circularProgressBar.setVisibility(View.INVISIBLE);
-        email.setEnabled(true);
-        password.setEnabled(true);
-        loginButton.setEnabled(true);
-        facebookButton.setEnabled(true);
-        googleButton.setEnabled(true);
-        dontHaveAnAccountTextView.setEnabled(true);
-        signUpTextView.setEnabled(true);
+        setLoading(true,View.INVISIBLE);
+    }
+    private void setLoading(boolean visible, int progressBarVisibility){
+        circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
+        activitySignInBinding.editloginTextEmail.setEnabled(visible);
+        activitySignInBinding.editLoginTextPassword.setEnabled(visible);
+        activitySignInBinding.LogInButton.setEnabled(visible);
+        activitySignInBinding.FacebookButton.setEnabled(visible);
+        activitySignInBinding.GoogleButton.setEnabled(visible);
+        activitySignInBinding.TextViewDontHaveAnAccount.setEnabled(visible);
+        activitySignInBinding.TextViewSignUp.setEnabled(visible);
     }
 
     private void handleTaskExceptionResults(Task<?> task) {
