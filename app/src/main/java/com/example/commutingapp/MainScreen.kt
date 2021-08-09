@@ -17,18 +17,23 @@ import java.util.*
 
 class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
     private var toastMessageBackButton: CustomToastMessage? = null
-    private lateinit var activityMainScreenBinding: ActivityMainScreenBinding
+    private var activityMainScreenBinding: ActivityMainScreenBinding? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ScreenDimension(window).windowToFullScreen()
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
-        setContentView(activityMainScreenBinding.root)
+        setContentView(activityMainScreenBinding?.root)
         toastMessageBackButton =
             CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10)
         FirebaseUserManager.initializeFirebase()
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        activityMainScreenBinding = null
+    }
 
     override fun onStart() {
         displayName()
@@ -46,7 +51,7 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
         }
 
     private fun displayName() {
-        activityMainScreenBinding.nameTextView.text = name
+        activityMainScreenBinding?.nameTextView?.text  = name
     }
 
     private fun getFilteredEmail(userEmail: String?): String? {

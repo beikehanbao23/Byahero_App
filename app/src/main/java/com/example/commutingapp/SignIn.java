@@ -52,7 +52,6 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     private static final int RC_SIGN_IN = 123;
     private final String TAG = "FacebookAuthentication";
     private final String FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE";
-    private final String GOOGLE_CONNECTION_FAILURE = ":7";
     private CustomDialogs customPopupDialog;
     private CallbackManager facebookCallBackManager;
     private GoogleSignInClient mGoogleSignInClient;
@@ -208,13 +207,15 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
     @Override
     protected void onDestroy() {
         LoginManager.getInstance().unregisterCallback(facebookCallBackManager);
+        activitySignInBinding = null;
+        circularProgressbarBinding = null;
         super.onDestroy();
     }
 
 
     public void SignUpTextClicked(View view) {
         this.startActivity(new Intent(this, Signup.class));
-        finish();
+
     }
 
     @Override

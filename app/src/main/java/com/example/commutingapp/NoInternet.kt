@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 class NoInternet : AppCompatActivity() {
 
-    private lateinit var connectionManager: ConnectionManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -21,11 +21,11 @@ class NoInternet : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        connectionManager = ConnectionManager(this)
+
     }
 
     fun retryButtonClicked(view: View) {
-        if (connectionManager.PhoneHasInternetConnection()){
+        if (!ConnectionManager(this).PhoneHasInternetConnection()){
         finish()
         }
     }

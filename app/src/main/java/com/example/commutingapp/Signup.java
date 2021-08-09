@@ -30,12 +30,11 @@ import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
 public class Signup extends AppCompatActivity {
 
 
-
-
     private CustomToastMessage toastMessageBackButton;
     private CustomDialogs customPopupDialog;
     private ActivitySignupBinding activitySignupBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
+
     private void initializeAttributes() {
 
         customPopupDialog = new CustomDialogs(this);
@@ -44,7 +43,8 @@ public class Signup extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-
+        activitySignupBinding = null;
+        circularProgressbarBinding = null;
         super.onDestroy();
     }
 
@@ -65,15 +65,7 @@ public class Signup extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        new CustomBackButton(() -> {
-            if (backButton.isDoubleTapped()) {
-                toastMessageBackButton.hideToast();
-                super.onBackPressed();
-                return;
-            }
-            toastMessageBackButton.showToast();
-            backButton.registerFirstClick();
-        }).backButtonIsClicked();
+        showNoInternetDialog();
 
     }
 
@@ -83,7 +75,7 @@ public class Signup extends AppCompatActivity {
 
     }
 
-    public void backToSignInButton(View view) {
+    public void backToSignIn(View view) {
         startActivity(new Intent(this, SignIn.class));
         finish();
     }
@@ -142,9 +134,7 @@ public class Signup extends AppCompatActivity {
 
             if (task.isSuccessful()) {
                 FirebaseUserManager.getCurrentUser();
-                finishLoading();
                 sendEmailVerificationToUser();
-
                 return;
 
             }
@@ -169,15 +159,15 @@ public class Signup extends AppCompatActivity {
 
     private void startLoading() {
 
-        setLoading(false,View.VISIBLE);
+        setLoading(false, View.VISIBLE);
     }
 
     private void finishLoading() {
 
-     setLoading(true,View.INVISIBLE);
+        setLoading(true, View.INVISIBLE);
     }
 
-    private void setLoading(boolean visible, int progressBarVisibility){
+    private void setLoading(boolean visible, int progressBarVisibility) {
         circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
         activitySignupBinding.editTextSignUpEmailAddress.setEnabled(visible);
         activitySignupBinding.editTextSignUpPassword.setEnabled(visible);
@@ -187,8 +177,8 @@ public class Signup extends AppCompatActivity {
         activitySignupBinding.BackButton.setEnabled(visible);
         activitySignupBinding.CreateButton.setEnabled(visible);
     }
-    private void showNoInternetDialog() {
 
+    private void showNoInternetDialog() {
         startActivity(new Intent(this, NoInternet.class));
     }
 
