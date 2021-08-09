@@ -26,7 +26,7 @@
         android:layout_height="35dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:onClick="backToSignInButton"
+        android:onClick="backToSignIn"
         app:backgroundTint="@color/white"
         app:icon="@drawable/ic_backbutton"
         app:iconTint="@color/black"
@@ -86,7 +86,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:onClick="backToSignInButton"
+        android:onClick="backToSignIn"
         android:text="Already have an account?"
         android:textColor="@color/black"
         android:textSize="15sp"
@@ -99,7 +99,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:onClick="backToSignInButton"
+        android:onClick="backToSignIn"
         android:text="Login here"
         android:textColor="@color/blue2"
         android:textSize="15sp"
@@ -109,8 +109,7 @@
         app:layout_constraintTop_toBottomOf="@+id/TextView_AlreadyHaveAccount" />
 
     <include
-        layout="@layout/circular_progressbar"
-        />
+        layout="@layout/circular_progressbar" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/TextInputLayoutSignUp_EmailAddress"
@@ -173,7 +172,7 @@
         app:startIconDrawable="@drawable/ic_password">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editSignUpConfirmPassword"
+            android:id="@+id/editTextSignUpConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
