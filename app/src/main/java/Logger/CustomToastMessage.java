@@ -33,22 +33,8 @@ public class CustomToastMessage {
 
         toast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT, type, true);
     }
-
-
      CustomToastMessage() {
 
-    }
-
-
-    public void showToastWithLimitedTimeThenClose(long timeAsMilliseconds) {
-        if(timeAsMilliseconds == 0) {
-            throw new RuntimeException("Time as milliseconds is invalid!");
-        }
-        toast.show();
-
-        new Handler().postDelayed(() -> {
-            toast.cancel();
-        }, timeAsMilliseconds);
     }
 
 

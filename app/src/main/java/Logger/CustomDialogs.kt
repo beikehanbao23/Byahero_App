@@ -3,23 +3,34 @@ package Logger
 import android.content.Context
 import id.ionbit.ionalert.IonAlert
 
-class CustomDialogs(val context:Context) {
-    private fun dialogOf(title: String, contextText: String, type: Int): IonAlert {
+class CustomDialogs(val context: Context) {
+
+
+    private fun dialogIonAlert(title: String, contextText: String, type: Int): IonAlert {
         val alertDialog = IonAlert(context, type)
-        alertDialog.titleText = title
-        alertDialog.contentText = contextText
-        return alertDialog
+        return alertDialog.apply {
+            titleText = title
+            contentText = contextText
+        }
     }
 
+
     fun showErrorDialog(title: String, contextText: String) {
-        dialogOf(title, contextText, IonAlert.ERROR_TYPE).show()
+        dialogIonAlert(title, contextText, IonAlert.ERROR_TYPE).apply {
+            if (!isShowing) show() else cancel()
+        }
+
     }
 
     fun showSuccessDialog(title: String, contentText: String) {
-        dialogOf(title, contentText, IonAlert.SUCCESS_TYPE).show()
+        dialogIonAlert(title, contentText, IonAlert.SUCCESS_TYPE).apply {
+            if (!isShowing) show() else cancel()
+        }
     }
 
     fun showWarningDialog(title: String, contentText: String) {
-        dialogOf(title, contentText, IonAlert.WARNING_TYPE).show()
+        dialogIonAlert(title, contentText, IonAlert.WARNING_TYPE).apply {
+            if (!isShowing) show() else cancel()
+        }
     }
 }
