@@ -25,7 +25,7 @@ class NoInternet : AppCompatActivity() {
     }
 
     fun retryButtonClicked(view: View) {
-        if (!ConnectionManager(this).PhoneHasInternetConnection()){
+        if (ConnectionManager(this).PhoneHasInternetConnection()){
         finish()
         }
     }
