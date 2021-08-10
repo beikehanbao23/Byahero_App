@@ -17,20 +17,20 @@ class CustomDialogs(val context: Context) {
 
     fun showErrorDialog(title: String, contextText: String) {
         dialogIonAlert(title, contextText, IonAlert.ERROR_TYPE).apply {
-            if (!isShowing) show() else cancel()
+            if (isShowing) cancel() else show()
         }
 
     }
 
     fun showSuccessDialog(title: String, contentText: String) {
         dialogIonAlert(title, contentText, IonAlert.SUCCESS_TYPE).apply {
-            if (!isShowing) show() else cancel()
+            if (isShowing) cancel() else show()
         }
     }
 
     fun showWarningDialog(title: String, contentText: String) {
         dialogIonAlert(title, contentText, IonAlert.WARNING_TYPE).apply {
-            if (!isShowing) show() else cancel()
+            if (isShowing) cancel() else show()
         }
     }
 }
