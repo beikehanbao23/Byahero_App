@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="70dp"
         android:text="                  Slow or no internet connection. \n Please check your internet settings and try again."
-        android:textSize="16sp"
+        android:textSize="14.3sp"
         app:layout_constraintBottom_toBottomOf="@+id/gifImageViewNoInternet"
         app:layout_constraintEnd_toEndOf="@+id/gifImageViewNoInternet"
         app:layout_constraintHorizontal_bias="0.509"
