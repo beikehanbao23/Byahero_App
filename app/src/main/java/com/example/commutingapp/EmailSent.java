@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.commutingapp.databinding.CustomEmailsentDialogBinding;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 
 import java.util.Objects;
 
@@ -33,7 +35,7 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
     private CustomToastMessage toastMessageBackButton;
     private volatile boolean exitThread;
     private CustomEmailsentDialogBinding emailDialogBinding;
-
+    private Thread thread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,44 +47,79 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
         customPopupDialog = new CustomDialogs(this);
         toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
         FirebaseUserManager.initializeFirebase();
-        exitThread = false;
         displayUserEmailToTextView();
-        try {
-            refreshEmailAutomatically();
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+
 
     }
 
 
     private void refreshEmailAutomatically() throws Exception {
-        new Thread(() -> {
+        thread = new Thread(() -> {
             while (!exitThread) {
                 reloadUserEmailCurrentData();
+                Log.e("THREAD STATUS","RUNNING");
                 try {
                     Thread.sleep(threadInterval);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
+        thread.start();
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+            Log.e("THREAD IS ","NULL");
+            setThreadDisabled(false);
+            try {
+                refreshEmailAutomatically();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        setThreadDisabled(true);
+    }
+
+
+    private void setThreadDisabled(Boolean threadState){
+     exitThread = threadState;
+    }
     private void reloadUserEmailCurrentData() {
-        if (!FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
+
             FirebaseUserManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
                 if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
-                    showMainScreen();
+                    showMainScreenActivity();
                 }
                 if (emailReload.getException() != null) {
-                    String message = emailReload.getException().getMessage();
-                    customPopupDialog.showErrorDialog("ERROR", Objects.requireNonNull(message));
+                    handleException(emailReload);
+
                 }
             });
-        }
-    }
 
+    }
+    private void handleException(Task<?> task){
+        try {
+            throw Objects.requireNonNull(task.getException());
+        } catch (FirebaseNetworkException firebaseNetworkException) {
+            showNoInternetActivity();
+        } catch (Exception ex) {
+            customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(task.getException().getMessage()));
+        }
+
+    }
+    private void showNoInternetActivity(){
+
+        startActivity(new Intent(this,NoInternet.class));
+    }
     @Override
     public void onBackPressed() {
         backButtonClicked();
@@ -109,6 +146,10 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
         }
         emailDialogBinding.textViewEmail.setText(userEmail);
     }
+
+
+
+
 
     public void resendEmailIsClicked(View view) {
         FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
@@ -157,7 +198,7 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
 
     }
 
-    private void showMainScreen() {
+    private void showMainScreenActivity() {
 
         startActivity(new Intent(this, MainScreen.class));
         finish();
@@ -166,7 +207,7 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
     @Override
     protected void onDestroy() {
         removeVerificationTimer();
-        exitThread = true;
+        setThreadDisabled(true);
         super.onDestroy();
     }
 
