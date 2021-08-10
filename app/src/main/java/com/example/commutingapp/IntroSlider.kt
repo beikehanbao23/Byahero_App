@@ -39,12 +39,13 @@ class IntroSlider : AppCompatActivity() {
         preferences = getSharedPreferences("IntroSlider", Context.MODE_PRIVATE)
         introSliderAdapter = IntroSliderAdapter(layoutInflater,this)
         if (userHasAlreadySeenTheIntroSliders()) {
-            showSignInForm()
+            showSignInActivity()
             return
         }
 
         toastMessageBackButton =
             CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10)
+
         setupIntroSlidersAttributes()
         setupIntroSliderPageIndicators()
 
@@ -152,13 +153,15 @@ class IntroSlider : AppCompatActivity() {
             return
         }
 
-        showSignInForm()
+        showSignInActivity()
         userIsDoneWithIntroSliders()
     }
 
-    private fun slideHasNext() = binding?.viewPagerSliders?.currentItem!! < ITEMS_COUNT - 1
+    private fun slideHasNext() = binding!!.viewPagerSliders.currentItem < ITEMS_COUNT - 1
+
     private fun moveToNextSlide() {
-        binding?.viewPagerSliders?.currentItem?.inc()
+        binding!!.viewPagerSliders.currentItem +=1
+
     }
 
     private fun slideIsLastSlide() = binding?.viewPagerSliders?.currentItem == ITEMS_COUNT - 1
@@ -168,7 +171,7 @@ class IntroSlider : AppCompatActivity() {
             "Let's get started!" else binding?.nextButtonSliders?.text = "Next"
     }
 
-    private fun showSignInForm() {
+    private fun showSignInActivity() {
         startActivity(Intent(this, SignIn::class.java))
         finish()
     }
@@ -190,7 +193,7 @@ class IntroSlider : AppCompatActivity() {
 
 
     fun skipButtonSlidersIsClicked(view: View) {
-        showSignInForm()
+        showSignInActivity()
         userIsDoneWithIntroSliders()
     }
 
