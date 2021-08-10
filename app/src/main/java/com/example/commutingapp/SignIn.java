@@ -153,6 +153,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+                showLoading();
                 authenticateFirebaseWithGoogle(account.getIdToken());
             } catch (ApiException e) {
                 handleGoogleException(e);
@@ -192,6 +193,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                         showMainScreenActivity();
                         return;
                     }
+                    finishLoading();
                     customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
                 });
     }
@@ -214,7 +216,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     public void SignUpTextClicked(View view) {
         this.startActivity(new Intent(this, Signup.class));
-
+        finish();
     }
 
     @Override
