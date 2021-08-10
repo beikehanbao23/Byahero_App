@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -114,7 +113,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
 
     private void handleFacebookException(Exception error){
         if (Objects.equals(error.getMessage(), FACEBOOK_CONNECTION_FAILURE)) {
-            showNoInternetDialog();
+            showNoInternetActivity();
             return;
         }
         customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(error.getMessage()));
@@ -128,7 +127,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                         task -> {
                             if (task.isSuccessful()) {
                                 FirebaseUserManager.getCurrentUser();
-                                showMainScreen();
+                                showMainScreenActivity();
                                 return;
                             }
                             finishLoading();
@@ -166,7 +165,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
             return;
         }
         if(!error.getStatus().isSuccess() && !new ConnectionManager(this).PhoneHasInternetConnection()){
-            showNoInternetDialog();
+            showNoInternetActivity();
             return;
         }
          customPopupDialog.showErrorDialog("ERROR","Authentication Failed.");
@@ -190,7 +189,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUserManager.getCurrentUser();
-                        showMainScreen();
+                        showMainScreenActivity();
                         return;
                     }
                     customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
@@ -240,7 +239,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         }
 
         if (!new ConnectionManager(this).PhoneHasInternetConnection()) {
-            showNoInternetDialog();
+            showNoInternetActivity();
             return;
         }
 
@@ -276,8 +275,8 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                 return;
             }
             if (signInTask.getException() != null) {
-                finishLoading();
                 handleFirebaseSignInAuthentication(signInTask);
+                finishLoading();
             }
         });
 
@@ -288,10 +287,10 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         FirebaseUserManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
 
             if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
-                showMainScreen();
+                showMainScreenActivity();
                 return;
             }
-            showEmailSentDialog();
+            showEmailSentActivity();
 
         });
     }
@@ -317,7 +316,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         try {
             throw task.getException();
         } catch (FirebaseNetworkException firebaseNetworkException) {
-            showNoInternetDialog();
+            showNoInternetActivity();
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
             if (firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")) {
                 customPopupDialog.showErrorDialog("Oops..", getString(disabledAccountMessage));
@@ -329,17 +328,17 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         }
     }
 
-    private void showMainScreen() {
+    private void showMainScreenActivity() {
         startActivity(new Intent(this, MainScreen.class));
         finish();
     }
 
-    private void showNoInternetDialog() {
+    private void showNoInternetActivity() {
 
         startActivity(new Intent(this, NoInternet.class));
     }
 
-    private void showEmailSentDialog() {
+    private void showEmailSentActivity() {
 
         startActivity(new Intent(this, EmailSent.class));
         finish();

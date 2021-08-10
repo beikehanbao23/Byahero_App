@@ -18,8 +18,6 @@ import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomDialogs;
 import Logger.CustomToastMessage;
-import MenuButtons.CustomBackButton;
-import MenuButtons.backButton;
 import Screen.ScreenDimension;
 import ValidateUser.UserManager;
 
@@ -65,8 +63,7 @@ public class Signup extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        showNoInternetDialog();
-
+        showSignInActivity();
     }
 
     @Override
@@ -89,7 +86,7 @@ public class Signup extends AppCompatActivity {
             return;
         }
         if (!new ConnectionManager(this).PhoneHasInternetConnection()) {
-            showNoInternetDialog();
+            showNoInternetActivity();
             return;
         }
         FirebaseUserManager.getCurrentUser();
@@ -118,7 +115,7 @@ public class Signup extends AppCompatActivity {
     private void sendEmailVerificationToUser() {
         FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                showEmailSentDialog();
+                showEmailSentActivity();
                 return;
             }
             customPopupDialog.showErrorDialog("Error", getString(sendingEmailErrorMessage));
@@ -151,7 +148,7 @@ public class Signup extends AppCompatActivity {
         try {
             throw Objects.requireNonNull(task.getException());
         } catch (FirebaseNetworkException firebaseNetworkException) {
-            showNoInternetDialog();
+            showNoInternetActivity();
         } catch (Exception ex) {
             customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(task.getException().getMessage()));
         }
@@ -178,12 +175,16 @@ public class Signup extends AppCompatActivity {
         activitySignupBinding.CreateButton.setEnabled(visible);
     }
 
-    private void showNoInternetDialog() {
+    private void showNoInternetActivity() {
         startActivity(new Intent(this, NoInternet.class));
     }
 
-    private void showEmailSentDialog() {
+    private void showEmailSentActivity() {
         startActivity(new Intent(this, EmailSent.class));
+        finish();
+    }
+    private void showSignInActivity(){
+        startActivity(new Intent(this, SignIn.class));
         finish();
     }
 
