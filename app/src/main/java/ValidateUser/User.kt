@@ -12,62 +12,44 @@ open class User(
     var confirmPassword: EditText?
 ) {
 
-
     fun validateEmailFailed(): Boolean {
+
         val emailInput: String = email.text.toString().trim()
 
-        if (emailInput.isEmpty()) {
-            email.error = context.getString(string.fieldLeftBlankMessage)
-            email.requestFocus()
-            return true
-        }
+        email.error = when {
+            emailInput.isEmpty() -> context.getString(string.fieldLeftBlankMessage)
+            !validEmail() -> context.getString(string.emailIsInvalidMessage)
+            else -> null
+        }.also { email.requestFocus() }
 
-        if (!validEmail()) {
-            email.error = context.getString(string.emailIsInvalidMessage)
-            email.requestFocus()
-            return true
-        }
-        email.error = null
-        return false
+        return !email.error.isNullOrBlank()
     }
 
     fun validateConfirmPasswordFailed(): Boolean {
         val confirmPasswordInput = confirmPassword?.text.toString().trim()
-         when {
-            confirmPasswordInput.isEmpty() -> {
-                confirmPassword?.error = context.getString(string.fieldLeftBlankMessage)
-                confirmPassword?.requestFocus()
-                return true
-            }
-            passwordIsNotMatch() -> {
-                confirmPassword?.error = context.getString(string.passwordIsNotMatchMessage)
-                confirmPassword?.requestFocus()
-                return true
-            }
-            !isPasswordStrong() -> {
-                confirmPassword?.error = context.getString(string.passwordIsWeakMessage)
-                confirmPassword?.requestFocus()
-                return true
-            }
 
-            else -> {
-                confirmPassword?.error = null
-                return false
-            }
-        }
+        confirmPassword?.error = when {
+
+            confirmPasswordInput.isEmpty() -> context.getString(string.fieldLeftBlankMessage)
+            passwordIsNotMatch() -> context.getString(string.passwordIsNotMatchMessage)
+            !isPasswordStrong() -> context.getString(string.passwordIsWeakMessage)
+            else -> null
+
+        }.also { confirmPassword?.requestFocus() }
+
+        return !confirmPassword?.error.isNullOrBlank()
     }
+
 
     fun validatePasswordFailed(): Boolean {
         val passwordInput = password.text.toString().trim()
 
-        if (passwordInput.isEmpty()) {
-            password.error = context.getString(string.fieldLeftBlankMessage)
-            password.requestFocus()
-            return true
+        password.error = when{
+            passwordInput.isNullOrBlank()->context.getString(string.fieldLeftBlankMessage)
+            else-> null
+        }.also { password?.requestFocus() }
 
-        }
-        password.error = null
-        return false
+        return !password.error.isNullOrBlank()
     }
 
     private fun passwordIsNotMatch(): Boolean {
