@@ -3,17 +3,8 @@ package com.example.commutingapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.WindowManager;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
-import com.google.firebase.auth.FirebaseAuth;
-
-import org.jetbrains.annotations.NotNull;
 
 import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
@@ -44,7 +35,7 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
             showMainScreen();
             return;
         }
-        new Handler().postDelayed(this::showIntroSliders, delayInMillis);
+        new Handler().postDelayed(this::showIntroSlidersActivity, delayInMillis);
     }
     @Override
     public void onBackPressed() {
@@ -54,7 +45,7 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
         startActivity(new Intent(this, MainScreen.class));
         finish();
     }
-    private void showIntroSliders() {
+    private void showIntroSlidersActivity() {
         startActivity(new Intent(this, IntroSlider.class));
         finish();
     }
