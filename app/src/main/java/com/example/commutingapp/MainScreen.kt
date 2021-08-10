@@ -56,13 +56,15 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
 
     private fun getFilteredEmail(userEmail: String?): String? {
         val emailLists = emailExtensions
-        if (userEmail != null) {
+
+       userEmail?.let{
             for (counter in emailLists.indices) {
                 val emailExtension = emailLists[counter]
                 if (userEmail.contains(emailExtension)) {
                     return userEmail.replace(emailExtension.toRegex(), "")
                 }
             }
+
         }
         return userEmail
     }
@@ -90,10 +92,10 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
 
     private fun putUserToLoginFlow() {
         signOutAccount()
-        showSignInForm()
+        showSignInActivity()
     }
 
-    private fun showSignInForm() {
+    private fun showSignInActivity() {
         startActivity(Intent(this, SignIn::class.java))
         finish()
     }
