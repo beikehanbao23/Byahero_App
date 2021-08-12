@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -76,12 +77,13 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         setContentView(activitySignInBinding.getRoot());
 
         initializeAttributes();
+        createRequestSignOptionsGoogle();
         FirebaseUserManager.initializeFirebase();
         FacebookSdk.sdkInitialize(getApplicationContext());
         facebookCallBackManager = CallbackManager.Factory.create();
 
         removeFacebookPreviousToken();
-        createRequestSignOptionsGoogle();
+
 
     }
 
@@ -111,11 +113,12 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         });
     }
     private void handleFacebookException(Exception error){
+
         if (Objects.equals(error.getMessage(), FACEBOOK_CONNECTION_FAILURE)) {
             showNoInternetActivity();
             return;
         }
-        customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(error.getMessage()));
+        customPopupDialog.showErrorDialog("Error", error.getMessage());
         removeFacebookPreviousToken();
     }
     private void handleFacebookAccessToken(AccessToken token) {
@@ -130,7 +133,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                                 return;
                             }
                             finishLoading();
-                            customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
+                           handleFacebookException(task.getException());
                         });
     }
     private void handleFacebookSignInCallback(int requestCode,int resultCode, Intent data){
@@ -150,7 +153,10 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         handleGoogleSignInCallback(requestCode, data);
 
     }
-
+    private void loginUsingGoogle() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
     private void handleGoogleSignInCallback(int requestCode, Intent data){
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -170,14 +176,10 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
         }
         if(!error.getStatus().isSuccess() && !new ConnectionManager(this).PhoneHasInternetConnection()){
             showNoInternetActivity();
-            return;
         }
-         customPopupDialog.showErrorDialog("ERROR","Authentication Failed.");
+
     }
-    private void loginUsingGoogle() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
+
     private void createRequestSignOptionsGoogle() {
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -196,7 +198,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                         return;
                     }
                     finishLoading();
-                    customPopupDialog.showErrorDialog("Error", "Authentication Failed.");
+                    customPopupDialog.showErrorDialog("Error", "Authentication Failed."); //TODO Change later
                 });
     }
 
