@@ -3,12 +3,14 @@ package com.example.commutingapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.databinding.CustomEmailsentDialogBinding;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
@@ -30,18 +32,19 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
     private final long twoMinutes = 120000;
     private final long threadInterval = 2000;
     private CustomDialogs customPopupDialog;
-
+    private final long DELAY_INTERVAL = 1500;
     private CountDownTimer verificationTimer;
     private CustomToastMessage toastMessageBackButton;
     private volatile boolean exitThread;
     private CustomEmailsentDialogBinding emailDialogBinding;
-    private Thread thread;
+    private CircularProgressbarBinding progressbarBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         emailDialogBinding = CustomEmailsentDialogBinding.inflate(getLayoutInflater());
+        progressbarBinding = CircularProgressbarBinding.bind(emailDialogBinding.getRoot());
         setContentView(emailDialogBinding.getRoot());
 
         customPopupDialog = new CustomDialogs(this);
@@ -54,18 +57,15 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
 
 
     private void refreshEmailAutomatically() throws Exception {
-        thread = new Thread(() -> {
+        new Thread(() -> {
             while (!exitThread) {
-                reloadUserEmailCurrentData();
-                Log.e("THREAD STATUS","RUNNING");
-                try {
-                    Thread.sleep(threadInterval);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                reloadUserEmail();
+                Log.e("THREAD STATUS: ","RUNNING");
+                try { Thread.sleep(threadInterval); } catch (InterruptedException e) { e.printStackTrace(); }
             }
-        });
-        thread.start();
+        }).start();
+
+
     }
 
 
@@ -73,52 +73,47 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
     protected void onStart() {
         super.onStart();
 
-            Log.e("THREAD IS ","NULL");
             setThreadDisabled(false);
-            try {
-                refreshEmailAutomatically();
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-
+            try { refreshEmailAutomatically(); } catch (Exception exception) { exception.printStackTrace(); }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        setThreadDisabled(true);
-    }
+
+
 
 
     private void setThreadDisabled(Boolean threadState){
      exitThread = threadState;
     }
-    private void reloadUserEmailCurrentData() {
+
+    private void reloadUserEmail() {
 
             FirebaseUserManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
                 if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
                     showMainScreenActivity();
                 }
                 if (emailReload.getException() != null) {
-                    handleException(emailReload);
-
+                    handleEmailVerificationException(emailReload);
                 }
             });
 
     }
-    private void handleException(Task<?> task){
+    private void handleEmailVerificationException(Task<?> task){
+
         try {
             throw Objects.requireNonNull(task.getException());
-        } catch (FirebaseNetworkException firebaseNetworkException) {
+        }catch (FirebaseNetworkException firebaseNetworkException) {
+            progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
+            setThreadDisabled(true);
             showNoInternetActivity();
-        } catch (Exception ex) {
-            customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(task.getException().getMessage()));
-        }
-
+        }catch (Exception ignored){}
     }
-    private void showNoInternetActivity(){
 
-        startActivity(new Intent(this,NoInternet.class));
+
+    private void showNoInternetActivity(){
+        new Handler().postDelayed(()-> {
+           startActivity(new Intent(this,NoInternet.class));
+           progressbarBinding.circularProgressBar.setVisibility(View.INVISIBLE);
+       },DELAY_INTERVAL);
     }
     @Override
     public void onBackPressed() {
@@ -141,10 +136,9 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
 
     private void displayUserEmailToTextView() {
         String userEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
-        if (Objects.equals(userEmail, null)) {
-            throw new RuntimeException("Email is Null");
+        if (userEmail != null) {
+            emailDialogBinding.textViewEmail.setText(userEmail);
         }
-        emailDialogBinding.textViewEmail.setText(userEmail);
     }
 
 
@@ -162,7 +156,7 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
         });
     }
 
-    private void DisplayWhenVerificationTimerStarts(long secondsLeft) {
+    private void DisplayWhenVerificationTimerStarted(long secondsLeft) {
         emailDialogBinding.ResendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.gray));
         emailDialogBinding.ResendVerificationButton.setText("Resend verification in " + secondsLeft + "s");
         emailDialogBinding.ResendVerificationButton.setEnabled(false);
@@ -180,7 +174,7 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
             @Override
             public void onTick(long millisUntilFinished) {
                 long secondsLeft = millisUntilFinished / 1000;
-                DisplayWhenVerificationTimerStarts(secondsLeft);
+                DisplayWhenVerificationTimerStarted(secondsLeft);
             }
 
             @Override
