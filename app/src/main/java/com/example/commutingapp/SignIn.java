@@ -198,7 +198,7 @@ public class SignIn extends AppCompatActivity implements BackButtonDoubleClicked
                         return;
                     }
                     finishLoading();
-                    customPopupDialog.showErrorDialog("Error", "Authentication Failed."); //TODO Change later
+                    customPopupDialog.showErrorDialog("Error", "Authentication Failed. Please try again later.");
                 });
     }
 

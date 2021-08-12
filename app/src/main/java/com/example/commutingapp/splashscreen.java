@@ -3,8 +3,11 @@ package com.example.commutingapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import FirebaseUserManager.FirebaseUserManager;
 import Logger.CustomToastMessage;
@@ -62,13 +65,10 @@ public class splashscreen extends AppCompatActivity implements BackButtonDoubleC
             backButton.registerFirstClick();
         }).backButtonIsClicked();
 
-    
+
 
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
+
 }
 
          
