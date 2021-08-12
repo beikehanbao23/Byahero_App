@@ -89,7 +89,7 @@
         android:onClick="backToSignIn"
         android:text="Already have an account?"
         android:textColor="@color/black"
-        android:textSize="15sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/CreateButton"
         app:layout_constraintStart_toStartOf="@+id/CreateButton"
         app:layout_constraintTop_toBottomOf="@+id/CreateButton" />
@@ -102,7 +102,7 @@
         android:onClick="backToSignIn"
         android:text="Login here"
         android:textColor="@color/blue2"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/TextView_AlreadyHaveAccount"
         app:layout_constraintStart_toStartOf="@+id/TextView_AlreadyHaveAccount"
