@@ -10,6 +10,7 @@
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_app_icon"
         android:label="@string/app_name"
+        android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CommutingApp">
