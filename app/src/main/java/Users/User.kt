@@ -61,8 +61,8 @@ open class User(
     private fun isPasswordStrong(): Boolean {
         val userConfirmPassword = confirmPassword?.text.toString().trim()
         return userConfirmPassword.toCharArray().size >= 8 &&
-                (InputValidationRegex.hasNumeric(userConfirmPassword) ||
-                        InputValidationRegex.hasSpecialCharacters(userConfirmPassword))
+                (NumberValidation.hasNumeric(userConfirmPassword) ||
+                        NumberValidation.hasSpecialCharacters(userConfirmPassword))
     }
 
     private fun validEmail(): Boolean {
