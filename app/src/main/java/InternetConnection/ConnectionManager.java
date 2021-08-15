@@ -16,9 +16,11 @@ public class ConnectionManager {
     }
 
 
-    public boolean PhoneHasInternetConnection() {
+    public boolean internetConnectionAvailable() {
         NetworkInfo internetConnection = connectivityManager.getActiveNetworkInfo();
-        return internetConnection != null && internetConnection.isConnected() && internetConnection.isAvailable();
+        return internetConnection != null &&
+                internetConnection.isConnected() &&
+                internetConnection.isAvailable();
 
     }
 

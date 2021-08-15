@@ -26,6 +26,7 @@ public class CustomToastMessage {
 
      */
 
+
     public CustomToastMessage(Context context, String message, int type) {
         if (message == null) { throw new RuntimeException("Message cannot be null!");}
         if (context == null){throw new RuntimeException("Context cannot be null");}
