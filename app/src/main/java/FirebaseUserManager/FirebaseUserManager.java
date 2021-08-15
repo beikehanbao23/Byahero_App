@@ -16,7 +16,7 @@ public class FirebaseUserManager    {
     private static FirebaseUser firebaseUser;
 
 
-    public static void getCurrentUser() {
+    public static void getCreatedUserAccount() {
 
         firebaseUser = firebaseAuth.getCurrentUser();
     }
@@ -35,7 +35,7 @@ public class FirebaseUserManager    {
         firebaseAuth = FirebaseAuth.getInstance();
     }
 
-    public static boolean isUserAlreadySignedIn() {
+    public static boolean userAlreadySignIn() {
 
         return firebaseUser != null;
     }
