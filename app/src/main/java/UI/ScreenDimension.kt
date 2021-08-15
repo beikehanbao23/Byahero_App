@@ -1,4 +1,4 @@
-package UI_Activity
+package UI
 
 import android.view.Window
 import android.view.WindowManager
