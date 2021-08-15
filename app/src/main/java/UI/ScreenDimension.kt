@@ -1,4 +1,4 @@
-package Screen
+package UI_Activity
 
 import android.view.Window
 import android.view.WindowManager
@@ -9,7 +9,7 @@ import android.view.WindowManager
 class ScreenDimension(var window: Window){
 
 
-    public fun windowToFullScreen(){
+     fun setWindowToFullScreen(){
         @Suppress("DEPRECATION")
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,

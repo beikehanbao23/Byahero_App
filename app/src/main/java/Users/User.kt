@@ -1,74 +1,74 @@
-package ValidateUser
+package Users
 
+import Validator.NumericNumberValidator
+import Validator.SpecialCharactersValidator
 import android.content.Context
 import android.util.Patterns
 import android.widget.EditText
 import com.example.commutingapp.R.string
 
-open class User(
-    var context: Context,
-    var email: EditText,
-    var password: EditText,
-    var confirmPassword: EditText?
+
+const val MINIMUM_NUMBER_OF_CHARACTERS = 8
+open class User constructor(
+    private var context: Context,
+    private var email: EditText,
+    private var password: EditText,
+    private var confirmPassword: EditText?
 ) {
 
-    fun validateEmailFailed(): Boolean {
+    private val userConfirmPassword = confirmPassword?.text.toString().trim()
+    private val userPassword = password.text.toString().trim()
+    private val userEmail: String = email.text.toString().trim()
 
-        val emailInput: String = email.text.toString().trim()
 
+
+    fun validateEmailFail() = setEmailErrorText().isNotEmpty()
+    private fun setEmailErrorText(): CharSequence{
         email.error = when {
-            emailInput.isEmpty() -> context.getString(string.fieldLeftBlankMessage)
+            userEmail.isEmpty() -> context.getString(string.fieldLeftBlankMessage)
             !validEmail() -> context.getString(string.emailIsInvalidMessage)
             else -> null
         }.also { email.requestFocus() }
 
-        return !email.error.isNullOrBlank()
+        return email.error
     }
+    private fun validEmail() = Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()
 
-    fun validateConfirmPasswordFailed(): Boolean {
-        val confirmPasswordInput = confirmPassword?.text.toString().trim()
 
+
+    fun validateConfirmPasswordFail() = setConfirmPasswordErrorText()?.isNotEmpty()
+    private fun setConfirmPasswordErrorText(): CharSequence? {
         confirmPassword?.error = when {
 
-            confirmPasswordInput.isEmpty() -> context.getString(string.fieldLeftBlankMessage)
+            userConfirmPassword.isEmpty() -> context.getString(string.fieldLeftBlankMessage)
             passwordIsNotMatch() -> context.getString(string.passwordIsNotMatchMessage)
-            !isPasswordStrong() -> context.getString(string.passwordIsWeakMessage)
+            !strongPassword() -> context.getString(string.passwordIsWeakMessage)
             else -> null
 
         }.also { confirmPassword?.requestFocus() }
-
-        return !confirmPassword?.error.isNullOrBlank()
+        return confirmPassword?.error
     }
+    private fun passwordIsNotMatch() = userPassword != userConfirmPassword
+    private fun strongPassword() : Boolean {
+       return isNumberOfCharactersLongEnough() &&
+                (NumericNumberValidator.containsNumeric(userConfirmPassword) ||
+                        SpecialCharactersValidator.containSpecialCharacters(userConfirmPassword))
+    }
+    private fun isNumberOfCharactersLongEnough() = userConfirmPassword.toCharArray().size >= MINIMUM_NUMBER_OF_CHARACTERS
 
 
-    fun validatePasswordFailed(): Boolean {
-        val passwordInput = password.text.toString().trim()
 
+    fun validatePasswordFail() = setPasswordError().isNotEmpty()
+    private fun setPasswordError():CharSequence{
         password.error = when{
-            passwordInput.isNullOrBlank()->context.getString(string.fieldLeftBlankMessage)
+            userPassword.isNullOrBlank()->context.getString(string.fieldLeftBlankMessage)
             else-> null
-        }.also { password?.requestFocus() }
-
-        return !password.error.isNullOrBlank()
+        }.also { password.requestFocus() }
+        return password.error
     }
 
-    private fun passwordIsNotMatch(): Boolean {
-        val userPassword = password.text.toString().trim()
-        val userConfirmPassword = confirmPassword?.text.toString().trim()
-        return userPassword != userConfirmPassword
-    }
 
-    private fun isPasswordStrong(): Boolean {
-        val userConfirmPassword = confirmPassword?.text.toString().trim()
-        return userConfirmPassword.toCharArray().size >= 8 &&
-                (NumberValidation.hasNumeric(userConfirmPassword) ||
-                        NumberValidation.hasSpecialCharacters(userConfirmPassword))
-    }
 
-    private fun validEmail(): Boolean {
-        val userEmail = email.text.toString().trim()
-        return Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()
-    }
 
 
 }
