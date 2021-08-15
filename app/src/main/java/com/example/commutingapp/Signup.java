@@ -18,8 +18,9 @@ import FirebaseUserManager.FirebaseUserManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomDialogs;
 import Logger.CustomToastMessage;
-import Screen.ScreenDimension;
-import ValidateUser.UserManager;
+import UI.ActivitySwitcher;
+import UI.ScreenDimension;
+import Users.UserManager;
 
 import static com.example.commutingapp.R.string.doubleTappedMessage;
 import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
@@ -28,35 +29,38 @@ import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
 public class Signup extends AppCompatActivity {
 
 
-    private CustomToastMessage toastMessageBackButton;
     private CustomDialogs customPopupDialog;
     private ActivitySignupBinding activitySignupBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
 
-    private void initializeAttributes() {
 
-        customPopupDialog = new CustomDialogs(this);
-        toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
-    }
 
     @Override
     protected void onDestroy() {
-        activitySignupBinding = null;
-        circularProgressbarBinding = null;
+       destroyCircularProgressBarBinding();
+       destroySignUpBinding();
         super.onDestroy();
     }
 
+    private void destroySignUpBinding(){
+        activitySignupBinding = null;
+    }
+    private void destroyCircularProgressBarBinding(){
+        circularProgressbarBinding = null;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new ScreenDimension(getWindow()).windowToFullScreen();
+        initializeLocalAttributes();
+        FirebaseUserManager.initializeFirebase();
+
+    }
+    private void initializeLocalAttributes() {
+        new ScreenDimension(getWindow()).setWindowToFullScreen();
         activitySignupBinding = ActivitySignupBinding.inflate(getLayoutInflater());
         circularProgressbarBinding = CircularProgressbarBinding.bind(activitySignupBinding.getRoot());
         setContentView(activitySignupBinding.getRoot());
-        initializeAttributes();
-
-
-        FirebaseUserManager.initializeFirebase();
+        customPopupDialog = new CustomDialogs(this);
 
     }
 
@@ -73,8 +77,7 @@ public class Signup extends AppCompatActivity {
     }
 
     public void backToSignIn(View view) {
-        startActivity(new Intent(this, SignIn.class));
-        finish();
+        showSignInActivity();
     }
 
     public void CreateButtonClicked(View view) {
@@ -82,15 +85,15 @@ public class Signup extends AppCompatActivity {
                 activitySignupBinding.editTextSignUpEmailAddress,
                 activitySignupBinding.editTextSignUpPassword,
                 activitySignupBinding.editTextSignUpConfirmPassword);
-        if (userManager.userInputRequirementsFailedAtSignUp()) {
+        if (userManager.signUpValidationFail()) {
             return;
         }
-        if (!new ConnectionManager(this).PhoneHasInternetConnection()) {
+        if (!new ConnectionManager(this).internetConnectionAvailable()) {
             showNoInternetActivity();
             return;
         }
-        FirebaseUserManager.getCurrentUser();
-        if (FirebaseUserManager.isUserAlreadySignedIn() && isUserCreatedNewAccount()) {
+        FirebaseUserManager.getCreatedUserAccount();
+        if (FirebaseUserManager.userAlreadySignIn() && isUserCreatedNewAccount()) {
             signOutPreviousAccount();
             ProceedToSignUp();
             return;
@@ -130,7 +133,7 @@ public class Signup extends AppCompatActivity {
         FirebaseUserManager.getFirebaseAuthInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
 
             if (task.isSuccessful()) {
-                FirebaseUserManager.getCurrentUser();
+                FirebaseUserManager.getCreatedUserAccount();
                 sendEmailVerificationToUser();
                 return;
 
@@ -138,13 +141,13 @@ public class Signup extends AppCompatActivity {
 
             if (task.getException() != null) {
                 finishLoading();
-                handleTaskExceptionResults(task);
+                handleSignUpExceptionResults(task);
             }
 
         });
     }
 
-    private void handleTaskExceptionResults(Task<?> task) {
+    private void handleSignUpExceptionResults(Task<?> task) {
         try {
             throw Objects.requireNonNull(task.getException());
         } catch (FirebaseNetworkException firebaseNetworkException) {
@@ -156,36 +159,37 @@ public class Signup extends AppCompatActivity {
 
     private void startLoading() {
 
-        setLoading(false, View.VISIBLE);
+        makeLoading(false, View.VISIBLE);
     }
 
     private void finishLoading() {
 
-        setLoading(true, View.INVISIBLE);
+        makeLoading(true, View.INVISIBLE);
     }
 
-    private void setLoading(boolean visible, int progressBarVisibility) {
+    private void makeLoading(boolean attributesVisibility, int progressBarVisibility) {
         circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
-        activitySignupBinding.editTextSignUpEmailAddress.setEnabled(visible);
-        activitySignupBinding.editTextSignUpPassword.setEnabled(visible);
-        activitySignupBinding.editTextSignUpConfirmPassword.setEnabled(visible);
-        activitySignupBinding.TextViewAlreadyHaveAccount.setEnabled(visible);
-        activitySignupBinding.TextViewLoginHere.setEnabled(visible);
-        activitySignupBinding.BackButton.setEnabled(visible);
-        activitySignupBinding.CreateButton.setEnabled(visible);
+        activitySignupBinding.editTextSignUpEmailAddress.setEnabled(attributesVisibility);
+        activitySignupBinding.editTextSignUpPassword.setEnabled(attributesVisibility);
+        activitySignupBinding.editTextSignUpConfirmPassword.setEnabled(attributesVisibility);
+        activitySignupBinding.TextViewAlreadyHaveAccount.setEnabled(attributesVisibility);
+        activitySignupBinding.TextViewLoginHere.setEnabled(attributesVisibility);
+        activitySignupBinding.BackButton.setEnabled(attributesVisibility);
+        activitySignupBinding.CreateButton.setEnabled(attributesVisibility);
     }
 
     private void showNoInternetActivity() {
-        startActivity(new Intent(this, NoInternet.class));
+
+        ActivitySwitcher.INSTANCE.startActivityOf(this,NoInternet.class);
     }
 
     private void showEmailSentActivity() {
-        startActivity(new Intent(this, EmailSent.class));
-        finish();
+
+        ActivitySwitcher.INSTANCE.startActivityOf(this,this,EmailSent.class);
     }
     private void showSignInActivity(){
-        startActivity(new Intent(this, SignIn.class));
-        finish();
+
+        ActivitySwitcher.INSTANCE.startActivityOf(this,this,SignIn.class);
     }
 
 
