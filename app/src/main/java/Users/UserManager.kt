@@ -1,9 +1,9 @@
-package ValidateUser
+package Users
 
 import android.content.Context
 import android.widget.EditText
 
-class UserManager(
+class UserManager constructor(
     context: Context,
     email: EditText,
     password: EditText,
@@ -11,11 +11,16 @@ class UserManager(
 ) : User(context, email, password, confirmPassword) {
 
 
-    fun userInputRequirementsFailedAtSignUp(): Boolean {
-        return super.validateEmailFailed() || super.validatePasswordFailed() || super.validateConfirmPasswordFailed()
+
+
+    fun signUpValidationFail(): Boolean {
+        return super.validateEmailFail() ||
+                super.validatePasswordFail() ||
+                super.validateConfirmPasswordFail() == true
     }
 
-    fun userInputRequirementsFailedAtSignIn(): Boolean {
-        return super.validateEmailFailed() || super.validatePasswordFailed()
+    fun signInValidationFail(): Boolean {
+        return super.validateEmailFail() ||
+                super.validatePasswordFail()
     }
 }
