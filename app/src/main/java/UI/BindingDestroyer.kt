@@ -1,0 +1,4 @@
+package UI
+
+object BindingDestroyer {
+}
