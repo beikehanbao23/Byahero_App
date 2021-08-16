@@ -1,5 +1,5 @@
 package UI
 
-interface AttributesCreator {
-    fun createAttributes()
+interface AttributesInitializer {
+    fun initializeAttributes()
 }

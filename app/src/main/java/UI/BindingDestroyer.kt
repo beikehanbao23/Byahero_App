@@ -1,4 +1,6 @@
 package UI
 
-object BindingDestroyer {
+interface BindingDestroyer {
+    fun destroyBinding()
+
 }
