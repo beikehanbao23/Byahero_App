@@ -30,7 +30,7 @@ public class FirebaseUserManager    {
         return firebaseAuth;
     }
 
-    public static void initializeFirebase() {
+    public static void initializeFirebaseApp() {
 
         firebaseAuth = FirebaseAuth.getInstance();
     }
