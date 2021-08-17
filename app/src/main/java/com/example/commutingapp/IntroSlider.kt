@@ -1,10 +1,10 @@
 package com.example.commutingapp
 
-import  Adapters.IntroSliderAdapter
-import Logger.CustomToastMessage
+import Adapters.IntroSliderAdapter
 import MenuButtons.CustomBackButton
-import MenuButtons.backButton
-import Screen.ScreenDimension
+import UI.AttributesInitializer
+import UI.BindingDestroyer
+import UI.ScreenDimension
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -23,39 +23,41 @@ import com.example.commutingapp.databinding.ActivityIntroSliderBinding
 const val ITEMS_COUNT = 4
 const val DEFAULT_INDICATOR_POSITION = 0
 
-class IntroSlider : AppCompatActivity() {
+class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
 
-    private lateinit var toastMessageBackButton: CustomToastMessage
     private lateinit var preferences: SharedPreferences
     private val preferedShowIntro = "IntroSlider_StateOfSlides"
     private var binding: ActivityIntroSliderBinding? = null
-    private lateinit var introSliderAdapter: IntroSliderAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        ScreenDimension(window).windowToFullScreen()
+
         super.onCreate(savedInstanceState)
-        binding = ActivityIntroSliderBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
-        preferences = getSharedPreferences("IntroSlider", Context.MODE_PRIVATE)
-        introSliderAdapter = IntroSliderAdapter(layoutInflater,this)
+        initializeAttributes()
+
         if (userHasAlreadySeenTheIntroSliders()) {
             showSignInActivity()
             return
         }
 
-        toastMessageBackButton =
-            CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10)
-
-        setupIntroSlidersAttributes()
-        setupIntroSliderPageIndicators()
-
+        setupIntroSliders()
+    }
+    private fun setupIntroSliders(){
+        provideViewPage()
+        renderIndicators()
         setCurrentIndicator(DEFAULT_INDICATOR_POSITION)
-        implementViewPagerSlideActionCallback()
+        setCallBacks()
+    }
+    override fun initializeAttributes() {
+        ScreenDimension(window).setWindowToFullScreen()
+        binding = ActivityIntroSliderBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
+        preferences = getSharedPreferences("IntroSlider", Context.MODE_PRIVATE)
     }
 
-    private fun implementViewPagerSlideActionCallback(){
+    private fun setCallBacks(){
         with(binding?.viewPagerSliders, {
-            this?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            this?.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     transitionButtonName()
@@ -67,12 +69,12 @@ class IntroSlider : AppCompatActivity() {
     private fun userHasAlreadySeenTheIntroSliders() =
         preferences.getBoolean(preferedShowIntro, false)
 
-    private fun setupIntroSlidersAttributes() {
+    private fun provideViewPage() {
 
-        binding?.viewPagerSliders?.adapter = introSliderAdapter
+        binding?.viewPagerSliders?.adapter = IntroSliderAdapter(layoutInflater,this)
     }
 
-    private fun setupIntroSliderPageIndicators() {
+    private fun renderIndicators() {
         val indicators = arrayOfNulls<ImageView>(ITEMS_COUNT)
         val layoutParameters: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
@@ -87,7 +89,7 @@ class IntroSlider : AppCompatActivity() {
 
     private fun renderIndicators(
         indicators: Array<ImageView?>,
-        layoutParameters: LinearLayout.LayoutParams
+        layoutParameters: LinearLayout.LayoutParams,
     ): Unit {
 
         for (counter in indicators.indices) {
@@ -134,15 +136,7 @@ class IntroSlider : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        CustomBackButton {
-            if (backButton.isDoubleTapped()) {
-                toastMessageBackButton.hideToast()
-                super.onBackPressed()
-                return@CustomBackButton
-            }
-            toastMessageBackButton.showToast()
-            backButton.registerFirstClick()
-        }.backButtonIsClicked()
+        CustomBackButton(this, this).applyDoubleClickToExit()
     }
 
     fun nextButtonSlidersIsClicked(view: View) {
@@ -186,8 +180,7 @@ class IntroSlider : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        introSliderAdapter.destroyIntroSliderAdapterBinding()
-        binding = null
+        destroyBinding()
         super.onDestroy()
     }
 
@@ -196,5 +189,12 @@ class IntroSlider : AppCompatActivity() {
         showSignInActivity()
         userIsDoneWithIntroSliders()
     }
+
+    override fun destroyBinding() {
+        IntroSliderAdapter(layoutInflater,this).destroyIntroSliderAdapterBinding()
+        binding = null
+    }
+
+
 
 }

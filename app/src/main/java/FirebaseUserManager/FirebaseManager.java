@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 
-public class FirebaseUserManager    {
+public class FirebaseManager {
 
 
     private static FirebaseAuth firebaseAuth;
@@ -35,7 +35,7 @@ public class FirebaseUserManager    {
         firebaseAuth = FirebaseAuth.getInstance();
     }
 
-    public static boolean userAlreadySignIn() {
+    public static boolean hasAccountSignedIn() {
 
         return firebaseUser != null;
     }

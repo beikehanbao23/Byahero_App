@@ -1,70 +1,84 @@
 package com.example.commutingapp
 
-import FirebaseUserManager.FirebaseUserManager
+import FirebaseUserManager.FirebaseManager
 import Logger.CustomToastMessage
-import MenuButtons.BackButtonDoubleClicked
 import MenuButtons.CustomBackButton
-import MenuButtons.backButton
-import Screen.ScreenDimension
-import android.content.Intent
+import UI.ActivitySwitcher
+import UI.AttributesInitializer
+import UI.BindingDestroyer
+import UI.ScreenDimension
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.facebook.login.LoginManager
+import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserInfo
 import java.util.*
 
-class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
+class MainScreen : AppCompatActivity(),AttributesInitializer,BindingDestroyer {
     private var toastMessageBackButton: CustomToastMessage? = null
     private var activityMainScreenBinding: ActivityMainScreenBinding? = null
-
+    private lateinit var userInfo: MutableList<out UserInfo>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ScreenDimension(window).windowToFullScreen()
-        activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
-        setContentView(activityMainScreenBinding?.root)
-        toastMessageBackButton =
-            CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10)
-        FirebaseUserManager.initializeFirebase()
+        initializeAttributes()
+        FirebaseManager.initializeFirebaseApp()
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        destroyBinding()
+    }
+    override fun onStart() {
+        super.onStart()
+        displayUserProfileName()
+    }
+    override fun initializeAttributes() {
+        ScreenDimension(window).setWindowToFullScreen()
+        activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
+        setContentView(activityMainScreenBinding?.root)
+        toastMessageBackButton = CustomToastMessage(this, getString(R.string.doubleTappedMessage), 10)
+        userInfo = FirebaseManager.getFirebaseUserInstance().providerData
+    }
+    override fun destroyBinding() {
         activityMainScreenBinding = null
     }
 
-    override fun onStart() {
-        displayName()
-        super.onStart()
-    }
 
-    private val name: String?
+
+    private val userProfileName: String?
         get() {
-            for (userInfo in FirebaseUserManager.getFirebaseUserInstance().providerData) {
-                if (userInfo.providerId == "facebook.com" || userInfo.providerId == "google.com") {
-                    return FirebaseUserManager.getFirebaseUserInstance().displayName
+            for (user in userInfo) {
+                if (userSignInViaFacebook(user.providerId) || userSignInViaGoogle(user.providerId)) {
+                    Log.e("User id from main screen",user.providerId)
+                    return FirebaseManager.getFirebaseUserInstance().displayName
                 }
             }
-            return getFilteredEmail(FirebaseUserManager.getFirebaseUserInstance().email)
+            return filterEmailAddress(FirebaseManager.getFirebaseUserInstance().email)
         }
 
-    private fun displayName() {
-        activityMainScreenBinding?.nameTextView?.text  = name
+    private fun userSignInViaFacebook(userProviderId:String) = userProviderId == FacebookAuthProvider.PROVIDER_ID
+    private fun userSignInViaGoogle(userProviderId:String) = userProviderId == GoogleAuthProvider.PROVIDER_ID
+
+
+
+    private fun displayUserProfileName() {
+        activityMainScreenBinding?.nameTextView?.text = userProfileName
     }
 
-    private fun getFilteredEmail(userEmail: String?): String? {
-        val emailLists = emailExtensions
-
+    private fun filterEmailAddress(userEmail: String?): String? {
+       val emailLists = emailExtensions
        userEmail?.let{
-            for (counter in emailLists.indices) {
-                val emailExtension = emailLists[counter]
-                if (userEmail.contains(emailExtension)) {
-                    return userEmail.replace(emailExtension.toRegex(), "")
-                }
-            }
-
+         for (counter in emailLists.indices) {
+           val emailExtension = emailLists[counter]
+              if (userEmail.contains(emailExtension)) {
+                 return userEmail.replace(emailExtension.toRegex(), "")
+              }
+           }
         }
         return userEmail
     }
@@ -87,7 +101,7 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
 
     private fun signOutAccount() {
         LoginManager.getInstance().logOut()
-        FirebaseUserManager.getFirebaseAuthInstance().signOut()
+        FirebaseManager.getFirebaseAuthInstance().signOut()
     }
 
     private fun putUserToLoginFlow() {
@@ -96,24 +110,14 @@ class MainScreen : AppCompatActivity(), BackButtonDoubleClicked {
     }
 
     private fun showSignInActivity() {
-        startActivity(Intent(this, SignIn::class.java))
-        finish()
-    }
 
+        ActivitySwitcher.startActivityOf(this,this,SignIn::class.java)
+    }
 
     override fun onBackPressed() {
-        backButtonClicked()
+       CustomBackButton(this,this).applyDoubleClickToExit()
     }
 
-    override fun backButtonClicked() {
-        CustomBackButton(label@ BackButtonDoubleClicked {
-            if (backButton.isDoubleTapped()) {
-                toastMessageBackButton!!.hideToast()
-                super.onBackPressed()
-                return@BackButtonDoubleClicked
-            }
-            toastMessageBackButton!!.showToast()
-            backButton.registerFirstClick()
-        }).backButtonIsClicked()
-    }
+
+
 }

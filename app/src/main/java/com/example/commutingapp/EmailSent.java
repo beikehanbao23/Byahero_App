@@ -1,6 +1,5 @@
 package com.example.commutingapp;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -17,17 +16,19 @@ import com.google.firebase.FirebaseNetworkException;
 
 import java.util.Objects;
 
-import FirebaseUserManager.FirebaseUserManager;
+import FirebaseUserManager.FirebaseManager;
 import Logger.CustomDialogs;
 import Logger.CustomToastMessage;
-import MenuButtons.BackButtonDoubleClicked;
 import MenuButtons.CustomBackButton;
+import UI.ActivitySwitcher;
+import UI.AttributesInitializer;
+import UI.BindingDestroyer;
 
 import static com.example.commutingapp.R.string.doubleTappedMessage;
 import static com.example.commutingapp.R.string.resendEmailFailedMessage;
 import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
 
-public class EmailSent extends AppCompatActivity implements BackButtonDoubleClicked {
+public class EmailSent extends AppCompatActivity implements BindingDestroyer, AttributesInitializer {
 
     private final long twoMinutes = 120000;
     private final long threadInterval = 2000;
@@ -43,19 +44,28 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        initializeAttributes();
+        FirebaseManager.initializeFirebaseApp();
+        displayUserEmailToTextView();
+
+
+    }
+
+    @Override
+    public void initializeAttributes() {
         emailDialogBinding = CustomEmailsentDialogBinding.inflate(getLayoutInflater());
         progressbarBinding = CircularProgressbarBinding.bind(emailDialogBinding.getRoot());
         setContentView(emailDialogBinding.getRoot());
 
         customPopupDialog = new CustomDialogs(this);
         toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
-        FirebaseUserManager.initializeFirebase();
-        displayUserEmailToTextView();
-
-
     }
 
-
+    @Override
+    public void destroyBinding() {
+        emailDialogBinding = null;
+        progressbarBinding = null;
+    }
     private void refreshEmailAutomatically() throws Exception {
         new Thread(() -> {
             while (!exitThread) {
@@ -77,18 +87,14 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
             try { refreshEmailAutomatically(); } catch (Exception exception) { exception.printStackTrace(); }
     }
 
-
-
-
-
     private void setThreadDisabled(Boolean threadState){
      exitThread = threadState;
     }
 
     private void reloadUserEmail() {
 
-            FirebaseUserManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
-                if (emailReload.isSuccessful() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
+            FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
+                if (emailReload.isSuccessful() && FirebaseManager.getFirebaseUserInstance().isEmailVerified()) {
                     showMainScreenActivity();
                 }
                 if (emailReload.getException() != null) {
@@ -97,12 +103,14 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
             });
 
     }
+
+    //TODO refactor this
     private void handleEmailVerificationException(Task<?> task){
 
         try {
             throw Objects.requireNonNull(task.getException());
         }catch (FirebaseNetworkException firebaseNetworkException) {
-            progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
+
             setThreadDisabled(true);
             showNoInternetActivity();
         }catch (Exception ignored){}
@@ -110,32 +118,24 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
 
 
     private void showNoInternetActivity(){
+        progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(()-> {
-           startActivity(new Intent(this,NoInternet.class));
+           ActivitySwitcher.INSTANCE.startActivityOf(this,NoInternet.class);
            progressbarBinding.circularProgressBar.setVisibility(View.INVISIBLE);
        },DELAY_INTERVAL);
     }
+
+
+
     @Override
     public void onBackPressed() {
-        backButtonClicked();
+       new CustomBackButton(this,this).applyDoubleClickToExit();
     }
 
-    @Override
-    public void backButtonClicked() {
 
-        new CustomBackButton(() -> {
-            if (MenuButtons.backButton.isDoubleTapped()) {
-                toastMessageBackButton.hideToast();
-                super.onBackPressed();
-                return;
-            }
-            toastMessageBackButton.showToast();
-            MenuButtons.backButton.registerFirstClick();
-        }).backButtonIsClicked();
-    }
 
     private void displayUserEmailToTextView() {
-        String userEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
+        String userEmail = FirebaseManager.getFirebaseUserInstance().getEmail();
         if (userEmail != null) {
             emailDialogBinding.textViewEmail.setText(userEmail);
         }
@@ -146,7 +146,7 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
 
 
     public void resendEmailIsClicked(View view) {
-        FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
+        FirebaseManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
             startTimerForVerification();
             if (task.isSuccessful()) {
                 customPopupDialog.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
@@ -156,13 +156,13 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
         });
     }
 
-    private void DisplayWhenVerificationTimerStarted(long secondsLeft) {
+    private void displayWhenVerificationTimerStarted(long secondsLeft) {
         emailDialogBinding.ResendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.gray));
         emailDialogBinding.ResendVerificationButton.setText("Resend verification in " + secondsLeft + "s");
         emailDialogBinding.ResendVerificationButton.setEnabled(false);
     }
 
-    private void DisplayWhenVerificationTimerIsFinished() {
+    private void displayWhenVerificationTimerIsFinished() {
         emailDialogBinding.ResendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.blue2));
         emailDialogBinding.ResendVerificationButton.setText("Resend verification");
         emailDialogBinding.ResendVerificationButton.setEnabled(true);
@@ -174,12 +174,12 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
             @Override
             public void onTick(long millisUntilFinished) {
                 long secondsLeft = millisUntilFinished / 1000;
-                DisplayWhenVerificationTimerStarted(secondsLeft);
+                displayWhenVerificationTimerStarted(secondsLeft);
             }
 
             @Override
             public void onFinish() {
-                DisplayWhenVerificationTimerIsFinished();
+                displayWhenVerificationTimerIsFinished();
             }
         }.start();
 
@@ -194,15 +194,16 @@ public class EmailSent extends AppCompatActivity implements BackButtonDoubleClic
 
     private void showMainScreenActivity() {
 
-        startActivity(new Intent(this, MainScreen.class));
-        finish();
+        ActivitySwitcher.INSTANCE.startActivityOf(this,this,MainScreen.class);
     }
 
     @Override
     protected void onDestroy() {
         removeVerificationTimer();
         setThreadDisabled(true);
+        destroyBinding();
         super.onDestroy();
     }
+
 
 }
