@@ -10,7 +10,7 @@ object ActivitySwitcher {
      */
     fun startActivityOf(activityOfThisClass: Activity ,contextOfThisClass: Context, classToOpen:Class<*>){
 
-        contextOfThisClass.startActivity(Intent(contextOfThisClass,classToOpen::class.java))
+        contextOfThisClass.startActivity(Intent(contextOfThisClass,classToOpen))
         activityOfThisClass.finish()
     }
     /**
@@ -19,6 +19,6 @@ object ActivitySwitcher {
 
     fun startActivityOf(contextOfThisClass: Context, classToOpen:Class<*>){
 
-        contextOfThisClass.startActivity(Intent(contextOfThisClass,classToOpen::class.java))
+        contextOfThisClass.startActivity(Intent(contextOfThisClass,classToOpen))
     }
 }
