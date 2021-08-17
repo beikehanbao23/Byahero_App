@@ -22,8 +22,8 @@ open class User constructor(
 
 
 
-    fun validateEmailFail() = setEmailErrorText().isNotEmpty()
-    private fun setEmailErrorText(): CharSequence{
+    fun validateEmailFail() = setEmailErrorText()?.isNotEmpty()
+    private fun setEmailErrorText(): CharSequence?{
         email.error = when {
             userEmail.isEmpty() -> context.getString(string.fieldLeftBlankMessage)
             !validEmail() -> context.getString(string.emailIsInvalidMessage)
@@ -58,8 +58,8 @@ open class User constructor(
 
 
 
-    fun validatePasswordFail() = setPasswordError().isNotEmpty()
-    private fun setPasswordError():CharSequence{
+    fun validatePasswordFail() = setPasswordError()?.isNotEmpty()
+    private fun setPasswordError():CharSequence?{
         password.error = when{
             userPassword.isNullOrBlank()->context.getString(string.fieldLeftBlankMessage)
             else-> null
