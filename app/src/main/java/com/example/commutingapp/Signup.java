@@ -14,19 +14,20 @@ import com.google.firebase.FirebaseNetworkException;
 
 import java.util.Objects;
 
-import FirebaseUserManager.FirebaseUserManager;
+import FirebaseUserManager.FirebaseManager;
 import InternetConnection.ConnectionManager;
 import Logger.CustomDialogs;
-import Logger.CustomToastMessage;
 import UI.ActivitySwitcher;
+import UI.AttributesInitializer;
+import UI.BindingDestroyer;
+import UI.LoadingScreen;
 import UI.ScreenDimension;
 import Users.UserManager;
 
-import static com.example.commutingapp.R.string.doubleTappedMessage;
 import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
 
 
-public class Signup extends AppCompatActivity {
+public class Signup extends AppCompatActivity implements LoadingScreen, BindingDestroyer, AttributesInitializer {
 
 
     private CustomDialogs customPopupDialog;
@@ -35,46 +36,29 @@ public class Signup extends AppCompatActivity {
 
 
 
-    @Override
-    protected void onDestroy() {
-       destroyCircularProgressBarBinding();
-       destroySignUpBinding();
-        super.onDestroy();
-    }
 
-    private void destroySignUpBinding(){
-        activitySignupBinding = null;
-    }
-    private void destroyCircularProgressBarBinding(){
-        circularProgressbarBinding = null;
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initializeLocalAttributes();
-        FirebaseUserManager.initializeFirebase();
+        initializeAttributes();
+        FirebaseManager.initializeFirebaseApp();
 
     }
-    private void initializeLocalAttributes() {
+
+    @Override
+    public void initializeAttributes() {
         new ScreenDimension(getWindow()).setWindowToFullScreen();
         activitySignupBinding = ActivitySignupBinding.inflate(getLayoutInflater());
         circularProgressbarBinding = CircularProgressbarBinding.bind(activitySignupBinding.getRoot());
         setContentView(activitySignupBinding.getRoot());
         customPopupDialog = new CustomDialogs(this);
-
     }
-
     @Override
     public void onBackPressed() {
 
         showSignInActivity();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
 
     public void backToSignIn(View view) {
         showSignInActivity();
@@ -88,35 +72,37 @@ public class Signup extends AppCompatActivity {
         if (userManager.signUpValidationFail()) {
             return;
         }
-        if (!new ConnectionManager(this).internetConnectionAvailable()) {
+        if (noInternetConnection()) {
             showNoInternetActivity();
             return;
         }
-        FirebaseUserManager.getCreatedUserAccount();
-        if (FirebaseUserManager.userAlreadySignIn() && isUserCreatedNewAccount()) {
+        FirebaseManager.getCreatedUserAccount();
+        if (FirebaseManager.hasAccountSignedIn() && isUserCreatedNewAccount()) {
             signOutPreviousAccount();
             ProceedToSignUp();
             return;
         }
         ProceedToSignUp();
     }
-
+    private boolean noInternetConnection(){
+        return !new ConnectionManager(this).internetConnectionAvailable();
+    }
     public void GoToSettingsClicked(View view) {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
 
     private void signOutPreviousAccount() {
-        FirebaseUserManager.getFirebaseAuthInstance().signOut();
+        FirebaseManager.getFirebaseAuthInstance().signOut();
     }
 
     private boolean isUserCreatedNewAccount() {
         String currentEmail = Objects.requireNonNull(activitySignupBinding.editTextSignUpEmailAddress.getText()).toString().trim();
-        String previousEmail = FirebaseUserManager.getFirebaseUserInstance().getEmail();
+        String previousEmail = FirebaseManager.getFirebaseUserInstance().getEmail();
         return !Objects.equals(previousEmail, currentEmail);
     }
 
     private void sendEmailVerificationToUser() {
-        FirebaseUserManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
+        FirebaseManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 showEmailSentActivity();
                 return;
@@ -129,11 +115,11 @@ public class Signup extends AppCompatActivity {
         String userEmail = Objects.requireNonNull(activitySignupBinding.editTextSignUpEmailAddress.getText()).toString().trim();
         String userConfirmPassword = Objects.requireNonNull(activitySignupBinding.editTextSignUpConfirmPassword.getText()).toString().trim();
 
-        startLoading();
-        FirebaseUserManager.getFirebaseAuthInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
+        showLoading();
+        FirebaseManager.getFirebaseAuthInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
 
             if (task.isSuccessful()) {
-                FirebaseUserManager.getCreatedUserAccount();
+                FirebaseManager.getCreatedUserAccount();
                 sendEmailVerificationToUser();
                 return;
 
@@ -156,18 +142,15 @@ public class Signup extends AppCompatActivity {
             customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(task.getException().getMessage()));
         }
     }
-
-    private void startLoading() {
+    @Override public void showLoading() {
 
         makeLoading(false, View.VISIBLE);
     }
-
-    private void finishLoading() {
+    @Override public void finishLoading() {
 
         makeLoading(true, View.INVISIBLE);
     }
-
-    private void makeLoading(boolean attributesVisibility, int progressBarVisibility) {
+    @Override public void makeLoading(boolean attributesVisibility, int progressBarVisibility) {
         circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
         activitySignupBinding.editTextSignUpEmailAddress.setEnabled(attributesVisibility);
         activitySignupBinding.editTextSignUpPassword.setEnabled(attributesVisibility);
@@ -192,5 +175,16 @@ public class Signup extends AppCompatActivity {
         ActivitySwitcher.INSTANCE.startActivityOf(this,this,SignIn.class);
     }
 
+    @Override
+    protected void onDestroy() {
+        destroyBinding();
+        super.onDestroy();
+    }
+
+
+    @Override public void destroyBinding(){
+        activitySignupBinding = null;
+        circularProgressbarBinding = null;
+    }
 
 }

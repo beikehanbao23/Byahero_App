@@ -2,43 +2,88 @@ package com.example.commutingapp;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import FirebaseUserManager.FirebaseUserManager;
+import com.example.commutingapp.databinding.ActivitySplashscreenBinding;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
+
+import FirebaseUserManager.FirebaseManager;
 import MenuButtons.CustomBackButton;
 import UI.ActivitySwitcher;
+import UI.AttributesInitializer;
+import UI.BindingDestroyer;
 import UI.ScreenDimension;
 
-public class splashscreen extends AppCompatActivity  {
+public class splashscreen extends AppCompatActivity implements BindingDestroyer, AttributesInitializer {
 
     private final int delayInMillis = 1000;
+    private ActivitySplashscreenBinding activitySplashscreenBinding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initializeAttributes();
+
+        FirebaseManager.initializeFirebaseApp();
+        FirebaseManager.getCreatedUserAccount();
+    }
+
+    @Override public void initializeAttributes() {
         new ScreenDimension(getWindow()).setWindowToFullScreen();
-        setContentView(R.layout.activity_splashscreen);
-
-        FirebaseUserManager.initializeFirebase();
-
+        activitySplashscreenBinding = ActivitySplashscreenBinding.inflate(getLayoutInflater());
+        setContentView(activitySplashscreenBinding.getRoot());
     }
-    @Override
-    protected void onStart() {
+
+    @Override protected void onStart() {
         super.onStart();
+        new Handler().postDelayed(this::transitionToNextActivity, delayInMillis);
 
-        FirebaseUserManager.getCreatedUserAccount();
-        if (FirebaseUserManager.userAlreadySignIn() && FirebaseUserManager.getFirebaseUserInstance().isEmailVerified()) {
-            showMainScreenActivity();
-            return;
-        }
-        new Handler().postDelayed(this::showIntroSlidersActivity, delayInMillis);
     }
-    @Override
-    public void onBackPressed() {
 
+
+
+    private void transitionToNextActivity(){
+        if (FirebaseManager.hasAccountSignedIn()) {
+            if (signInSuccess()) {
+                showMainScreenActivity();
+                return;
+            }
+        }
+        showIntroSlidersActivity();
+
+    }
+
+    private boolean signInSuccess(){
+        return FirebaseManager.getFirebaseUserInstance().isEmailVerified() ||
+                isUserSignInUsingFacebook() ||
+                isUserSignInUsingGoogle();
+    }
+
+    private boolean isUserSignInUsingFacebook(){
+        return getProviderIdResult(FacebookAuthProvider.PROVIDER_ID);
+    }
+
+    private boolean isUserSignInUsingGoogle(){
+        return getProviderIdResult(GoogleAuthProvider.PROVIDER_ID);
+    }
+
+    private boolean getProviderIdResult(String id){
+        for (UserInfo ui : FirebaseManager.getFirebaseUserInstance().getProviderData()) {
+            Log.e("Result",ui.getProviderId());
+            if (ui.getProviderId().equals(id)) {
+                return true; // return ui.getProviderId().equals(id) does not work here, always returning 'firebase' as providerId
+            }
+        }
+        return false;
+    }
+
+
+    @Override public void onBackPressed() {
         new CustomBackButton(this,this).applyDoubleClickToExit();
     }
-
     private void showMainScreenActivity() {
 
         ActivitySwitcher.INSTANCE.startActivityOf(this,this,MainScreen.class);
@@ -46,11 +91,16 @@ public class splashscreen extends AppCompatActivity  {
     private void showIntroSlidersActivity() {
         ActivitySwitcher.INSTANCE.startActivityOf(this,this,IntroSlider.class);
     }
-
-
-
-
+    @Override protected void onDestroy() {
+        destroyBinding();
+        super.onDestroy();
     }
+    @Override public void destroyBinding(){
+        activitySplashscreenBinding = null;
+    }
+
+
+}
 
 
 

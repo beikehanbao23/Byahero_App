@@ -87,12 +87,30 @@
         android:text="Google"
         android:textAlignment="center"
         android:textSize="14sp"
-        android:textColor="@color/white"
         android:onClick="googleButtonIsClicked"
         app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.03"
         app:layout_constraintStart_toStartOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <Button
+        android:id="@+id/FacebookButton"
+        android:layout_width="0dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="96dp"
+        android:backgroundTint="@color/blue_facebook_logo"
+        android:drawableLeft="@drawable/ic_facebook"
+        android:onClick="FacebookButtonIsClicked"
+        android:paddingLeft="5dp"
+        android:text="Facebook"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/textView2"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <TextView
@@ -178,24 +196,7 @@
     <include
         layout="@layout/circular_progressbar" />
 
-    <Button
-        android:id="@+id/FacebookButton"
-        android:layout_width="0dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="96dp"
-        android:backgroundTint="@color/blue_facebook_logo"
-        android:drawableLeft="@drawable/ic_facebook"
-        android:onClick="FacebookButtonIsClicked"
-        android:paddingLeft="5dp"
-        android:text="Facebook"
-        android:textAlignment="center"
-        android:textSize="14sp"
-        app:cornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/textView2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
 
     <TextView
         android:id="@+id/textView"
