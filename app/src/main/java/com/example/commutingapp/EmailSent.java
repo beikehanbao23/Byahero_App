@@ -1,7 +1,5 @@
 package com.example.commutingapp;
 
-
-
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -106,13 +104,12 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
 
     }
 
-    //TODO refactor this
+
     private void handleEmailVerificationException(Task<?> task){
 
         try {
             throw Objects.requireNonNull(task.getException());
         }catch (FirebaseNetworkException firebaseNetworkException) {
-
             setThreadDisabled(true);
             showNoInternetActivity();
         }catch (Exception ignored){}
@@ -142,9 +139,6 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
             emailDialogBinding.textViewEmail.setText(userEmail);
         }
     }
-
-
-
 
 
     public void resendEmailIsClicked(View view) {

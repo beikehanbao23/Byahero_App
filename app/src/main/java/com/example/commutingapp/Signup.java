@@ -84,9 +84,11 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         }
         ProceedToSignUp();
     }
+
     private boolean noInternetConnection(){
         return !new ConnectionManager(this).internetConnectionAvailable();
     }
+
     public void GoToSettingsClicked(View view) {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
@@ -111,6 +113,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         });
     }
 
+
     private void ProceedToSignUp() {
         String userEmail = Objects.requireNonNull(activitySignupBinding.editTextSignUpEmailAddress.getText()).toString().trim();
         String userConfirmPassword = Objects.requireNonNull(activitySignupBinding.editTextSignUpConfirmPassword.getText()).toString().trim();
@@ -133,6 +136,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         });
     }
 
+
     private void handleSignUpExceptionResults(Task<?> task) {
         try {
             throw Objects.requireNonNull(task.getException());
@@ -150,6 +154,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
 
         makeLoading(true, View.INVISIBLE);
     }
+
     @Override public void makeLoading(boolean attributesVisibility, int progressBarVisibility) {
         circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
         activitySignupBinding.editTextSignUpEmailAddress.setEnabled(attributesVisibility);
