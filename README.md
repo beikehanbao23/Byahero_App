@@ -1,2 +1,2 @@
 # Byahero_App
-Application for commuters, almost done
+Android app for commuters, almost done
