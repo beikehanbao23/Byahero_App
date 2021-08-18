@@ -43,8 +43,8 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
         setupIntroSliders()
     }
     private fun setupIntroSliders(){
-        provideViewPage()
-        renderIndicators()
+        provideViewPageDisplay()
+        setupIndicators()
         setCurrentIndicator(DEFAULT_INDICATOR_POSITION)
         setCallBacks()
     }
@@ -69,12 +69,12 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
     private fun userHasAlreadySeenTheIntroSliders() =
         preferences.getBoolean(preferedShowIntro, false)
 
-    private fun provideViewPage() {
+    private fun provideViewPageDisplay() {
 
         binding?.viewPagerSliders?.adapter = IntroSliderAdapter(layoutInflater,this)
     }
 
-    private fun renderIndicators() {
+    private fun setupIndicators() {
         val indicators = arrayOfNulls<ImageView>(ITEMS_COUNT)
         val layoutParameters: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)

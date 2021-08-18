@@ -104,13 +104,11 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
 
     }
 
-    //TODO refactor this
     private void handleEmailVerificationException(Task<?> task){
 
         try {
             throw Objects.requireNonNull(task.getException());
         }catch (FirebaseNetworkException firebaseNetworkException) {
-
             setThreadDisabled(true);
             showNoInternetActivity();
         }catch (Exception ignored){}
@@ -140,9 +138,6 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
             emailDialogBinding.textViewEmail.setText(userEmail);
         }
     }
-
-
-
 
 
     public void resendEmailIsClicked(View view) {

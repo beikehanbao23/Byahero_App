@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.commutingapp.databinding.ActivitySignInBinding;
@@ -42,6 +44,7 @@ import UI.BindingDestroyer;
 import UI.LoadingScreen;
 import UI.ScreenDimension;
 import Users.UserManager;
+import kotlin.Suppress;
 
 
 import static com.example.commutingapp.R.string.disabledAccountMessage;
@@ -60,7 +63,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     private CustomToastMessage toastMessageBackButton;
     private ActivitySignInBinding activitySignInBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
-
+    private  ActivityResultLauncher<Intent> launchSomeActivity;
 
 
     @Override
@@ -74,9 +77,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         facebookCallBackManager = CallbackManager.Factory.create();
 
         removeFacebookUserAccountPreviousToken();
-
     }
-
     @Override public void initializeAttributes() {
 
         activitySignInBinding = ActivitySignInBinding.inflate(getLayoutInflater());
@@ -87,8 +88,6 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
 
     }
-
-
     public void FacebookButtonIsClicked(View view) {
         loginViaFacebook();
     }
@@ -113,8 +112,6 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
             }
         });
     }
-
-
     private void handleFacebookSignInException(Exception error){
 
         if (Objects.equals(error.getMessage(), FACEBOOK_CONNECTION_FAILURE)) {
@@ -124,8 +121,6 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         customPopupDialog.showErrorDialog("Error", error.getMessage());
         removeFacebookUserAccountPreviousToken();
     }
-
-
     private void handleFacebookAccessToken(AccessToken token) {
 
         AuthCredential authCredential = FacebookAuthProvider.getCredential(token.getToken());
@@ -154,10 +149,13 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
 
     }
     private void handleFacebookSignInCallback(int requestCode,int resultCode, Intent data){
+
         facebookCallBackManager.onActivityResult(requestCode, resultCode, data);
     }
+
+
+
     private void handleGoogleSignInCallback(int requestCode, Intent data){
-        if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
@@ -166,7 +164,6 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
             } catch (ApiException e) {
                 handleGoogleSignInException(e);
             }
-        }
     }
     private void handleGoogleSignInException(ApiException error){
 
@@ -175,8 +172,9 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         }
         if(!error.getStatus().isSuccess() && noInternetConnection()){
             showNoInternetActivity();
+            return;
         }
-        Log.e("This only happens ","in onCancel() event");
+        Log.e("This only happens ","when onCancel() event occur");
     }
     private boolean noInternetConnection(){
         return !new ConnectionManager(this).internetConnectionAvailable();
@@ -325,6 +323,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         loginViaGoogle();
     }
     private void loginViaGoogle() {
+
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
