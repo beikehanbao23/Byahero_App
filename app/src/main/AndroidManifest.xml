@@ -24,28 +24,28 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".TokenExpired"
+            android:name=".views.ui.TokenExpired"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".IntroSlider"
+            android:name=".views.ui.IntroSlider"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MainScreen"
+            android:name=".views.ui.MainScreen"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Signup"
+            android:name=".views.ui.Signup"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SignIn"
+            android:name=".views.ui.SignIn"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".NoInternet"
+            android:name=".views.ui.NoInternet"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".EmailSent"
+            android:name=".views.ui.EmailSent"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".splashscreen"
+            android:name=".views.ui.splashscreen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
