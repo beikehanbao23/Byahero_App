@@ -2,26 +2,25 @@ package com.example.commutingapp.views.ui;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.commutingapp.databinding.ActivitySplashscreenBinding;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.UserInfo;
-
-import com.example.commutingapp.utils.FirebaseUserManager.*;
-import com.example.commutingapp.views.MenuButtons.CustomBackButton;
+import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.AttributesInitializer;
 import com.example.commutingapp.utils.ui_utilities.BindingDestroyer;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
+import com.example.commutingapp.viewmodels.SplashScreenViewModel;
+import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 
 public class splashscreen extends AppCompatActivity implements BindingDestroyer, AttributesInitializer {
 
-    private final int delayInMillis = 1000;
+    private final int delayInMillis = 1250;
+    private SplashScreenViewModel viewModel;
     private ActivitySplashscreenBinding activitySplashscreenBinding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,73 +28,63 @@ public class splashscreen extends AppCompatActivity implements BindingDestroyer,
 
         FirebaseManager.initializeFirebaseApp();
         FirebaseManager.getCreatedUserAccount();
+
+        viewModel = new ViewModelProvider(this).get(SplashScreenViewModel.class);
+        viewModel.setUserSignInProvider();
+
+
     }
 
-    @Override public void initializeAttributes() {
+    @Override
+    public void initializeAttributes() {
         new ScreenDimension(getWindow()).setWindowToFullScreen();
         activitySplashscreenBinding = ActivitySplashscreenBinding.inflate(getLayoutInflater());
         setContentView(activitySplashscreenBinding.getRoot());
+
     }
 
-    @Override protected void onStart() {
+    @Override
+    protected void onStart() {
         super.onStart();
-        new Handler().postDelayed(this::transitionToNextActivity, delayInMillis);
+        new Handler().postDelayed(this::startTransitionToNextActivity, delayInMillis);
 
     }
 
 
-
-    private void transitionToNextActivity(){
+    private void startTransitionToNextActivity() {
         if (FirebaseManager.hasAccountSignedIn()) {
-            if (signInSuccess()) {
+            viewModel.transition().observe(this,transition->{
                 showMainScreenActivity();
-                return;
-            }
+            });
+            return;
         }
         showIntroSlidersActivity();
-
-    }
-
-    private boolean signInSuccess(){
-        return FirebaseManager.getFirebaseUserInstance().isEmailVerified() ||
-                isUserSignInUsingFacebook() ||
-                isUserSignInUsingGoogle();
-    }
-
-    private boolean isUserSignInUsingFacebook(){
-        return getProviderIdResult(FacebookAuthProvider.PROVIDER_ID);
-    }
-
-    private boolean isUserSignInUsingGoogle(){
-        return getProviderIdResult(GoogleAuthProvider.PROVIDER_ID);
-    }
-
-    private boolean getProviderIdResult(String id){
-        for (UserInfo ui : FirebaseManager.getFirebaseUserInstance().getProviderData()) {
-            Log.e("Result",ui.getProviderId());
-            if (ui.getProviderId().equals(id)) {
-                return true; // return ui.getProviderId().equals(id) does not work here, always returning 'firebase' as providerId
-            }
-        }
-        return false;
     }
 
 
-    @Override public void onBackPressed() {
-        new CustomBackButton(this,this).applyDoubleClickToExit();
+    @Override
+    public void onBackPressed() {
+        new CustomBackButton(this, this).applyDoubleClickToExit();
     }
+
     private void showMainScreenActivity() {
-
         ActivitySwitcher.INSTANCE.startActivityOf(this,this, MainScreen.class);
+
     }
+
     private void showIntroSlidersActivity() {
-        ActivitySwitcher.INSTANCE.startActivityOf(this,this, IntroSlider.class);
+        ActivitySwitcher.INSTANCE.startActivityOf(this, this, IntroSlider.class);
     }
-    @Override protected void onDestroy() {
+
+    @Override
+    protected void onDestroy() {
         destroyBinding();
         super.onDestroy();
     }
-    @Override public void destroyBinding(){
+
+    @Override
+    public void destroyBinding() {
+
         activitySplashscreenBinding = null;
     }
 
