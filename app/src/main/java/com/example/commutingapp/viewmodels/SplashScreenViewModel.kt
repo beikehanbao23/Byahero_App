@@ -14,8 +14,8 @@ class SplashScreenViewModel : ViewModel() {
 
     private val _navigateToDetails = MutableLiveData<Event<Boolean>>()
 
-    val navigateToDetails : LiveData<Event<Boolean>>
-        get() = _navigateToDetails
+    fun navigateToDetails() : LiveData<Event<Boolean>> = _navigateToDetails
+
 
 
     fun setUserSignInProvider(){
