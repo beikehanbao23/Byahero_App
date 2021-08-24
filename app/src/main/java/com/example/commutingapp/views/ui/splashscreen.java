@@ -53,8 +53,10 @@ public class splashscreen extends AppCompatActivity implements BindingDestroyer,
 
     private void startTransitionToNextActivity() {
         if (FirebaseManager.hasAccountSignedIn()) {
-            viewModel.transition().observe(this,transition->{
-                showMainScreenActivity();
+            viewModel.getNavigateToDetails().observe(this,transition->{
+                if(transition != null){
+                    showMainScreenActivity();
+                }
             });
             return;
         }
