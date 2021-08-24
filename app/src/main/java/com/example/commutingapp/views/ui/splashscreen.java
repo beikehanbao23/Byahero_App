@@ -54,7 +54,7 @@ public class splashscreen extends AppCompatActivity implements BindingDestroyer,
     private void startTransitionToNextActivity() {
         if (FirebaseManager.hasAccountSignedIn()) {
             viewModel.getNavigateToDetails().observe(this,transition->{
-                if(transition != null){
+                if(transition.getContentIfNotHandled() != null){
                     showMainScreenActivity();
                 }
             });
@@ -68,28 +68,19 @@ public class splashscreen extends AppCompatActivity implements BindingDestroyer,
     public void onBackPressed() {
         new CustomBackButton(this, this).applyDoubleClickToExit();
     }
-
     private void showMainScreenActivity() {
         ActivitySwitcher.INSTANCE.startActivityOf(this,this, MainScreen.class);
-
     }
-
     private void showIntroSlidersActivity() {
         ActivitySwitcher.INSTANCE.startActivityOf(this, this, IntroSlider.class);
     }
-
-    @Override
-    protected void onDestroy() {
+    @Override protected void onDestroy() {
         destroyBinding();
         super.onDestroy();
     }
-
-    @Override
-    public void destroyBinding() {
-
+    @Override public void destroyBinding() {
         activitySplashscreenBinding = null;
     }
-
 
 }
 
