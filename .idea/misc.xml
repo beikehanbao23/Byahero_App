@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../../layout/custom_preview.xml" value="0.540460282108389" />
+        <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.3640625" />
+        <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.3609375" />
         <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.1" />
       </map>
     </option>
