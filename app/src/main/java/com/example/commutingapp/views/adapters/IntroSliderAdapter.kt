@@ -43,53 +43,6 @@ class IntroSliderAdapter(
     )
 
 
-    /*
-    Executing a lambda on non-null objects: let
-    Introducing an expression as a variable in local scope: let
-
-
-    Object configuration: apply
-    Use the apply() function if you are not accessing any functions of the receiver within your block, and also want to return the same receiver.
-
-
-    Object configuration and computing the result: run
-    Running statements where an expression is required: non-extension run
-
-
-
-
-
-    Additional effects: also
-    Use the also() function, if your block does not access its receiver parameter at all,
-    or if it does not mutate its receiver parameter. Don’t use also() if your block needs to return a different value.
-
-
-
-
-
-
-
-    Grouping function calls on an object: with
-    Use with() only on non-nullable receivers, and when you don’t need its result.
-
-    val person: Person = getPerson()
-    with(person) {
-    print(name)
-    print(age)
-}
-
-    The equivalent code without with() looks like this:
-
-    val person: Person = getPerson()
-    print(person.name)
-    print(person.age)
-     */
-
-
-
-
-
-
 
     /* A ViewHolder describes an
     item view and metadata about
