@@ -15,17 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CommutingApp">
 
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
 
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity
-            android:name=".views.ui.TokenExpired"
-            android:screenOrientation="portrait"/>
         <activity
             android:name=".views.ui.IntroSlider"
             android:screenOrientation="portrait" />
