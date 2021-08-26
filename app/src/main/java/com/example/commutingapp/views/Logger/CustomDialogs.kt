@@ -5,7 +5,7 @@ import id.ionbit.ionalert.IonAlert
 
 class CustomDialogs(val context: Context):DialogPresenter {
 
-    //TODO create models
+
     private fun dialogIonAlert(title: String, contextText: String, type: Int): IonAlert {
         val alertDialog = IonAlert(context, type)
         return alertDialog.apply {
@@ -16,20 +16,20 @@ class CustomDialogs(val context: Context):DialogPresenter {
 
 
     override fun showErrorDialog(title: String, contextText: String) {
-        dialogIonAlert(title, contextText, IonAlert.ERROR_TYPE).run {
+        dialogIonAlert(title, contextText, IonAlert.ERROR_TYPE).apply {
             if (isShowing) cancel() else show()
         }
 
     }
 
     override fun showSuccessDialog(title: String, contentText: String) {
-        dialogIonAlert(title, contentText, IonAlert.SUCCESS_TYPE).run {
+        dialogIonAlert(title, contentText, IonAlert.SUCCESS_TYPE).apply {
             if (isShowing) cancel() else show()
         }
     }
 
     override fun showWarningDialog(title: String, contentText: String) {
-        dialogIonAlert(title, contentText, IonAlert.WARNING_TYPE).run {
+        dialogIonAlert(title, contentText, IonAlert.WARNING_TYPE).apply {
             if (isShowing) cancel() else show()
         }
     }

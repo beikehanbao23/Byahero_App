@@ -2,6 +2,7 @@ package com.example.commutingapp.views.ui;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -30,8 +31,6 @@ public class splashscreen extends AppCompatActivity implements BindingDestroyer,
         FirebaseManager.getCreatedUserAccount();
 
         viewModel = new ViewModelProvider(this).get(SplashScreenViewModel.class);
-        viewModel.setUserSignInProvider();
-
 
     }
 
@@ -52,16 +51,20 @@ public class splashscreen extends AppCompatActivity implements BindingDestroyer,
 
 
     private void startTransitionToNextActivity() {
-        if (FirebaseManager.hasAccountSignedIn()) {
-            viewModel.navigateToDetails().observe(this,transition->{
-                if(transition.getContentIfNotHandled() != null){
-                    showMainScreenActivity();
-                }
-            });
-            return;
-        }
-        showIntroSlidersActivity();
+        viewModel.setUserSignInProvider();
+
+        viewModel.onNavigateToUserDetailsSuccess().observe(this, transition -> {
+            if (transition.getContentIfNotHandled() != null) {
+                showMainScreenActivity();
+            }
+        });
+
+      if(viewModel.onNavigateToUserDetailsSuccess().getValue() == null){
+          showIntroSlidersActivity();
+      }
+
     }
+
 
 
     @Override

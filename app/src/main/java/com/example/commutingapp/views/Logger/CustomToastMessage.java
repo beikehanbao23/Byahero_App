@@ -8,7 +8,6 @@ import com.rejowan.cutetoast.CuteToast;
 public class CustomToastMessage {
     private Toast toast;
 
-    //TODO create models
     /*
     types of Toast Message::
 
@@ -25,7 +24,6 @@ public class CustomToastMessage {
 
      */
 
-
     public CustomToastMessage(Context context, String message, int type) {
         if (message == null) { throw new RuntimeException("Message cannot be null!");}
         if (context == null){throw new RuntimeException("Context cannot be null");}
@@ -36,12 +34,9 @@ public class CustomToastMessage {
      CustomToastMessage() {
 
     }
-
-
     public void showToast() {
         toast.show();
     }
-
     public void hideToast() {
         toast.cancel();
     }
