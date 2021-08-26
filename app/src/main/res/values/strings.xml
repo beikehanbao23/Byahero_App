@@ -2,5 +2,5 @@
     <string name="app_name">Byahero</string>
 
     <string name="facebook_app_id">1431643380538458</string>
-
+    <string name="fb_login_protocol_scheme">fb1431643380538458</string>
 </resources>
