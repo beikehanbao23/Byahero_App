@@ -1,16 +1,20 @@
 package com.example.commutingapp.viewmodels
 
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
+import kotlinx.coroutines.*
 
 private const val twoMinutes: Long = 120000
 private const val oneSecond: Long = 1000
+private const val two_Seconds: Long = 2000
 
 class EmailSentViewModel:ViewModel() {
 
@@ -18,11 +22,12 @@ class EmailSentViewModel:ViewModel() {
     private val _seconds = MutableLiveData<Int>()
     private val timer = MutableLiveData<Event<Boolean>>()
     private var displayUserEmail = MutableLiveData<String>()
-    private val emailReload = MutableLiveData<Boolean>()
+    private var mainScreenActivityTransition = MutableLiveData<Event<Boolean>>()
+    private var noInternetActivityTransition = MutableLiveData<Event<Boolean>>()
+    private lateinit var job: Job
 
     fun timerOnFinished() : LiveData<Event<Boolean>> = timer
     fun timerOnRunning():LiveData<Int> = _seconds
-
     fun displayUserEmailToTextView():LiveData<String>{
         FirebaseManager.getFirebaseUserInstance().email?.let {
             displayUserEmail.value = it
@@ -31,33 +36,48 @@ class EmailSentViewModel:ViewModel() {
         }
 
     }
+    fun transitionToMainScreenActivity():LiveData<Event<Boolean>> = mainScreenActivityTransition
+    fun transitionToNoInternetActivity():LiveData<Event<Boolean>> = noInternetActivityTransition
 
-    fun emailRefresh(){
-        FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener(){
-            if(it.isSuccessful){
-                emailReload.postValue(true)
+
+    fun refreshEmailSynchronously(){
+         job = viewModelScope.launch(Dispatchers.IO) {
+            while (this.isActive) {
+                reloadUserEmail()
+                Log.e("THREAD STATUS: ", "RUNNING")
+                delay(two_Seconds)
             }
         }
+
+
     }
 
-    fun reloadUserEmail(){
-        FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener(){task->
-        if(task.isSuccessful){
 
+   private fun reloadUserEmail(){
+    FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener { reload->
+        if (reload.isSuccessful && FirebaseManager.getFirebaseUserInstance().isEmailVerified) {
+            job.cancel()
+            mainScreenActivityTransition.value = Event(true)
+            return@addOnCompleteListener
         }
+        reload.exception?.let {
+            handleEmailVerificationExceptions(reload)
         }
     }
+    }
 
-    private fun handleEmailVerificationException(task: Task<*>) {
-        try {
+
+    private fun handleEmailVerificationExceptions(task:Task<*>){
+        try{
             throw task.exception!!
-        } catch (firebaseNetworkException: FirebaseNetworkException) {
-        //    exitThread = true
-           // showNoInternetActivity()
-        } catch (ignored: Exception) {
+        }catch (networkException: FirebaseNetworkException){
+           noInternetActivityTransition.value = Event(true)
+        }catch (ex:Exception){
+            Log.e("Exception",ex.message.toString())
+        }finally {
+            job.cancel()
         }
     }
-
 
     fun startTimer(){
 
@@ -72,7 +92,6 @@ class EmailSentViewModel:ViewModel() {
             }
         }.start()
     }
-
     private fun stopTimer(){
 
         if(::verificationTimer.isInitialized){
@@ -80,13 +99,11 @@ class EmailSentViewModel:ViewModel() {
         }
 
     }
-
     override fun onCleared() {
+        if(job.isActive){
+            job.cancel()
+        }
         super.onCleared()
         stopTimer()
     }
 }
-/*
-
-3. threading for email
- */

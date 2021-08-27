@@ -21,6 +21,8 @@ import com.example.commutingapp.utils.ui_utilities.AttributesInitializer;
 import com.example.commutingapp.utils.ui_utilities.BindingDestroyer;
 import static com.example.commutingapp.R.string.*;
 
+import kotlinx.coroutines.GlobalScope;
+
 
 public class EmailSent extends AppCompatActivity implements BindingDestroyer, AttributesInitializer {
 
@@ -29,9 +31,7 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
     private DialogPresenter customPopupDialog;
     private final long DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG = 1500;
     private final long DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG = 2950;
-    private CountDownTimer verificationTimer;
     private CustomToastMessage toastMessageBackButton;
-    private volatile boolean exitThread;
     private CustomEmailsentDialogBinding emailDialogBinding;
     private CircularProgressbarBinding progressbarBinding;
     private EmailSentViewModel viewModel;
@@ -43,6 +43,13 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         FirebaseManager.initializeFirebaseApp();
         displayUserEmailToTextView();
 
+
+        viewModel.transitionToMainScreenActivity().observe(this, transition->{
+            if(transition.getContentIfNotHandled()!=null){ showMainScreenActivity(); }
+        });
+        viewModel.transitionToNoInternetActivity().observe(this,transition->{
+            if(transition.getContentIfNotHandled()!=null){showNoInternetActivity();}
+        });
 
     }
     @Override public void initializeAttributes() {
@@ -60,55 +67,10 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
     }
 
 
-    private void refreshEmailAutomatically() {
-        new Thread(() -> {
-            while (!exitThread) {
-                reloadUserEmail();
-                Log.d("THREAD STATUS: ","RUNNING");
-                try { Thread.sleep(threadInterval); } catch (InterruptedException e) { e.printStackTrace(); }
-            }
-        }).start();
-    }
-
-
-    @Override protected void onStop() {
-        super.onStop();
-        exitThread = true;
-
-    }
     @Override protected void onStart() {
         super.onStart();
-        exitThread = false;
-        refreshEmailAutomatically();
+        viewModel.refreshEmailSynchronously();
     }
-
-
-    private void reloadUserEmail() {
-
-            FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
-                if (emailReload.isSuccessful() && FirebaseManager.getFirebaseUserInstance().isEmailVerified()) {
-                    exitThread = true;
-                    showMainScreenActivity();
-                    return;
-                }
-                if (emailReload.getException() != null) {
-                    handleEmailVerificationException(emailReload);
-                }
-            });
-
-    }
-
-
-    private void handleEmailVerificationException(Task<?> task){
-
-        try {
-            throw Objects.requireNonNull(task.getException());
-        }catch (FirebaseNetworkException firebaseNetworkException) {
-            exitThread = true;
-            showNoInternetActivity();
-        }catch (Exception ignored){}
-    }
-
 
     private void showNoInternetActivity(){
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
@@ -133,9 +95,7 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
     }
 
     private void displayUserEmailToTextView() {
-        viewModel.displayUserEmailToTextView().observe(this,userEmail->{
-            emailDialogBinding.textViewEmail.setText(userEmail);
-        });
+        viewModel.displayUserEmailToTextView().observe(this,userEmail-> emailDialogBinding.textViewEmail.setText(userEmail));
     }
 
     public void resendEmailIsClicked(View view) {
@@ -165,15 +125,11 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         viewModel.startTimer();
         viewModel.timerOnRunning().observe(this, this::displayWhenVerificationTimerStarted);
         viewModel.timerOnFinished().observe(this,timer->{
-            if(timer.getContentIfNotHandled()!=null) {
-                displayWhenVerificationTimerIsFinished();
-            }
+            if(timer.getContentIfNotHandled()!=null) { displayWhenVerificationTimerIsFinished(); }
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        exitThread = true;
+    @Override protected void onDestroy() {
         super.onDestroy();
         destroyBinding();
     }
