@@ -47,9 +47,8 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         viewModel.transitionToMainScreenActivity().observe(this, transition->{
             if(transition.getContentIfNotHandled()!=null){ showMainScreenActivity(); }
         });
-        viewModel.transitionToNoInternetActivity().observe(this,transition->{
-            if(transition.getContentIfNotHandled()!=null){showNoInternetActivity();}
-        });
+
+        viewModel.transitionToNoInternetActivity().observe(this,transition-> showNoInternetActivity());
 
     }
     @Override public void initializeAttributes() {
@@ -75,6 +74,7 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
     private void showNoInternetActivity(){
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(()-> {
+
            ActivitySwitcher.INSTANCE.startActivityOf(this, NoInternet.class);
            progressbarBinding.circularProgressBar.setVisibility(View.INVISIBLE);
        }, DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG);

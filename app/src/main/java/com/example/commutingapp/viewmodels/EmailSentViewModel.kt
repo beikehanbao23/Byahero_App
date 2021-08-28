@@ -41,10 +41,11 @@ class EmailSentViewModel:ViewModel() {
 
 
     fun refreshEmailSynchronously(){
+
          job = viewModelScope.launch(Dispatchers.IO) {
             while (this.isActive) {
                 reloadUserEmail()
-                Log.e("THREAD STATUS: ", "RUNNING")
+                Log.e("THREAD STATUS: ", "RUNNING and coroutine is active == ${this.isActive}")
                 delay(two_Seconds)
             }
         }
@@ -56,7 +57,7 @@ class EmailSentViewModel:ViewModel() {
    private fun reloadUserEmail(){
     FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener { reload->
         if (reload.isSuccessful && FirebaseManager.getFirebaseUserInstance().isEmailVerified) {
-            job.cancel()
+
             mainScreenActivityTransition.value = Event(true)
             return@addOnCompleteListener
         }
@@ -75,7 +76,7 @@ class EmailSentViewModel:ViewModel() {
         }catch (ex:Exception){
             Log.e("Exception",ex.message.toString())
         }finally {
-            job.cancel()
+           job.cancel()
         }
     }
 
@@ -91,6 +92,8 @@ class EmailSentViewModel:ViewModel() {
                 stopTimer()
             }
         }.start()
+
+
     }
     private fun stopTimer(){
 
@@ -100,9 +103,7 @@ class EmailSentViewModel:ViewModel() {
 
     }
     override fun onCleared() {
-        if(job.isActive){
-            job.cancel()
-        }
+        Log.e("Status","View model is now cleared")
         super.onCleared()
         stopTimer()
     }
