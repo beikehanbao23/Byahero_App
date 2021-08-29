@@ -35,14 +35,29 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         initializeAttributes();
         FirebaseManager.initializeFirebaseApp();
         displayUserEmailToTextView();
+        applyObservers();
+    }
 
-
+    private void applyObservers(){
+        observeNoInternetActivityTransition();
+        observeMainActivityTransition();
+        observeEmailVerification();
+    }
+    private void observeMainActivityTransition(){
         viewModel.getMainScreenActivityTransition().observe(this, transition->{
             if(transition.getContentIfNotHandled()!=null){ showMainScreenActivity(); }
         });
-
+    }
+    private void observeNoInternetActivityTransition(){
         viewModel.getNoInternetActivityTransition().observe(this,transition-> showNoInternetActivity());
-
+    }
+    private void observeEmailVerification(){
+        viewModel.getSendEmailOnSuccess().observe(this,task->{
+            customPopupDialog.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
+        });
+        viewModel.getSendEmailOnFailed().observe(this,task->{
+            customPopupDialog.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
+        });
     }
     @Override public void initializeAttributes() {
         emailDialogBinding = CustomEmailsentDialogBinding.inflate(getLayoutInflater());
@@ -65,6 +80,7 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(()-> {
            ActivitySwitcher.INSTANCE.startActivityOf(this, NoInternet.class);
+            progressbarBinding.circularProgressBar.setVisibility(View.INVISIBLE);
        }, DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG);
     }
     private void showMainScreenActivity() {
@@ -81,17 +97,11 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         viewModel.displayUserEmailToTextView().observe(this,userEmail-> emailDialogBinding.textViewEmail.setText(userEmail));
     }
     public void resendEmailIsClicked(View view) {
+
         startVerificationTimer();
-        FirebaseManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                customPopupDialog.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
-                return;
-            }
-            customPopupDialog.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
-        });
-
-
+        viewModel.sendEmail();
     }
+
     private void displayWhenVerificationTimerStarted(long secondsLeft) {
         emailDialogBinding.ResendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.gray));
         emailDialogBinding.ResendVerificationButton.setText("Resend verification in " + secondsLeft + "s");

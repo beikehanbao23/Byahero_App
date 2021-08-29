@@ -12,7 +12,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
 import kotlinx.coroutines.*
 
-private const val timerCounts: Long = 120000
+private const val timerCounts: Long = 15000
 private const val oneSecond: Long = 1000
 private const val two_Seconds: Long = 2000
 
@@ -32,6 +32,11 @@ class EmailSentViewModel:ViewModel() {
     var noInternetActivityTransition = MutableLiveData<Boolean>()
     private set
 
+    var sendEmailOnSuccess = MutableLiveData<Boolean>()
+    private set
+
+    var sendEmailOnFailed = MutableLiveData<Boolean>()
+    private set
 
     private var displayUserEmail = MutableLiveData<String>()
 
@@ -51,17 +56,27 @@ class EmailSentViewModel:ViewModel() {
 
 
 
-
     fun refreshEmailSynchronously(){
          job = viewModelScope.launch(Dispatchers.IO) {
              while (this.isActive) {
                  reloadUserEmail()
                  Log.d("COROUTINE STATUS: ", "$isActive")
                  delay(two_Seconds)
-
              }
          }
 
+    }
+
+    fun sendEmail(){
+        viewModelScope.launch(Dispatchers.IO) {
+        FirebaseManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                sendEmailOnSuccess.postValue(true)
+                return@addOnCompleteListener
+            }
+                sendEmailOnFailed.postValue(true)
+        }
+        }
     }
 
 
