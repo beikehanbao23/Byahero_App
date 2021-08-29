@@ -43,11 +43,10 @@ import com.example.commutingapp.utils.ui_utilities.AttributesInitializer;
 import com.example.commutingapp.utils.ui_utilities.BindingDestroyer;
 import com.example.commutingapp.utils.ui_utilities.LoadingScreen;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
-import com.example.commutingapp.models.users.UserValidatorManager;
+import com.example.commutingapp.data.users.UserValidatorManager;
 
 
 import static com.example.commutingapp.R.string.disabledAccountMessage;
-import static com.example.commutingapp.R.string.doubleTappedMessage;
 import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
 
 
@@ -56,10 +55,9 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     private static final int RC_SIGN_IN = 123;
     private final String TAG = "FacebookAuthentication";
     private final String FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE";
-    private CustomDialogs customPopupDialog;
+    private DialogPresenter customPopupDialog;
     private CallbackManager facebookCallBackManager;
     private GoogleSignInClient mGoogleSignInClient;
-    private CustomToastMessage toastMessageBackButton;
     private ActivitySignInBinding activitySignInBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
 
@@ -90,7 +88,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         new ScreenDimension(getWindow()).setWindowToFullScreen();
         setContentView(activitySignInBinding.getRoot());
         customPopupDialog = new CustomDialogs(this);
-        toastMessageBackButton = new CustomToastMessage(this, getString(doubleTappedMessage), 10);
+
 
     }
 
@@ -122,14 +120,16 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         });
     }
 
-    private void handleFacebookSignInException(Exception error){
+    private void handleFacebookSignInException(Exception error) {
 
         if (Objects.equals(error.getMessage(), FACEBOOK_CONNECTION_FAILURE)) {
             showNoInternetActivity();
             return;
         }
-        customPopupDialog.showErrorDialog("Error", error.getMessage());
-        removeFacebookUserAccountPreviousToken();
+        if (error.getMessage() != null) {
+            customPopupDialog.showErrorDialog("Error", error.getMessage());
+            removeFacebookUserAccountPreviousToken();
+        }
     }
 
 
@@ -144,8 +144,10 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
                                 showMainScreenActivity();
                                 return;
                             }
-                            finishLoading();
-                           handleFacebookSignInException(task.getException());
+                            if(task.getException()!=null) {
+                                finishLoading();
+                                handleFacebookSignInException(task.getException());
+                            }
                         });
     }
     private void removeFacebookUserAccountPreviousToken() {
@@ -167,6 +169,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
 
 
     private void handleGoogleSignInCallback(int requestCode, Intent data){
+        if(requestCode == RC_SIGN_IN){
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
@@ -175,6 +178,8 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
             } catch (ApiException e) {
                 handleGoogleSignInException(e);
             }
+        }
+
     }
     private void handleGoogleSignInException(ApiException error){
 
@@ -224,16 +229,14 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     public void SignUpTextClicked(View view) {
         showSignUpActivity();
     }
-    @Override protected void onStart() {
-        super.onStart();
-
-    }
     @Override public void onBackPressed() {
         new CustomBackButton(this,this).applyDoubleClickToExit();
     }
+
     public void SignInButtonIsClicked(View view) {
         loginViaDefaultSignIn();
     }
+
     private void loginViaDefaultSignIn(){
         UserValidatorManager userManager = new UserValidatorManager(this,
                 activitySignInBinding.editloginTextEmail,
@@ -252,8 +255,8 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     }
     private void proceedToSignIn() {
 
-        String email = activitySignInBinding.editloginTextEmail.getText().toString().trim();
-        String userPassword = activitySignInBinding.editLoginTextPassword.getText().toString().trim();
+        String email = Objects.requireNonNull(activitySignInBinding.editloginTextEmail.getText()).toString().trim();
+        String userPassword = Objects.requireNonNull(activitySignInBinding.editLoginTextPassword.getText()).toString().trim();
 
         showLoading();
         FirebaseManager.getFirebaseAuthInstance().signInWithEmailAndPassword(
@@ -283,17 +286,17 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     }
     private void handleFirebaseSignInException(Task<?> task) {
         try {
-            throw task.getException();
+            throw Objects.requireNonNull(task.getException());
         } catch (FirebaseNetworkException firebaseNetworkException) {
             showNoInternetActivity();
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
             handleUserAccountExceptions(firebaseAuthInvalidUserException);
         } catch (Exception e) {
-            customPopupDialog.showErrorDialog("Oops..", e.getMessage());
+            customPopupDialog.showErrorDialog("Oops..", Objects.requireNonNull(e.getMessage()));
         }
     }
-    private void handleUserAccountExceptions(FirebaseAuthInvalidUserException firebaseAuthInvalidUserException){
-        if (firebaseAuthInvalidUserException.getErrorCode().equals("ERROR_USER_DISABLED")) {
+    private void handleUserAccountExceptions(FirebaseAuthInvalidUserException exception){
+        if (exception.getErrorCode().equals("ERROR_USER_DISABLED")) {
             customPopupDialog.showErrorDialog("Oops..", getString(disabledAccountMessage));
             return;
         }
@@ -302,12 +305,12 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     }
 
     @Override public void showLoading() {
-        makeLoading(false,View.VISIBLE);
+        processLoading(false,View.VISIBLE);
     }
     @Override public void finishLoading() {
-        makeLoading(true,View.INVISIBLE);
+        processLoading(true,View.INVISIBLE);
     }
-    @Override public void makeLoading(boolean visible, int progressBarVisibility){
+    @Override public void processLoading(boolean visible, int progressBarVisibility){
         circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
         activitySignInBinding.editloginTextEmail.setEnabled(visible);
         activitySignInBinding.editLoginTextPassword.setEnabled(visible);
