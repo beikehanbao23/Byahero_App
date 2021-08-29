@@ -44,9 +44,6 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         viewModel.getNoInternetActivityTransition().observe(this,transition-> showNoInternetActivity());
 
     }
-
-
-
     @Override public void initializeAttributes() {
         emailDialogBinding = CustomEmailsentDialogBinding.inflate(getLayoutInflater());
         progressbarBinding = CircularProgressbarBinding.bind(emailDialogBinding.getRoot());
@@ -56,9 +53,6 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         viewModel = new ViewModelProvider(this).get(EmailSentViewModel.class);
 
     }
-
-
-
     @Override public void destroyBinding() {
         emailDialogBinding = null;
         progressbarBinding = null;
@@ -71,14 +65,12 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(()-> {
            ActivitySwitcher.INSTANCE.startActivityOf(this, NoInternet.class);
-           progressbarBinding.circularProgressBar.setVisibility(View.INVISIBLE);
        }, DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG);
     }
     private void showMainScreenActivity() {
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(()->{
             ActivitySwitcher.INSTANCE.startActivityOf(this,this, MainScreen.class);
-            progressbarBinding.circularProgressBar.setVisibility(View.INVISIBLE);
         },DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG);
 
     }
@@ -89,10 +81,11 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         viewModel.displayUserEmailToTextView().observe(this,userEmail-> emailDialogBinding.textViewEmail.setText(userEmail));
     }
     public void resendEmailIsClicked(View view) {
-        FirebaseManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
+        viewModel.sendEmailVerification();
+        viewModel.getSendEmailToUser().observe(this, sendEmailMessage->{
             startVerificationTimer();
-            if (task.isSuccessful()) {
-                customPopupDialog.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
+            if(sendEmailMessage != null){
+                customPopupDialog.showSuccessDialog("New email sent", sendEmailMessage);
                 return;
             }
             customPopupDialog.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
