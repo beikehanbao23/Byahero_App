@@ -81,15 +81,16 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         viewModel.displayUserEmailToTextView().observe(this,userEmail-> emailDialogBinding.textViewEmail.setText(userEmail));
     }
     public void resendEmailIsClicked(View view) {
-        viewModel.sendEmailVerification();
-        viewModel.getSendEmailToUser().observe(this, sendEmailMessage->{
-            startVerificationTimer();
-            if(sendEmailMessage != null){
-                customPopupDialog.showSuccessDialog("New email sent", sendEmailMessage);
+        startVerificationTimer();
+        FirebaseManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                customPopupDialog.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
                 return;
             }
             customPopupDialog.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
         });
+
+
     }
     private void displayWhenVerificationTimerStarted(long secondsLeft) {
         emailDialogBinding.ResendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.gray));

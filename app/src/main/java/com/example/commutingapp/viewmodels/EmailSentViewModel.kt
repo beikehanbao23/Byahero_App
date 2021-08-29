@@ -6,14 +6,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.commutingapp.R
 import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
 import kotlinx.coroutines.*
 
-private const val twoMinutes: Long = 120000
+private const val timerCounts: Long = 120000
 private const val oneSecond: Long = 1000
 private const val two_Seconds: Long = 2000
 
@@ -33,8 +32,6 @@ class EmailSentViewModel:ViewModel() {
     var noInternetActivityTransition = MutableLiveData<Boolean>()
     private set
 
-    var sendEmailToUser = MutableLiveData<String?>()
-    private set
 
     private var displayUserEmail = MutableLiveData<String>()
 
@@ -57,13 +54,13 @@ class EmailSentViewModel:ViewModel() {
 
     fun refreshEmailSynchronously(){
          job = viewModelScope.launch(Dispatchers.IO) {
-            while (this.isActive) {
-                reloadUserEmail()
-                Log.d("COROUTINE STATUS: ", "$isActive")
-                delay(two_Seconds)
-            }
-        }
+             while (this.isActive) {
+                 reloadUserEmail()
+                 Log.d("COROUTINE STATUS: ", "$isActive")
+                 delay(two_Seconds)
 
+             }
+         }
 
     }
 
@@ -80,19 +77,6 @@ class EmailSentViewModel:ViewModel() {
     }
     }
 
-
-    fun sendEmailVerification(){
-        viewModelScope.launch(Dispatchers.IO) {
-            FirebaseManager.getFirebaseUserInstance().sendEmailVerification()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        sendEmailToUser.postValue(R.string.resendEmailSuccessMessage.toString())
-                        return@addOnCompleteListener
-                    }
-                    sendEmailToUser.postValue(null)
-                }
-        }
-    }
 
 
     private fun handleEmailVerificationExceptions(task:Task<*>){
@@ -112,13 +96,14 @@ class EmailSentViewModel:ViewModel() {
     fun startTimer(){
 
         viewModelScope.launch(Dispatchers.Main) {
-            verificationTimer = object : CountDownTimer(twoMinutes, oneSecond) {
+            verificationTimer = object : CountDownTimer(timerCounts, oneSecond) {
                 override fun onTick(millisUntilFinished: Long) {
                     val timeLeft = millisUntilFinished / oneSecond
                     timerOnRunning.value = timeLeft.toInt()
                 }
 
                 override fun onFinish() {
+
                     timerOnFinished.value = true
                     stopTimer()
                 }
