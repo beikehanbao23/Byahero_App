@@ -19,15 +19,25 @@ private const val two_Seconds: Long = 2000
 class EmailSentViewModel:ViewModel() {
 
     private lateinit var verificationTimer: CountDownTimer
-    private val _seconds = MutableLiveData<Int>()
-    private val timer = MutableLiveData<Event<Boolean>>()
-    private var displayUserEmail = MutableLiveData<String>()
-    private var mainScreenActivityTransition = MutableLiveData<Event<Boolean>>()
-    private var noInternetActivityTransition = MutableLiveData<Event<Boolean>>()
     private lateinit var job: Job
 
-    fun timerOnFinished() : LiveData<Event<Boolean>> = timer
-    fun timerOnRunning():LiveData<Int> = _seconds
+
+    var timerOnRunning = MutableLiveData<Int>()
+    private set
+
+    var timerOnFinished = MutableLiveData<Boolean>()
+    private set
+
+    var mainScreenActivityTransition = MutableLiveData<Event<Boolean>>()
+    private set
+
+    var noInternetActivityTransition = MutableLiveData<Boolean>()
+    private set
+
+    private var displayUserEmail = MutableLiveData<String>()
+
+
+
     fun displayUserEmailToTextView():LiveData<String>{
         FirebaseManager.getFirebaseUserInstance().email?.let {
             displayUserEmail.value = it
@@ -36,8 +46,8 @@ class EmailSentViewModel:ViewModel() {
         }
 
     }
-    fun transitionToMainScreenActivity():LiveData<Event<Boolean>> = mainScreenActivityTransition
-    fun transitionToNoInternetActivity():LiveData<Event<Boolean>> = noInternetActivityTransition
+
+
 
 
     fun refreshEmailSynchronously(){
@@ -45,7 +55,7 @@ class EmailSentViewModel:ViewModel() {
          job = viewModelScope.launch(Dispatchers.IO) {
             while (this.isActive) {
                 reloadUserEmail()
-                Log.e("THREAD STATUS: ", "RUNNING and coroutine is active == ${this.isActive}")
+                Log.d("COROUTINE STATUS: ", "$isActive")
                 delay(two_Seconds)
             }
         }
@@ -57,7 +67,6 @@ class EmailSentViewModel:ViewModel() {
    private fun reloadUserEmail(){
     FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener { reload->
         if (reload.isSuccessful && FirebaseManager.getFirebaseUserInstance().isEmailVerified) {
-
             mainScreenActivityTransition.value = Event(true)
             return@addOnCompleteListener
         }
@@ -72,7 +81,7 @@ class EmailSentViewModel:ViewModel() {
         try{
             throw task.exception!!
         }catch (networkException: FirebaseNetworkException){
-           noInternetActivityTransition.value = Event(true)
+           noInternetActivityTransition.value = true
         }catch (ex:Exception){
             Log.e("Exception",ex.message.toString())
         }finally {
@@ -85,10 +94,10 @@ class EmailSentViewModel:ViewModel() {
         verificationTimer = object : CountDownTimer(twoMinutes, oneSecond){
             override fun onTick(millisUntilFinished: Long) {
                 val timeLeft = millisUntilFinished/oneSecond
-               _seconds.postValue(timeLeft.toInt())
+               timerOnRunning.postValue(timeLeft.toInt())
             }
             override fun onFinish() {
-                timer.postValue(Event(true))
+                timerOnFinished.postValue(true)
                 stopTimer()
             }
         }.start()
@@ -103,7 +112,6 @@ class EmailSentViewModel:ViewModel() {
 
     }
     override fun onCleared() {
-        Log.e("Status","View model is now cleared")
         super.onCleared()
         stopTimer()
     }
