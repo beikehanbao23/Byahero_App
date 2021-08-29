@@ -3,32 +3,39 @@ package com.example.commutingapp.viewmodels
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SplashScreenViewModel : ViewModel() {
 
 
-     var onNavigateToDetailsSuccess = MutableLiveData<Event<Boolean>>()
-     private set
+    var onNavigateToDetailsSuccess = MutableLiveData<Event<Boolean>>()
+        private set
 
 
-    fun setUserSignInProvider(){
-
-        if(FirebaseManager.hasAccountRemainingInCache()) {
-            if (signInSuccessWithAnyProviders()) {
-                onNavigateToDetailsSuccess.value = Event(true)
-                return;
+    fun setUserSignInProvider() {
+        viewModelScope.launch(Dispatchers.Main) {
+            if (FirebaseManager.hasAccountRemainingInCache()) {
+                if (signInSuccessWithAnyProviders()) {
+                    onNavigateToDetailsSuccess.value = Event(true)
+                }
             }
         }
     }
 
-    private fun signInSuccessWithAnyProviders(): Boolean {
-        return FirebaseManager.getFirebaseUserInstance().isEmailVerified ||
-                isUserSignInUsingFacebook() ||
-                isUserSignInUsingGoogle()
+    private suspend fun signInSuccessWithAnyProviders(): Boolean {
+        return withContext(Dispatchers.IO){
+            FirebaseManager.getFirebaseUserInstance().isEmailVerified ||
+                    isUserSignInUsingFacebook() ||
+                    isUserSignInUsingGoogle()
+
+        }
 
 
     }
@@ -46,7 +53,6 @@ class SplashScreenViewModel : ViewModel() {
         }
         return false
     }
-
 
 
 }
