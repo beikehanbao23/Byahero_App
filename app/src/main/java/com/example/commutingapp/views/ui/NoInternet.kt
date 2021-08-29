@@ -1,20 +1,20 @@
 package com.example.commutingapp.views.ui
 
-import com.example.commutingapp.utils.InternetConnection.ConnectionManager
-import com.example.commutingapp.utils.ui_utilities.AttributesInitializer
-import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.commutingapp.R
+import com.example.commutingapp.utils.InternetConnection.ConnectionManager
+import com.example.commutingapp.utils.ui_utilities.AttributesInitializer
+import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 
 class NoInternet : AppCompatActivity(),AttributesInitializer {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //TODO add threading
+        //TODO add coroutine
         super.onCreate(savedInstanceState)
         initializeAttributes()
 
