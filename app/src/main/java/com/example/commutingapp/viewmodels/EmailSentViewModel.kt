@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.commutingapp.R
 import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.android.gms.tasks.Task
@@ -20,8 +21,6 @@ class EmailSentViewModel:ViewModel() {
 
     private lateinit var verificationTimer: CountDownTimer
     private lateinit var job: Job
-
-
     var timerOnRunning = MutableLiveData<Int>()
     private set
 
@@ -34,14 +33,20 @@ class EmailSentViewModel:ViewModel() {
     var noInternetActivityTransition = MutableLiveData<Boolean>()
     private set
 
+    var sendEmailToUser = MutableLiveData<String?>()
+    private set
+
     private var displayUserEmail = MutableLiveData<String>()
 
 
 
     fun displayUserEmailToTextView():LiveData<String>{
-        FirebaseManager.getFirebaseUserInstance().email?.let {
-            displayUserEmail.value = it
-        }.also{
+
+        viewModelScope.launch(Dispatchers.Main) {
+            FirebaseManager.getFirebaseUserInstance().email?.let {
+                displayUserEmail.value = it
+            }
+        }.also {
             return displayUserEmail
         }
 
@@ -51,7 +56,6 @@ class EmailSentViewModel:ViewModel() {
 
 
     fun refreshEmailSynchronously(){
-
          job = viewModelScope.launch(Dispatchers.IO) {
             while (this.isActive) {
                 reloadUserEmail()
@@ -64,16 +68,30 @@ class EmailSentViewModel:ViewModel() {
     }
 
 
-   private fun reloadUserEmail(){
-    FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener { reload->
+   private fun reloadUserEmail() {
+    FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener { reload ->
         if (reload.isSuccessful && FirebaseManager.getFirebaseUserInstance().isEmailVerified) {
-            mainScreenActivityTransition.value = Event(true)
+            mainScreenActivityTransition.postValue(Event(true))
             return@addOnCompleteListener
         }
         reload.exception?.let {
             handleEmailVerificationExceptions(reload)
         }
     }
+    }
+
+
+    fun sendEmailVerification(){
+        viewModelScope.launch(Dispatchers.IO) {
+            FirebaseManager.getFirebaseUserInstance().sendEmailVerification()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        sendEmailToUser.postValue(R.string.resendEmailSuccessMessage.toString())
+                        return@addOnCompleteListener
+                    }
+                    sendEmailToUser.postValue(null)
+                }
+        }
     }
 
 
@@ -89,21 +107,27 @@ class EmailSentViewModel:ViewModel() {
         }
     }
 
+
+
     fun startTimer(){
 
-        verificationTimer = object : CountDownTimer(twoMinutes, oneSecond){
-            override fun onTick(millisUntilFinished: Long) {
-                val timeLeft = millisUntilFinished/oneSecond
-               timerOnRunning.postValue(timeLeft.toInt())
-            }
-            override fun onFinish() {
-                timerOnFinished.postValue(true)
-                stopTimer()
-            }
-        }.start()
+        viewModelScope.launch(Dispatchers.Main) {
+            verificationTimer = object : CountDownTimer(twoMinutes, oneSecond) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val timeLeft = millisUntilFinished / oneSecond
+                    timerOnRunning.value = timeLeft.toInt()
+                }
 
-
+                override fun onFinish() {
+                    timerOnFinished.value = true
+                    stopTimer()
+                }
+            }.start()
+        }
     }
+
+
+
     private fun stopTimer(){
 
         if(::verificationTimer.isInitialized){
