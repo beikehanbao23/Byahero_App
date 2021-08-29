@@ -32,7 +32,7 @@ public class FirebaseManager {
         firebaseAuth = FirebaseAuth.getInstance();
     }
 
-    public static boolean hasAccountSignedIn() {
+    public static boolean hasAccountRemainingInCache() {
 
         return firebaseUser != null;
     }
