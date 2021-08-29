@@ -1,7 +1,6 @@
 package com.example.commutingapp.viewmodels
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
@@ -12,22 +11,26 @@ import com.google.firebase.auth.GoogleAuthProvider
 class SplashScreenViewModel : ViewModel() {
 
 
-    private val _navigateToDetails = MutableLiveData<Event<Boolean>>()
-
-    fun navigateToDetails() : LiveData<Event<Boolean>> = _navigateToDetails
-
+     var onNavigateToDetailsSuccess = MutableLiveData<Event<Boolean>>()
+     private set
 
 
     fun setUserSignInProvider(){
-       if (signInSuccessWithAnyProviders()){
-           _navigateToDetails.value = Event(true)
-       }
+
+        if(FirebaseManager.hasAccountRemainingInCache()) {
+            if (signInSuccessWithAnyProviders()) {
+                onNavigateToDetailsSuccess.value = Event(true)
+                return;
+            }
+        }
     }
 
     private fun signInSuccessWithAnyProviders(): Boolean {
         return FirebaseManager.getFirebaseUserInstance().isEmailVerified ||
                 isUserSignInUsingFacebook() ||
                 isUserSignInUsingGoogle()
+
+
     }
 
     private fun isUserSignInUsingFacebook() = getProviderIdResult(FacebookAuthProvider.PROVIDER_ID)
@@ -45,7 +48,5 @@ class SplashScreenViewModel : ViewModel() {
     }
 
 
-    override fun onCleared() {
-        super.onCleared()
-    }
+
 }

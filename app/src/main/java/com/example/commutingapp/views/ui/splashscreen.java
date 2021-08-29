@@ -53,13 +53,13 @@ public class splashscreen extends AppCompatActivity implements BindingDestroyer,
     private void startTransitionToNextActivity() {
         viewModel.setUserSignInProvider();
 
-        viewModel.onNavigateToUserDetailsSuccess().observe(this, transition -> {
+        viewModel.getOnNavigateToDetailsSuccess().observe(this, transition -> {
             if (transition.getContentIfNotHandled() != null) {
                 showMainScreenActivity();
             }
         });
 
-      if(viewModel.onNavigateToUserDetailsSuccess().getValue() == null){
+      if(viewModel.getOnNavigateToDetailsSuccess().getValue() == null){
           showIntroSlidersActivity();
       }
 
