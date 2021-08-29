@@ -54,16 +54,15 @@ class MainScreen : AppCompatActivity(),AttributesInitializer,BindingDestroyer {
     private val userProfileName: String?
         get() {
             for (user in userInfo) {
-                if (userSignInViaFacebook(user.providerId) || userSignInViaGoogle(user.providerId)) {
-                    Log.e("User id from main screen",user.providerId)
+                if (userSignInViaFacebookUsing(user.providerId) || userSignInViaGoogleUsing(user.providerId)) {
                     return FirebaseManager.getFirebaseUserInstance().displayName
                 }
             }
             return filterEmailAddress(FirebaseManager.getFirebaseUserInstance().email)
         }
 
-    private fun userSignInViaFacebook(userProviderId:String) = userProviderId == FacebookAuthProvider.PROVIDER_ID
-    private fun userSignInViaGoogle(userProviderId:String) = userProviderId == GoogleAuthProvider.PROVIDER_ID
+    private fun userSignInViaFacebookUsing(userProviderId:String) = userProviderId == FacebookAuthProvider.PROVIDER_ID
+    private fun userSignInViaGoogleUsing(userProviderId:String) = userProviderId == GoogleAuthProvider.PROVIDER_ID
 
 
 
@@ -72,13 +71,11 @@ class MainScreen : AppCompatActivity(),AttributesInitializer,BindingDestroyer {
     }
 
     private fun filterEmailAddress(userEmail: String?): String? {
-       val emailLists = emailExtensions
        userEmail?.let{
-         for (counter in emailLists.indices) {
-           val emailExtension = emailLists[counter]
-              if (userEmail.contains(emailExtension)) {
-                 return userEmail.replace(emailExtension.toRegex(), "")
-              }
+           emailExtensions.forEach {emailExtensions->
+               if (userEmail.contains(emailExtensions)) {
+                   return userEmail.replace(emailExtensions.toRegex(), "")
+               }
            }
         }
         return userEmail
@@ -97,7 +94,7 @@ class MainScreen : AppCompatActivity(),AttributesInitializer,BindingDestroyer {
 
     fun logoutButtonIsClicked(view: View?) {
         Log.e(javaClass.name, "Logging out!")
-        putUserToLoginFlow()
+        putToLoginFlow()
     }
 
     private fun signOutAccount() {
@@ -105,7 +102,7 @@ class MainScreen : AppCompatActivity(),AttributesInitializer,BindingDestroyer {
         FirebaseManager.getFirebaseAuthInstance().signOut()
     }
 
-    private fun putUserToLoginFlow() {
+    private fun putToLoginFlow() {
         signOutAccount()
         showSignInActivity()
     }
