@@ -27,7 +27,7 @@ const val DEFAULT_INDICATOR_POSITION = 0
 class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
 
     private lateinit var preferences: SharedPreferences
-    private val preferedShowIntro = "IntroSlider_StateOfSlides"
+    private val preferredShowIntro = "IntroSlider_StateOfSlides"
     private var binding: ActivityIntroSliderBinding? = null
 
 
@@ -70,7 +70,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
         })
     }
     private fun userHasAlreadySeenTheIntroSliders() =
-        preferences.getBoolean(preferedShowIntro, false)
+        preferences.getBoolean(preferredShowIntro, false)
 
 
     private fun provideViewPageDisplay() {
@@ -180,7 +180,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
 
         val editor = preferences.edit()
         with(editor) {
-            putBoolean(preferedShowIntro, true)
+            putBoolean(preferredShowIntro, true)
             apply()
         }
     }
