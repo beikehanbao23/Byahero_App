@@ -1,4 +1,4 @@
-package com.example.commutingapp.models.users
+package com.example.commutingapp.data.users
 
 import android.content.Context
 import android.widget.EditText
@@ -22,4 +22,5 @@ class UserValidatorManager constructor(
         return super.validationEmailFailed() == true ||
                 super.validationPasswordFailed() == true
     }
+
 }

@@ -1,4 +1,4 @@
-package com.example.commutingapp.models.users
+package com.example.commutingapp.data.users
 
 import android.content.Context
 import android.util.Patterns
