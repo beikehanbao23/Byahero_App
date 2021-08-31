@@ -23,10 +23,10 @@ class IntroSliderAdapter(
 
     private var binding: IntroSlidersAdapterBinding? = null
     private val images = arrayListOf<Int>(
-        rocket,
-        enjoytrip,
-        point,
-        accurate_weather
+        ic_create_account,
+        ic_traveller,
+        ic_map,
+        ic_weather
     )
     private val headerText = arrayListOf<Int>(
         headerTextCreateAccountMessage,
