@@ -10,8 +10,7 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerSliders"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-
+        android:layout_height="515dp"
         android:layout_marginBottom="175dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,12 +21,11 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="48dp"
         android:background="@color/transparent"
         android:onClick="skipButtonSlidersIsClicked"
         android:paddingStart="17dp"
         android:text="SKIP"
-
         android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,9 +35,9 @@
     <Button
         android:id="@+id/nextButtonSliders"
         android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="85dp"
-        android:layout_marginEnd="85dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="80dp"
         android:backgroundTint="@color/Blue"
         android:onClick="nextButtonSlidersIsClicked"
         android:text="Next"

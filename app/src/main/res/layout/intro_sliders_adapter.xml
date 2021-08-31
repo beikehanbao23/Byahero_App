@@ -7,12 +7,12 @@
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/imageViewDisplaySliders"
-        android:layout_width="wrap_content"
-        android:layout_height="328dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/accurate_weather"
+        android:layout_width="0dp"
+        android:layout_height="402dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/ic_weather"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.461"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -20,8 +20,7 @@
         android:id="@+id/headerTextViewSliders"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-
-        android:layout_marginTop="328dp"
+        android:layout_marginTop="2dp"
         android:fontFamily="sans-serif"
         android:text="@string/headerTextAccurateWeatherMessage"
         android:textAlignment="center"
@@ -31,14 +30,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageViewDisplaySliders" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViewDisplaySliders" />
 
     <TextView
         android:id="@+id/descriptionTextViewSliders"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="16dp"
         android:text="@string/descriptionTextAccurateWeatherMessage"
         android:textAlignment="center"
