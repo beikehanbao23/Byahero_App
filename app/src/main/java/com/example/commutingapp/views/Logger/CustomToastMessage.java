@@ -29,7 +29,7 @@ public class CustomToastMessage {
         if (context == null){throw new RuntimeException("Context cannot be null");}
         if (type > 10 || type < 1) { throw new RuntimeException("Type of toast is out of bounds"); }
 
-        toast = CuteToast.ct(context, message, CuteToast.LENGTH_SHORT, type, true);
+        toast = CuteToast.ct(context, message, 1400, type, true);
     }
      CustomToastMessage() {
 
