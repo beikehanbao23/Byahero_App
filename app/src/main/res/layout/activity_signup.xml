@@ -73,8 +73,9 @@
         android:backgroundTint="@color/blue2"
         android:onClick="CreateButtonClicked"
         android:text="Create"
+        android:textAllCaps="false"
         android:textAlignment="center"
-        android:textSize="16sp"
+        android:textSize="18.5sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayoutSignUp_ConfirmPassword" />
