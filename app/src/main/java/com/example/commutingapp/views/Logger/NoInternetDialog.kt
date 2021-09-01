@@ -1,33 +1,40 @@
-package com.example.commutingapp.views.ui
+package com.example.commutingapp.views.Logger
 
+import android.app.Dialog
 import android.content.Context
-import android.view.LayoutInflater
+import android.content.Intent
+import android.provider.Settings
 import android.view.View
-import androidx.appcompat.app.AlertDialog
-import com.example.commutingapp.databinding.CustomDialogNoInternetBinding
+import com.example.commutingapp.R
+import com.example.commutingapp.utils.InternetConnection.ConnectionManager
 
-class NoInternetDialog(
-    var context: Context,
-    var layoutInflater: LayoutInflater) {
+class NoInternetDialog(context: Context) {
+
+    private var dialog: Dialog = Dialog(context).apply {
+        setContentView(R.layout.custom_dialog_no_internet)
+        window?.attributes?.windowAnimations  = android.R.style.Animation_Dialog
+        findViewById<View>(R.id.retry_button).setOnClickListener {
+            if (ConnectionManager(context).internetConnectionAvailable()){
+                dismiss()
+            }
+        }
+        findViewById<View>(R.id.go_to_settings_Button).setOnClickListener{
+            context.startActivity(Intent(Settings.ACTION_SETTINGS))
+        }
+    }
 
 
-    private lateinit var binding: CustomDialogNoInternetBinding
-    private lateinit var builder: AlertDialog.Builder
-    private lateinit var view:View
-    fun showInternetDialog() {
+    fun showNoInternetDialog(){
+        dialog.apply {
+            if(isShowing) dismiss() else show()
+        }
+    }
+
+
 
     }
 
 
-}
-
-
-/*
-on click
-on close
-on show
-on backpressed
- */
 
 
 
