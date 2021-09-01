@@ -30,10 +30,10 @@ class SplashScreenViewModel : ViewModel() {
     }
 
     private suspend fun signInSuccessWithAnyProviders(): Boolean {
-        return withContext(Dispatchers.IO){
-            FirebaseManager.getFirebaseUserInstance().isEmailVerified ||
-                    isUserSignInUsingFacebook() ||
-                    isUserSignInUsingGoogle()
+        return withContext(Dispatchers.IO) {
+                FirebaseManager.getFirebaseUserInstance().isEmailVerified ||
+                        isUserSignInUsingFacebook() ||
+                        isUserSignInUsingGoogle()
 
         }
 
@@ -44,12 +44,12 @@ class SplashScreenViewModel : ViewModel() {
     private fun isUserSignInUsingGoogle() = getProviderIdResult(GoogleAuthProvider.PROVIDER_ID)
 
 
-    private fun getProviderIdResult(id: String): Boolean {
-        FirebaseManager.getFirebaseUserInstance().providerData.forEach {
-            Log.e("Result", it.providerId)
-            if (it.providerId == id) {
-                return true // return ui.getProviderId().equals(id) does not work here, always returning 'firebase' as providerId
-            }
+    private  fun getProviderIdResult(id: String): Boolean {
+            FirebaseManager.getFirebaseUserInstance().providerData.forEach {
+                Log.e("Result", it.providerId)
+                if (it.providerId == id) {
+                    return true // return ui.getProviderId().equals(id) does not work here, always returning 'firebase' as providerId
+                }
         }
         return false
     }

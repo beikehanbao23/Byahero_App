@@ -14,35 +14,34 @@ import kotlinx.coroutines.*
 
 private const val timerCounts: Long = 15000
 private const val oneSecond: Long = 1000
-private const val two_Seconds: Long = 2000
+private const val coroutineInterval: Long = 2200
 
-class EmailSentViewModel:ViewModel() {
+class EmailSentViewModel : ViewModel() {
 
     private lateinit var verificationTimer: CountDownTimer
     private lateinit var job: Job
     var timerOnRunning = MutableLiveData<Int>()
-    private set
+        private set
 
     var timerOnFinished = MutableLiveData<Boolean>()
-    private set
+        private set
 
     var mainScreenActivityTransition = MutableLiveData<Event<Boolean>>()
-    private set
+        private set
 
     var noInternetActivityTransition = MutableLiveData<Boolean>()
-    private set
+        private set
 
     var sendEmailOnSuccess = MutableLiveData<Boolean>()
-    private set
+        private set
 
     var sendEmailOnFailed = MutableLiveData<Boolean>()
-    private set
+        private set
 
     private var displayUserEmail = MutableLiveData<String>()
 
 
-
-    fun displayUserEmailToTextView():LiveData<String>{
+    fun displayUserEmailToTextView(): LiveData<String> {
 
         viewModelScope.launch(Dispatchers.Main) {
             FirebaseManager.getFirebaseUserInstance().email?.let {
@@ -54,62 +53,56 @@ class EmailSentViewModel:ViewModel() {
 
     }
 
-
-
-    fun refreshEmailSynchronously(){
-         job = viewModelScope.launch(Dispatchers.IO) {
-             while (this.isActive) {
-                 reloadUserEmail()
-                 Log.d("COROUTINE STATUS: ", "$isActive")
-                 delay(two_Seconds)
-             }
-         }
-
-    }
-
-    fun sendEmail(){
-        viewModelScope.launch(Dispatchers.IO) {
-        FirebaseManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                sendEmailOnSuccess.postValue(true)
-                return@addOnCompleteListener
+    fun refreshEmailSynchronously() {
+        job = viewModelScope.launch(Dispatchers.IO) {
+            while (this.isActive) {
+                reloadUserEmail()
+                Log.d("COROUTINE STATUS: ", "$isActive")
+                delay(coroutineInterval)
             }
-                sendEmailOnFailed.postValue(true)
-        }
         }
     }
 
-
-   private fun reloadUserEmail() {
-    FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener { reload ->
-        if (reload.isSuccessful && FirebaseManager.getFirebaseUserInstance().isEmailVerified) {
-            mainScreenActivityTransition.postValue(Event(true))
-            return@addOnCompleteListener
-        }
-        reload.exception?.let {
-            handleEmailVerificationExceptions(reload)
-        }
-    }
-    }
-
-
-
-    private fun handleEmailVerificationExceptions(task:Task<*>){
-        try{
-            throw task.exception!!
-        }catch (networkException: FirebaseNetworkException){
-           noInternetActivityTransition.value = true
-        }catch (ex:Exception){
-            Log.e("Exception",ex.message.toString())
-        }finally {
-           job.cancel()
+    fun sendEmail() {
+        viewModelScope.launch(Dispatchers.IO) {
+            FirebaseManager.getFirebaseUserInstance().sendEmailVerification()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        sendEmailOnSuccess.postValue(true)
+                        return@addOnCompleteListener
+                    }
+                    sendEmailOnFailed.postValue(true)
+                }
         }
     }
 
+    private suspend fun reloadUserEmail() {
+        coroutineScope {
+            FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener { reload ->
+                if (reload.isSuccessful && FirebaseManager.getFirebaseUserInstance().isEmailVerified) {
+                    mainScreenActivityTransition.postValue(Event(true))
+                    return@addOnCompleteListener
+                }
+                reload.exception?.let {
+                    runBlocking { handleEmailVerificationExceptions(reload) }
+                }
+            }
+            }
+        }
 
+    private fun handleEmailVerificationExceptions(task: Task<*>) {
+            try {
+                throw task.exception!!
+            } catch (networkException: FirebaseNetworkException) {
+                noInternetActivityTransition.value = true // todo fix bug here
+            } catch (ex: Exception) {
+                Log.e("Exception", ex.message.toString())
+            } finally {
+                job.cancel()
+            }
+    }
 
-    fun startTimer(){
-
+    fun startTimer() {
         viewModelScope.launch(Dispatchers.Main) {
             verificationTimer = object : CountDownTimer(timerCounts, oneSecond) {
                 override fun onTick(millisUntilFinished: Long) {
@@ -118,7 +111,6 @@ class EmailSentViewModel:ViewModel() {
                 }
 
                 override fun onFinish() {
-
                     timerOnFinished.value = true
                     stopTimer()
                 }
@@ -126,15 +118,12 @@ class EmailSentViewModel:ViewModel() {
         }
     }
 
-
-
-    private fun stopTimer(){
-
-        if(::verificationTimer.isInitialized){
+    private fun stopTimer() {
+        if (::verificationTimer.isInitialized) {
             verificationTimer.cancel()
         }
-
     }
+
     override fun onCleared() {
         super.onCleared()
         stopTimer()
