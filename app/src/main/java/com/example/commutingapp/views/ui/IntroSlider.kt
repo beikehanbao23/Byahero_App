@@ -43,6 +43,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
 
         setupIntroSliders()
     }
+
     private fun setupIntroSliders(){
 
         provideViewPageDisplay()
@@ -100,7 +101,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
 
         for (counter in indicators.indices) {
 
-            indicators[counter] = ImageView(applicationContext)
+            indicators[counter] = ImageView(baseContext)
             indicators[counter]?.apply {
                 setInactiveIndicators(this)
                 layoutParams = layoutParameters
@@ -125,7 +126,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
     private fun setActiveIndicators(imageView: ImageView) {
         imageView.setImageDrawable(
             ContextCompat.getDrawable(
-                applicationContext,
+                baseContext,
                 R.drawable.active_indicator
             )
         )
@@ -135,7 +136,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
     private fun setInactiveIndicators(indicator: ImageView) {
         indicator.setImageDrawable(
             ContextCompat.getDrawable(
-                applicationContext,
+                baseContext,
                 R.drawable.inactive_indicator
             )
         )
