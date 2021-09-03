@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.commutingapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -21,7 +22,6 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
         <activity
             android:name=".views.ui.IntroSlider"
             android:screenOrientation="portrait" />
@@ -33,9 +33,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.ui.SignIn"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".views.ui.NoInternet"
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.ui.EmailSent"
