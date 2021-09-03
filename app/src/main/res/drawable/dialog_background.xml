@@ -18,7 +18,7 @@
     </item>
 
     <!-- White top color -->
-    <item android:bottom="23.5px">
+    <item android:bottom="24.5px">
         <shape android:shape="rectangle">
 
             <solid android:color="#FFFFFF" />
