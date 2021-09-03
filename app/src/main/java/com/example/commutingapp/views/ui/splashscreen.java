@@ -2,7 +2,6 @@ package com.example.commutingapp.views.ui;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -59,29 +58,34 @@ public class splashscreen extends AppCompatActivity implements BindingDestroyer,
             }
         });
 
-      if(viewModel.getOnNavigateToDetailsSuccess().getValue() == null){
-          showIntroSlidersActivity();
-      }
+        if (viewModel.getOnNavigateToDetailsSuccess().getValue() == null) {
+            showIntroSlidersActivity();
+        }
 
     }
-
 
 
     @Override
     public void onBackPressed() {
         new CustomBackButton(this, this).applyDoubleClickToExit();
     }
+
     private void showMainScreenActivity() {
-        ActivitySwitcher.INSTANCE.startActivityOf(this,this, MainScreen.class);
+        ActivitySwitcher.INSTANCE.startActivityOf(this, this, MainScreen.class);
     }
+
     private void showIntroSlidersActivity() {
         ActivitySwitcher.INSTANCE.startActivityOf(this, this, IntroSlider.class);
     }
-    @Override protected void onDestroy() {
+
+    @Override
+    protected void onDestroy() {
         destroyBinding();
         super.onDestroy();
     }
-    @Override public void destroyBinding() {
+
+    @Override
+    public void destroyBinding() {
         activitySplashscreenBinding = null;
     }
 

@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.commutingapp.R;
 import com.example.commutingapp.databinding.ActivitySignInBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
+import com.example.commutingapp.views.Logger.CustomDialogManager;
+import com.example.commutingapp.views.Logger.CustomDialogProcessor;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -34,8 +36,7 @@ import java.util.Objects;
 
 import com.example.commutingapp.utils.FirebaseUserManager.*;
 import com.example.commutingapp.utils.InternetConnection.*;
-import com.example.commutingapp.views.Logger.CustomDialogs;
-import com.example.commutingapp.views.Logger.*;
+import com.example.commutingapp.views.Logger.Abstracts.SuccessDialogWrapper;
 import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
@@ -55,7 +56,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     private static final int RC_SIGN_IN = 123;
     private final String TAG = "FacebookAuthentication";
     private final String FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE";
-    private DialogPresenter customPopupDialog;
+    private CustomDialogProcessor customDialogProcessor;
     private CallbackManager facebookCallBackManager;
     private GoogleSignInClient mGoogleSignInClient;
     private ActivitySignInBinding activitySignInBinding;
@@ -73,10 +74,9 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         FirebaseManager.initializeFirebaseApp();
         FacebookSdk.sdkInitialize(getApplicationContext());
         facebookCallBackManager = CallbackManager.Factory.create();
-
         removeFacebookUserAccountPreviousToken();
 
-
+        customDialogProcessor.showSuccessDialog("TEST TITLE","TEST CONTENT");
     }
 
 
@@ -87,7 +87,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         circularProgressbarBinding = CircularProgressbarBinding.bind(activitySignInBinding.getRoot());
         new ScreenDimension(getWindow()).setWindowToFullScreen();
         setContentView(activitySignInBinding.getRoot());
-        customPopupDialog = new CustomDialogs(this);
+        customDialogProcessor = new CustomDialogProcessor(this);
 
 
     }
@@ -127,7 +127,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
             return;
         }
         if (error.getMessage() != null) {
-            customPopupDialog.showErrorDialog("Error", error.getMessage());
+            customDialogProcessor.showErrorDialog("Error", error.getMessage());
             removeFacebookUserAccountPreviousToken();
         }
     }
@@ -214,7 +214,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
                         return;
                     }
                     finishLoading();
-                    customPopupDialog.showErrorDialog("Error", "Authentication Failed. Please try again later.");
+                    customDialogProcessor.showErrorDialog("Error", "Authentication Failed. Please try again later.");
                 });
     }
     @Override protected void onDestroy() {
@@ -292,15 +292,15 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
             handleUserAccountExceptions(firebaseAuthInvalidUserException);
         } catch (Exception e) {
-            customPopupDialog.showErrorDialog("Oops..", Objects.requireNonNull(e.getMessage()));
+            customDialogProcessor.showErrorDialog("Oops..", Objects.requireNonNull(e.getMessage()));
         }
     }
     private void handleUserAccountExceptions(FirebaseAuthInvalidUserException exception){
         if (exception.getErrorCode().equals("ERROR_USER_DISABLED")) {
-            customPopupDialog.showErrorDialog("Oops..", getString(disabledAccountMessage));
+            customDialogProcessor.showErrorDialog("Oops..", getString(disabledAccountMessage));
             return;
         }
-        customPopupDialog.showErrorDialog("Oops..", getString(incorrectEmailOrPasswordMessage));
+        customDialogProcessor.showErrorDialog("Oops..", getString(incorrectEmailOrPasswordMessage));
 
     }
 
@@ -327,7 +327,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     }
     private void showNoInternetActivity() {
 
-        ActivitySwitcher.INSTANCE.startActivityOf(this, NoInternet.class);
+        customDialogProcessor.showNoInternetDialog();
     }
     private void showEmailSentActivity() {
 

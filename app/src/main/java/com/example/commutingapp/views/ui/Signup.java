@@ -4,22 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.commutingapp.databinding.ActivitySignupBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.viewmodels.SignUpViewModel;
-import com.example.commutingapp.views.Logger.DialogPresenter;
+import com.example.commutingapp.views.Logger.CustomDialogProcessor;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
-
 import java.util.Objects;
-
 import com.example.commutingapp.utils.FirebaseUserManager.*;
 import com.example.commutingapp.utils.InternetConnection.*;
-import com.example.commutingapp.views.Logger.CustomDialogs;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.AttributesInitializer;
 import com.example.commutingapp.utils.ui_utilities.BindingDestroyer;
@@ -33,7 +28,7 @@ import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
 public class Signup extends AppCompatActivity implements LoadingScreen, BindingDestroyer, AttributesInitializer {
 
 
-    private DialogPresenter customPopupDialog;
+    private CustomDialogProcessor customDialogProcessor;
     private ActivitySignupBinding activitySignupBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
     private SignUpViewModel viewModel;
@@ -54,7 +49,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         activitySignupBinding = ActivitySignupBinding.inflate(getLayoutInflater());
         circularProgressbarBinding = CircularProgressbarBinding.bind(activitySignupBinding.getRoot());
         setContentView(activitySignupBinding.getRoot());
-        customPopupDialog = new CustomDialogs(this);
+        customDialogProcessor = new CustomDialogProcessor(this);
         viewModel = new ViewModelProvider(this).get(SignUpViewModel.class);
     }
     @Override
@@ -112,7 +107,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
                 showEmailSentActivity();
                 return;
             }
-            customPopupDialog.showErrorDialog("Error", getString(sendingEmailErrorMessage));
+            customDialogProcessor.showErrorDialog("Error", getString(sendingEmailErrorMessage));
         });
     }
 
@@ -150,7 +145,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         } catch (FirebaseNetworkException firebaseNetworkException) {
             showNoInternetActivity();
         } catch (Exception ex) {
-            customPopupDialog.showErrorDialog("Error", Objects.requireNonNull(task.getException().getMessage()));
+            customDialogProcessor.showErrorDialog("Error", Objects.requireNonNull(task.getException().getMessage()));
         }
     }
 
@@ -177,8 +172,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         activitySignupBinding.CreateButton.setEnabled(attributesVisibility);
     }
     private void showNoInternetActivity() {
-
-        ActivitySwitcher.INSTANCE.startActivityOf(this, NoInternet.class);
+        customDialogProcessor.showNoInternetDialog();
     }
     private void showEmailSentActivity() {
 
