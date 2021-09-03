@@ -3,9 +3,9 @@ package com.example.commutingapp.views.Logger
 import android.content.Context
 import id.ionbit.ionalert.IonAlert
 
-class CustomDialogs(val context: Context):CustomDialogPresenter {
+class CustomDialogsP(val context: Context):CustomDialogPresenter {
 
-
+private val noInternetDialog: NoInternetDialog = NoInternetDialog(context)
     private fun dialogAlert(title: String, contextText: String, type: Int): IonAlert {
         val alertDialog = IonAlert(context, type)
         return alertDialog.apply {
@@ -13,11 +13,6 @@ class CustomDialogs(val context: Context):CustomDialogPresenter {
             contentText = contextText
         }
     }
-    private fun dialogAlert():NoInternetDialog{
-        NoInternetDialog(context).also {
-           return it
-       }
-   }
 
     override fun showErrorDialog(title: String, contextText: String) {
         dialogAlert(title, contextText, IonAlert.ERROR_TYPE).apply {
@@ -39,6 +34,8 @@ class CustomDialogs(val context: Context):CustomDialogPresenter {
     }
 
     override fun showNoInternetDialog() {
-        dialogAlert().showNoInternetDialog()
+        noInternetDialog.showNoInternetDialog()
+
     }
+
 }
