@@ -10,12 +10,12 @@ import android.view.View
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.InternetConnection.ConnectionManager
 
-class NoInternetDialog(context:Context) {
+class CustomNoInternetDialog(context:Context) {
 
      var dialog: Dialog = Dialog(context).apply {
         setContentView(R.layout.custom_dialog_no_internet)
         window?.attributes?.windowAnimations  = android.R.style.Animation_Dialog
-
+         setTitle("testing title only")
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         findViewById<View>(R.id.retry_button).setOnClickListener {
             if (ConnectionManager(context).internetConnectionAvailable()){

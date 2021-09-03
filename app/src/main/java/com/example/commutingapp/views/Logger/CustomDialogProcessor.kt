@@ -1,18 +1,15 @@
 package com.example.commutingapp.views.Logger
 
-class CustomDialogProcessor(var customDialogPresenter: CustomDialogPresenter) {
+import android.content.Context
+import com.example.commutingapp.views.Logger.Abstracts.SuccessDialogWrapper
 
-    fun showErrorDialog(title: String, contextText: String){
-        customDialogPresenter.showErrorDialog(title,contextText)
-    }
-    fun showSuccessDialog(title: String, contextText: String){
-        customDialogPresenter.showSuccessDialog(title,contextText)
-    }
-    fun showWarningDialog(title: String, contextText: String){
-        customDialogPresenter.showWarningDialog(title,contextText)
-    }
-    fun showNoInternetDialog(){
+class CustomDialogProcessor(var context:Context) {
 
-        customDialogPresenter.showNoInternetDialog()
+
+    fun showSuccessDialog(title:String,contentText:String) {
+       CustomDialogManager(SuccessDialogWrapper(context)).apply{
+           showDialog(title,contentText)
+       }
     }
+
 }
