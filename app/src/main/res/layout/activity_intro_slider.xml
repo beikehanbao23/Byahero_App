@@ -43,6 +43,7 @@
         android:backgroundTint="@color/Blue"
         android:onClick="nextButtonSlidersIsClicked"
         android:text="Next"
+        app:cornerRadius="15dp"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="18.5sp"

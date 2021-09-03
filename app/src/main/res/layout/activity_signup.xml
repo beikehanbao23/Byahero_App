@@ -73,6 +73,7 @@
         android:backgroundTint="@color/blue2"
         android:onClick="CreateButtonClicked"
         android:text="Create"
+        app:cornerRadius="15dp"
         android:textAllCaps="false"
         android:textAlignment="center"
         android:textSize="18.5sp"
