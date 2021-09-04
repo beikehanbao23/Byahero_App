@@ -9,14 +9,14 @@ import com.example.commutingapp.views.Logger.*;
 
 public class CustomBackButton  {
     //TODo refactor later
-    private static final int timeDelayInMillis = 1480;//todo change later
+    private static final int timeDelayInMillis = 1650;//todo change later
     private static long backPressedTime = 0;
     private final Activity activity;
     private final Toast toast;
 
     public CustomBackButton(Activity activity, Context context) {
         this.activity = activity;
-        toast = CuteToast.ct(context, "Tap again to exit", 1400, CuteToast.NORMAL, true);
+        toast = CuteToast.ct(context, "Tap again to exit", 1750, CuteToast.NORMAL, true);
 
     }
 
