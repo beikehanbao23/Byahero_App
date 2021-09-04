@@ -1,11 +1,11 @@
 package com.example.commutingapp.views.Logger
 
-import com.example.commutingapp.views.Logger.interfaces.ResultStateDialogPresenter
+import com.example.commutingapp.views.Logger.interfaces.MutableDialogPresenter
 
-class CustomDialogManager(private var resultStateDialogPresenter: ResultStateDialogPresenter) {
+class StateDialogManager(private var mutableDialogPresenter: MutableDialogPresenter) {
 
     fun showDialog(title:String,contentText:String){
-        resultStateDialogPresenter.showDialog(title,contentText)
+        mutableDialogPresenter.showDialog(title,contentText)
     }
 
 }

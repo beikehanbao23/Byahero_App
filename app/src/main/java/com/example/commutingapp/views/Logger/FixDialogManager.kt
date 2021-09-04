@@ -1,20 +1,13 @@
 package com.example.commutingapp.views.Logger
 
-import android.app.Dialog
-import com.example.commutingapp.views.Logger.interfaces.DialogListeners
-import com.example.commutingapp.views.Logger.interfaces.FixDialogPresenter
+import com.example.commutingapp.views.Logger.interfaces.ImmutableDialogPresenter
 
 class FixDialogManager(
-    private val fixDialogPresenter: FixDialogPresenter,
-    private val dialogCallback: DialogListeners,
-) {
+    private val immutableDialogPresenter: ImmutableDialogPresenter){
 
     fun showDialog() {
-        fixDialogPresenter.showDialog()
+        immutableDialogPresenter.showDialog()
     }
 
-    fun dialogCallback() : Dialog {
-        return dialogCallback.dialogCallback()
-    }
 
 }
