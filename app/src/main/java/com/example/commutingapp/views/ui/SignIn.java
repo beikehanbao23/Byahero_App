@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.commutingapp.R;
 import com.example.commutingapp.databinding.ActivitySignInBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
-import com.example.commutingapp.views.Logger.CustomDialogManager;
+import com.example.commutingapp.views.Logger.StateDialogManager;
 import com.example.commutingapp.views.Logger.CustomDialogProcessor;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -36,7 +36,7 @@ import java.util.Objects;
 
 import com.example.commutingapp.utils.FirebaseUserManager.*;
 import com.example.commutingapp.utils.InternetConnection.*;
-import com.example.commutingapp.views.Logger.Abstracts.SuccessDialogWrapper;
+
 import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
@@ -76,7 +76,6 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         facebookCallBackManager = CallbackManager.Factory.create();
         removeFacebookUserAccountPreviousToken();
 
-        customDialogProcessor.showSuccessDialog("TEST TITLE","TEST CONTENT");
     }
 
 

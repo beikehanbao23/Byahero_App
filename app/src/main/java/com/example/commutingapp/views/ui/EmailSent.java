@@ -18,8 +18,6 @@ import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.AttributesInitializer;
 import com.example.commutingapp.utils.ui_utilities.BindingDestroyer;
 import com.example.commutingapp.viewmodels.EmailSentViewModel;
-import com.example.commutingapp.views.Logger.CustomDialogManager;
-import com.example.commutingapp.views.Logger.Abstracts.SuccessDialogWrapper;
 import com.example.commutingapp.views.Logger.CustomDialogProcessor;
 import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 
