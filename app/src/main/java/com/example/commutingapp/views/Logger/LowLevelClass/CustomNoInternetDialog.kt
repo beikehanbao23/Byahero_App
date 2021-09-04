@@ -1,4 +1,4 @@
-package com.example.commutingapp.views.Logger
+package com.example.commutingapp.views.Logger.LowLevelClass
 
 import android.app.Dialog
 import android.content.Context
@@ -15,7 +15,6 @@ class CustomNoInternetDialog(context:Context) {
      var dialog: Dialog = Dialog(context).apply {
         setContentView(R.layout.custom_dialog_no_internet)
         window?.attributes?.windowAnimations  = android.R.style.Animation_Dialog
-         setTitle("testing title only")
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         findViewById<View>(R.id.retry_button).setOnClickListener {
             if (ConnectionManager(context).internetConnectionAvailable()){
