@@ -1,5 +1,5 @@
 package com.example.commutingapp.views.Logger.interfaces
 
-interface FixDialogPresenter  {
+interface ImmutableDialogPresenter  {
     fun showDialog()
 }
