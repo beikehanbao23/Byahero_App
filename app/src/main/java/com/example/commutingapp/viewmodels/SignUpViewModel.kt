@@ -3,7 +3,6 @@ package com.example.commutingapp.viewmodels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.commutingapp.R
 import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.android.gms.tasks.Task
@@ -56,12 +55,14 @@ class SignUpViewModel:ViewModel(){
     }
 
   private fun sendEmailVerification(){
-        FirebaseManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener { task->
-            if(task.isSuccessful){
+      viewModelScope.launch(Dispatchers.IO){
+        FirebaseManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
                 emailVerification.value = Event(true)
                 return@addOnCompleteListener
             }
-            exceptionErrorMessage.value = R.string.sendingEmailErrorMessage.toString()
+
+        }
         }
     }
 

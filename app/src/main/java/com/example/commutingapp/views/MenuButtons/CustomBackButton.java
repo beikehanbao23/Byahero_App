@@ -2,19 +2,22 @@ package com.example.commutingapp.views.MenuButtons;
 
 import android.app.Activity;
 import android.content.Context;
+import android.widget.Toast;
+
 import com.rejowan.cutetoast.CuteToast;
 import com.example.commutingapp.views.Logger.*;
 
 public class CustomBackButton  {
-
-    private static final int timeDelayInMillis = 1800;
+    //TODo refactor later
+    private static final int timeDelayInMillis = 1480;//todo change later
     private static long backPressedTime = 0;
     private final Activity activity;
-    private final CustomToastMessage toastMessage;
+    private final Toast toast;
 
     public CustomBackButton(Activity activity, Context context) {
         this.activity = activity;
-        toastMessage = new CustomToastMessage(context, "Tap again to exit", CuteToast.NORMAL);
+        toast = CuteToast.ct(context, "Tap again to exit", 1400, CuteToast.NORMAL, true);
+
     }
 
 
@@ -28,15 +31,14 @@ public class CustomBackButton  {
         beginToastMessage();
     }
     private static boolean doubleClicked() {
-
         return backPressedTime + timeDelayInMillis > System.currentTimeMillis();
     }
     private void terminateActivity(){
-        toastMessage.hideToast();
+        toast.cancel();
         activity.finish();
     }
     private void beginToastMessage(){
-        toastMessage.showToast();
+        toast.show();
         registerFirstClick();
     }
     private static void registerFirstClick() {
