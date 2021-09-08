@@ -13,7 +13,8 @@
         android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_app_icon_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CommutingApp">
+        android:theme="@style/Theme.CommutingApp"
+       >
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -25,12 +26,14 @@
 
         <activity
             android:name=".views.ui.IntroSlider"
+            android:theme="@style/splashScreenTheme"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".views.ui.MainScreen"
             android:screenOrientation="portrait" />
@@ -43,8 +46,6 @@
         <activity
             android:name=".views.ui.EmailSent"
             android:screenOrientation="portrait" />
-
-
         <activity
             android:name=".views.ui.splashscreen"
             android:screenOrientation="portrait"/>
