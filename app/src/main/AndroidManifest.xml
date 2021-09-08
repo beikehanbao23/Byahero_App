@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.commutingapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,15 +15,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CommutingApp">
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
         <activity
             android:name=".views.ui.IntroSlider"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".views.ui.MainScreen"
             android:screenOrientation="portrait" />
@@ -36,15 +42,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".views.ui.EmailSent"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+
+
         <activity
             android:name=".views.ui.splashscreen"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:screenOrientation="portrait"/>
 
 
     </application>
