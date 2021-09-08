@@ -55,6 +55,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
     override fun initializeAttributes() {
         ScreenDimension(window).setWindowToFullScreen()
         binding = ActivityIntroSliderBinding.inflate(layoutInflater)
+        setTheme(R.style.Theme_CommutingApp)
         setContentView(binding?.root)
         preferences = getSharedPreferences("IntroSlider", Context.MODE_PRIVATE)
     }
