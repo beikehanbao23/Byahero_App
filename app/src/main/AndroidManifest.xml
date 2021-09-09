@@ -46,9 +46,6 @@
         <activity
             android:name=".views.ui.EmailSent"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".views.ui.splashscreen"
-            android:screenOrientation="portrait"/>
 
 
     </application>
