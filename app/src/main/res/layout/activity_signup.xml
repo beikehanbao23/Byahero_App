@@ -32,7 +32,8 @@
         app:icon="@drawable/ic_backbutton"
         app:iconTint="@color/black"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
     <TextView
         android:id="@+id/textView5"
@@ -95,7 +96,8 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/CreateButton"
         app:layout_constraintStart_toStartOf="@+id/CreateButton"
-        app:layout_constraintTop_toBottomOf="@+id/CreateButton" />
+        app:layout_constraintTop_toBottomOf="@+id/CreateButton"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/TextView_LoginHere"
@@ -109,7 +111,8 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/TextView_AlreadyHaveAccount"
         app:layout_constraintStart_toStartOf="@+id/TextView_AlreadyHaveAccount"
-        app:layout_constraintTop_toBottomOf="@+id/TextView_AlreadyHaveAccount" />
+        app:layout_constraintTop_toBottomOf="@+id/TextView_AlreadyHaveAccount"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <include
         layout="@layout/circular_progressbar" />

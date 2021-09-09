@@ -133,7 +133,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/FacebookButton"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
-        tools:ignore="OnClick" />
+        tools:ignore="OnClick,TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/TextViewSignUp"
@@ -146,7 +146,8 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/TextView_DontHaveAnAccount"
         app:layout_constraintStart_toStartOf="@+id/TextView_DontHaveAnAccount"
-        app:layout_constraintTop_toBottomOf="@+id/TextView_DontHaveAnAccount" />
+        app:layout_constraintTop_toBottomOf="@+id/TextView_DontHaveAnAccount"
+        tools:ignore="TouchTargetSizeCheck" />
 
 
     <com.google.android.material.textfield.TextInputLayout
