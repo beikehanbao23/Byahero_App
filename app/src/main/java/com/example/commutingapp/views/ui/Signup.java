@@ -6,6 +6,9 @@ import android.provider.Settings;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.example.commutingapp.data.users.UserValidator;
+import com.example.commutingapp.data.users.UserValidatorModel;
 import com.example.commutingapp.databinding.ActivitySignupBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.viewmodels.SignUpViewModel;
@@ -62,11 +65,15 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         showSignInActivity();
     }
     public void CreateButtonClicked(View view) {
-        UserValidatorManager userManager = new UserValidatorManager(this,
+
+
+        UserValidatorManager user = new UserValidatorManager(new UserValidatorModel(this,
                 activitySignupBinding.editTextSignUpEmailAddress,
                 activitySignupBinding.editTextSignUpPassword,
-                activitySignupBinding.editTextSignUpConfirmPassword);
-        if (userManager.signUpValidationFail()) {
+                activitySignupBinding.editTextSignUpConfirmPassword));
+
+
+        if (user.signUpValidationFail()) {
             return;
         }
         if (noInternetConnection()) {

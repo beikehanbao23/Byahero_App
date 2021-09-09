@@ -8,6 +8,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.commutingapp.R;
+import com.example.commutingapp.data.users.UserValidatorModel;
 import com.example.commutingapp.databinding.ActivitySignInBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.views.Logger.StateDialogManager;
@@ -87,6 +88,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         new ScreenDimension(getWindow()).setWindowToFullScreen();
         setContentView(activitySignInBinding.getRoot());
         customDialogProcessor = new CustomDialogProcessor(this);
+
 
 
     }
@@ -237,11 +239,12 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     }
 
     private void loginViaDefaultSignIn(){
-        UserValidatorManager userManager = new UserValidatorManager(this,
+        UserValidatorManager user = new UserValidatorManager(new UserValidatorModel(this,
                 activitySignInBinding.editloginTextEmail,
                 activitySignInBinding.editLoginTextPassword,
-                null);
-        if (userManager.signInValidationFail()) {
+                null));
+
+        if (user.signInValidationFail()) {
             return;
         }
 
