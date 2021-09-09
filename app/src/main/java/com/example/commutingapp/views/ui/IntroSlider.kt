@@ -10,39 +10,68 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.ActivityIntroSliderBinding
-import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
+import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
+import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher.startActivityOf
 import com.example.commutingapp.utils.ui_utilities.AttributesInitializer
 import com.example.commutingapp.utils.ui_utilities.BindingDestroyer
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
+import com.example.commutingapp.viewmodels.IntroSliderViewModel
 import com.example.commutingapp.views.MenuButtons.CustomBackButton
 import com.example.commutingapp.views.adapters.IntroSliderAdapter
 
 
-const val ITEMS_COUNT = 4
-const val DEFAULT_INDICATOR_POSITION = 0
+private const val ITEMS_COUNT = 4
+private const val DEFAULT_INDICATOR_POSITION = 0
+
 
 class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
 
     private lateinit var preferences: SharedPreferences
     private val preferredShowIntro = "IntroSlider_StateOfSlides"
     private var binding: ActivityIntroSliderBinding? = null
-
+    private lateinit var viewModel: IntroSliderViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         initializeAttributes()
+        FirebaseManager.initializeFirebaseApp()
+        FirebaseManager.getCreatedUserAccount()
+        viewModel = ViewModelProvider(this).get(IntroSliderViewModel::class.java)
+
 
         if (userHasAlreadySeenTheIntroSliders()) {
-            showSignInActivity()
+            startTransitionToNextActivity()
             return
         }
 
         setupIntroSliders()
     }
+
+
+
+    private fun startTransitionToNextActivity() {
+        viewModel.setUserSignInProvider()
+        viewModel.onNavigateToDetailsSuccess.observe(this){
+                if (it.getContentIfNotHandled() != null) {
+                    showMainScreenActivity()
+                }
+            }
+
+
+        if (viewModel.onNavigateToDetailsSuccess.value == null) {
+            showSignInActivity()
+        }
+    }
+    private fun showMainScreenActivity() {
+        startActivityOf(this, this, MainScreen::class.java)
+    }
+
+
 
     private fun setupIntroSliders(){
 
@@ -98,7 +127,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
     private fun renderIndicators(
         indicators: Array<ImageView?>,
         layoutParameters: LinearLayout.LayoutParams,
-    ): Unit {
+    ) {
 
         for (counter in indicators.indices) {
 
@@ -175,7 +204,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
     }
 
     private fun showSignInActivity() {
-      ActivitySwitcher.startActivityOf(this,this, SignIn::class.java)
+      startActivityOf(this,this, SignIn::class.java)
     }
 
     private fun userIsDoneWithIntroSliders() {
@@ -201,6 +230,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
     override fun destroyBinding() {
         IntroSliderAdapter(layoutInflater,this).destroyIntroSliderAdapterBinding()
         binding = null
+
     }
 
 

@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SplashScreenViewModel : ViewModel() {
+class IntroSliderViewModel : ViewModel() {
 
 
     var onNavigateToDetailsSuccess = MutableLiveData<Event<Boolean>>()
