@@ -19,24 +19,23 @@ private const val coroutineInterval: Long = 2200
 class EmailSentViewModel : ViewModel() {
 
     private lateinit var verificationTimer: CountDownTimer
-    private lateinit var coroutine_IO_Job: Job
-    var timerOnRunning = MutableLiveData<Int>()
-        private set
 
-    var timerOnFinished = MutableLiveData<Boolean>()
-        private set
+    lateinit var coroutine_IO_Job: Job
+    private set
 
-    var mainScreenActivityTransition = MutableLiveData<Event<Boolean>>()
-        private set
+    private var timerOnRunningSecondsValue = MutableLiveData<Int>()
+    private var timerOnFinished = MutableLiveData<Boolean>()
+    private var mainScreenActivityTransition = MutableLiveData<Event<Boolean>>()
+    private var noInternetActivityTransition = MutableLiveData<Boolean>()
+    private var sendEmailOnSuccess = MutableLiveData<Boolean>()
+    private var sendEmailOnFailed = MutableLiveData<Boolean>()
 
-    var noInternetActivityTransition = MutableLiveData<Boolean>()
-        private set
-
-    var sendEmailOnSuccess = MutableLiveData<Boolean>()
-        private set
-
-    var sendEmailOnFailed = MutableLiveData<Boolean>()
-        private set
+    fun getTimerOnRunningStatus():LiveData<Int> = timerOnRunningSecondsValue
+    fun getTimerOnFinishedStatus():LiveData<Boolean> = timerOnFinished
+    fun getMainScreenTransitionStatus():LiveData<Event<Boolean>> = mainScreenActivityTransition
+    fun getInternetConnectionStatus():LiveData<Boolean> = noInternetActivityTransition
+    fun getEmailOnSuccessStatus():LiveData<Boolean> = sendEmailOnSuccess
+    fun getEmailOnFailureStatus():LiveData<Boolean> = sendEmailOnFailed
 
     private var displayUserEmail = MutableLiveData<String>()
 
@@ -55,7 +54,7 @@ class EmailSentViewModel : ViewModel() {
 
     fun refreshEmailSynchronously() {
         coroutine_IO_Job = viewModelScope.launch(Dispatchers.IO) {
-            while (this.isActive) {
+            while (isActive) {
                 reloadUserEmail()
                 Log.d("COROUTINE STATUS: ", "$isActive")
                 delay(coroutineInterval)
@@ -107,7 +106,7 @@ class EmailSentViewModel : ViewModel() {
             verificationTimer = object : CountDownTimer(timerCounts, oneSecond) {
                 override fun onTick(millisUntilFinished: Long) {
                     val timeLeft = millisUntilFinished / oneSecond
-                    timerOnRunning.value = timeLeft.toInt()
+                    timerOnRunningSecondsValue.value = timeLeft.toInt()
                 }
 
                 override fun onFinish() {

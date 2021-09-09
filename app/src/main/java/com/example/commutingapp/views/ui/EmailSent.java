@@ -50,7 +50,7 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
     }
 
     private void observeMainActivityTransition() {
-        viewModel.getMainScreenActivityTransition().observe(this, transition -> {
+        viewModel.getMainScreenTransitionStatus().observe(this, transition -> {
             if (transition.getContentIfNotHandled() != null) {
                 showMainScreenActivity();
             }
@@ -58,14 +58,14 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
     }
 
     private void observeNoInternetActivityTransition() {
-        viewModel.getNoInternetActivityTransition().observe(this, transition -> showNoInternetActivity());
+        viewModel.getInternetConnectionStatus().observe(this, transition -> showNoInternetActivity());
     }
 
     private void observeEmailVerification() {
-        viewModel.getSendEmailOnSuccess().observe(this, task -> {
+        viewModel.getEmailOnSuccessStatus().observe(this, task -> {
             customDialogProcessor.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
         });
-        viewModel.getSendEmailOnFailed().observe(this, task -> {
+        viewModel.getEmailOnFailureStatus().observe(this, task -> {
             customDialogProcessor.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
         });
     }
@@ -146,8 +146,8 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
 
     private void startVerificationTimer() {
         viewModel.startTimer();
-        viewModel.getTimerOnRunning().observe(this, this::displayWhenVerificationTimerStarted);
-        viewModel.getTimerOnFinished().observe(this, timer -> displayWhenVerificationTimerIsFinished());
+        viewModel.getTimerOnRunningStatus().observe(this, this::displayWhenVerificationTimerStarted);
+        viewModel.getTimerOnFinishedStatus().observe(this, timer -> displayWhenVerificationTimerIsFinished());
     }
 
     @Override
