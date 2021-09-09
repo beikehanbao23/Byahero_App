@@ -10,9 +10,10 @@ import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import kotlinx.coroutines.*
 
-private const val timerCounts: Long = 15000
+private const val timerCounts: Long = 120000
 private const val oneSecond: Long = 1000
 private const val coroutineInterval: Long = 2200
 
@@ -94,8 +95,10 @@ class EmailSentViewModel : ViewModel() {
                 throw task.exception!!
             } catch (networkException: FirebaseNetworkException) {
                 noInternetActivityTransition.value = true
-            } catch (ex: Exception) {
-                Log.e("Exception", ex.message.toString())
+            } catch (ex: FirebaseAuthInvalidUserException) {
+                Log.e("Exception", ex.message.toString())// TODO: add livedata and observers in customDialogs
+            }finally{
+                coroutine_IO_Job.cancel()
             }
 
 

@@ -32,6 +32,7 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
     private CircularProgressbarBinding progressbarBinding;
     private EmailSentViewModel viewModel;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -41,8 +42,22 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         displayUserEmailToTextView();
         initializeObservers();
         viewModel.refreshEmailSynchronously();
-    }
 
+        customDialogProcessor.noInternetDialogCallback().setOnDismissListener(T->{
+            Log.e("STATUS","ON DISMISSED!");
+            viewModel.refreshEmailSynchronously();
+        });
+
+    }
+    @Override
+    public void initializeAttributes() {
+        emailDialogBinding = CustomEmailsentDialogBinding.inflate(getLayoutInflater());
+        progressbarBinding = CircularProgressbarBinding.bind(emailDialogBinding.getRoot());
+        setContentView(emailDialogBinding.getRoot());
+        customDialogProcessor = new CustomDialogProcessor(this);
+        viewModel = new ViewModelProvider(this).get(EmailSentViewModel.class);
+
+    }
     private void initializeObservers() {
         observeNoInternetActivityTransition();
         observeMainActivityTransition();
@@ -70,15 +85,7 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         });
     }
 
-    @Override
-    public void initializeAttributes() {
-        emailDialogBinding = CustomEmailsentDialogBinding.inflate(getLayoutInflater());
-        progressbarBinding = CircularProgressbarBinding.bind(emailDialogBinding.getRoot());
-        setContentView(emailDialogBinding.getRoot());
-        customDialogProcessor = new CustomDialogProcessor(this);
-        viewModel = new ViewModelProvider(this).get(EmailSentViewModel.class);
 
-    }
 
     @Override
     public void destroyBinding() {
