@@ -154,4 +154,5 @@
     <color name="Green">#008000</color>
     <color name="DarkGreen">#006400</color>
     <color name="theme_color">#6c63ff</color>
+    <color name="splash_screen_theme_color">#091E92</color>
 </resources>
