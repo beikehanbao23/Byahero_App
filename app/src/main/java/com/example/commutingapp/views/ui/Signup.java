@@ -1,40 +1,38 @@
 package com.example.commutingapp.views.ui;
 
+import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.commutingapp.data.users.UserValidatorManager;
 import com.example.commutingapp.data.users.UserValidatorModel;
 import com.example.commutingapp.databinding.ActivitySignupBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
+import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager;
+import com.example.commutingapp.utils.InternetConnection.ConnectionManager;
+import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
+import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
 import com.example.commutingapp.viewmodels.SignUpViewModel;
 import com.example.commutingapp.views.Logger.CustomDialogProcessor;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
+
 import java.util.Objects;
-import com.example.commutingapp.utils.FirebaseUserManager.*;
-import com.example.commutingapp.utils.InternetConnection.*;
-import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
-import com.example.commutingapp.utils.ui_utilities.AttributesInitializer;
-import com.example.commutingapp.utils.ui_utilities.BindingDestroyer;
-import com.example.commutingapp.utils.ui_utilities.LoadingScreen;
-import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
-import com.example.commutingapp.data.users.UserValidatorManager;
-
-import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
 
 
-public class Signup extends AppCompatActivity implements LoadingScreen, BindingDestroyer, AttributesInitializer {
+public class Signup extends AppCompatActivity {
 
 
     private CustomDialogProcessor customDialogProcessor;
     private ActivitySignupBinding activitySignupBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
     private SignUpViewModel viewModel;
-
 
 
     @Override
@@ -45,8 +43,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
 
     }
 
-    @Override
-    public void initializeAttributes() {
+    private void initializeAttributes() {
         new ScreenDimension(getWindow()).setWindowToFullScreen();
         activitySignupBinding = ActivitySignupBinding.inflate(getLayoutInflater());
         circularProgressbarBinding = CircularProgressbarBinding.bind(activitySignupBinding.getRoot());
@@ -54,6 +51,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         customDialogProcessor = new CustomDialogProcessor(this);
         viewModel = new ViewModelProvider(this).get(SignUpViewModel.class);
     }
+
     @Override
     public void onBackPressed() {
         showSignInActivity();
@@ -63,6 +61,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
     public void backToSignIn(View view) {
         showSignInActivity();
     }
+
     public void CreateButtonClicked(View view) {
 
 
@@ -88,23 +87,24 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         ProceedToSignUp();
 
     }
-    private boolean noInternetConnection(){
+
+    private boolean noInternetConnection() {
         return !new ConnectionManager(this).internetConnectionAvailable();
     }
+
     public void GoToSettingsClicked(View view) {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
+
     private void signOutPreviousAccount() {
         AuthenticationManager.getFirebaseAuthInstance().signOut();
     }
+
     private boolean isUserCreatedNewAccount() {
         String currentEmail = Objects.requireNonNull(activitySignupBinding.editTextSignUpEmailAddress.getText()).toString().trim();
         String previousEmail = AuthenticationManager.getFirebaseUserInstance().getEmail();
         return !Objects.equals(previousEmail, currentEmail);
     }
-
-
-
 
 
     private void sendEmailVerificationToUser() {
@@ -156,18 +156,17 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
     }
 
 
-
-
-
-    @Override public void showLoading() {
+    private void showLoading() {
 
         processLoading(false, View.VISIBLE);
     }
-    @Override public void finishLoading() {
+
+    private void finishLoading() {
 
         processLoading(true, View.INVISIBLE);
     }
-    @Override public void processLoading(boolean attributesVisibility, int progressBarVisibility) {
+
+    private void processLoading(boolean attributesVisibility, int progressBarVisibility) {
         circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
         activitySignupBinding.editTextSignUpEmailAddress.setEnabled(attributesVisibility);
         activitySignupBinding.editTextSignUpPassword.setEnabled(attributesVisibility);
@@ -177,22 +176,28 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         activitySignupBinding.BackButton.setEnabled(attributesVisibility);
         activitySignupBinding.CreateButton.setEnabled(attributesVisibility);
     }
+
     private void showNoInternetActivity() {
         customDialogProcessor.showNoInternetDialog();
     }
+
     private void showEmailSentActivity() {
 
-        ActivitySwitcher.INSTANCE.startActivityOf(this,this, EmailSent.class);
+        ActivitySwitcher.INSTANCE.startActivityOf(this, this, EmailSent.class);
     }
-    private void showSignInActivity(){
 
-        ActivitySwitcher.INSTANCE.startActivityOf(this,this,SignIn.class);
+    private void showSignInActivity() {
+
+        ActivitySwitcher.INSTANCE.startActivityOf(this, this, SignIn.class);
     }
-    @Override protected void onDestroy() {
+
+    @Override
+    protected void onDestroy() {
         destroyBinding();
         super.onDestroy();
     }
-    @Override public void destroyBinding(){
+
+    private void destroyBinding() {
         activitySignupBinding = null;
         circularProgressbarBinding = null;
     }

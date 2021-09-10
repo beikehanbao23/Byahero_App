@@ -9,20 +9,17 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.commutingapp.R;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.databinding.CustomEmailsentDialogBinding;
 import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
-import com.example.commutingapp.utils.ui_utilities.AttributesInitializer;
-import com.example.commutingapp.utils.ui_utilities.BindingDestroyer;
 import com.example.commutingapp.viewmodels.EmailSentViewModel;
 import com.example.commutingapp.views.Logger.CustomDialogProcessor;
 import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 
 
-public class EmailSent extends AppCompatActivity implements BindingDestroyer, AttributesInitializer {
+public class EmailSent extends AppCompatActivity {
 
 
     private final long DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG = 2000;
@@ -49,8 +46,8 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
         });
 
     }
-    @Override
-    public void initializeAttributes() {
+
+    private void initializeAttributes() {
         emailDialogBinding = CustomEmailsentDialogBinding.inflate(getLayoutInflater());
         progressbarBinding = CircularProgressbarBinding.bind(emailDialogBinding.getRoot());
         setContentView(emailDialogBinding.getRoot());
@@ -87,8 +84,8 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
 
 
 
-    @Override
-    public void destroyBinding() {
+
+    private void destroyBinding() {
         emailDialogBinding = null;
         progressbarBinding = null;
     }

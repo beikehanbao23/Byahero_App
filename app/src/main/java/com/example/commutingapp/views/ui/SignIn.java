@@ -34,26 +34,15 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.GoogleAuthProvider;
-
 import java.util.Arrays;
 import java.util.Objects;
-
 import com.example.commutingapp.utils.FirebaseUserManager.*;
 import com.example.commutingapp.utils.InternetConnection.*;
-
 import com.example.commutingapp.views.MenuButtons.CustomBackButton;
-
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
-import com.example.commutingapp.utils.ui_utilities.AttributesInitializer;
-import com.example.commutingapp.utils.ui_utilities.BindingDestroyer;
-import com.example.commutingapp.utils.ui_utilities.LoadingScreen;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
 import com.example.commutingapp.data.users.UserValidatorManager;
-import com.thecode.aestheticdialogs.AestheticDialog;
-import com.thecode.aestheticdialogs.DialogAnimation;
-import com.thecode.aestheticdialogs.DialogStyle;
-import com.thecode.aestheticdialogs.DialogType;
-import com.thecode.aestheticdialogs.OnDialogClickListener;
+
 
 
 import static com.example.commutingapp.R.string.disabledAccountMessage;
@@ -62,7 +51,7 @@ import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
 
 
 
-public class SignIn extends AppCompatActivity implements LoadingScreen, BindingDestroyer, AttributesInitializer {
+public class SignIn extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     private final String TAG = "FacebookAuthentication";
@@ -90,7 +79,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     }
 
 
-    @Override public void initializeAttributes() {
+    private void initializeAttributes() {
 
 
         activitySignInBinding = ActivitySignInBinding.inflate(getLayoutInflater());
@@ -232,7 +221,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         destroyBinding();
         super.onDestroy();
     }
-    @Override public void destroyBinding(){
+    private void destroyBinding(){
         activitySignInBinding = null;
         circularProgressbarBinding = null;
     }
@@ -315,13 +304,13 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
 
     }
 
-    @Override public void showLoading() {
+    private void showLoading() {
         processLoading(false,View.VISIBLE);
     }
-    @Override public void finishLoading() {
+    private void finishLoading() {
         processLoading(true,View.INVISIBLE);
     }
-    @Override public void processLoading(boolean visible, int progressBarVisibility){
+    private void processLoading(boolean visible, int progressBarVisibility){
         circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
         activitySignInBinding.editloginTextEmail.setEnabled(visible);
         activitySignInBinding.editLoginTextPassword.setEnabled(visible);

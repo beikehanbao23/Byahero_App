@@ -7,8 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
-import com.example.commutingapp.utils.ui_utilities.AttributesInitializer
-import com.example.commutingapp.utils.ui_utilities.BindingDestroyer
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.views.MenuButtons.CustomBackButton
 import com.facebook.login.LoginManager
@@ -17,7 +15,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserInfo
 import java.util.*
 
-class MainScreen : AppCompatActivity(),AttributesInitializer,BindingDestroyer {
+class MainScreen : AppCompatActivity() {
 
     private var activityMainScreenBinding: ActivityMainScreenBinding? = null
     private lateinit var userInfo: MutableList<out UserInfo>
@@ -36,13 +34,13 @@ class MainScreen : AppCompatActivity(),AttributesInitializer,BindingDestroyer {
         super.onStart()
         displayUserProfileName()
     }
-    override fun initializeAttributes() {
+    private fun initializeAttributes() {
         ScreenDimension(window).setWindowToFullScreen()
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
         setContentView(activityMainScreenBinding?.root)
         userInfo = AuthenticationManager.getFirebaseUserInstance().providerData
     }
-    override fun destroyBinding() {
+    private fun destroyBinding() {
         activityMainScreenBinding = null
     }
 

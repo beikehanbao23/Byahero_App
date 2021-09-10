@@ -16,8 +16,6 @@ import com.example.commutingapp.R
 import com.example.commutingapp.databinding.ActivityIntroSliderBinding
 import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher.startActivityOf
-import com.example.commutingapp.utils.ui_utilities.AttributesInitializer
-import com.example.commutingapp.utils.ui_utilities.BindingDestroyer
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.viewmodels.IntroSliderViewModel
 import com.example.commutingapp.views.MenuButtons.CustomBackButton
@@ -27,7 +25,7 @@ private const val ITEMS_COUNT = 4
 private const val DEFAULT_INDICATOR_POSITION = 0
 
 
-class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
+class IntroSlider : AppCompatActivity() {
 
     private lateinit var preferences: SharedPreferences
     private val preferredShowIntro = "IntroSlider_StateOfSlides"
@@ -77,7 +75,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
         setCurrentIndicator(DEFAULT_INDICATOR_POSITION)
         registerCallbacks()
     }
-    override fun initializeAttributes() {
+    private fun initializeAttributes() {
         ScreenDimension(window).setWindowToFullScreen()
         binding = ActivityIntroSliderBinding.inflate(layoutInflater)
         setTheme(R.style.Theme_CommutingApp)
@@ -223,7 +221,7 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
         userIsDoneWithIntroSliders()
     }
 
-    override fun destroyBinding() {
+    private fun destroyBinding() {
         IntroSliderAdapter(layoutInflater,this).destroyIntroSliderAdapterBinding()
         binding = null
 
