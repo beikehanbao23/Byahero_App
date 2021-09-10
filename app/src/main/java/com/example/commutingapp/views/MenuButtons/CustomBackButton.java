@@ -8,8 +8,8 @@ import com.rejowan.cutetoast.CuteToast;
 import com.example.commutingapp.views.Logger.*;
 
 public class CustomBackButton  {
-    //TODo refactor later
-    private static final int timeDelayInMillis = 1650;//todo change later
+   
+    private static final int timeDelayInMillis = 1650;
     private static long backPressedTime = 0;
     private final Activity activity;
     private final Toast toast;

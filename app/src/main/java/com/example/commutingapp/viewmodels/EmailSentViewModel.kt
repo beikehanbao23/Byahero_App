@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
+import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
@@ -44,7 +44,7 @@ class EmailSentViewModel : ViewModel() {
     fun displayUserEmailToTextView(): LiveData<String> {
 
         viewModelScope.launch(Dispatchers.Main) {
-            FirebaseManager.getFirebaseUserInstance().email?.let {
+            AuthenticationManager.getFirebaseUserInstance().email?.let {
                 displayUserEmail.value = it
             }
         }.also {
@@ -65,7 +65,7 @@ class EmailSentViewModel : ViewModel() {
 
     fun sendEmail() {
         viewModelScope.launch(Dispatchers.IO) {
-            FirebaseManager.getFirebaseUserInstance().sendEmailVerification()
+            AuthenticationManager.getFirebaseUserInstance().sendEmailVerification()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         sendEmailOnSuccess.postValue(true)
@@ -78,8 +78,8 @@ class EmailSentViewModel : ViewModel() {
 
     private suspend fun reloadUserEmail() {
         coroutineScope {
-            FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener { reload ->
-                if (reload.isSuccessful && FirebaseManager.getFirebaseUserInstance().isEmailVerified) {
+            AuthenticationManager.getFirebaseUserInstance().reload().addOnCompleteListener { reload ->
+                if (reload.isSuccessful && AuthenticationManager.getFirebaseUserInstance().isEmailVerified) {
                     mainScreenActivityTransition.postValue(Event(true))
                     return@addOnCompleteListener
                 }

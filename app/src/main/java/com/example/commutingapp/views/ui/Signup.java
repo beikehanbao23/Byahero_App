@@ -7,7 +7,6 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.commutingapp.data.users.UserValidator;
 import com.example.commutingapp.data.users.UserValidatorModel;
 import com.example.commutingapp.databinding.ActivitySignupBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
@@ -42,7 +41,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeAttributes();
-        FirebaseManager.initializeFirebaseApp();
+        AuthenticationManager.initializeFirebaseApp();
 
     }
 
@@ -80,8 +79,8 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
             showNoInternetActivity();
             return;
         }
-        FirebaseManager.getCreatedUserAccount();
-        if (FirebaseManager.hasAccountRemainingInCache() && isUserCreatedNewAccount()) {
+        AuthenticationManager.getCreatedUserAccount();
+        if (AuthenticationManager.hasAccountRemainingInCache() && isUserCreatedNewAccount()) {
             signOutPreviousAccount();
             ProceedToSignUp();
             return;
@@ -96,11 +95,11 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
     private void signOutPreviousAccount() {
-        FirebaseManager.getFirebaseAuthInstance().signOut();
+        AuthenticationManager.getFirebaseAuthInstance().signOut();
     }
     private boolean isUserCreatedNewAccount() {
         String currentEmail = Objects.requireNonNull(activitySignupBinding.editTextSignUpEmailAddress.getText()).toString().trim();
-        String previousEmail = FirebaseManager.getFirebaseUserInstance().getEmail();
+        String previousEmail = AuthenticationManager.getFirebaseUserInstance().getEmail();
         return !Objects.equals(previousEmail, currentEmail);
     }
 
@@ -109,7 +108,7 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
 
 
     private void sendEmailVerificationToUser() {
-        FirebaseManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
+        AuthenticationManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 showEmailSentActivity();
                 return;
@@ -126,10 +125,10 @@ public class Signup extends AppCompatActivity implements LoadingScreen, BindingD
         showLoading();
 
 
-        FirebaseManager.getFirebaseAuthInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
+        AuthenticationManager.getFirebaseAuthInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
 
             if (task.isSuccessful()) {
-                FirebaseManager.getCreatedUserAccount();
+                AuthenticationManager.getCreatedUserAccount();
                 sendEmailVerificationToUser();
                 return;
 

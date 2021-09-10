@@ -5,7 +5,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
-import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
+import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
 import com.example.commutingapp.utils.ui_utilities.AttributesInitializer
 import com.example.commutingapp.utils.ui_utilities.BindingDestroyer
@@ -24,7 +24,7 @@ class MainScreen : AppCompatActivity(),AttributesInitializer,BindingDestroyer {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeAttributes()
-        FirebaseManager.initializeFirebaseApp()
+        AuthenticationManager.initializeFirebaseApp()
 
     }
 
@@ -40,7 +40,7 @@ class MainScreen : AppCompatActivity(),AttributesInitializer,BindingDestroyer {
         ScreenDimension(window).setWindowToFullScreen()
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
         setContentView(activityMainScreenBinding?.root)
-        userInfo = FirebaseManager.getFirebaseUserInstance().providerData
+        userInfo = AuthenticationManager.getFirebaseUserInstance().providerData
     }
     override fun destroyBinding() {
         activityMainScreenBinding = null
@@ -52,10 +52,10 @@ class MainScreen : AppCompatActivity(),AttributesInitializer,BindingDestroyer {
         get() {
             for (user in userInfo) {
                 if (userSignInViaFacebookUsing(user.providerId) || userSignInViaGoogleUsing(user.providerId)) {
-                    return FirebaseManager.getFirebaseUserInstance().displayName
+                    return AuthenticationManager.getFirebaseUserInstance().displayName
                 }
             }
-            return filterEmailAddress(FirebaseManager.getFirebaseUserInstance().email)
+            return filterEmailAddress(AuthenticationManager.getFirebaseUserInstance().email)
         }
 
     private fun userSignInViaFacebookUsing(userProviderId:String) = userProviderId == FacebookAuthProvider.PROVIDER_ID
@@ -96,7 +96,7 @@ class MainScreen : AppCompatActivity(),AttributesInitializer,BindingDestroyer {
 
     private fun signOutAccount() {
         LoginManager.getInstance().logOut()
-        FirebaseManager.getFirebaseAuthInstance().signOut()
+        AuthenticationManager.getFirebaseAuthInstance().signOut()
     }
 
     private fun putToLoginFlow() {

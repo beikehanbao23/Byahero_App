@@ -7,8 +7,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 
-public class FirebaseManager {
-//todo REFACTOR
+public class AuthenticationManager {
+
     private static FirebaseAuth firebaseAuth;
     private static FirebaseUser firebaseUser;
 

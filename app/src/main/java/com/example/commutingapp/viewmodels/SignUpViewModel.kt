@@ -3,7 +3,7 @@ package com.example.commutingapp.viewmodels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
+import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
@@ -27,10 +27,10 @@ class SignUpViewModel:ViewModel(){
 
         viewModelScope.launch(Dispatchers.IO) {
 
-            FirebaseManager.getFirebaseAuthInstance()
+            AuthenticationManager.getFirebaseAuthInstance()
                 .createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    FirebaseManager.getCreatedUserAccount()
+                    AuthenticationManager.getCreatedUserAccount()
                     sendEmailVerification()
                     return@addOnCompleteListener
                 }
@@ -56,7 +56,7 @@ class SignUpViewModel:ViewModel(){
 
   private fun sendEmailVerification(){
       viewModelScope.launch(Dispatchers.IO){
-        FirebaseManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener { task ->
+        AuthenticationManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 emailVerification.value = Event(true)
                 return@addOnCompleteListener

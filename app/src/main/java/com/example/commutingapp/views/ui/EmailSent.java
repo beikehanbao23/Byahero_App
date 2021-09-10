@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.commutingapp.R;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.databinding.CustomEmailsentDialogBinding;
-import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager;
+import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.AttributesInitializer;
 import com.example.commutingapp.utils.ui_utilities.BindingDestroyer;
@@ -38,7 +38,7 @@ public class EmailSent extends AppCompatActivity implements BindingDestroyer, At
 
         super.onCreate(savedInstanceState);
         initializeAttributes();
-        FirebaseManager.initializeFirebaseApp();
+        AuthenticationManager.initializeFirebaseApp();
         displayUserEmailToTextView();
         initializeObservers();
         viewModel.refreshEmailSynchronously();

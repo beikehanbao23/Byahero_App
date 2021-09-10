@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.ActivityIntroSliderBinding
-import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
+import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher.startActivityOf
 import com.example.commutingapp.utils.ui_utilities.AttributesInitializer
 import com.example.commutingapp.utils.ui_utilities.BindingDestroyer
@@ -39,10 +39,10 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
 
         super.onCreate(savedInstanceState)
         initializeAttributes()
-        FirebaseManager.initializeFirebaseApp()
-        FirebaseManager.getCreatedUserAccount()
+        AuthenticationManager.initializeFirebaseApp()
+        AuthenticationManager.getCreatedUserAccount()
         viewModel = ViewModelProvider(this).get(IntroSliderViewModel::class.java)
-
+     
 
         if (userHasAlreadySeenTheIntroSliders()) {
             startTransitionToNextActivity()

@@ -11,7 +11,6 @@ import com.example.commutingapp.R;
 import com.example.commutingapp.data.users.UserValidatorModel;
 import com.example.commutingapp.databinding.ActivitySignInBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
-import com.example.commutingapp.views.Logger.StateDialogManager;
 import com.example.commutingapp.views.Logger.CustomDialogProcessor;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -52,6 +51,8 @@ import static com.example.commutingapp.R.string.disabledAccountMessage;
 import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
 
 
+
+
 public class SignIn extends AppCompatActivity implements LoadingScreen, BindingDestroyer, AttributesInitializer {
 
     private static final int RC_SIGN_IN = 123;
@@ -72,7 +73,7 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         super.onCreate(savedInstanceState);
         initializeAttributes();
         createRequestSignOptionsGoogle();
-        FirebaseManager.initializeFirebaseApp();
+        AuthenticationManager.initializeFirebaseApp();
         FacebookSdk.sdkInitialize(getApplicationContext());
         facebookCallBackManager = CallbackManager.Factory.create();
         removeFacebookUserAccountPreviousToken();
@@ -137,11 +138,11 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     private void handleFacebookAccessToken(AccessToken token) {
 
         AuthCredential authCredential = FacebookAuthProvider.getCredential(token.getToken());
-        FirebaseManager.getFirebaseAuthInstance().signInWithCredential(authCredential).
+        AuthenticationManager.getFirebaseAuthInstance().signInWithCredential(authCredential).
                 addOnCompleteListener(this,
                         task -> {
                             if (task.isSuccessful()) {
-                                FirebaseManager.getCreatedUserAccount();
+                                AuthenticationManager.getCreatedUserAccount();
                                 showMainScreenActivity();
                                 return;
                             }
@@ -207,10 +208,10 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
     }
     private void authenticateFirebaseWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        FirebaseManager.getFirebaseAuthInstance().signInWithCredential(credential)
+        AuthenticationManager.getFirebaseAuthInstance().signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        FirebaseManager.getCreatedUserAccount();
+                        AuthenticationManager.getCreatedUserAccount();
                         showMainScreenActivity();
                         return;
                     }
@@ -261,10 +262,10 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         String userPassword = Objects.requireNonNull(activitySignInBinding.editLoginTextPassword.getText()).toString().trim();
 
         showLoading();
-        FirebaseManager.getFirebaseAuthInstance().signInWithEmailAndPassword(
+        AuthenticationManager.getFirebaseAuthInstance().signInWithEmailAndPassword(
                 email, userPassword).addOnCompleteListener(this, signInTask -> {
             if (signInTask.isSuccessful()) {
-                FirebaseManager.getCreatedUserAccount();
+                AuthenticationManager.getCreatedUserAccount();
                 verifyUserEmail();
                 return;
             }
@@ -276,9 +277,9 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
 
     }
     private void verifyUserEmail() {
-        FirebaseManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
+        AuthenticationManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
 
-            if (emailReload.isSuccessful() && FirebaseManager.getFirebaseUserInstance().isEmailVerified()) {
+            if (emailReload.isSuccessful() && AuthenticationManager.getFirebaseUserInstance().isEmailVerified()) {
                 showMainScreenActivity();
                 return;
             }

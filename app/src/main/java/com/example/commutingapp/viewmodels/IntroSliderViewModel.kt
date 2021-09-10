@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.commutingapp.utils.FirebaseUserManager.FirebaseManager
+import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
@@ -21,7 +21,7 @@ class IntroSliderViewModel : ViewModel() {
 
     fun setUserSignInProvider() {
         viewModelScope.launch(Dispatchers.Main) {
-            if (FirebaseManager.hasAccountRemainingInCache()) {
+            if (AuthenticationManager.hasAccountRemainingInCache()) {
                 if (signInSuccessWithAnyProviders()) {
                     onNavigateToDetailsSuccess.value = Event(true)
                 }
@@ -31,7 +31,7 @@ class IntroSliderViewModel : ViewModel() {
 
     private suspend fun signInSuccessWithAnyProviders(): Boolean {
         return withContext(Dispatchers.IO) {
-                FirebaseManager.getFirebaseUserInstance().isEmailVerified ||
+                AuthenticationManager.getFirebaseUserInstance().isEmailVerified ||
                         isUserSignInUsingFacebook() ||
                         isUserSignInUsingGoogle()
 
@@ -45,7 +45,7 @@ class IntroSliderViewModel : ViewModel() {
 
 
     private  fun getProviderIdResult(id: String): Boolean {
-            FirebaseManager.getFirebaseUserInstance().providerData.forEach {
+            AuthenticationManager.getFirebaseUserInstance().providerData.forEach {
                 Log.e("Result", it.providerId)
                 if (it.providerId == id) {
                     return true // return ui.getProviderId().equals(id) does not work here, always returning 'firebase' as providerId
