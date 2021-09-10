@@ -18,8 +18,7 @@ import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
 import com.example.commutingapp.viewmodels.SignUpViewModel;
 import com.example.commutingapp.views.Logger.CustomDialogProcessor;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseNetworkException;
+
 
 import java.util.Objects;
 
@@ -130,21 +129,19 @@ public class Signup extends AppCompatActivity {
 
 
     private void showLoading() {
-        processLoading(false, View.VISIBLE);
+
+        circularProgressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
+        activitySignupBinding.editTextSignUpEmailAddress.setEnabled(false);
+        activitySignupBinding.editTextSignUpPassword.setEnabled(false);
+        activitySignupBinding.editTextSignUpConfirmPassword.setEnabled(false);
+        activitySignupBinding.TextViewAlreadyHaveAccount.setEnabled(false);
+        activitySignupBinding.TextViewLoginHere.setEnabled(false);
+        activitySignupBinding.BackButton.setEnabled(false);
+        activitySignupBinding.CreateButton.setEnabled(false);
     }
 
 
 
-    private void processLoading(boolean attributesVisibility, int progressBarVisibility) {
-        circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
-        activitySignupBinding.editTextSignUpEmailAddress.setEnabled(attributesVisibility);
-        activitySignupBinding.editTextSignUpPassword.setEnabled(attributesVisibility);
-        activitySignupBinding.editTextSignUpConfirmPassword.setEnabled(attributesVisibility);
-        activitySignupBinding.TextViewAlreadyHaveAccount.setEnabled(attributesVisibility);
-        activitySignupBinding.TextViewLoginHere.setEnabled(attributesVisibility);
-        activitySignupBinding.BackButton.setEnabled(attributesVisibility);
-        activitySignupBinding.CreateButton.setEnabled(attributesVisibility);
-    }
 
     private void showEmailSentActivity() {
 
