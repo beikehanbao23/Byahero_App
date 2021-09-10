@@ -39,15 +39,22 @@ public class Signup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initializeAttributes();
         AuthenticationManager.initializeFirebaseApp();
-
+        initializeObservers();
+    }
+    private void initializeObservers(){
+        observeEmailVerification();
+        observeInternet();
+        observeExceptionMessage();
+    }
+    private void observeEmailVerification(){
         viewModel.sendEmailOnSuccess().observe(this, task-> showEmailSentActivity());
-
         viewModel.sendEmailOnFailed().observe(this, task-> customDialogProcessor.showErrorDialog("Error", getString(sendingEmailErrorMessage)));
-
+    }
+    private void observeInternet(){
         viewModel.noInternetStatus().observe(this, task-> customDialogProcessor.showNoInternetDialog());
-
+    }
+    private void observeExceptionMessage(){
         viewModel.getExceptionMessage().observe(this,errorMessage->customDialogProcessor.showErrorDialog("Error", Objects.requireNonNull(errorMessage)));
-
     }
 
     private void initializeAttributes() {
@@ -139,9 +146,6 @@ public class Signup extends AppCompatActivity {
         activitySignupBinding.CreateButton.setEnabled(attributesVisibility);
     }
 
-
-
-
     private void showEmailSentActivity() {
 
         ActivitySwitcher.INSTANCE.startActivityOf(this, this, EmailSent.class);
@@ -152,8 +156,7 @@ public class Signup extends AppCompatActivity {
         ActivitySwitcher.INSTANCE.startActivityOf(this, this, SignIn.class);
     }
 
-    @Override
-    protected void onDestroy() {
+    @Override protected void onDestroy() {
         destroyBinding();
         super.onDestroy();
     }
