@@ -6,10 +6,7 @@
     android:id="@+id/no_internet_layout"
     android:layout_width="wrap_content"
     android:layout_height="345dp"
-    android:layout_gravity="center|bottom"
-    android:layout_marginTop="200dp"
-    android:layout_marginBottom="40dp"
-
+    android:layout_gravity="center"
     android:elevation="40dp">
 
     <androidx.cardview.widget.CardView
