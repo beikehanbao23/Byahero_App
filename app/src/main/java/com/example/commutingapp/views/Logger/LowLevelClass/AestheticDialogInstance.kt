@@ -1,4 +1,4 @@
-package com.example.commutingapp.views.Logger.Abstracts
+package com.example.commutingapp.views.Logger.LowLevelClass
 
 import android.content.Context
 import id.ionbit.ionalert.IonAlert
