@@ -1,17 +1,19 @@
 package com.example.commutingapp.views.Logger.Abstracts
 
-import android.content.Context
+import android.app.Activity
+import com.example.commutingapp.views.Logger.LowLevelClass.AestheticDialogInstance
 import com.example.commutingapp.views.Logger.interfaces.MutableDialogPresenter
-import id.ionbit.ionalert.IonAlert
+import com.thecode.aestheticdialogs.DialogType
 
-  class SuccessStateDialogWrapper(var context: Context): MutableDialogPresenter {
+  class SuccessStateDialogWrapper(
+      override var activity: Activity
+  ):
+      AestheticDialogInstance(activity)
+      ,MutableDialogPresenter {
+
       override fun showDialog(title: String, contentText: String) {
-          IonAlertInstance(context).dialogIonAlert(title,contentText,IonAlert.SUCCESS_TYPE).apply {
-              if (isShowing) dismissWithAnimation() else show()
-          }
+          super.aestheticDialog(title,contentText, DialogType.SUCCESS).show()
       }
-
-
 
 
  }
