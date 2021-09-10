@@ -74,10 +74,10 @@ public class EmailSent extends AppCompatActivity {
     }
 
     private void observeEmailVerification() {
-        viewModel.getEmailOnSuccessStatus().observe(this, task -> {
+        viewModel.sendEmailOnSuccess().observe(this, task -> {
             customDialogProcessor.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
         });
-        viewModel.getEmailOnFailureStatus().observe(this, task -> {
+        viewModel.sendEmailOnFail().observe(this, task -> {
             customDialogProcessor.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
         });
     }
@@ -133,7 +133,7 @@ public class EmailSent extends AppCompatActivity {
     public void resendEmailIsClicked(View view) {
 
         startVerificationTimer();
-        viewModel.sendEmail();
+        viewModel.sendEmailVerification();
     }
 
     private void displayWhenVerificationTimerStarted(long secondsLeft) {
