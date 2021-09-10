@@ -1,15 +1,31 @@
 package com.example.commutingapp.views.Logger.LowLevelClass
 
-import android.content.Context
-import id.ionbit.ionalert.IonAlert
+import android.app.Activity
+import android.view.Gravity
+import com.thecode.aestheticdialogs.*
 
-internal class IonAlertInstance(var context: Context) {
-     fun dialogIonAlert(title: String, contextText: String, type: Int): IonAlert {
-        return IonAlert(context, type).apply {
-            titleText = title
-            contentText = contextText
-        }
+open class AestheticDialogInstance(open var activity: Activity) {
+     fun aestheticDialog(title: String, message: String, type: DialogType): AestheticDialog.Builder {
+
+         return AestheticDialog.Builder(activity, DialogStyle.FLAT,type).apply {
+           setTitle(title)
+           setMessage(message)
+           setCancelable(true)
+           setDarkMode(false)
+
+           setGravity(Gravity.CENTER)
+           setAnimation(DialogAnimation.SHRINK)
+           setOnClickListener(object :OnDialogClickListener{
+               override fun onClick(dialog: AestheticDialog.Builder) {
+                dismiss()
+               }
+           })
+
+           }
+
+       }
+
+
     }
 
 
-}
