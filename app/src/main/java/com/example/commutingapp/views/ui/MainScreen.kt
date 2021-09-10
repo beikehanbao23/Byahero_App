@@ -1,7 +1,6 @@
 package com.example.commutingapp.views.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
@@ -13,6 +12,7 @@ import com.facebook.login.LoginManager
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserInfo
+import timber.log.Timber
 import java.util.*
 
 class MainScreen : AppCompatActivity() {
@@ -88,7 +88,7 @@ class MainScreen : AppCompatActivity() {
         }
 
     fun logoutButtonIsClicked(view: View?) {
-        Log.e(javaClass.name, "Logging out!")
+        Timber.e("Logging out!")
         putToLoginFlow()
     }
 

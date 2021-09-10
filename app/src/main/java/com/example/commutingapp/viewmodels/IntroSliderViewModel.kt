@@ -1,6 +1,5 @@
 package com.example.commutingapp.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +10,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class IntroSliderViewModel : ViewModel() {
 
@@ -46,7 +46,7 @@ class IntroSliderViewModel : ViewModel() {
 
     private  fun getProviderIdResult(id: String): Boolean {
             AuthenticationManager.getFirebaseUserInstance().providerData.forEach {
-                Log.e("Result", it.providerId)
+                Timber.e(it.providerId)
                 if (it.providerId == id) {
                     return true // return ui.getProviderId().equals(id) does not work here, always returning 'firebase' as providerId
                 }

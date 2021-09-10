@@ -18,6 +18,8 @@ import com.example.commutingapp.viewmodels.EmailSentViewModel;
 import com.example.commutingapp.views.Logger.CustomDialogProcessor;
 import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 
+import timber.log.Timber;
+
 
 public class EmailSent extends AppCompatActivity {
 
@@ -41,7 +43,7 @@ public class EmailSent extends AppCompatActivity {
         viewModel.refreshEmailSynchronously();
 
         customDialogProcessor.noInternetDialogCallback().setOnDismissListener(T->{
-            Log.e("STATUS","ON DISMISSED!");
+            Timber.e("ON DISMISSED!");
             viewModel.refreshEmailSynchronously();
         });
 
@@ -98,7 +100,7 @@ public class EmailSent extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.e("Status","OnStart");
+        Timber.e("OnStart");
     }
 
 
