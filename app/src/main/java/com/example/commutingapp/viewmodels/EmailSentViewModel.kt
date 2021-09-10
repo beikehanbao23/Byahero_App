@@ -25,18 +25,22 @@ class EmailSentViewModel : ViewModel() {
     private set
 
     private var timerOnRunningSecondsValue = MutableLiveData<Int>()
-    private var timerOnFinished = MutableLiveData<Boolean>()
-    private var mainScreenActivityTransition = MutableLiveData<Event<Boolean>>()
-    private var noInternetActivityTransition = MutableLiveData<Boolean>()
-    private var sendEmailOnSuccess = MutableLiveData<Boolean>()
-    private var sendEmailOnFailed = MutableLiveData<Boolean>()
-
     fun getTimerOnRunningStatus():LiveData<Int> = timerOnRunningSecondsValue
+
+    private var timerOnFinished = MutableLiveData<Boolean>()
     fun getTimerOnFinishedStatus():LiveData<Boolean> = timerOnFinished
+
+    private var mainScreenActivityTransition = MutableLiveData<Event<Boolean>>()
     fun getMainScreenTransitionStatus():LiveData<Event<Boolean>> = mainScreenActivityTransition
+
+    private var noInternetActivityTransition = MutableLiveData<Boolean>()
     fun getInternetConnectionStatus():LiveData<Boolean> = noInternetActivityTransition
-    fun getEmailOnSuccessStatus():LiveData<Boolean> = sendEmailOnSuccess
-    fun getEmailOnFailureStatus():LiveData<Boolean> = sendEmailOnFailed
+
+    private var sendEmailOnSuccess = MutableLiveData<Boolean>()
+    fun sendEmailOnSuccess():LiveData<Boolean> = sendEmailOnSuccess
+
+    private var sendEmailOnFailed = MutableLiveData<Boolean>()
+    fun sendEmailOnFail():LiveData<Boolean> = sendEmailOnFailed
 
     private var displayUserEmail = MutableLiveData<String>()
 
@@ -63,7 +67,7 @@ class EmailSentViewModel : ViewModel() {
         }
     }
 
-    fun sendEmail() {
+    fun sendEmailVerification() {
         viewModelScope.launch(Dispatchers.IO) {
             AuthenticationManager.getFirebaseUserInstance().sendEmailVerification()
                 .addOnCompleteListener { task ->
@@ -90,16 +94,18 @@ class EmailSentViewModel : ViewModel() {
             }
         }
 
-    private fun handleEmailVerificationExceptions(task: Task<*>) {
+     private fun handleEmailVerificationExceptions(task: Task<*>) {
             try {
                 throw task.exception!!
             } catch (networkException: FirebaseNetworkException) {
                 noInternetActivityTransition.value = true
             } catch (ex: FirebaseAuthInvalidUserException) {
-                Log.e("Exception", ex.message.toString())// TODO: add livedata and observers in customDialogs
-            }finally{
+                Log.e("Exception",
+                    ex.message.toString())// TODO: add livedata and observers in customDialogs
+            } finally {
                 coroutine_IO_Job.cancel()
             }
+
 
 
     }
