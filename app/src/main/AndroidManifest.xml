@@ -32,9 +32,6 @@
             android:name="com.google.android.gms.version"
             android:resource="@integer/google_play_services_version" />
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:resource="@string/google_maps_key" />
 
         <activity
             android:name=".views.ui.IntroSlider"
