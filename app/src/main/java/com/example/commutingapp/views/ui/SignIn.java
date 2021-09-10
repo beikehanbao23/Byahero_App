@@ -1,10 +1,14 @@
 package com.example.commutingapp.views.ui;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.commutingapp.R;
@@ -45,6 +49,11 @@ import com.example.commutingapp.utils.ui_utilities.BindingDestroyer;
 import com.example.commutingapp.utils.ui_utilities.LoadingScreen;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
 import com.example.commutingapp.data.users.UserValidatorManager;
+import com.thecode.aestheticdialogs.AestheticDialog;
+import com.thecode.aestheticdialogs.DialogAnimation;
+import com.thecode.aestheticdialogs.DialogStyle;
+import com.thecode.aestheticdialogs.DialogType;
+import com.thecode.aestheticdialogs.OnDialogClickListener;
 
 
 import static com.example.commutingapp.R.string.disabledAccountMessage;
@@ -101,7 +110,6 @@ public class SignIn extends AppCompatActivity implements LoadingScreen, BindingD
         loginViaFacebook();
     }
     public void loginViaFacebook() {
-
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
         LoginManager.getInstance().registerCallback(facebookCallBackManager, new FacebookCallback<LoginResult>() {
             @Override

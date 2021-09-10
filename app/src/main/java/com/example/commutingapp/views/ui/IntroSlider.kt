@@ -23,7 +23,6 @@ import com.example.commutingapp.viewmodels.IntroSliderViewModel
 import com.example.commutingapp.views.MenuButtons.CustomBackButton
 import com.example.commutingapp.views.adapters.IntroSliderAdapter
 
-
 private const val ITEMS_COUNT = 4
 private const val DEFAULT_INDICATOR_POSITION = 0
 
@@ -42,13 +41,10 @@ class IntroSlider : AppCompatActivity(),BindingDestroyer,AttributesInitializer {
         AuthenticationManager.initializeFirebaseApp()
         AuthenticationManager.getCreatedUserAccount()
         viewModel = ViewModelProvider(this).get(IntroSliderViewModel::class.java)
-     
-
         if (userHasAlreadySeenTheIntroSliders()) {
             startTransitionToNextActivity()
             return
         }
-
         setupIntroSliders()
     }
 
