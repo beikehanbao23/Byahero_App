@@ -2,9 +2,7 @@ package com.example.commutingapp.views.ui;
 
 import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +30,7 @@ public class Signup extends AppCompatActivity {
     private CustomDialogProcessor customDialogProcessor;
     private ActivitySignupBinding activitySignupBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
+
     private SignUpViewModel viewModel;
 
 
@@ -40,6 +39,14 @@ public class Signup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initializeAttributes();
         AuthenticationManager.initializeFirebaseApp();
+
+        viewModel.sendEmailOnSuccess().observe(this, task-> showEmailSentActivity());
+
+        viewModel.sendEmailOnFailed().observe(this, task-> customDialogProcessor.showErrorDialog("Error", getString(sendingEmailErrorMessage)));
+
+        viewModel.noInternetStatus().observe(this, task-> customDialogProcessor.showNoInternetDialog());
+
+        viewModel.getExceptionMessage().observe(this,errorMessage->customDialogProcessor.showErrorDialog("Error", Objects.requireNonNull(errorMessage)));
 
     }
 
@@ -75,7 +82,7 @@ public class Signup extends AppCompatActivity {
             return;
         }
         if (noInternetConnection()) {
-            showNoInternetActivity();
+            customDialogProcessor.showNoInternetDialog();
             return;
         }
         AuthenticationManager.getCreatedUserAccount();
@@ -92,10 +99,6 @@ public class Signup extends AppCompatActivity {
         return !new ConnectionManager(this).internetConnectionAvailable();
     }
 
-    public void GoToSettingsClicked(View view) {
-        startActivity(new Intent(Settings.ACTION_SETTINGS));
-    }
-
     private void signOutPreviousAccount() {
         AuthenticationManager.getFirebaseAuthInstance().signOut();
     }
@@ -107,64 +110,23 @@ public class Signup extends AppCompatActivity {
     }
 
 
-    private void sendEmailVerificationToUser() {
-        AuthenticationManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                showEmailSentActivity();
-                return;
-            }
-            customDialogProcessor.showErrorDialog("Error", getString(sendingEmailErrorMessage));
-        });
-    }
-
-
     private void ProceedToSignUp() {
         String userEmail = Objects.requireNonNull(activitySignupBinding.editTextSignUpEmailAddress.getText()).toString().trim();
         String userConfirmPassword = Objects.requireNonNull(activitySignupBinding.editTextSignUpConfirmPassword.getText()).toString().trim();
 
         showLoading();
-
-
-        AuthenticationManager.getFirebaseAuthInstance().createUserWithEmailAndPassword(userEmail, userConfirmPassword).addOnCompleteListener(task -> {
-
-            if (task.isSuccessful()) {
-                AuthenticationManager.getCreatedUserAccount();
-                sendEmailVerificationToUser();
-                return;
-
-            }
-
-            if (task.getException() != null) {
-                finishLoading();
-                handleSignUpExceptionResults(task);
-            }
-
-        });
-
+        viewModel.signUpAccount(userEmail,userConfirmPassword);
 
     }
 
 
-    private void handleSignUpExceptionResults(Task<?> task) {
-        try {
-            throw Objects.requireNonNull(task.getException());
-        } catch (FirebaseNetworkException firebaseNetworkException) {
-            showNoInternetActivity();
-        } catch (Exception ex) {
-            customDialogProcessor.showErrorDialog("Error", Objects.requireNonNull(task.getException().getMessage()));
-        }
-    }
 
 
     private void showLoading() {
-
         processLoading(false, View.VISIBLE);
     }
 
-    private void finishLoading() {
 
-        processLoading(true, View.INVISIBLE);
-    }
 
     private void processLoading(boolean attributesVisibility, int progressBarVisibility) {
         circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
@@ -177,9 +139,8 @@ public class Signup extends AppCompatActivity {
         activitySignupBinding.CreateButton.setEnabled(attributesVisibility);
     }
 
-    private void showNoInternetActivity() {
-        customDialogProcessor.showNoInternetDialog();
-    }
+
+
 
     private void showEmailSentActivity() {
 

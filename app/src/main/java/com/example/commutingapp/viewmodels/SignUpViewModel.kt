@@ -1,26 +1,30 @@
 package com.example.commutingapp.viewmodels
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
-import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class SignUpViewModel:ViewModel(){
 
-    var emailVerification = MutableLiveData<Event<Boolean>>()
-    private set
+    private var sendEmailVerificationOnSuccess = MutableLiveData<Boolean>()
+    fun sendEmailOnSuccess():LiveData<Boolean> = sendEmailVerificationOnSuccess
 
-    var noInternet = MutableLiveData<Event<Boolean>>()// should not be Event
-    private set
+    private var sendEmailVerificationOnFail = MutableLiveData<Boolean>()
+    fun sendEmailOnFailed():LiveData<Boolean> = sendEmailVerificationOnFail
 
-    var exceptionErrorMessage = MutableLiveData<String?>()
-    private set
+    private var noInternet = MutableLiveData<Boolean>()
+    fun noInternetStatus():LiveData<Boolean> = noInternet
+
+    private var exceptionErrorMessage = MutableLiveData<String?>()
+    fun getExceptionMessage():LiveData<String?> = exceptionErrorMessage
 
 
     fun signUpAccount(email:String,password:String){
@@ -31,11 +35,11 @@ class SignUpViewModel:ViewModel(){
                 .createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     AuthenticationManager.getCreatedUserAccount()
-                    sendEmailVerification()
+                    runBlocking { sendEmailVerification() }
                     return@addOnCompleteListener
                 }
                 task.exception?.let {
-                    handleSignUpExceptions(task)
+                   runBlocking {handleSignUpExceptions(task)}
                 }
             }
         }
@@ -44,25 +48,25 @@ class SignUpViewModel:ViewModel(){
     }
 
 
-   private fun handleSignUpExceptions(task: Task<*>){
-        try {
-            task.exception!!
-        }catch (networkException:FirebaseNetworkException){
-            noInternet.value = Event(true)
-        }catch (ex:Exception){
-            exceptionErrorMessage.value = ex.message
-        }
+    private fun handleSignUpExceptions(task: Task<*>){
+            try {
+                task.exception!!
+            } catch (networkException: FirebaseNetworkException) {
+                noInternet.postValue(true)
+            } catch (ex: Exception) {
+                exceptionErrorMessage.postValue(ex.message)
+            }
     }
 
   private fun sendEmailVerification(){
-      viewModelScope.launch(Dispatchers.IO){
+
         AuthenticationManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                emailVerification.value = Event(true)
+                sendEmailVerificationOnSuccess.postValue(true)
                 return@addOnCompleteListener
             }
+            sendEmailVerificationOnFail.postValue(true)
 
-        }
         }
     }
 
