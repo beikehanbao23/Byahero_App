@@ -59,6 +59,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
 
+    implementation 'com.firebaseui:firebase-ui-auth:8.0.0'
     implementation 'com.google.firebase:firebase-firestore:23.0.3'
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.21")
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'

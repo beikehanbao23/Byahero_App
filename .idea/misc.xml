@@ -22,10 +22,10 @@
         <entry key="app/src/main/res/drawable/ic_network__two_color.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/drawable/ic_password.xml" value="0.3802083333333333" />
         <entry key="app/src/main/res/drawable/ic_search_signal.xml" value="0.37435897435897436" />
-        <entry key="app/src/main/res/drawable/ic_splashhh.xml" value="0.37552083333333336" />
+        <entry key="app/src/main/res/drawable/ic_splashhh.xml" value="0.75" />
         <entry key="app/src/main/res/drawable/ic_splashscreen.xml" value="0.5" />
         <entry key="app/src/main/res/drawable/ic_traveller.xml" value="0.37435897435897436" />
-        <entry key="app/src/main/res/drawable/ic_weather.xml" value="0.3802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_weather.xml" value="0.67" />
         <entry key="app/src/main/res/drawable/ic_weather_updates.xml" value="0.3802083333333333" />
         <entry key="app/src/main/res/drawable/inactive_indicator.xml" value="0.3802083333333333" />
         <entry key="app/src/main/res/drawable/no_internet_background.xml" value="0.18333333333333332" />
