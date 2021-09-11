@@ -5,11 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
-import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class SignUpViewModel:ViewModel(){
@@ -35,11 +33,11 @@ class SignUpViewModel:ViewModel(){
                 .createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     AuthenticationManager.getCreatedUserAccount()
-                    runBlocking { sendEmailVerification() }
+                    sendEmailVerification()
                     return@addOnCompleteListener
                 }
                 task.exception?.let {
-                   runBlocking {handleSignUpExceptions(task)}
+                   handleSignUpExceptions(it)
                 }
             }
         }
@@ -48,26 +46,29 @@ class SignUpViewModel:ViewModel(){
     }
 
 
-    private fun handleSignUpExceptions(task: Task<*>){
+    private fun handleSignUpExceptions(exception:Exception){
+
             try {
-                task.exception!!
+                throw exception
             } catch (networkException: FirebaseNetworkException) {
-                noInternet.postValue(true)
+                noInternet.value = true
             } catch (ex: Exception) {
-                exceptionErrorMessage.postValue(ex.message)
-            }
+                exceptionErrorMessage.value = ex.message
+
+        }
     }
 
   private fun sendEmailVerification(){
 
-        AuthenticationManager.getFirebaseUserInstance().sendEmailVerification().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                sendEmailVerificationOnSuccess.postValue(true)
-                return@addOnCompleteListener
+        AuthenticationManager.getFirebaseUserInstance().sendEmailVerification()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    sendEmailVerificationOnSuccess.postValue(true)
+                    return@addOnCompleteListener
+                }
+                sendEmailVerificationOnFail.postValue(true)
             }
-            sendEmailVerificationOnFail.postValue(true)
 
-        }
     }
 
 
