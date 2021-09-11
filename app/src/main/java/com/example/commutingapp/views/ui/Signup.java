@@ -122,25 +122,30 @@ public class Signup extends AppCompatActivity {
 
         showLoading();
         viewModel.signUpAccount(userEmail,userConfirmPassword);
-
+        finishLoading();
     }
 
 
 
 
     private void showLoading() {
-
-        circularProgressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
-        activitySignupBinding.editTextSignUpEmailAddress.setEnabled(false);
-        activitySignupBinding.editTextSignUpPassword.setEnabled(false);
-        activitySignupBinding.editTextSignUpConfirmPassword.setEnabled(false);
-        activitySignupBinding.TextViewAlreadyHaveAccount.setEnabled(false);
-        activitySignupBinding.TextViewLoginHere.setEnabled(false);
-        activitySignupBinding.BackButton.setEnabled(false);
-        activitySignupBinding.CreateButton.setEnabled(false);
+        processLoading(false, View.VISIBLE);
     }
 
+    private void finishLoading(){
+        processLoading(true,View.INVISIBLE);
+    }
 
+    private void processLoading(boolean attributesVisibility, int progressBarVisibility) {
+        circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
+        activitySignupBinding.editTextSignUpEmailAddress.setEnabled(attributesVisibility);
+        activitySignupBinding.editTextSignUpPassword.setEnabled(attributesVisibility);
+        activitySignupBinding.editTextSignUpConfirmPassword.setEnabled(attributesVisibility);
+        activitySignupBinding.TextViewAlreadyHaveAccount.setEnabled(attributesVisibility);
+        activitySignupBinding.TextViewLoginHere.setEnabled(attributesVisibility);
+        activitySignupBinding.BackButton.setEnabled(attributesVisibility);
+        activitySignupBinding.CreateButton.setEnabled(attributesVisibility);
+    }
 
 
     private void showEmailSentActivity() {
