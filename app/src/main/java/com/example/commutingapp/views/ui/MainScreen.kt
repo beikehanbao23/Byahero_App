@@ -8,11 +8,9 @@ import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.views.MenuButtons.CustomBackButton
-import com.facebook.login.LoginManager
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserInfo
-import timber.log.Timber
 import java.util.*
 
 class MainScreen : AppCompatActivity() {
@@ -88,12 +86,10 @@ class MainScreen : AppCompatActivity() {
         }
 
     fun logoutButtonIsClicked(view: View?) {
-        Timber.e("Logging out!")
         putToLoginFlow()
     }
 
     private fun signOutAccount() {
-        LoginManager.getInstance().logOut()
         AuthenticationManager.getFirebaseAuthInstance().signOut()
     }
 
