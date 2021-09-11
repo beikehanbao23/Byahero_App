@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.firebase.FirebaseNetworkException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import kotlinx.coroutines.*
 
 private const val timerCounts: Long = 120000
@@ -98,9 +97,6 @@ class EmailSentViewModel : ViewModel() {
                 throw exception
             } catch (networkException: FirebaseNetworkException) {
                 noInternetActivityTransition.value = true
-            } catch (ex: FirebaseAuthInvalidUserException) {
-                Log.e("Exception",
-                    ex.message.toString())// TODO: add livedata and observers in customDialogs
             } finally {
                 coroutine_IO_Job.cancel()
             }
