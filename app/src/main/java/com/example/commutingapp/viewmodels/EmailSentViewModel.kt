@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.Event
-import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import kotlinx.coroutines.*
@@ -88,15 +87,15 @@ class EmailSentViewModel : ViewModel() {
                     return@addOnCompleteListener
                 }
                 reload.exception?.let {
-                    runBlocking { handleEmailVerificationExceptions(reload) }
+                     handleEmailVerificationExceptions(it)
                 }
             }
             }
         }
 
-     private fun handleEmailVerificationExceptions(task: Task<*>) {
+     private fun handleEmailVerificationExceptions(exception:Exception) {
             try {
-                throw task.exception!!
+                throw exception
             } catch (networkException: FirebaseNetworkException) {
                 noInternetActivityTransition.value = true
             } catch (ex: FirebaseAuthInvalidUserException) {
