@@ -1,42 +1,50 @@
 package com.example.commutingapp.viewmodels
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 class IntroSliderViewModel : ViewModel() {
 
+    private var onNavigateToDetailsSuccess = MutableLiveData<Event<Boolean>>()
+    fun navigateToDetailsOnSuccess(): LiveData<Event<Boolean>> = onNavigateToDetailsSuccess
 
-    var onNavigateToDetailsSuccess = MutableLiveData<Event<Boolean>>()
-        private set
 
 
-    fun setUserSignInProvider() {
-        viewModelScope.launch(Dispatchers.Main) {
-            if (AuthenticationManager.hasAccountRemainingInCache()) {
-                if (signInSuccessWithAnyProviders()) {
-                    onNavigateToDetailsSuccess.value = Event(true)
-                }
+
+     fun setUserSignInProvider() = runBlocking {
+
+        AuthenticationManager.initializeFirebaseApp()
+        AuthenticationManager.getCreatedUserAccount()
+
+        if (AuthenticationManager.hasAccountRemainingInCache()) {
+            if (signInSuccessWithAnyProvidersAsync()) {
+                onNavigateToDetailsSuccess.value = Event(true)
+
             }
         }
     }
 
-    private suspend fun signInSuccessWithAnyProviders(): Boolean {
+
+     }
+
+
+
+
+    private suspend fun signInSuccessWithAnyProvidersAsync(): Boolean {
+
         return withContext(Dispatchers.IO) {
-                AuthenticationManager.getFirebaseUserInstance().isEmailVerified ||
-                        isUserSignInUsingFacebook() ||
-                        isUserSignInUsingGoogle()
-
+            AuthenticationManager.getFirebaseUserInstance().isEmailVerified ||
+                    isUserSignInUsingFacebook() ||
+                    isUserSignInUsingGoogle()
         }
-
 
     }
 
@@ -44,15 +52,12 @@ class IntroSliderViewModel : ViewModel() {
     private fun isUserSignInUsingGoogle() = getProviderIdResult(GoogleAuthProvider.PROVIDER_ID)
 
 
-    private  fun getProviderIdResult(id: String): Boolean {
-            AuthenticationManager.getFirebaseUserInstance().providerData.forEach {
-                Timber.e(it.providerId)
-                if (it.providerId == id) {
-                    return true // return ui.getProviderId().equals(id) does not work here, always returning 'firebase' as providerId
-                }
+    private fun getProviderIdResult(id: String): Boolean {
+        AuthenticationManager.getFirebaseUserInstance().providerData.forEach {
+            if (it.providerId == id) {
+                return true
+            }
         }
         return false
     }
 
-
-}

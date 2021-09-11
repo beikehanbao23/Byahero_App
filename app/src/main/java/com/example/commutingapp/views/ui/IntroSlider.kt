@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.ActivityIntroSliderBinding
-import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher.startActivityOf
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.viewmodels.IntroSliderViewModel
@@ -36,8 +35,7 @@ class IntroSlider : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         initializeAttributes()
-        AuthenticationManager.initializeFirebaseApp()
-        AuthenticationManager.getCreatedUserAccount()
+
         viewModel = ViewModelProvider(this).get(IntroSliderViewModel::class.java)
         if (userHasAlreadySeenTheIntroSliders()) {
             startTransitionToNextActivity()
@@ -50,15 +48,15 @@ class IntroSlider : AppCompatActivity() {
 
     private fun startTransitionToNextActivity() {
         viewModel.setUserSignInProvider()
-        viewModel.onNavigateToDetailsSuccess.observe(this){
+        viewModel.navigateToDetailsOnSuccess().observe(this){
                 if (it.getContentIfNotHandled() != null) {
                     showMainScreenActivity()
                 }
             }
 
 
-        if (viewModel.onNavigateToDetailsSuccess.value == null) {
-            showSignInActivity()
+        if (viewModel.navigateToDetailsOnSuccess().value == null) {
+           showSignInActivity()
         }
     }
     private fun showMainScreenActivity() {
