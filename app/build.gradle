@@ -3,11 +3,9 @@ plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
     id 'kotlin-android'
-
+    id("androidx.navigation.safeargs")
 }
 
-
-apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'kotlin-kapt'
 
 android {
@@ -92,7 +90,7 @@ dependencies {
     // Dagger Android
     api 'com.google.dagger:dagger-android:2.35.1'
     api 'com.google.dagger:dagger-android-support:2.28.1'
-    kapt 'com.google.dagger:dagger-android-processor:2.23.2'
+    //kapt 'com.google.dagger:dagger-android-processor:2.23.2'
 
     // Easy Permissions
     implementation 'pub.devrel:easypermissions:3.0.0'
