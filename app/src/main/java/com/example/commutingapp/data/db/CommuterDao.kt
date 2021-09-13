@@ -23,7 +23,7 @@ ORDER BY
  CASE WHEN :column = 'DISTANCE' THEN distanceInMeters END DESC,
  CASE WHEN :column = 'PLACES' THEN wentPlaces END DESC
 """)
-suspend fun filterBy(column:CommuterColumn):LiveData<List<Commuter>>
+   fun filterBy(column:String):LiveData<List<Commuter>>
 
 
 
