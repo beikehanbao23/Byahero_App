@@ -2,10 +2,9 @@ package com.example.commutingapp.data.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import androidx.room.Dao
 
 @Dao
-interface Dao {
+interface CommuterDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCommute(commuter: Commuter)
