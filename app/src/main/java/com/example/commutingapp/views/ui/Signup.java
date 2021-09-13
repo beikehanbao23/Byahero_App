@@ -8,8 +8,8 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.commutingapp.data.users.UserValidatorManager;
-import com.example.commutingapp.data.users.UserValidatorModel;
+import com.example.commutingapp.utils.InputValidator.users.UserValidatorManager;
+import com.example.commutingapp.utils.InputValidator.users.UserValidatorModel;
 import com.example.commutingapp.databinding.ActivitySignupBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager;

@@ -1,18 +1,14 @@
 package com.example.commutingapp.views.ui;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.commutingapp.R;
-import com.example.commutingapp.data.users.UserValidatorModel;
+import com.example.commutingapp.utils.InputValidator.users.UserValidatorModel;
 import com.example.commutingapp.databinding.ActivitySignInBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.views.Logger.CustomDialogProcessor;
@@ -41,7 +37,7 @@ import com.example.commutingapp.utils.InternetConnection.*;
 import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
-import com.example.commutingapp.data.users.UserValidatorManager;
+import com.example.commutingapp.utils.InputValidator.users.UserValidatorManager;
 
 
 
