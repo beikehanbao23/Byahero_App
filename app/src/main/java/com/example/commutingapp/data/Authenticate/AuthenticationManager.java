@@ -1,4 +1,4 @@
-package com.example.commutingapp.utils.FirebaseUserManager;
+package com.example.commutingapp.data.Authenticate;
 
 
 
@@ -29,7 +29,7 @@ public class AuthenticationManager {
 
     public static void initializeFirebaseApp() {
 
-        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();// todo make an init
     }
 
     public static boolean hasAccountRemainingInCache() {
