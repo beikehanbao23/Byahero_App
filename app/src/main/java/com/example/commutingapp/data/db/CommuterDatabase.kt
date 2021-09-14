@@ -11,5 +11,5 @@ import androidx.room.TypeConverters
 @TypeConverters(Converters::class)
 abstract class CommuterDatabase:RoomDatabase(){
 
-    abstract fun getRunDao():CommuterDao
+    abstract fun getCommuterDao():CommuterDao
 }

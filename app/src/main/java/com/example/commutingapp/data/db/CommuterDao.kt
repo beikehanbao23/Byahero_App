@@ -7,15 +7,15 @@ import androidx.room.*
 interface CommuterDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCommute(commuter: Commuter)
+    suspend fun insertCommuter(commuter: Commuter)
 
     @Delete
-    suspend fun deleteCommute(commuter: Commuter)
+    suspend fun deleteCommuter(commuter: Commuter)
 
 
 
 @Query("""
-SELECT * FROM commute_table
+SELECT * FROM commuter_table
 ORDER BY 
  CASE WHEN :column = 'TIMESTAMP' THEN timestamp END DESC,
  CASE WHEN :column = 'TIME_IN_MILLIS' THEN timeInMillis END DESC,
@@ -27,12 +27,12 @@ ORDER BY
 
 
 
-    @Query("SELECT SUM(timeInMillis) FROM commute_table")
+    @Query("SELECT SUM(timeInMillis) FROM commuter_table")
     fun getTotalTimeInMillis():LiveData<Long>
 
-    @Query("SELECT AVG(averageSpeed_KmH) FROM commute_table")
+    @Query("SELECT AVG(averageSpeed_KmH) FROM commuter_table")
     fun getTotalAverageSpeed():LiveData<Float>
 
-    @Query("SELECT SUM(distanceInMeters)FROM commute_table")
+    @Query("SELECT SUM(distanceInMeters)FROM commuter_table")
     fun getTotalDistance():LiveData<Int>
 }

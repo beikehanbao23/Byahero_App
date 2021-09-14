@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "Commute_Table")
+@Entity(tableName = "Commuter_Table")
 data class Commuter(
     var image: Bitmap? = null,
     var timestamp: Long = 0L,
