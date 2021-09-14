@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
+import com.example.commutingapp.data.Authenticate.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.firebase.FirebaseNetworkException
 import kotlinx.coroutines.*
