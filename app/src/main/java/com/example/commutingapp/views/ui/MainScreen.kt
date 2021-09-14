@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
-import com.example.commutingapp.utils.FirebaseUserManager.AuthenticationManager
+import com.example.commutingapp.data.Authenticate.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.views.MenuButtons.CustomBackButton
@@ -14,7 +14,7 @@ import com.google.firebase.auth.UserInfo
 import java.util.*
 
 class MainScreen : AppCompatActivity() {
-
+    //TODO refactor and inject CommuterDao
     private var activityMainScreenBinding: ActivityMainScreenBinding? = null
     private lateinit var userInfo: MutableList<out UserInfo>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +43,7 @@ class MainScreen : AppCompatActivity() {
     }
 
 
-
+//
     private val userProfileName: String?
         get() {
             for (user in userInfo) {
@@ -85,6 +85,7 @@ class MainScreen : AppCompatActivity() {
             return list
         }
 
+    //
     fun logoutButtonIsClicked(view: View?) {
         putToLoginFlow()
     }
