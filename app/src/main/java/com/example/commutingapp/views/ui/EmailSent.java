@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.commutingapp.R;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.databinding.CustomEmailsentDialogBinding;
-import com.example.commutingapp.data.Auth.AuthenticationManager;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.viewmodels.EmailSentViewModel;
 import com.example.commutingapp.views.Logger.CustomDialogProcessor;
@@ -35,7 +34,6 @@ public class EmailSent extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         initializeAttributes();
-        AuthenticationManager.initializeFirebaseApp();
         displayUserEmailToTextView();
         initializeObservers();
         viewModel.refreshEmailSynchronously();
