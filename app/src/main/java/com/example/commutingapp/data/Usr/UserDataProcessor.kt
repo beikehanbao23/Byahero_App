@@ -1,7 +1,9 @@
 package com.example.commutingapp.data.Usr
 
 class UserDataProcessor<T> constructor(private val userData: UserData<T>) {
-
+    fun saveCreatedAccount(){
+        userData.saveCreatedAccount()
+    }
     fun getUserProviderData():T?{
         return userData.getUserProviderData()
     }
@@ -11,7 +13,5 @@ class UserDataProcessor<T> constructor(private val userData: UserData<T>) {
     fun hasAccountRemainingInCache():Boolean{
         return userData.hasAccountRemainingInCache()
     }
-    fun saveCreatedAccount(){
-        userData.saveCreatedAccount()
-    }
+
 }
