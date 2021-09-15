@@ -12,7 +12,7 @@ import com.example.commutingapp.utils.InputValidator.users.UserValidatorManager;
 import com.example.commutingapp.utils.InputValidator.users.UserValidatorModel;
 import com.example.commutingapp.databinding.ActivitySignupBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
-import com.example.commutingapp.data.Authenticate.AuthenticationManager;
+import com.example.commutingapp.data.Auth.AuthenticationManager;
 import com.example.commutingapp.utils.InternetConnection.ConnectionManager;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;

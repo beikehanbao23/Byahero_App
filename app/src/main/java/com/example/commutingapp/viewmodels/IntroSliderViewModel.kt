@@ -3,7 +3,7 @@ package com.example.commutingapp.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.commutingapp.data.Authenticate.AuthenticationManager
+import com.example.commutingapp.data.Auth.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider

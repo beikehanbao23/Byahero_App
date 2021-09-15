@@ -32,7 +32,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.GoogleAuthProvider;
 import java.util.Arrays;
 import java.util.Objects;
-import com.example.commutingapp.data.Authenticate.*;
+import com.example.commutingapp.data.Auth.*;
 import com.example.commutingapp.utils.InternetConnection.*;
 import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;

@@ -3,8 +3,8 @@ package com.example.commutingapp.views.ui
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.commutingapp.data.Auth.AuthenticationManager
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
-import com.example.commutingapp.data.Authenticate.AuthenticationManager
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.views.MenuButtons.CustomBackButton
