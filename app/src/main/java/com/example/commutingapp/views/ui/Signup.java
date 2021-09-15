@@ -39,7 +39,6 @@ public class Signup extends AppCompatActivity {
     private CircularProgressbarBinding circularProgressbarBinding;
 
     private FirebaseUserWrapper firebaseUser;
-    private FirebaseAuthenticatorWrapper authenticator;
 
     private UserDataProcessor<List<UserInfo>> userData;
     private UserAuthenticationProcessor<Task<AuthResult>> userAuth;
@@ -77,9 +76,8 @@ public class Signup extends AppCompatActivity {
         customDialogProcessor = new CustomDialogProcessor(this);
         viewModel = new ViewModelProvider(this).get(SignUpViewModel.class);
         firebaseUser = new FirebaseUserWrapper();
-        authenticator = new FirebaseAuthenticatorWrapper();
         userData = new UserDataProcessor(firebaseUser);
-        userAuth = new UserAuthenticationProcessor(authenticator);
+        userAuth = new UserAuthenticationProcessor(new FirebaseAuthenticatorWrapper());
         userEmail = new UserEmailProcessor(firebaseUser);
     }
 
@@ -125,7 +123,7 @@ public class Signup extends AppCompatActivity {
 
     private void signOutPreviousAccount() {
 
-      authenticator.signOut();
+        userAuth.signOut();
     }
 
     private boolean isUserCreatedNewAccount() {

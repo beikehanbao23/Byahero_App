@@ -1,17 +1,32 @@
 package com.example.commutingapp.views.ui;
 
+import static com.example.commutingapp.R.string.disabledAccountMessage;
+import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.commutingapp.R;
-import com.example.commutingapp.utils.InputValidator.users.UserValidatorModel;
+import com.example.commutingapp.data.Auth.AuthenticationManager;
+import com.example.commutingapp.data.Auth.FirebaseAuthenticatorWrapper;
+import com.example.commutingapp.data.Auth.UserAuthenticationProcessor;
+import com.example.commutingapp.data.Usr.FirebaseUserWrapper;
+import com.example.commutingapp.data.Usr.UserDataProcessor;
+import com.example.commutingapp.data.Usr.UserEmailProcessor;
 import com.example.commutingapp.databinding.ActivitySignInBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
+import com.example.commutingapp.utils.InputValidator.users.UserValidatorManager;
+import com.example.commutingapp.utils.InputValidator.users.UserValidatorModel;
+import com.example.commutingapp.utils.InternetConnection.ConnectionManager;
+import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
+import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
 import com.example.commutingapp.views.Logger.CustomDialogProcessor;
+import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -27,24 +42,17 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
+
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
-import com.example.commutingapp.data.Auth.*;
-import com.example.commutingapp.utils.InternetConnection.*;
-import com.example.commutingapp.views.MenuButtons.CustomBackButton;
-import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
-import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
-import com.example.commutingapp.utils.InputValidator.users.UserValidatorManager;
 
-
-
-import static com.example.commutingapp.R.string.disabledAccountMessage;
-import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
-
-
+import timber.log.Timber;
 
 
 public class SignIn extends AppCompatActivity {
@@ -59,7 +67,11 @@ public class SignIn extends AppCompatActivity {
     private CircularProgressbarBinding circularProgressbarBinding;
 
 
+    private FirebaseUserWrapper firebaseUser;
 
+    private UserAuthenticationProcessor<Task<AuthResult>> userAuth;
+    private UserDataProcessor<List<UserInfo>> userData;
+    private UserEmailProcessor<Task<Void>> userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +79,6 @@ public class SignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initializeAttributes();
         createRequestSignOptionsGoogle();
-        AuthenticationManager.initializeFirebaseApp();
         FacebookSdk.sdkInitialize(getApplicationContext());
         facebookCallBackManager = CallbackManager.Factory.create();
         removeFacebookUserAccountPreviousToken();
@@ -83,17 +94,17 @@ public class SignIn extends AppCompatActivity {
         new ScreenDimension(getWindow()).setWindowToFullScreen();
         setContentView(activitySignInBinding.getRoot());
         customDialogProcessor = new CustomDialogProcessor(this);
-
-
-
+        firebaseUser = new FirebaseUserWrapper();
+        userAuth = new UserAuthenticationProcessor(new FirebaseAuthenticatorWrapper());
+        userData = new UserDataProcessor(firebaseUser);
+        userEmail =  new UserEmailProcessor(firebaseUser);
     }
-
-
 
 
     public void FacebookButtonIsClicked(View view) {
         loginViaFacebook();
     }
+
     public void loginViaFacebook() {
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
         LoginManager.getInstance().registerCallback(facebookCallBackManager, new FacebookCallback<LoginResult>() {
@@ -131,40 +142,43 @@ public class SignIn extends AppCompatActivity {
     private void handleFacebookAccessToken(AccessToken token) {
 
         AuthCredential authCredential = FacebookAuthProvider.getCredential(token.getToken());
-        AuthenticationManager.getFirebaseAuthInstance().signInWithCredential(authCredential).
+        userAuth.signInWithCredential(authCredential).
                 addOnCompleteListener(this,
                         task -> {
                             if (task.isSuccessful()) {
-                                AuthenticationManager.getCreatedUserAccount();
+                                userData.saveCreatedAccount();
                                 showMainScreenActivity();
                                 return;
                             }
-                            if(task.getException()!=null) {
+                            if (task.getException() != null) {
                                 finishLoading();
                                 handleFacebookSignInException(task.getException());
                             }
                         });
     }
+
     private void removeFacebookUserAccountPreviousToken() {
         if (AccessToken.getCurrentAccessToken() != null) {
             LoginManager.getInstance().logOut();
         }
     }
-    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
         handleFacebookSignInCallback(requestCode, resultCode, data);
         handleGoogleSignInCallback(requestCode, data);
 
     }
-    private void handleFacebookSignInCallback(int requestCode,int resultCode, Intent data){
+
+    private void handleFacebookSignInCallback(int requestCode, int resultCode, Intent data) {
         facebookCallBackManager.onActivityResult(requestCode, resultCode, data);
     }
 
 
-
-    private void handleGoogleSignInCallback(int requestCode, Intent data){
-        if(requestCode == RC_SIGN_IN){
+    private void handleGoogleSignInCallback(int requestCode, Intent data) {
+        if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
@@ -176,21 +190,24 @@ public class SignIn extends AppCompatActivity {
         }
 
     }
-    private void handleGoogleSignInException(ApiException error){
 
-        if(error.getStatus().isCanceled()){
+    private void handleGoogleSignInException(ApiException error) {
+
+        if (error.getStatus().isCanceled()) {
             return;
         }
-        if(!error.getStatus().isSuccess() && noInternetConnection()){
+        if (!error.getStatus().isSuccess() && noInternetConnection()) {
             showNoInternetActivity();
             return;
         }
-        Log.e("This only happens ","when onCancel() event occur");
+        Timber.e("when onCancel() event occur");
 
     }
-    private boolean noInternetConnection(){
+
+    private boolean noInternetConnection() {
         return !new ConnectionManager(this).internetConnectionAvailable();
     }
+
     private void createRequestSignOptionsGoogle() {
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -199,12 +216,13 @@ public class SignIn extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
     }
+
     private void authenticateFirebaseWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        AuthenticationManager.getFirebaseAuthInstance().signInWithCredential(credential)
+        userAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        AuthenticationManager.getCreatedUserAccount();
+                        userData.saveCreatedAccount();
                         showMainScreenActivity();
                         return;
                     }
@@ -212,27 +230,33 @@ public class SignIn extends AppCompatActivity {
                     customDialogProcessor.showErrorDialog("Error", "Authentication Failed. Please try again later.");
                 });
     }
-    @Override protected void onDestroy() {
+
+    @Override
+    protected void onDestroy() {
         LoginManager.getInstance().unregisterCallback(facebookCallBackManager);
         destroyBinding();
         super.onDestroy();
     }
-    private void destroyBinding(){
+
+    private void destroyBinding() {
         activitySignInBinding = null;
         circularProgressbarBinding = null;
     }
+
     public void SignUpTextClicked(View view) {
         showSignUpActivity();
     }
-    @Override public void onBackPressed() {
-        new CustomBackButton(this,this).applyDoubleClickToExit();
+
+    @Override
+    public void onBackPressed() {
+        new CustomBackButton(this, this).applyDoubleClickToExit();
     }
 
     public void SignInButtonIsClicked(View view) {
         loginViaDefaultSignIn();
     }
 
-    private void loginViaDefaultSignIn(){
+    private void loginViaDefaultSignIn() {
         UserValidatorManager user = new UserValidatorManager(new UserValidatorModel(this,
                 activitySignInBinding.editloginTextEmail,
                 activitySignInBinding.editLoginTextPassword,
@@ -249,16 +273,16 @@ public class SignIn extends AppCompatActivity {
 
         proceedToSignIn();
     }
+
     private void proceedToSignIn() {
 
         String email = Objects.requireNonNull(activitySignInBinding.editloginTextEmail.getText()).toString().trim();
         String userPassword = Objects.requireNonNull(activitySignInBinding.editLoginTextPassword.getText()).toString().trim();
 
         showLoading();
-        AuthenticationManager.getFirebaseAuthInstance().signInWithEmailAndPassword(
-                email, userPassword).addOnCompleteListener(this, signInTask -> {
+        userAuth.signInWithEmailAndPassword(email, userPassword).addOnCompleteListener(this, signInTask -> {
             if (signInTask.isSuccessful()) {
-                AuthenticationManager.getCreatedUserAccount();
+                userData.saveCreatedAccount();
                 verifyUserEmail();
                 return;
             }
@@ -269,10 +293,10 @@ public class SignIn extends AppCompatActivity {
         });
 
     }
-    private void verifyUserEmail() {
-        AuthenticationManager.getFirebaseUserInstance().reload().addOnCompleteListener(emailReload -> {
 
-            if (emailReload.isSuccessful() && AuthenticationManager.getFirebaseUserInstance().isEmailVerified()) {
+    private void verifyUserEmail() {
+        userEmail.reloadEmail().addOnCompleteListener(emailReload -> {
+            if (emailReload.isSuccessful() && Objects.requireNonNull(userEmail.isEmailVerified())) {
                 showMainScreenActivity();
                 return;
             }
@@ -280,6 +304,7 @@ public class SignIn extends AppCompatActivity {
 
         });
     }
+
     private void handleFirebaseSignInException(Task<?> task) {
         try {
             throw Objects.requireNonNull(task.getException());
@@ -291,7 +316,8 @@ public class SignIn extends AppCompatActivity {
             customDialogProcessor.showErrorDialog("Oops..", Objects.requireNonNull(e.getMessage()));
         }
     }
-    private void handleUserAccountExceptions(FirebaseAuthInvalidUserException exception){
+
+    private void handleUserAccountExceptions(FirebaseAuthInvalidUserException exception) {
         if (exception.getErrorCode().equals("ERROR_USER_DISABLED")) {
             customDialogProcessor.showErrorDialog("Oops..", getString(disabledAccountMessage));
             return;
@@ -301,12 +327,14 @@ public class SignIn extends AppCompatActivity {
     }
 
     private void showLoading() {
-        processLoading(false,View.VISIBLE);
+        processLoading(false, View.VISIBLE);
     }
+
     private void finishLoading() {
-        processLoading(true,View.INVISIBLE);
+        processLoading(true, View.INVISIBLE);
     }
-    private void processLoading(boolean visible, int progressBarVisibility){
+
+    private void processLoading(boolean visible, int progressBarVisibility) {
         circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);
         activitySignInBinding.editloginTextEmail.setEnabled(visible);
         activitySignInBinding.editLoginTextPassword.setEnabled(visible);
@@ -317,21 +345,26 @@ public class SignIn extends AppCompatActivity {
         activitySignInBinding.TextViewSignUp.setEnabled(visible);
 
     }
+
     private void showMainScreenActivity() {
 
-        ActivitySwitcher.INSTANCE.startActivityOf(this,this, MainScreen.class);
+        ActivitySwitcher.INSTANCE.startActivityOf(this, this, MainScreen.class);
     }
+
     private void showNoInternetActivity() {
 
         customDialogProcessor.showNoInternetDialog();
     }
+
     private void showEmailSentActivity() {
 
-        ActivitySwitcher.INSTANCE.startActivityOf(this,this, EmailSent.class);
+        ActivitySwitcher.INSTANCE.startActivityOf(this, this, EmailSent.class);
     }
-    private void showSignUpActivity(){
-        ActivitySwitcher.INSTANCE.startActivityOf(this,this,Signup.class);
+
+    private void showSignUpActivity() {
+        ActivitySwitcher.INSTANCE.startActivityOf(this, this, Signup.class);
     }
+
     public void googleButtonIsClicked(View view) {
         loginViaGoogle();
     }
