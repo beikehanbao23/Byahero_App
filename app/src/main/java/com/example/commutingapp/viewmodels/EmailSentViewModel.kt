@@ -6,8 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.commutingapp.data.Auth.AuthenticationManager
+import com.example.commutingapp.data.Usr.FirebaseUserWrapper
+import com.example.commutingapp.data.Usr.UserEmailProcessor
 import com.example.commutingapp.utils.ui_utilities.Event
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
 import kotlinx.coroutines.*
 
@@ -18,6 +20,7 @@ private const val coroutineInterval: Long = 2200
 class EmailSentViewModel : ViewModel() {
 
     private lateinit var verificationTimer: CountDownTimer
+    private var userEmailProcessor:UserEmailProcessor<Task<Void>?> = UserEmailProcessor(FirebaseUserWrapper())
 
     lateinit var coroutine_IO_Job: Job
     private set
@@ -46,7 +49,7 @@ class EmailSentViewModel : ViewModel() {
     fun displayUserEmailToTextView(): LiveData<String> {
 
         viewModelScope.launch(Dispatchers.Main) {
-            AuthenticationManager.getFirebaseUserInstance().email?.let {
+            userEmailProcessor.getUserEmail()?.let {
                 displayUserEmail.value = it
             }
         }.also {
@@ -67,8 +70,8 @@ class EmailSentViewModel : ViewModel() {
 
     fun sendEmailVerification() {
         viewModelScope.launch(Dispatchers.IO) {
-            AuthenticationManager.getFirebaseUserInstance().sendEmailVerification()
-                .addOnCompleteListener { task ->
+            userEmailProcessor.sendEmailVerification()
+                ?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         sendEmailOnSuccess.postValue(true)
                         return@addOnCompleteListener
@@ -80,8 +83,8 @@ class EmailSentViewModel : ViewModel() {
 
     private suspend fun reloadUserEmail() {
         coroutineScope {
-            AuthenticationManager.getFirebaseUserInstance().reload().addOnCompleteListener { reload ->
-                if (reload.isSuccessful && AuthenticationManager.getFirebaseUserInstance().isEmailVerified) {
+            userEmailProcessor.reloadEmail()?.addOnCompleteListener { reload ->
+                if (reload.isSuccessful && userEmailProcessor.isEmailVerified() == true) {
                     mainScreenActivityTransition.postValue(Event(true))
                     return@addOnCompleteListener
                 }

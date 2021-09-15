@@ -3,10 +3,14 @@ package com.example.commutingapp.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.commutingapp.data.Auth.AuthenticationManager
+import com.example.commutingapp.data.Usr.FirebaseUserWrapper
+import com.example.commutingapp.data.Usr.UserDataProcessor
+import com.example.commutingapp.data.Usr.UserEmailProcessor
 import com.example.commutingapp.utils.ui_utilities.Event
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -14,17 +18,16 @@ import kotlinx.coroutines.withContext
 class IntroSliderViewModel : ViewModel() {
 
     private var onNavigateToDetailsSuccess = MutableLiveData<Event<Boolean>>()
+    private val firebaseUser = FirebaseUserWrapper()
+    private val userData:UserDataProcessor<List< UserInfo>?> = UserDataProcessor(firebaseUser)
+    private val userEmail:UserEmailProcessor<Task<Void>?> = UserEmailProcessor(firebaseUser)
+
     fun navigateToDetailsOnSuccess(): LiveData<Event<Boolean>> = onNavigateToDetailsSuccess
 
 
+    fun setUserSignInProvider() = runBlocking {
 
-
-     fun setUserSignInProvider() = runBlocking {
-
-        AuthenticationManager.initializeFirebaseApp()
-        AuthenticationManager.getCreatedUserAccount()
-
-        if (AuthenticationManager.hasAccountRemainingInCache()) {
+        if (userData.hasAccountRemainingInCache()) {
             if (signInSuccessWithAnyProvidersAsync()) {
                 onNavigateToDetailsSuccess.value = Event(true)
 
@@ -33,15 +36,9 @@ class IntroSliderViewModel : ViewModel() {
     }
 
 
-     }
-
-
-
-
     private suspend fun signInSuccessWithAnyProvidersAsync(): Boolean {
-
         return withContext(Dispatchers.IO) {
-            AuthenticationManager.getFirebaseUserInstance().isEmailVerified ||
+            userEmail.isEmailVerified() == true ||
                     isUserSignInUsingFacebook() ||
                     isUserSignInUsingGoogle()
         }
@@ -53,11 +50,13 @@ class IntroSliderViewModel : ViewModel() {
 
 
     private fun getProviderIdResult(id: String): Boolean {
-        AuthenticationManager.getFirebaseUserInstance().providerData.forEach {
+
+    userData.getUserProviderData()?.forEach {
             if (it.providerId == id) {
                 return true
             }
         }
         return false
     }
+}
 
