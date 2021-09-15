@@ -20,7 +20,6 @@ private const val coroutineInterval: Long = 2200
 class EmailSentViewModel : ViewModel() {
 
     private lateinit var verificationTimer: CountDownTimer
-    private var userEmailProcessor:UserEmailProcessor<Task<Void>?> = UserEmailProcessor(FirebaseUserWrapper())
 
     lateinit var coroutine_IO_Job: Job
     private set
@@ -45,6 +44,7 @@ class EmailSentViewModel : ViewModel() {
 
     private var displayUserEmail = MutableLiveData<String>()
 
+    private var userEmailProcessor:UserEmailProcessor<Task<Void>?> = UserEmailProcessor(FirebaseUserWrapper())
 
     fun displayUserEmailToTextView(): LiveData<String> {
 
