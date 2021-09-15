@@ -8,18 +8,26 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.commutingapp.data.Auth.FirebaseAuthenticatorWrapper;
+import com.example.commutingapp.data.Auth.UserAuthenticationProcessor;
+import com.example.commutingapp.data.Usr.FirebaseUserWrapper;
+import com.example.commutingapp.data.Usr.UserDataProcessor;
+import com.example.commutingapp.data.Usr.UserEmailProcessor;
 import com.example.commutingapp.utils.InputValidator.users.UserValidatorManager;
 import com.example.commutingapp.utils.InputValidator.users.UserValidatorModel;
 import com.example.commutingapp.databinding.ActivitySignupBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
-import com.example.commutingapp.data.Auth.AuthenticationManager;
 import com.example.commutingapp.utils.InternetConnection.ConnectionManager;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
 import com.example.commutingapp.viewmodels.SignUpViewModel;
 import com.example.commutingapp.views.Logger.CustomDialogProcessor;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.UserInfo;
 
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -30,6 +38,12 @@ public class Signup extends AppCompatActivity {
     private ActivitySignupBinding activitySignupBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
 
+    private FirebaseUserWrapper firebaseUser;
+    private FirebaseAuthenticatorWrapper authenticator;
+
+    private UserDataProcessor<List<UserInfo>> userData;
+    private UserAuthenticationProcessor<Task<AuthResult>> userAuth;
+    private UserEmailProcessor<Task<Void>> userEmail;
     private SignUpViewModel viewModel;
 
 
@@ -37,7 +51,6 @@ public class Signup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeAttributes();
-        AuthenticationManager.initializeFirebaseApp();
         initializeObservers();
     }
     private void initializeObservers(){
@@ -63,6 +76,11 @@ public class Signup extends AppCompatActivity {
         setContentView(activitySignupBinding.getRoot());
         customDialogProcessor = new CustomDialogProcessor(this);
         viewModel = new ViewModelProvider(this).get(SignUpViewModel.class);
+        firebaseUser = new FirebaseUserWrapper();
+        authenticator = new FirebaseAuthenticatorWrapper();
+        userData = new UserDataProcessor(firebaseUser);
+        userAuth = new UserAuthenticationProcessor(authenticator);
+        userEmail = new UserEmailProcessor(firebaseUser);
     }
 
     @Override
@@ -91,8 +109,8 @@ public class Signup extends AppCompatActivity {
             customDialogProcessor.showNoInternetDialog();
             return;
         }
-        AuthenticationManager.getCreatedUserAccount();
-        if (AuthenticationManager.hasAccountRemainingInCache() && isUserCreatedNewAccount()) {
+
+        if (userData.hasAccountRemainingInCache() && isUserCreatedNewAccount()) {
             signOutPreviousAccount();
             ProceedToSignUp();
             return;
@@ -106,12 +124,13 @@ public class Signup extends AppCompatActivity {
     }
 
     private void signOutPreviousAccount() {
-        AuthenticationManager.getFirebaseAuthInstance().signOut();
+
+      authenticator.signOut();
     }
 
     private boolean isUserCreatedNewAccount() {
         String currentEmail = Objects.requireNonNull(activitySignupBinding.editTextSignUpEmailAddress.getText()).toString().trim();
-        String previousEmail = AuthenticationManager.getFirebaseUserInstance().getEmail();
+        String previousEmail = userEmail.getUserEmail();
         return !Objects.equals(previousEmail, currentEmail);
     }
 
