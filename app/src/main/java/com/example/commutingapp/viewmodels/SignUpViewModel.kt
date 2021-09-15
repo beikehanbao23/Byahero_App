@@ -32,11 +32,11 @@ class SignUpViewModel : ViewModel() {
     fun getExceptionMessage(): LiveData<String?> = exceptionErrorMessage
 
     private val userAuthentication = FirebaseAuthenticatorWrapper()
-    private val authenticate: UserAuthenticationProcessor<Task<AuthResult>> = UserAuthenticationProcessor(userAuthentication)
+    private val authenticator: UserAuthenticationProcessor<Task<AuthResult>> = UserAuthenticationProcessor(userAuthentication)
 
-    private val user = FirebaseUserWrapper()
-    private val userDataProcessor: UserDataProcessor<List<UserInfo>?> = UserDataProcessor(user)
-    private val userEmailProcessor: UserEmailProcessor<Task<Void>?> = UserEmailProcessor(user)
+    private val firebaseUser = FirebaseUserWrapper()
+    private val userDataProcessor: UserDataProcessor<List<UserInfo>?> = UserDataProcessor(firebaseUser)
+    private val userEmailProcessor: UserEmailProcessor<Task<Void>?> = UserEmailProcessor(firebaseUser)
 
 
 
@@ -52,7 +52,7 @@ class SignUpViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
 
-            authenticate.createUserWithEmailAndPassword(email, password)
+            authenticator.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         userDataProcessor.saveCreatedAccount()
