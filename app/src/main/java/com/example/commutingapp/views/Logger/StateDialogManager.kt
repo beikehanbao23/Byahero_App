@@ -1,6 +1,6 @@
 package com.example.commutingapp.views.Logger
 
-import com.example.commutingapp.views.Logger.interfaces.MutableDialogPresenter
+import com.example.commutingapp.views.Logger.Interface.MutableDialogPresenter
 
 class StateDialogManager
 constructor(

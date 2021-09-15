@@ -1,4 +1,4 @@
-package com.example.commutingapp.views.Logger.interfaces
+package com.example.commutingapp.views.Logger.Interface
 
 interface ImmutableDialogPresenter  {
     fun showDialog()

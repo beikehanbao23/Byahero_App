@@ -2,10 +2,10 @@ package com.example.commutingapp.views.Logger
 
 import android.app.Activity
 import android.app.Dialog
-import com.example.commutingapp.views.Logger.Abstracts.ErrorStateDialogWrapper
-import com.example.commutingapp.views.Logger.Abstracts.NoInternetDialogWrapper
-import com.example.commutingapp.views.Logger.Abstracts.SuccessStateDialogWrapper
-import com.example.commutingapp.views.Logger.Abstracts.WarningStateDialogWrapper
+import com.example.commutingapp.views.Logger.Wrappers.ErrorStateDialogWrapper
+import com.example.commutingapp.views.Logger.Wrappers.NoInternetDialogWrapper
+import com.example.commutingapp.views.Logger.Wrappers.SuccessStateDialogWrapper
+import com.example.commutingapp.views.Logger.Wrappers.WarningStateDialogWrapper
 
 class CustomDialogProcessor( var activity: Activity) {
     private val noInternetDialogWrapper = NoInternetDialogWrapper(context = activity)

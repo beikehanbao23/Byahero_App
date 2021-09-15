@@ -1,4 +1,4 @@
-package com.example.commutingapp.views.Logger.LowLevelClass
+package com.example.commutingapp.views.Logger.LowLevelImplementation
 
 import android.app.Dialog
 import android.content.Context

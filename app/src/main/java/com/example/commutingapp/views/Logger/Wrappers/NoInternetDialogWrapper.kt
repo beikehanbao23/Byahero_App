@@ -1,8 +1,8 @@
-package com.example.commutingapp.views.Logger.Abstracts
+package com.example.commutingapp.views.Logger.Wrappers
 
 import android.content.Context
-import com.example.commutingapp.views.Logger.LowLevelClass.CustomNoInternetDialog
-import com.example.commutingapp.views.Logger.interfaces.ImmutableDialogPresenter
+import com.example.commutingapp.views.Logger.LowLevelImplementation.CustomNoInternetDialog
+import com.example.commutingapp.views.Logger.Interface.ImmutableDialogPresenter
 
 class NoInternetDialogWrapper(
     context: Context

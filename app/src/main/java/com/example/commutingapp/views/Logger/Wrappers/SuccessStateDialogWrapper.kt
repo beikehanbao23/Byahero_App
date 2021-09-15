@@ -1,8 +1,8 @@
-package com.example.commutingapp.views.Logger.Abstracts
+package com.example.commutingapp.views.Logger.Wrappers
 
 import android.app.Activity
-import com.example.commutingapp.views.Logger.LowLevelClass.AestheticDialogInstance
-import com.example.commutingapp.views.Logger.interfaces.MutableDialogPresenter
+import com.example.commutingapp.views.Logger.LowLevelImplementation.AestheticDialogInstance
+import com.example.commutingapp.views.Logger.Interface.MutableDialogPresenter
 import com.thecode.aestheticdialogs.DialogType
 
   class SuccessStateDialogWrapper(
