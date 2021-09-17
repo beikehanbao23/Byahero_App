@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/signUpActivity"
-    tools:context=".views.ui.Signup">
+    tools:context=".views.ui.Activities.Signup">
 
 
     <include
