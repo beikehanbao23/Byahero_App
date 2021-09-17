@@ -9,7 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.commutingapp.R
-import com.example.commutingapp.views.ui.Signup
+import com.example.commutingapp.views.ui.Activities.Signup
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
