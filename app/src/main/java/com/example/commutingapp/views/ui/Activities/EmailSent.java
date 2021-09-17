@@ -1,4 +1,4 @@
-package com.example.commutingapp.views.ui;
+package com.example.commutingapp.views.ui.Activities;
 
 import static com.example.commutingapp.R.string.resendEmailFailedMessage;
 import static com.example.commutingapp.R.string.resendEmailSuccessMessage;

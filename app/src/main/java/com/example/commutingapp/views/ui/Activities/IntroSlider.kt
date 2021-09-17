@@ -1,4 +1,4 @@
-package com.example.commutingapp.views.ui
+package com.example.commutingapp.views.ui.Activities
 
 import android.content.Context
 import android.content.SharedPreferences
