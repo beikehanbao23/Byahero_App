@@ -1,4 +1,7 @@
 package com.example.commutingapp.views.ui.Fragments
 
-class StatisticsFragment {
+import androidx.fragment.app.Fragment
+import com.example.commutingapp.R
+
+class StatisticsFragment: Fragment(R.layout.statistics_fragment)  {
 }
