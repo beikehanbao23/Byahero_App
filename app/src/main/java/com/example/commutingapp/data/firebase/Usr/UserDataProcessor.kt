@@ -1,4 +1,4 @@
-package com.example.commutingapp.data.Usr
+package com.example.commutingapp.data.firebase.Usr
 
 class UserDataProcessor<T> constructor(private val userData: UserData<T>) {
     fun saveCreatedAccount(){

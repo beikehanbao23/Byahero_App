@@ -3,11 +3,11 @@ package com.example.commutingapp.views.ui
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.commutingapp.data.Auth.FirebaseAuthenticatorWrapper
-import com.example.commutingapp.data.Auth.UserAuthenticationProcessor
-import com.example.commutingapp.data.Usr.FirebaseUserWrapper
-import com.example.commutingapp.data.Usr.UserDataProcessor
-import com.example.commutingapp.data.Usr.UserEmailProcessor
+import com.example.commutingapp.data.firebase.Auth.FirebaseAuthenticatorWrapper
+import com.example.commutingapp.data.firebase.Auth.UserAuthenticationProcessor
+import com.example.commutingapp.data.firebase.Usr.FirebaseUserWrapper
+import com.example.commutingapp.data.firebase.Usr.UserDataProcessor
+import com.example.commutingapp.data.firebase.Usr.UserEmailProcessor
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension

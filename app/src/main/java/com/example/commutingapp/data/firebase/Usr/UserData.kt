@@ -1,4 +1,4 @@
-package com.example.commutingapp.data.Usr
+package com.example.commutingapp.data.firebase.Usr
 
 interface UserData<T> {
     fun saveCreatedAccount()

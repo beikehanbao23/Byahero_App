@@ -2,7 +2,7 @@ package com.example.commutingapp.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.commutingapp.data.db.CommuterDatabase
+import com.example.commutingapp.data.local_db.CommuterDatabase
 import com.example.commutingapp.data.others.Constants.COMMUTER_DATABASE_FILE_NAME
 import dagger.Module
 import dagger.Provides

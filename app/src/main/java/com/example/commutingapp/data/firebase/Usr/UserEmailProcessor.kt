@@ -1,4 +1,4 @@
-package com.example.commutingapp.data.Usr
+package com.example.commutingapp.data.firebase.Usr
 
 class UserEmailProcessor<T> constructor(private val userEmail: UserEmail<T>) {
 

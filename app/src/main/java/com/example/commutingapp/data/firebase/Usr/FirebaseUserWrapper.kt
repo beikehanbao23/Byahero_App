@@ -1,4 +1,4 @@
-package com.example.commutingapp.data.Usr
+package com.example.commutingapp.data.firebase.Usr
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth

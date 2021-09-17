@@ -8,11 +8,11 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.commutingapp.data.Auth.FirebaseAuthenticatorWrapper;
-import com.example.commutingapp.data.Auth.UserAuthenticationProcessor;
-import com.example.commutingapp.data.Usr.FirebaseUserWrapper;
-import com.example.commutingapp.data.Usr.UserDataProcessor;
-import com.example.commutingapp.data.Usr.UserEmailProcessor;
+import com.example.commutingapp.data.firebase.Auth.FirebaseAuthenticatorWrapper;
+import com.example.commutingapp.data.firebase.Auth.UserAuthenticationProcessor;
+import com.example.commutingapp.data.firebase.Usr.FirebaseUserWrapper;
+import com.example.commutingapp.data.firebase.Usr.UserDataProcessor;
+import com.example.commutingapp.data.firebase.Usr.UserEmailProcessor;
 import com.example.commutingapp.utils.InputValidator.users.UserValidatorManager;
 import com.example.commutingapp.utils.InputValidator.users.UserValidatorModel;
 import com.example.commutingapp.databinding.ActivitySignupBinding;

@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.commutingapp.data.Auth.FirebaseAuthenticatorWrapper
-import com.example.commutingapp.data.Auth.UserAuthenticationProcessor
-import com.example.commutingapp.data.Usr.FirebaseUserWrapper
-import com.example.commutingapp.data.Usr.UserDataProcessor
-import com.example.commutingapp.data.Usr.UserEmailProcessor
+import com.example.commutingapp.data.firebase.Auth.FirebaseAuthenticatorWrapper
+import com.example.commutingapp.data.firebase.Auth.UserAuthenticationProcessor
+import com.example.commutingapp.data.firebase.Usr.FirebaseUserWrapper
+import com.example.commutingapp.data.firebase.Usr.UserDataProcessor
+import com.example.commutingapp.data.firebase.Usr.UserEmailProcessor
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.AuthResult

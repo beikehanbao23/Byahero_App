@@ -1,4 +1,4 @@
-package com.example.commutingapp.data.db
+package com.example.commutingapp.data.local_db
 
 import android.graphics.Bitmap
 import androidx.room.Entity

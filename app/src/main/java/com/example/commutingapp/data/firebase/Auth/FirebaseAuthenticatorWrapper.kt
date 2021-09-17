@@ -1,4 +1,4 @@
-package com.example.commutingapp.data.Auth
+package com.example.commutingapp.data.firebase.Auth
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential

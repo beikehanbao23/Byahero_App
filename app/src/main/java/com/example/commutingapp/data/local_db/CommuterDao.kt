@@ -1,4 +1,4 @@
-package com.example.commutingapp.data.db
+package com.example.commutingapp.data.local_db
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
@@ -13,8 +13,7 @@ interface CommuterDao {
     suspend fun deleteCommuter(commuter: Commuter)
 
 
-
-@Query("""
+    @Query("""
 SELECT * FROM commuter_table
 ORDER BY 
  CASE WHEN :column = 'TIMESTAMP' THEN timestamp END DESC,
@@ -23,16 +22,14 @@ ORDER BY
  CASE WHEN :column = 'DISTANCE' THEN distanceInMeters END DESC,
  CASE WHEN :column = 'PLACES' THEN wentPlaces END DESC
 """)
-   fun filterBy(column:String):LiveData<List<Commuter>>
-
-
+    fun filterBy(column: String): LiveData<List<Commuter>>
 
     @Query("SELECT SUM(timeInMillis) FROM commuter_table")
-    fun getTotalTimeInMillis():LiveData<Long>
+    fun getTotalTimeInMillis(): LiveData<Long>
 
     @Query("SELECT AVG(averageSpeed_KmH) FROM commuter_table")
-    fun getTotalAverageSpeed():LiveData<Float>
+    fun getTotalAverageSpeed(): LiveData<Float>
 
     @Query("SELECT SUM(distanceInMeters)FROM commuter_table")
-    fun getTotalDistance():LiveData<Int>
+    fun getTotalDistance(): LiveData<Int>
 }
