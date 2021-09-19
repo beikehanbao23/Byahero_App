@@ -49,7 +49,7 @@
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.5" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.5" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.67" />
         <entry key="app/src/main/res/layout/settings_fragment.xml" value="0.33" />
         <entry key="app/src/main/res/layout/setup_statisctics.xml" value="0.54375" />
         <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.54375" />
@@ -70,13 +70,6 @@
       <set>
         <option value="Commuting_App.app" />
       </set>
-    </option>
-  </component>
-  <component name="VisualizationToolProject">
-    <option name="state">
-      <ProjectState>
-        <option name="scale" value="0.22" />
-      </ProjectState>
     </option>
   </component>
 </project>

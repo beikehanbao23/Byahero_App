@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:gravity="center"
-                android:text="No Internet Connection"
+                android:text="@string/titleNoInternetDialog"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="22sp"
@@ -57,9 +57,8 @@
                 android:layout_width="317dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="   Slow or no internet connection. \n Please check your internet settings and try again."
+                android:text="@string/descriptionNoInternetDialog"
                 android:textAlignment="center"
-
                 android:textSize="14.5sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
@@ -79,7 +78,6 @@
                 app:cornerRadius="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.496"
-
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView3" />
 

@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="222dp"
         android:layout_marginBottom="310dp"
-        android:src="@drawable/emailsent2"
+        android:src="@drawable/email_sent2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Confirm your email address"
+        android:text="@string/confirmEmailAddress"
         android:textSize="21sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="We sent a confirmation email to:"
+        android:text="@string/weSentConfirmationEmail"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
@@ -46,6 +46,7 @@
 
     <include
 
+        android:id="@+id/include"
         layout="@layout/circular_progressbar" />
 
     <TextView
@@ -53,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="sampleEmail@gmail.com"
+        android:text="@string/emailTextHolder"
         android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,9 +68,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="11dp"
-        android:text=" Check your email and click on \nthe verification link to continue."
-        android:textSize="15sp"
+        android:text="@string/checkEmailVerification"
         android:textAlignment="center"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewEmail" />
@@ -82,7 +83,7 @@
         android:layout_marginBottom="40dp"
         android:background="@color/transparent"
         android:onClick="resendEmailIsClicked"
-        android:text="Resend verification"
+        android:text="@string/resendVerification"
         android:textAllCaps="false"
         android:textColor="@color/blue2"
         android:textSize="19.5sp"
