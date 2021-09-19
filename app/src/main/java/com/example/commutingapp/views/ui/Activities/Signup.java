@@ -21,7 +21,7 @@ import com.example.commutingapp.utils.InternetConnection.ConnectionManager;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
 import com.example.commutingapp.viewmodels.SignUpViewModel;
-import com.example.commutingapp.views.Logger.CustomDialogProcessor;
+import com.example.commutingapp.views.Dialogs.DialogDirector;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.UserInfo;
@@ -34,7 +34,7 @@ import java.util.Objects;
 public class Signup extends AppCompatActivity {
 
 
-    private CustomDialogProcessor customDialogProcessor;
+    private DialogDirector dialogDirector;
     private ActivitySignupBinding activitySignupBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
 
@@ -59,13 +59,13 @@ public class Signup extends AppCompatActivity {
     }
     private void observeEmailVerification(){
         viewModel.sendEmailOnSuccess().observe(this, task-> showEmailSentActivity());
-        viewModel.sendEmailOnFailed().observe(this, task-> customDialogProcessor.showErrorDialog("Error", getString(sendingEmailErrorMessage)));
+        viewModel.sendEmailOnFailed().observe(this, task-> dialogDirector.constructErrorDialog("Error", getString(sendingEmailErrorMessage)));
     }
     private void observeInternet(){
-        viewModel.noInternetStatus().observe(this, task-> customDialogProcessor.showNoInternetDialog());
+        viewModel.noInternetStatus().observe(this, task-> dialogDirector.constructNoInternetDialog());
     }
     private void observeExceptionMessage(){
-        viewModel.getExceptionMessage().observe(this,errorMessage->customDialogProcessor.showErrorDialog("Error", Objects.requireNonNull(errorMessage)));
+        viewModel.getExceptionMessage().observe(this,errorMessage->dialogDirector.constructErrorDialog("Error", Objects.requireNonNull(errorMessage)));
     }
 
     private void initializeAttributes() {
@@ -73,7 +73,7 @@ public class Signup extends AppCompatActivity {
         activitySignupBinding = ActivitySignupBinding.inflate(getLayoutInflater());
         circularProgressbarBinding = CircularProgressbarBinding.bind(activitySignupBinding.getRoot());
         setContentView(activitySignupBinding.getRoot());
-        customDialogProcessor = new CustomDialogProcessor(this);
+        dialogDirector = new DialogDirector(this);
         viewModel = new ViewModelProvider(this).get(SignUpViewModel.class);
         firebaseUser = new FirebaseUserWrapper();
         userData = new UserDataProcessor(firebaseUser);
@@ -104,7 +104,7 @@ public class Signup extends AppCompatActivity {
             return;
         }
         if (noInternetConnection()) {
-            customDialogProcessor.showNoInternetDialog();
+            dialogDirector.constructNoInternetDialog();
             return;
         }
 

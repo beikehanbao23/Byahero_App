@@ -13,7 +13,7 @@ import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.databinding.CustomEmailsentDialogBinding;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.viewmodels.EmailSentViewModel;
-import com.example.commutingapp.views.Logger.CustomDialogProcessor;
+import com.example.commutingapp.views.Dialogs.DialogDirector;
 import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 
 
@@ -23,7 +23,7 @@ public class EmailSent extends AppCompatActivity {
 
     private final long DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG = 2000;
     private final long DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG = 2000;
-    private CustomDialogProcessor customDialogProcessor;
+    private DialogDirector dialogDirector;
     private CustomEmailsentDialogBinding emailDialogBinding;
     private CircularProgressbarBinding progressbarBinding;
     private EmailSentViewModel viewModel;
@@ -38,9 +38,7 @@ public class EmailSent extends AppCompatActivity {
         initializeObservers();
         viewModel.refreshEmailSynchronously();
 
-        customDialogProcessor.noInternetDialogCallback().setOnDismissListener(T->{
-            viewModel.refreshEmailSynchronously();
-        });
+
 
     }
 
@@ -48,7 +46,7 @@ public class EmailSent extends AppCompatActivity {
         emailDialogBinding = CustomEmailsentDialogBinding.inflate(getLayoutInflater());
         progressbarBinding = CircularProgressbarBinding.bind(emailDialogBinding.getRoot());
         setContentView(emailDialogBinding.getRoot());
-        customDialogProcessor = new CustomDialogProcessor(this);
+        dialogDirector = new DialogDirector(this);
         viewModel = new ViewModelProvider(this).get(EmailSentViewModel.class);
 
     }
@@ -72,10 +70,10 @@ public class EmailSent extends AppCompatActivity {
 
     private void observeEmailVerification() {
         viewModel.sendEmailOnSuccess().observe(this, task -> {
-            customDialogProcessor.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
+            dialogDirector.constructSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
         });
         viewModel.sendEmailOnFail().observe(this, task -> {
-            customDialogProcessor.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
+            dialogDirector.constructWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
         });
     }
 
@@ -104,7 +102,7 @@ public class EmailSent extends AppCompatActivity {
     private void showNoInternetActivity() {
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(() -> {
-            customDialogProcessor.showNoInternetDialog();
+            dialogDirector.constructNoInternetDialog().setOnDismissListener(T->viewModel.refreshEmailSynchronously());
             progressbarBinding.circularProgressBar.setVisibility(View.INVISIBLE);
         }, DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG);
     }

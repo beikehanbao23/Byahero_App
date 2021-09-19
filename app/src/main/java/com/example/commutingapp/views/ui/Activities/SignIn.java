@@ -23,7 +23,8 @@ import com.example.commutingapp.utils.InputValidator.users.UserValidatorModel;
 import com.example.commutingapp.utils.InternetConnection.ConnectionManager;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
-import com.example.commutingapp.views.Logger.CustomDialogProcessor;
+import com.example.commutingapp.views.Dialogs.DialogDirector;
+
 import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -58,12 +59,12 @@ public class SignIn extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private final String TAG = "FacebookAuthentication";
     private final String FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE";
-    private CustomDialogProcessor customDialogProcessor;
+    private DialogDirector director;
     private CallbackManager facebookCallBackManager;
     private GoogleSignInClient mGoogleSignInClient;
     private ActivitySignInBinding activitySignInBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
-
+    private DialogDirector dialogDirector;
 
     private FirebaseUserWrapper firebaseUser;
 
@@ -91,11 +92,12 @@ public class SignIn extends AppCompatActivity {
         circularProgressbarBinding = CircularProgressbarBinding.bind(activitySignInBinding.getRoot());
         new ScreenDimension(getWindow()).setWindowToFullScreen();
         setContentView(activitySignInBinding.getRoot());
-        customDialogProcessor = new CustomDialogProcessor(this);
+        dialogDirector = new DialogDirector(this);
         firebaseUser = new FirebaseUserWrapper();
         userAuth = new UserAuthenticationProcessor(new FirebaseAuthenticatorWrapper());
         userData = new UserDataProcessor(firebaseUser);
         userEmail =  new UserEmailProcessor(firebaseUser);
+        director = new DialogDirector(this);
     }
 
 
@@ -131,7 +133,7 @@ public class SignIn extends AppCompatActivity {
             return;
         }
         if (error.getMessage() != null) {
-            customDialogProcessor.showErrorDialog("Error", error.getMessage());
+            dialogDirector.constructErrorDialog("Error", error.getMessage());
             removeFacebookUserAccountPreviousToken();
         }
     }
@@ -225,7 +227,7 @@ public class SignIn extends AppCompatActivity {
                         return;
                     }
                     finishLoading();
-                    customDialogProcessor.showErrorDialog("Error", "Authentication Failed. Please try again later.");
+                    dialogDirector.constructErrorDialog("Error", "Authentication Failed. Please try again later.");
                 });
     }
 
@@ -311,16 +313,16 @@ public class SignIn extends AppCompatActivity {
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
             handleUserAccountExceptions(firebaseAuthInvalidUserException);
         } catch (Exception e) {
-            customDialogProcessor.showErrorDialog("Oops..", Objects.requireNonNull(e.getMessage()));
+            dialogDirector.constructErrorDialog("Oops..", Objects.requireNonNull(e.getMessage()));
         }
     }
 
     private void handleUserAccountExceptions(FirebaseAuthInvalidUserException exception) {
         if (exception.getErrorCode().equals("ERROR_USER_DISABLED")) {
-            customDialogProcessor.showErrorDialog("Oops..", getString(disabledAccountMessage));
+            dialogDirector.constructErrorDialog("Oops..", getString(disabledAccountMessage));
             return;
         }
-        customDialogProcessor.showErrorDialog("Oops..", getString(incorrectEmailOrPasswordMessage));
+        dialogDirector.constructErrorDialog("Oops..", getString(incorrectEmailOrPasswordMessage));
 
     }
 
@@ -351,7 +353,7 @@ public class SignIn extends AppCompatActivity {
 
     private void showNoInternetActivity() {
 
-        customDialogProcessor.showNoInternetDialog();
+        director.constructNoInternetDialog();
     }
 
     private void showEmailSentActivity() {
