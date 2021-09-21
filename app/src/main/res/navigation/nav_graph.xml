@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph">
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/setupFragment">
+    <fragment
+        android:id="@+id/commuterFragment"
+        android:name="com.example.commutingapp.views.ui.Fragments.CommuterFragment"
+        android:label="CommuterFragment">
+        <action
+            android:id="@+id/action_commuterFragment2_to_trackingFragment"
+            app:destination="@id/trackingFragment" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/trackingFragment"
+        android:name="com.example.commutingapp.views.ui.Fragments.TrackingFragment"
+        android:label="TrackingFragment">
+        <action
+            android:id="@+id/action_trackingFragment_to_commuterFragment2"
+            app:destination="@id/commuterFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.commutingapp.views.ui.Fragments.SettingsFragment"
+        android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/setupFragment"
+        android:name="com.example.commutingapp.views.ui.Fragments.SetupFragment"
+        android:label="SetupFragment">
+        <action
+            android:id="@+id/action_setupFragment_to_commuterFragment2"
+            app:destination="@id/commuterFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="com.example.commutingapp.views.ui.Fragments.StatisticsFragment"
+        android:label="StatisticsFragment" />
 </navigation>
