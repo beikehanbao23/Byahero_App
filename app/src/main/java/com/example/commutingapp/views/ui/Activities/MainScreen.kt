@@ -3,6 +3,10 @@ package com.example.commutingapp.views.ui.Activities
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
+import com.example.commutingapp.R
 import com.example.commutingapp.data.firebase.Auth.FirebaseAuthenticatorWrapper
 import com.example.commutingapp.data.firebase.Auth.UserAuthenticationProcessor
 import com.example.commutingapp.data.firebase.Usr.FirebaseUserWrapper
@@ -10,7 +14,6 @@ import com.example.commutingapp.data.firebase.Usr.UserDataProcessor
 import com.example.commutingapp.data.firebase.Usr.UserEmailProcessor
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
-import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.views.MenuButtons.CustomBackButton
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -30,9 +33,23 @@ class MainScreen : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initializeAttributes()
+            super.onCreate(savedInstanceState)
+            initializeAttributes()
+            val navigationToolbar = activityMainScreenBinding?.toolbar
+            val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.FragmentContainer) as NavHostFragment
+            val navigationController = navigationHostFragment.navController
 
+            setSupportActionBar(navigationToolbar)
+            NavigationUI.setupWithNavController(navigationToolbar as Toolbar, navigationController)
+
+            navigationController.addOnDestinationChangedListener { _, destination, _ ->
+                when (destination.id) {
+                    R.id.settingsFragment, R.id.statisticsFragment, R.id.commuterFragment -> {
+                        activityMainScreenBinding?.bottomNavigation?.visibility = View.VISIBLE
+                    }
+                    else -> activityMainScreenBinding?.bottomNavigation?.visibility = View.INVISIBLE
+                }
+            }
 
     }
 
@@ -47,7 +64,6 @@ class MainScreen : AppCompatActivity() {
     }
 
     private fun initializeAttributes() {
-        ScreenDimension(window).setWindowToFullScreen()
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
         setContentView(activityMainScreenBinding?.root)
 
@@ -78,6 +94,7 @@ class MainScreen : AppCompatActivity() {
 
     private fun displayUserProfileName() {
         activityMainScreenBinding?.nameTextView?.text = userProfileName
+
     }
 
     private fun filterEmailAddress(userEmail: String?): String? {
