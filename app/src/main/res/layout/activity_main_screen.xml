@@ -13,13 +13,47 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="159dp"
         android:layout_marginEnd="158dp"
-        android:layout_marginBottom="564dp"
         android:onClick="logoutButtonIsClicked"
         android:text="Log out"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/FragmentContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <!--Todo:add fragment class-->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvToolbarTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="Byahero"
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <TextView
         android:id="@+id/nameTextView"
@@ -27,42 +61,41 @@
         android:layout_height="0dp"
         android:layout_marginStart="173dp"
         android:layout_marginEnd="180dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="4dp"
         android:text="Name"
 
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/LogoutButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.483"
+        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <!--Todo:add fragment class-->
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/FragmentContainer"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="415dp"
-        android:layout_height="518dp"
-        android:layout_marginBottom="44dp"
+        android:layout_width="0dp"
+        android:layout_height="375dp"
+        android:layout_marginBottom="15dp"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:navGraph="@navigation/nav_graph"
         tools:layout="@layout/setup_fragment" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
         android:layout_width="0dp"
         android:layout_height="45dp"
         android:layout_marginStart="1dp"
-        app:menu="@menu/bottom_navigation_menu"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
