@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/setupFragment">
+    app:startDestination="@id/commutersFragment">
     <fragment
         android:id="@+id/commutersFragment"
         android:name="com.example.commutingapp.views.ui.Fragments.CommuterFragment"
@@ -25,19 +25,14 @@
         android:id="@+id/settingsFragment"
         android:name="com.example.commutingapp.views.ui.Fragments.SettingsFragment"
         android:label="SettingsFragment" />
-    <fragment
-        android:id="@+id/setupFragment"
-        android:name="com.example.commutingapp.views.ui.Fragments.SetupFragment"
-        android:label="SetupFragment">
-        <action
-            android:id="@+id/action_setupFragment_to_commuterFragment2"
-            app:destination="@id/commutersFragment" />
-    </fragment>
+
 
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="com.example.commutingapp.views.ui.Fragments.StatisticsFragment"
         android:label="StatisticsFragment" />
+
+
     <fragment
         android:id="@+id/weatherFragment"
         android:name="com.example.commutingapp.views.ui.Fragments.WeatherFragment"

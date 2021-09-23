@@ -81,17 +81,16 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:navGraph="@navigation/nav_graph"
-        tools:layout="@layout/setup_fragment" />
+        tools:layout="@layout/commuter_fragment" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        app:labelVisibilityMode="selected"
         android:id="@+id/bottomNavigation"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
-        app:itemHorizontalTranslationEnabled="true"
+
         app:itemIconSize="25.5sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
