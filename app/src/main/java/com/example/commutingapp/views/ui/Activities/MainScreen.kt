@@ -43,6 +43,7 @@ class MainScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             initializeAttributes()
+
             val navigationToolbar = activityMainScreenBinding?.toolbar
             val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
             val navigationController = navigationHostFragment.navController
@@ -53,7 +54,7 @@ class MainScreen : AppCompatActivity() {
 
         navigationController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.settingsBottomNavigation, R.id.statisticsBottomNavigation, R.id.commuterBottomNavigation -> {
+                R.id.settingsFragment, R.id.statisticsFragment, R.id.commutersFragment -> {
                     activityMainScreenBinding?.bottomNavigation?.visibility = View.VISIBLE
                 }
                 else -> activityMainScreenBinding?.bottomNavigation?.visibility = View.INVISIBLE
@@ -61,15 +62,26 @@ class MainScreen : AppCompatActivity() {
         }
 
 
+        activityMainScreenBinding?.bottomNavigation?.setOnItemSelectedListener {
+            when(it.itemId){
+                R.id.commutersFragment->setCurrentFragment(CommuterFragment())
+                R.id.settingsFragment->setCurrentFragment(SettingsFragment())
+                R.id.statisticsFragment->setCurrentFragment(StatisticsFragment())
+                R.id.weatherFragment->setCurrentFragment(WeatherFragment())
+            }
+            true
+        }
+
+
+
+
 
 
     }
 
 
-    fun statisticsBottomNavigationMenuOnClick(item: android.view.MenuItem)  = setCurrentFragment(StatisticsFragment())
-    fun commutesBottomNavigationMenuOnClick(item: android.view.MenuItem) = setCurrentFragment(CommuterFragment())
-    fun settingsBottomNavigationMenuOnClick(item: android.view.MenuItem) = setCurrentFragment(SettingsFragment())
-    fun weatherBottomNavigationMenuOnClick(item: android.view.MenuItem) = setCurrentFragment(WeatherFragment())
+
+
 
     private fun setCurrentFragment(fragment: Fragment){
     supportFragmentManager.beginTransaction().apply {
