@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/commuterFragment"
-        android:title="Commutes"
-        android:onClick="commutesBottomNavigationMenuOnClick"
-        android:icon="@drawable/ic_jeep"/>
 
-    <item android:id="@+id/statisticsFragment"
-        android:onClick="statisticsBottomNavigationMenuOnClick"
+    <item
+      android:title="Commutes"
+        android:icon="@drawable/ic_jeep"
+        android:onClick="commutesBottomNavigationMenuOnClick"/>
+
+    <item
+        android:icon="@drawable/ic_statistics"
         android:title="Statistics"
-        android:icon="@drawable/ic_statistics"/>
+        android:onClick="statisticsBottomNavigationMenuOnClick"/>
 
-    <item android:id="@+id/settingsFragment"
-        android:onClick="settingsBottomNavigationMenuOnClick"
+    <item
+        android:icon="@drawable/ic_weather_weather"
+        android:title="Weather"
+        android:onClick="weatherBottomNavigationMenuOnClick"/>
+
+    <item
+        android:icon="@drawable/ic_settings"
         android:title="Settings"
-        android:icon="@drawable/ic_settings"/>
+        android:onClick="settingsBottomNavigationMenuOnClick"/>
 
-    
+
+
 </menu>
