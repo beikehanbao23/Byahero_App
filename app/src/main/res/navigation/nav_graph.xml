@@ -4,7 +4,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/setupFragment">
     <fragment
-        android:id="@+id/commuterFragment"
+        android:id="@+id/commutersFragment"
         android:name="com.example.commutingapp.views.ui.Fragments.CommuterFragment"
         android:label="CommuterFragment">
         <action
@@ -18,7 +18,7 @@
         android:label="TrackingFragment">
         <action
             android:id="@+id/action_trackingFragment_to_commuterFragment2"
-            app:destination="@id/commuterFragment" />
+            app:destination="@id/commutersFragment" />
     </fragment>
 
     <fragment
@@ -31,11 +31,15 @@
         android:label="SetupFragment">
         <action
             android:id="@+id/action_setupFragment_to_commuterFragment2"
-            app:destination="@id/commuterFragment" />
+            app:destination="@id/commutersFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="com.example.commutingapp.views.ui.Fragments.StatisticsFragment"
         android:label="StatisticsFragment" />
+    <fragment
+        android:id="@+id/weatherFragment"
+        android:name="com.example.commutingapp.views.ui.Fragments.WeatherFragment"
+        android:label="WeatherFragment" />
 </navigation>

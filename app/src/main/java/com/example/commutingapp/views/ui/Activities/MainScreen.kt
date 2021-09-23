@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.example.commutingapp.R
@@ -15,13 +16,20 @@ import com.example.commutingapp.data.firebase.Usr.UserEmailProcessor
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
 import com.example.commutingapp.views.MenuButtons.CustomBackButton
+import com.example.commutingapp.views.ui.Fragments.CommuterFragment
+import com.example.commutingapp.views.ui.Fragments.SettingsFragment
+import com.example.commutingapp.views.ui.Fragments.StatisticsFragment
+import com.example.commutingapp.views.ui.Fragments.WeatherFragment
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserInfo
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
+
+@AndroidEntryPoint
 class MainScreen : AppCompatActivity() {
     private val firebaseUser = FirebaseUserWrapper()
     private val userData: UserDataProcessor<List<UserInfo>?> = UserDataProcessor(firebaseUser)
@@ -36,22 +44,43 @@ class MainScreen : AppCompatActivity() {
             super.onCreate(savedInstanceState)
             initializeAttributes()
             val navigationToolbar = activityMainScreenBinding?.toolbar
-            val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.FragmentContainer) as NavHostFragment
+            val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
             val navigationController = navigationHostFragment.navController
 
             setSupportActionBar(navigationToolbar)
             NavigationUI.setupWithNavController(navigationToolbar as Toolbar, navigationController)
 
-            navigationController.addOnDestinationChangedListener { _, destination, _ ->
-                when (destination.id) {
-                    R.id.settingsFragment, R.id.statisticsFragment, R.id.commuterFragment -> {
-                        activityMainScreenBinding?.bottomNavigation?.visibility = View.VISIBLE
-                    }
-                    else -> activityMainScreenBinding?.bottomNavigation?.visibility = View.INVISIBLE
+
+        navigationController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.settingsBottomNavigation, R.id.statisticsBottomNavigation, R.id.commuterBottomNavigation -> {
+                    activityMainScreenBinding?.bottomNavigation?.visibility = View.VISIBLE
                 }
+                else -> activityMainScreenBinding?.bottomNavigation?.visibility = View.INVISIBLE
             }
+        }
+
+
+
 
     }
+
+
+    fun statisticsBottomNavigationMenuOnClick(item: android.view.MenuItem)  = setCurrentFragment(StatisticsFragment())
+    fun commutesBottomNavigationMenuOnClick(item: android.view.MenuItem) = setCurrentFragment(CommuterFragment())
+    fun settingsBottomNavigationMenuOnClick(item: android.view.MenuItem) = setCurrentFragment(SettingsFragment())
+    fun weatherBottomNavigationMenuOnClick(item: android.view.MenuItem) = setCurrentFragment(WeatherFragment())
+
+    private fun setCurrentFragment(fragment: Fragment){
+    supportFragmentManager.beginTransaction().apply {
+        replace(R.id.fragmentContainer,fragment)
+        addToBackStack(null)
+        commit()
+    }
+    }
+
+
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -74,7 +103,6 @@ class MainScreen : AppCompatActivity() {
     }
 
 
-    //
     private val userProfileName: String?
         get() {
             for (user in userData.getUserProviderData()!!) {
@@ -141,6 +169,8 @@ class MainScreen : AppCompatActivity() {
     override fun onBackPressed() {
         CustomBackButton(this, this).applyDoubleClickToExit()
     }
+
+
 
 
 }
