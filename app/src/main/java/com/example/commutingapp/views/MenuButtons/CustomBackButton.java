@@ -3,9 +3,7 @@ package com.example.commutingapp.views.MenuButtons;
 import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
-
 import com.rejowan.cutetoast.CuteToast;
-import com.example.commutingapp.views.Logger.*;
 
 public class CustomBackButton  {
    
