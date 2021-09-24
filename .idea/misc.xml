@@ -15,10 +15,14 @@
         <entry key="app/src/main/res/drawable/customdialog_background.xml" value="0.33" />
         <entry key="app/src/main/res/drawable/dialog_background.xml" value="0.22280701754385965" />
         <entry key="app/src/main/res/drawable/ic_backbutton.xml" value="0.37435897435897436" />
+        <entry key="app/src/main/res/drawable/ic_bn_weather.xml" value="0.283984375" />
         <entry key="app/src/main/res/drawable/ic_create_account.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_email.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_facebook.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_googlee.xml" value="0.37435897435897436" />
+        <entry key="app/src/main/res/drawable/ic_jeep.xml" value="0.37864583333333335" />
+        <entry key="app/src/main/res/drawable/ic_jeepney1.xml" value="0.283984375" />
+        <entry key="app/src/main/res/drawable/ic_jjep.xml" value="0.283984375" />
         <entry key="app/src/main/res/drawable/ic_map.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_network__two_color.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/drawable/ic_password.xml" value="0.3802083333333333" />
@@ -29,6 +33,7 @@
         <entry key="app/src/main/res/drawable/ic_traveller.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_weather.xml" value="0.67" />
         <entry key="app/src/main/res/drawable/ic_weather_updates.xml" value="0.3802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_weather_weather.xml" value="0.283984375" />
         <entry key="app/src/main/res/drawable/inactive_indicator.xml" value="0.3802083333333333" />
         <entry key="app/src/main/res/drawable/no_internet_background.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/drawable/splash_app_title.xml" value="0.3204444444444444" />
@@ -40,22 +45,25 @@
         <entry key="app/src/main/res/font/berkshire_swash.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/font/fonts.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/layout/activity_intro_slider.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_splashscreen.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_token_expired.xml" value="0.35" />
         <entry key="app/src/main/res/layout/application_icon_display.xml" value="0.35" />
         <entry key="app/src/main/res/layout/circular_progressbar.xml" value="0.23177083333333334" />
-        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.5312977099236641" />
+        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.18" />
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.1" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.5" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.67" />
-        <entry key="app/src/main/res/layout/settings_fragment.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/settings_fragment.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/setup_fragment.xml" value="0.2" />
         <entry key="app/src/main/res/layout/setup_statisctics.xml" value="0.54375" />
-        <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.54375" />
-        <entry key="app/src/main/res/layout/tracking_fragment.xml" value="0.54375" />
+        <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/tracking_fragment.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.271875" />
+        <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.22" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_app_icon.xml" value="0.10462962962962963" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_app_icon_round.xml" value="0.19444444444444445" />
       </map>
