@@ -3,6 +3,11 @@ package com.example.commutingapp.views.ui.Activities
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
+import com.example.commutingapp.R
 import com.example.commutingapp.data.firebase.Auth.FirebaseAuthenticatorWrapper
 import com.example.commutingapp.data.firebase.Auth.UserAuthenticationProcessor
 import com.example.commutingapp.data.firebase.Usr.FirebaseUserWrapper
@@ -10,15 +15,21 @@ import com.example.commutingapp.data.firebase.Usr.UserDataProcessor
 import com.example.commutingapp.data.firebase.Usr.UserEmailProcessor
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
-import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.views.MenuButtons.CustomBackButton
+import com.example.commutingapp.views.ui.Fragments.CommuterFragment
+import com.example.commutingapp.views.ui.Fragments.SettingsFragment
+import com.example.commutingapp.views.ui.Fragments.StatisticsFragment
+import com.example.commutingapp.views.ui.Fragments.WeatherFragment
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserInfo
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
+
+@AndroidEntryPoint
 class MainScreen : AppCompatActivity() {
     private val firebaseUser = FirebaseUserWrapper()
     private val userData: UserDataProcessor<List<UserInfo>?> = UserDataProcessor(firebaseUser)
@@ -30,11 +41,58 @@ class MainScreen : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initializeAttributes()
+            super.onCreate(savedInstanceState)
+            initializeAttributes()
+
+            val navigationToolbar = activityMainScreenBinding?.toolbar
+            val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+            val navigationController = navigationHostFragment.navController
+
+            setSupportActionBar(navigationToolbar)
+            NavigationUI.setupWithNavController(navigationToolbar as Toolbar, navigationController)
+
+
+        navigationController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.settingsFragment, R.id.statisticsFragment, R.id.commutersFragment -> {
+                    activityMainScreenBinding?.bottomNavigation?.visibility = View.VISIBLE
+                }
+                else -> activityMainScreenBinding?.bottomNavigation?.visibility = View.INVISIBLE
+            }
+        }
+
+
+        activityMainScreenBinding?.bottomNavigation?.setOnItemSelectedListener {
+            when(it.itemId){
+                R.id.commutersFragment->setCurrentFragment(CommuterFragment())
+                R.id.settingsFragment->setCurrentFragment(SettingsFragment())
+                R.id.statisticsFragment->setCurrentFragment(StatisticsFragment())
+                R.id.weatherFragment->setCurrentFragment(WeatherFragment())
+            }
+            true
+        }
+
+
+
+
 
 
     }
+
+
+
+
+
+    private fun setCurrentFragment(fragment: Fragment){
+    supportFragmentManager.beginTransaction().apply {
+        replace(R.id.fragmentContainer,fragment)
+        addToBackStack(null)
+        commit()
+    }
+    }
+
+
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -47,7 +105,6 @@ class MainScreen : AppCompatActivity() {
     }
 
     private fun initializeAttributes() {
-        ScreenDimension(window).setWindowToFullScreen()
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
         setContentView(activityMainScreenBinding?.root)
 
@@ -58,7 +115,6 @@ class MainScreen : AppCompatActivity() {
     }
 
 
-    //
     private val userProfileName: String?
         get() {
             for (user in userData.getUserProviderData()!!) {
@@ -78,6 +134,7 @@ class MainScreen : AppCompatActivity() {
 
     private fun displayUserProfileName() {
         activityMainScreenBinding?.nameTextView?.text = userProfileName
+
     }
 
     private fun filterEmailAddress(userEmail: String?): String? {
@@ -124,6 +181,8 @@ class MainScreen : AppCompatActivity() {
     override fun onBackPressed() {
         CustomBackButton(this, this).applyDoubleClickToExit()
     }
+
+
 
 
 }

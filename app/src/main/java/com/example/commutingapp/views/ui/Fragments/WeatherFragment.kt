@@ -2,6 +2,9 @@ package com.example.commutingapp.views.ui.Fragments
 
 import androidx.fragment.app.Fragment
 import com.example.commutingapp.R
+import dagger.hilt.android.AndroidEntryPoint
 
-class SetupFragment:Fragment(R.layout.setup_fragment) {
+@AndroidEntryPoint
+class WeatherFragment: Fragment(R.layout.weather_fragment)  {
+
 }
