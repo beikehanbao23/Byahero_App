@@ -32,7 +32,7 @@ object TrackingUtility {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             EasyPermissions.requestPermissions(
                 fragment,
-                "You need to accept location permission to use this app.",
+                fragment.getString(R.string.requestLocationMessage),
                 REQUEST_CODE_LOCATION_PERMISSION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -40,7 +40,7 @@ object TrackingUtility {
         }else{
             EasyPermissions.requestPermissions(
                 fragment,
-                fragment.getString(R.string.),
+                fragment.getString(R.string.requestLocationMessage),
                 REQUEST_CODE_LOCATION_PERMISSION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
