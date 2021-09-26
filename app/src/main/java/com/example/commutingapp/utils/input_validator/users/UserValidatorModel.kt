@@ -1,11 +1,11 @@
-package com.example.commutingapp.utils.InputValidator.users
+package com.example.commutingapp.utils.input_validator.users
 
 import android.content.Context
 import android.util.Patterns
 import android.widget.EditText
 import com.example.commutingapp.R.string
-import com.example.commutingapp.utils.InputValidator.NumericNumberValidator
-import com.example.commutingapp.utils.InputValidator.SpecialCharactersValidator
+import com.example.commutingapp.utils.input_validator.NumericNumberValidator
+import com.example.commutingapp.utils.input_validator.SpecialCharactersValidator
 
 
 const val USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS = 8

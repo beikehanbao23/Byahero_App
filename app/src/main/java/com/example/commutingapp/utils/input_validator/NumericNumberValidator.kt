@@ -1,4 +1,4 @@
-package com.example.commutingapp.utils.InputValidator
+package com.example.commutingapp.utils.input_validator
 
 import java.util.regex.Pattern
 

@@ -1,4 +1,4 @@
-package com.example.commutingapp.utils.InputValidator.users
+package com.example.commutingapp.utils.input_validator.users
 
 interface UserValidator {
     fun validationEmailFailed():Boolean?
