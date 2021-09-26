@@ -36,10 +36,11 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:resource="@string/google_maps_key" />
+            android:value="${MAPS_API_KEY}" />
+
 
         <activity
-            android:name=".views.ui.Activities.IntroSlider"
+            android:name=".views.ui.activities.IntroSlider"
             android:theme="@style/splashScreenTheme"
             android:screenOrientation="portrait"
             android:exported="true">
@@ -51,17 +52,17 @@
 
 
         <activity
-            android:name=".views.ui.Activities.MainScreen"
+            android:name=".views.ui.activities.MainScreen"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.ui.Activities.Signup"
+            android:name=".views.ui.activities.Signup"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.ui.Activities.SignIn"
+            android:name=".views.ui.activities.SignIn"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".views.ui.Activities.EmailSent"
+            android:name=".views.ui.activities.EmailSent"
             android:screenOrientation="portrait" />
 
 
