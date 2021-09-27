@@ -66,6 +66,10 @@
             android:screenOrientation="portrait" />
 
 
+        <service android:name=".data.service.TrackingService"
+            android:foregroundServiceType="location"
+            />
+
     </application>
 
 </manifest>
