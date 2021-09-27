@@ -1,12 +1,16 @@
 package com.example.commutingapp.views.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.commutingapp.R
+import com.example.commutingapp.data.others.Constants
 import com.example.commutingapp.data.others.TrackingUtility.hasLocationPermission
 import com.example.commutingapp.data.others.TrackingUtility.requestPermission
+import com.example.commutingapp.data.service.TrackingService
 import com.example.commutingapp.viewmodels.MainViewModel
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -20,16 +24,35 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private var googleMap:GoogleMap? = null
     private lateinit var mapView:MapView
+    private lateinit var button: Button
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requestRequiredPermissions()
+
+        button = view.findViewById(R.id.startCommute)
+        button.setOnClickListener {
+            sendCommandsToService(Constants.ACTION_START_OR_RESUME_SERVICE)
+
+        }
         mapView = view.findViewById(R.id.googleMapView)
+
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync {
             googleMap = it
         }
     }
+
+    private fun sendCommandsToService(action:String){
+        Intent(requireContext(),TrackingService::class.java).also {
+            it.action = action
+            requireContext().startService(it)
+        }
+    }
+
+
+
+
 
     override fun onResume() {
         super.onResume()
