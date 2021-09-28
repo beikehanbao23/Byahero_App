@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
     app:startDestination="@id/commutersFragment">
+
+    <action
+        android:id="@+id/action_global_commuterFragment"
+        app:destination="@+id/commutersFragment"
+        app:launchSingleTop="true"
+        />
+
     <fragment
         android:id="@+id/commutersFragment"
         android:name="com.example.commutingapp.views.ui.fragments.CommuterFragment"
