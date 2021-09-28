@@ -1,10 +1,12 @@
 package com.example.commutingapp.views.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.example.commutingapp.R
@@ -13,6 +15,7 @@ import com.example.commutingapp.data.firebase.auth.UserAuthenticationProcessor
 import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper
 import com.example.commutingapp.data.firebase.usr.UserDataProcessor
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
+import com.example.commutingapp.data.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
 import com.example.commutingapp.views.MenuButtons.CustomBackButton
@@ -38,29 +41,24 @@ class MainScreen : AppCompatActivity() {
         UserAuthenticationProcessor(FirebaseAuthenticatorWrapper())
 
     private var activityMainScreenBinding: ActivityMainScreenBinding? = null
-
+    private lateinit var navigationController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            initializeAttributes()
+        super.onCreate(savedInstanceState)
+        initializeAttributes()
 
-            val navigationToolbar = activityMainScreenBinding?.toolbar
-            val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
-            val navigationController = navigationHostFragment.navController
+        val navigationToolbar = activityMainScreenBinding?.toolbar
+        val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+        navigationController = navigationHostFragment.navController
 
-            setSupportActionBar(navigationToolbar)
-            NavigationUI.setupWithNavController(navigationToolbar as Toolbar, navigationController)
+        navigateToCommuterFragment(intent)
 
+        setSupportActionBar(navigationToolbar)
+        NavigationUI.setupWithNavController(navigationToolbar as Toolbar, navigationController)
+        setupBottomNavigationListeners()
 
-        navigationController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.settingsFragment, R.id.statisticsFragment, R.id.commutersFragment -> {
-                    activityMainScreenBinding?.bottomNavigation?.visibility = View.VISIBLE
-                }
-                else -> activityMainScreenBinding?.bottomNavigation?.visibility = View.INVISIBLE
-            }
-        }
-
+    }
+    private fun setupBottomNavigationListeners(){
 
         activityMainScreenBinding?.bottomNavigation?.setOnItemSelectedListener {
             when(it.itemId){
@@ -71,24 +69,28 @@ class MainScreen : AppCompatActivity() {
             }
             true
         }
+    }
 
-
-
-
-
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        navigateToCommuterFragment(intent)
 
     }
 
-
+    private fun navigateToCommuterFragment(intent: Intent?){
+        if(intent?.action == ACTION_SHOW_COMMUTER_FRAGMENT){
+            navigationController.navigate(R.id.action_global_commuterFragment)
+        }
+    }
 
 
 
     private fun setCurrentFragment(fragment: Fragment){
-    supportFragmentManager.beginTransaction().apply {
-        replace(R.id.fragmentContainer,fragment)
-        addToBackStack(null)
-        commit()
-    }
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fragmentContainer,fragment)
+            addToBackStack(null)
+            commit()
+        }
     }
 
 
