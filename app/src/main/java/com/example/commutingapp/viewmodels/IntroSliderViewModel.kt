@@ -3,9 +3,9 @@ package com.example.commutingapp.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.commutingapp.data.firebase.Usr.FirebaseUserWrapper
-import com.example.commutingapp.data.firebase.Usr.UserDataProcessor
-import com.example.commutingapp.data.firebase.Usr.UserEmailProcessor
+import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper
+import com.example.commutingapp.data.firebase.usr.UserDataProcessor
+import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
 import com.example.commutingapp.utils.ui_utilities.Event
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FacebookAuthProvider

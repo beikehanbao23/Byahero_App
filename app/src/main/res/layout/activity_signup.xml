@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/signUpActivity"
-    tools:context=".views.ui.Activities.Signup">
+    tools:context=".views.ui.activities.Signup">
 
 
     <include
@@ -44,6 +44,7 @@
         android:layout_marginEnd="84dp"
         android:fontFamily="sans-serif-medium"
         android:text="@string/letsGetStarted"
+        android:gravity="center"
         android:textColor="@color/black"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -59,6 +60,7 @@
         android:layout_marginStart="84dp"
         android:layout_marginTop="4dp"
         android:text="@string/createAnAccountInByahero"
+        android:gravity="center"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@+id/textView5"
         app:layout_constraintHorizontal_bias="0.937"
@@ -92,6 +94,7 @@
         android:layout_marginTop="10dp"
         android:onClick="backToSignIn"
         android:text="@string/askIfHaveAccount"
+        android:gravity="center"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/CreateButton"
@@ -104,6 +107,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
+        android:gravity="center"
         android:onClick="backToSignIn"
         android:text="@string/loginHere"
         android:textColor="@color/blue2"

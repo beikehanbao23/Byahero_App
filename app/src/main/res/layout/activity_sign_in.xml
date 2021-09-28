@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/signInActivity"
-    tools:context=".views.ui.Activities.SignIn">
+    tools:context=".views.ui.activities.SignIn">
 
 
     <TextView
@@ -17,6 +17,7 @@
         android:layout_marginEnd="84dp"
         android:fontFamily="sans-serif-medium"
         android:text="@string/welcomeMessage"
+        android:gravity="center"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="22sp"
@@ -67,7 +68,7 @@
         android:text="@string/connectUsing"
         android:textAlignment="center"
         android:textColor="@color/blurText"
-
+        android:gravity="center"
         android:textSize="16.5sp"
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -125,6 +126,7 @@
         android:layout_marginEnd="60dp"
         android:onClick="SignUpTextClicked"
         android:text="@string/askIfDontHaveAccount"
+        android:gravity="center"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="16sp"
@@ -205,6 +207,7 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
+        android:gravity="center"
         android:layout_height="19dp"
         android:layout_marginStart="110dp"
         android:layout_marginTop="1dp"

@@ -3,38 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
     app:startDestination="@id/commutersFragment">
-    <fragment
-        android:id="@+id/commutersFragment"
-        android:name="com.example.commutingapp.views.ui.Fragments.CommuterFragment"
-        android:label="CommuterFragment">
-        <action
-            android:id="@+id/action_commuterFragment2_to_trackingFragment"
-            app:destination="@id/trackingFragment" />
-    </fragment>
+
+    <action
+        android:id="@+id/action_global_commuterFragment"
+        app:destination="@+id/commutersFragment"
+        app:launchSingleTop="true"
+        />
 
     <fragment
-        android:id="@+id/trackingFragment"
-        android:name="com.example.commutingapp.views.ui.Fragments.TrackingFragment"
-        android:label="TrackingFragment">
-        <action
-            android:id="@+id/action_trackingFragment_to_commuterFragment2"
-            app:destination="@id/commutersFragment" />
-    </fragment>
+        android:id="@+id/commutersFragment"
+        android:name="com.example.commutingapp.views.ui.fragments.CommuterFragment"
+        android:label="CommuterFragment"/>
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.commutingapp.views.ui.Fragments.SettingsFragment"
+        android:name="com.example.commutingapp.views.ui.fragments.SettingsFragment"
         android:label="SettingsFragment" />
 
 
     <fragment
         android:id="@+id/statisticsFragment"
-        android:name="com.example.commutingapp.views.ui.Fragments.StatisticsFragment"
+        android:name="com.example.commutingapp.views.ui.fragments.StatisticsFragment"
         android:label="StatisticsFragment" />
 
 
     <fragment
         android:id="@+id/weatherFragment"
-        android:name="com.example.commutingapp.views.ui.Fragments.WeatherFragment"
+        android:name="com.example.commutingapp.views.ui.fragments.WeatherFragment"
         android:label="WeatherFragment" />
 </navigation>

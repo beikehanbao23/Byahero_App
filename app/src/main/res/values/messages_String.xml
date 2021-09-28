@@ -27,12 +27,13 @@
     <string name="descriptionTextCreateAccountMessage">Complete your profile in less than 5 minutes to get accurate results.</string>
     <string name="skipButton">Skip</string>
     <string name="nextButton">Next</string>
-    
-    
+
+
     <!--No internet dialog XML-->
     <string name="titleNoInternetDialog">No Internet Connection</string>
     <string name="descriptionNoInternetDialog">Slow or no internet connection.\nPlease check your internet settings and try\n again.</string>
-
+    <string name="RetryButton">Retry</string>
+    <string name="GoToSettings">Go to Settings</string>
 
     <!-- Email XML-->
     <string name="resendVerification">Resend verification</string>
@@ -55,7 +56,7 @@
     <!--Sign In XML -->
     <string name="welcomeMessage">Welcome to Byahero!</string>
     <string name="loginButton">Log in</string>
-    <string name="connectUsing">Or connect using</string>
+    <string name="connectUsing"> Or connect using</string>
     <string name="googleButton">Google</string>
     <string name="facebookButton">Facebook</string>
     <string name="askIfDontHaveAccount">Don\'t have an account?</string>
@@ -65,4 +66,10 @@
 
     <!--Permission Dialog-->
     <string name="requestLocationMessage">You need to accept location permission to use this app.</string>
+
+
+    <!-- Commuter Fragment-->
+    <string name="startCommuteButton">Start</string>
+
+
 </resources>
