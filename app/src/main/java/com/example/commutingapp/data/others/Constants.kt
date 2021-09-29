@@ -13,5 +13,8 @@ object Constants {
     const val NOTIFICATION_CHANNEL_ID = "tracking_channel"
     const val NOTIFICATION_CHANNEL_NAME = "Tracking"
     const val NOTIFICATION_ID = 1
+    const val FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE"
 
+    const val FASTEST_LOCATION_UPDATE_INTERVAL = 5000L
+    const val NORMAL_LOCATION_UPDATE_INTERVAL = 10000L
 }
