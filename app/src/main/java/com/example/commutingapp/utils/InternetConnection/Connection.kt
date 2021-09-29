@@ -11,25 +11,24 @@ import com.example.commutingapp.utils.InternetConnection.Connection.hasInternetC
 object Connection {
 
 
-
+    @SuppressLint("MissingPermission")
+    @Suppress("Deprecation")
+    fun hasInternetConnection(context: Context):Boolean {
+        (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo?.apply {
+            return isConnected && isAvailable
+        }
+        return false
+    }
 
 
     @SuppressLint("MissingPermission")
     @Suppress("Deprecation")
-    fun Context.hasInternetConnection() =
-        (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo?.apply {
-             isConnected && isAvailable
+    fun hasLocationTurnedOn(context: Context) :Boolean {
+        (context.getSystemService(Context.LOCATION_SERVICE) as LocationManager).apply {
+            return isProviderEnabled(LocationManager.GPS_PROVIDER)
         }
 
-
-
-    @SuppressLint("MissingPermission")
-    @Suppress("Deprecation")
-    fun Context.hasLocationTurnedOn()=
-        (getSystemService(Context.LOCATION_SERVICE) as LocationManager).apply {
-             isProviderEnabled(LocationManager.GPS_PROVIDER) && isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-        }
-
+    }
 
 
 }
