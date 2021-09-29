@@ -1,6 +1,7 @@
 package com.example.commutingapp.views.dialogs
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -8,8 +9,9 @@ import android.provider.Settings
 import android.view.Gravity
 import android.view.View
 import com.example.commutingapp.R
-import com.example.commutingapp.utils.InternetConnection.ConnectionManager
+import com.example.commutingapp.utils.InternetConnection.InternetManager
 import com.thecode.aestheticdialogs.*
+
 
 class DialogDirector(val activity: Activity) {
 
@@ -22,7 +24,9 @@ class DialogDirector(val activity: Activity) {
 
         ).also { it.show() }.apply {
             findViewById<View>(R.id.retry_button)?.setOnClickListener {
-                if (ConnectionManager(activity).internetConnectionAvailable()) {
+                if (InternetManager(
+                        activity
+                    ).isConnectionAvailable()) {
                     dismiss()
                 }
                 findViewById<View>(R.id.go_to_settings_Button)?.setOnClickListener {
@@ -34,9 +38,12 @@ class DialogDirector(val activity: Activity) {
     }
 
 
-    fun constructWarningDialog(title: String, message: String) {
-
-        AestheticDialog.Builder(activity, DialogStyle.FLAT, DialogType.WARNING)
+    private fun aestheticDialog(
+        title: String,
+        message: String,
+        dialogType: DialogType
+    ): AestheticDialog {
+        return AestheticDialog.Builder(activity, DialogStyle.FLAT, dialogType)
             .setTitle(title)
             .setMessage(message)
             .setCancelable(true)
@@ -48,44 +55,37 @@ class DialogDirector(val activity: Activity) {
                     dialog.dismiss()
                 }
             }).show()
+    }
 
 
+    fun constructWarningDialog(title: String, message: String) {
+        aestheticDialog(title, message, DialogType.WARNING)
     }
 
 
     fun constructErrorDialog(title: String, message: String) {
-
-        AestheticDialog.Builder(activity, DialogStyle.FLAT, DialogType.ERROR)
-            .setTitle(title)
-            .setMessage(message)
-            .setCancelable(true)
-            .setDarkMode(false)
-            .setGravity(Gravity.CENTER)
-            .setAnimation(DialogAnimation.SHRINK)
-            .setOnClickListener(object : OnDialogClickListener {
-                override fun onClick(dialog: AestheticDialog.Builder) {
-                    dialog.dismiss()
-                }
-            }).show()
-
-
+        aestheticDialog(title, message, DialogType.ERROR)
     }
 
     fun constructSuccessDialog(title: String, message: String) {
+      aestheticDialog(title,message,DialogType.SUCCESS)
+    }
 
 
-        AestheticDialog.Builder(activity, DialogStyle.FLAT, DialogType.SUCCESS)
-            .setTitle(title)
-            .setMessage(message)
-            .setCancelable(true)
-            .setDarkMode(false)
-            .setGravity(Gravity.CENTER)
-            .setAnimation(DialogAnimation.SHRINK)
-            .setOnClickListener(object : OnDialogClickListener {
-                override fun onClick(dialog: AestheticDialog.Builder) {
-                    dialog.dismiss()
+    fun constructRequestLocationDialog(activity: Activity){
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(activity).apply {
+            setTitle("GPS is settings")
+            setMessage("GPS is not enabled. Do you want to go to settings menu?")
+            setPositiveButton("Settings"){ _, _ ->
+                    activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 }
-            }).show()
+            setNegativeButton("Cancel"){ dialog, _ -> dialog.cancel() }
+        }.apply {
+            show()
+        }
+
+
+
     }
 
 }
