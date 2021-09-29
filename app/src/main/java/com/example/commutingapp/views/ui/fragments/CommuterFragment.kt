@@ -7,11 +7,13 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.commutingapp.R
-import com.example.commutingapp.data.others.Constants
-import com.example.commutingapp.data.others.TrackingUtility.hasLocationPermission
-import com.example.commutingapp.data.others.TrackingUtility.requestPermission
+import com.example.commutingapp.data.others.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.example.commutingapp.data.others.TrackingPermissionUtility.hasLocationPermission
+import com.example.commutingapp.data.others.TrackingPermissionUtility.requestPermission
 import com.example.commutingapp.data.service.TrackingService
+import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.viewmodels.MainViewModel
+import com.example.commutingapp.views.dialogs.DialogDirector
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,11 +30,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requestRequiredPermissions()
+
+
 
         button = view.findViewById(R.id.startCommute)
+
         button.setOnClickListener {
-            sendCommandsToService(Constants.ACTION_START_OR_RESUME_SERVICE)
+            requestRequiredSettings()
+            startForegroundServiceTracking(ACTION_START_OR_RESUME_SERVICE)
 
         }
         mapView = view.findViewById(R.id.googleMapView)
@@ -43,7 +48,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
     }
 
-    private fun sendCommandsToService(action:String){
+    private fun startForegroundServiceTracking(action:String){
         Intent(requireContext(),TrackingService::class.java).also {
             it.action = action
             requireContext().startService(it)
@@ -85,8 +90,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         mapView.onPause()
     }
 
-    private fun requestRequiredPermissions() {
+    private fun requestRequiredSettings() {
         if (hasLocationPermission(requireContext())) {
+            if (!Connection.hasLocationTurnedOn(requireContext())){
+                DialogDirector(requireActivity()).constructRequestLocationDialog()
+            }
             return
         }
         requestPermission(this)
@@ -97,7 +105,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            AppSettingsDialog.Builder(this).build().show()//TODO re style
+            AppSettingsDialog.Builder(this).build().show()
         } else {
             requestPermission(this)
         }

@@ -5,7 +5,6 @@ import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,11 +15,12 @@ import com.example.commutingapp.data.firebase.auth.UserAuthenticationProcessor;
 import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper;
 import com.example.commutingapp.data.firebase.usr.UserDataProcessor;
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor;
+import com.example.commutingapp.data.others.Constants;
 import com.example.commutingapp.databinding.ActivitySignInBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
+import com.example.commutingapp.utils.InternetConnection.Connection;
 import com.example.commutingapp.utils.input_validator.users.UserValidatorManager;
 import com.example.commutingapp.utils.input_validator.users.UserValidatorModel;
-import com.example.commutingapp.utils.InternetConnection.ConnectionManager;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
 import com.example.commutingapp.views.dialogs.DialogDirector;
@@ -57,8 +57,8 @@ import timber.log.Timber;
 public class SignIn extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
-    private final String TAG = "FacebookAuthentication";
-    private final String FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE";
+
+
     private DialogDirector director;
     private CallbackManager facebookCallBackManager;
     private GoogleSignInClient mGoogleSignInClient;
@@ -116,7 +116,7 @@ public class SignIn extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                Log.e(TAG, "facebook:onCancel");
+                Timber.e( "facebook:onCancel");
             }
 
             @Override
@@ -128,7 +128,7 @@ public class SignIn extends AppCompatActivity {
 
     private void handleFacebookSignInException(Exception error) {
 
-        if (Objects.equals(error.getMessage(), FACEBOOK_CONNECTION_FAILURE)) {
+        if (Objects.equals(error.getMessage(), Constants.FACEBOOK_CONNECTION_FAILURE)) {
             showNoInternetActivity();
             return;
         }
@@ -196,7 +196,7 @@ public class SignIn extends AppCompatActivity {
         if (error.getStatus().isCanceled()) {
             return;
         }
-        if (!error.getStatus().isSuccess() && noInternetConnection()) {
+        if (!error.getStatus().isSuccess() && !Connection.INSTANCE.hasInternetConnection(this)) {
             showNoInternetActivity();
             return;
         }
@@ -204,9 +204,7 @@ public class SignIn extends AppCompatActivity {
 
     }
 
-    private boolean noInternetConnection() {
-        return !new ConnectionManager(this).internetConnectionAvailable();
-    }
+
 
     private void createRequestSignOptionsGoogle() {
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions
@@ -266,7 +264,7 @@ public class SignIn extends AppCompatActivity {
             return;
         }
 
-        if (noInternetConnection()) {
+        if (!Connection.INSTANCE.hasInternetConnection(this)) {
             showNoInternetActivity();
             return;
         }

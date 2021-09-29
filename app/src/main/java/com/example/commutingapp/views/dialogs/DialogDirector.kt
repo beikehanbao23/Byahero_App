@@ -9,7 +9,7 @@ import android.provider.Settings
 import android.view.Gravity
 import android.view.View
 import com.example.commutingapp.R
-import com.example.commutingapp.utils.InternetConnection.InternetManager
+import com.example.commutingapp.utils.InternetConnection.Connection
 import com.thecode.aestheticdialogs.*
 
 
@@ -24,9 +24,7 @@ class DialogDirector(val activity: Activity) {
 
         ).also { it.show() }.apply {
             findViewById<View>(R.id.retry_button)?.setOnClickListener {
-                if (InternetManager(
-                        activity
-                    ).isConnectionAvailable()) {
+                if (Connection.hasInternetConnection(activity)) {
                     dismiss()
                 }
                 findViewById<View>(R.id.go_to_settings_Button)?.setOnClickListener {
@@ -72,9 +70,9 @@ class DialogDirector(val activity: Activity) {
     }
 
 
-    fun constructRequestLocationDialog(activity: Activity){
-        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(activity).apply {
-            setTitle("GPS is settings")
+    fun constructRequestLocationDialog(){
+            AlertDialog.Builder(activity).apply {
+            setTitle("Use location?")
             setMessage("GPS is not enabled. Do you want to go to settings menu?")
             setPositiveButton("Settings"){ _, _ ->
                     activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))

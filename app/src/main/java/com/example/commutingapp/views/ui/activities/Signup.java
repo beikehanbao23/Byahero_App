@@ -13,11 +13,11 @@ import com.example.commutingapp.data.firebase.auth.UserAuthenticationProcessor;
 import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper;
 import com.example.commutingapp.data.firebase.usr.UserDataProcessor;
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor;
+import com.example.commutingapp.utils.InternetConnection.Connection;
 import com.example.commutingapp.utils.input_validator.users.UserValidatorManager;
 import com.example.commutingapp.utils.input_validator.users.UserValidatorModel;
 import com.example.commutingapp.databinding.ActivitySignupBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
-import com.example.commutingapp.utils.InternetConnection.ConnectionManager;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
 import com.example.commutingapp.viewmodels.SignUpViewModel;
@@ -103,7 +103,7 @@ public class Signup extends AppCompatActivity {
         if (user.signUpValidationFail()) {
             return;
         }
-        if (noInternetConnection()) {
+        if (!Connection.INSTANCE.hasInternetConnection(this)) {
             dialogDirector.constructNoInternetDialog();
             return;
         }
@@ -117,9 +117,7 @@ public class Signup extends AppCompatActivity {
 
     }
 
-    private boolean noInternetConnection() {
-        return !new ConnectionManager(this).internetConnectionAvailable();
-    }
+
 
     private void signOutPreviousAccount() {
 
