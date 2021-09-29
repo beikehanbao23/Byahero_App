@@ -66,17 +66,17 @@ class DialogDirector(val activity: Activity) {
     }
 
     fun constructSuccessDialog(title: String, message: String) {
-      aestheticDialog(title,message,DialogType.SUCCESS)
+        aestheticDialog(title,message,DialogType.SUCCESS)
     }
 
 
     fun constructRequestLocationDialog(){
-            AlertDialog.Builder(activity).apply {
+        AlertDialog.Builder(activity).apply {
             setTitle("Use location?")
             setMessage("GPS is not enabled. Do you want to go to settings menu?")
             setPositiveButton("Settings"){ _, _ ->
-                    activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-                }
+                activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }
             setNegativeButton("Cancel"){ dialog, _ -> dialog.cancel() }
         }.apply {
             show()

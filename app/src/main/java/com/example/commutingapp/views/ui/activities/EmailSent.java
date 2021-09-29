@@ -21,8 +21,6 @@ import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 public class EmailSent extends AppCompatActivity {
 
 
-    private final long DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG = 2000;
-    private final long DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG = 2000;
     private DialogDirector dialogDirector;
     private CustomEmailsentDialogBinding emailDialogBinding;
     private CircularProgressbarBinding progressbarBinding;
@@ -101,6 +99,7 @@ public class EmailSent extends AppCompatActivity {
 
     private void showNoInternetActivity() {
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
+        long DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG = 2000;
         new Handler().postDelayed(() -> {
             dialogDirector.constructNoInternetDialog().setOnDismissListener(T->viewModel.refreshEmailSynchronously());
             progressbarBinding.circularProgressBar.setVisibility(View.INVISIBLE);
@@ -109,6 +108,7 @@ public class EmailSent extends AppCompatActivity {
 
     private void showMainScreenActivity() {
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
+        long DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG = 2150;
         new Handler().postDelayed(() -> {
             ActivitySwitcher.INSTANCE.startActivityOf(this, this, MainScreen.class);
         }, DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG);

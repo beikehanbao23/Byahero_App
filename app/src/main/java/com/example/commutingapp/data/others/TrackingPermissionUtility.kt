@@ -9,19 +9,17 @@ import com.example.commutingapp.data.others.Constants.REQUEST_CODE_LOCATION_PERM
 import pub.devrel.easypermissions.EasyPermissions
 
 
-object TrackingUtility {
+object TrackingPermissionUtility {
 
     fun hasLocationPermission(context: Context) =
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             EasyPermissions.hasPermissions(
                 context,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION
             )
         } else {
             EasyPermissions.hasPermissions(
                 context,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             )
@@ -34,7 +32,6 @@ object TrackingUtility {
                 fragment,
                 fragment.getString(R.string.requestLocationMessage),
                 REQUEST_CODE_LOCATION_PERMISSION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION
             )
         }else{
@@ -42,7 +39,6 @@ object TrackingUtility {
                 fragment,
                 fragment.getString(R.string.requestLocationMessage),
                 REQUEST_CODE_LOCATION_PERMISSION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             )
