@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 
-object ActivitySwitcher {
+object ActivitySwitch {
     /**
      * Start new activity and closing the previous activity, popping the previous activity at the backstack
      */

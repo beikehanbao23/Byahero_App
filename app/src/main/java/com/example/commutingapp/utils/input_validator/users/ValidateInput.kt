@@ -1,6 +1,6 @@
 package com.example.commutingapp.utils.input_validator.users
 
-interface UserValidator {
+interface ValidateInput {
     fun validationEmailFailed():Boolean?
     fun validationConfirmPasswordFailed():Boolean?
     fun validationPasswordFailed():Boolean?

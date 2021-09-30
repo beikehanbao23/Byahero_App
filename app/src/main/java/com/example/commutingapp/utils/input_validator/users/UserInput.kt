@@ -4,17 +4,16 @@ import android.content.Context
 import android.util.Patterns
 import android.widget.EditText
 import com.example.commutingapp.R.string
-import com.example.commutingapp.utils.input_validator.NumericNumberValidator
-import com.example.commutingapp.utils.input_validator.SpecialCharactersValidator
+import com.example.commutingapp.utils.input_validator.Validate
 
 
 const val USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS = 8
-open class UserValidatorModel constructor(
+open class ValidateInputModel constructor(
     private var context: Context,
     private var email: EditText,
     private var password: EditText,
     private var confirmPassword: EditText?
-) : UserValidator {
+) : ValidateInput {
     private val userConfirmPassword = confirmPassword?.text.toString().trim()
     private val userPassword = password.text.toString().trim()
     private val userEmail: String = email.text.toString().trim()
@@ -50,8 +49,8 @@ open class UserValidatorModel constructor(
     private fun passwordIsNotMatch() = userPassword != userConfirmPassword
     private fun strongPassword() : Boolean {
        return isNumberOfCharactersLongEnough() &&
-                (NumericNumberValidator.containsNumeric(userConfirmPassword) ||
-                        SpecialCharactersValidator.containSpecialCharacters(userConfirmPassword))
+                (Validate.containsNumeric(userConfirmPassword) ||
+                        Validate.containSpecialCharacters(userConfirmPassword))
     }
     private fun isNumberOfCharactersLongEnough() = userConfirmPassword.toCharArray().size >= USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS
 
