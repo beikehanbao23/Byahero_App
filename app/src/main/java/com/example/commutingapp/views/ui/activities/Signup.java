@@ -14,11 +14,11 @@ import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper;
 import com.example.commutingapp.data.firebase.usr.UserDataProcessor;
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor;
 import com.example.commutingapp.utils.InternetConnection.Connection;
-import com.example.commutingapp.utils.input_validator.users.UserValidatorManager;
-import com.example.commutingapp.utils.input_validator.users.UserValidatorModel;
+import com.example.commutingapp.utils.input_validator.users.UserInputValidate;
+import com.example.commutingapp.utils.input_validator.users.ValidateInputModel;
 import com.example.commutingapp.databinding.ActivitySignupBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
-import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
+import com.example.commutingapp.utils.ui_utilities.ActivitySwitch;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
 import com.example.commutingapp.viewmodels.SignUpViewModel;
 import com.example.commutingapp.views.dialogs.DialogDirector;
@@ -69,7 +69,7 @@ public class Signup extends AppCompatActivity {
     }
 
     private void initializeAttributes() {
-        new ScreenDimension(getWindow()).setWindowToFullScreen();
+        ScreenDimension.INSTANCE.setWindowToFullScreen(getWindow());
         activitySignupBinding = ActivitySignupBinding.inflate(getLayoutInflater());
         circularProgressbarBinding = CircularProgressbarBinding.bind(activitySignupBinding.getRoot());
         setContentView(activitySignupBinding.getRoot());
@@ -94,7 +94,7 @@ public class Signup extends AppCompatActivity {
     public void CreateButtonClicked(View view) {
 
 
-        UserValidatorManager user = new UserValidatorManager(new UserValidatorModel(this,
+        UserInputValidate user = new UserInputValidate(new ValidateInputModel(this,
                 activitySignupBinding.editTextSignUpEmailAddress,
                 activitySignupBinding.editTextSignUpPassword,
                 activitySignupBinding.editTextSignUpConfirmPassword));
@@ -165,12 +165,12 @@ public class Signup extends AppCompatActivity {
 
     private void showEmailSentActivity() {
 
-        ActivitySwitcher.INSTANCE.startActivityOf(this, this, EmailSent.class);
+        ActivitySwitch.INSTANCE.startActivityOf(this, EmailSent.class);
     }
 
     private void showSignInActivity() {
 
-        ActivitySwitcher.INSTANCE.startActivityOf(this, this, SignIn.class);
+        ActivitySwitch.INSTANCE.startActivityOf(this, SignIn.class);
     }
 
     @Override protected void onDestroy() {

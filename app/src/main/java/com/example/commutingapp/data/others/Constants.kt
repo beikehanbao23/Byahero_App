@@ -17,4 +17,8 @@ object Constants {
 
     const val FASTEST_LOCATION_UPDATE_INTERVAL = 5000L
     const val NORMAL_LOCATION_UPDATE_INTERVAL = 10000L
+
+
+    const val REGEX_NUMBER_VALUE="[0-9]"
+    const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"
 }

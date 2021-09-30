@@ -14,10 +14,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.ActivityIntroSliderBinding
-import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher.startActivityOf
+import com.example.commutingapp.utils.ui_utilities.ActivitySwitch.startActivityOf
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.viewmodels.IntroSliderViewModel
-import com.example.commutingapp.views.MenuButtons.CustomBackButton
+import com.example.commutingapp.views.MenuButtons.NavigationButton
 import com.example.commutingapp.views.adapters.IntroSliderAdapter
 
 private const val ITEMS_COUNT = 4
@@ -60,7 +60,7 @@ class IntroSlider : AppCompatActivity() {
         }
     }
     private fun showMainScreenActivity() {
-        startActivityOf(this, this, MainScreen::class.java)
+        startActivityOf(this, MainScreen::class.java)
     }
 
 
@@ -74,7 +74,7 @@ class IntroSlider : AppCompatActivity() {
         registerCallbacks()
     }
     private fun initializeAttributes() {
-        ScreenDimension(window).setWindowToFullScreen()
+        ScreenDimension.setWindowToFullScreen(window)
         binding = ActivityIntroSliderBinding.inflate(layoutInflater)
         setTheme(R.style.Theme_CommutingApp)
         setContentView(binding?.root)
@@ -165,7 +165,7 @@ class IntroSlider : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        CustomBackButton(this, this).applyDoubleClickToExit()
+        NavigationButton.applyDoubleClickToExit(this)
 
     }
 
@@ -196,7 +196,7 @@ class IntroSlider : AppCompatActivity() {
     }
 
     private fun showSignInActivity() {
-      startActivityOf(this,this, SignIn::class.java)
+      startActivityOf(this, SignIn::class.java)
     }
 
     private fun userIsDoneWithIntroSliders() {

@@ -8,10 +8,10 @@ object ActivitySwitch {
     /**
      * Start new activity and closing the previous activity, popping the previous activity at the backstack
      */
-    fun startActivityOf(activityOfThisClass: Activity ,contextOfThisClass: Context, classToOpen:Class<*>){
+    fun startActivityOf(activity: Activity, classToOpen:Class<*>){
 
-        contextOfThisClass.startActivity(Intent(contextOfThisClass,classToOpen))
-        activityOfThisClass.finish()
+        activity.startActivity(Intent(activity,classToOpen))
+        activity.finish()
     }
     /**
      * Start new activity without closing the previous activity, previous activity remains at the backstack

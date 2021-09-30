@@ -11,10 +11,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.commutingapp.R;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.databinding.CustomEmailsentDialogBinding;
-import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
+import com.example.commutingapp.utils.ui_utilities.ActivitySwitch;
 import com.example.commutingapp.viewmodels.EmailSentViewModel;
 import com.example.commutingapp.views.dialogs.DialogDirector;
-import com.example.commutingapp.views.MenuButtons.CustomBackButton;
+import com.example.commutingapp.views.MenuButtons.NavigationButton;
 
 
 
@@ -110,14 +110,14 @@ public class EmailSent extends AppCompatActivity {
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
         long DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG = 2150;
         new Handler().postDelayed(() -> {
-            ActivitySwitcher.INSTANCE.startActivityOf(this, this, MainScreen.class);
+            ActivitySwitch.INSTANCE.startActivityOf(this, MainScreen.class);
         }, DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG);
 
     }
 
     @Override
     public void onBackPressed() {
-        new CustomBackButton(this, this).applyDoubleClickToExit();
+         NavigationButton.applyDoubleClickToExit(this);
     }
 
     private void displayUserEmailToTextView() {

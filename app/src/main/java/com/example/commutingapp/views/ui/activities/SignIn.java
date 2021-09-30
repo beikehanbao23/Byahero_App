@@ -19,13 +19,12 @@ import com.example.commutingapp.data.others.Constants;
 import com.example.commutingapp.databinding.ActivitySignInBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.utils.InternetConnection.Connection;
-import com.example.commutingapp.utils.input_validator.users.UserValidatorManager;
-import com.example.commutingapp.utils.input_validator.users.UserValidatorModel;
-import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher;
+import com.example.commutingapp.utils.input_validator.users.UserInputValidate;
+import com.example.commutingapp.utils.input_validator.users.ValidateInputModel;
+import com.example.commutingapp.utils.ui_utilities.ActivitySwitch;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
+import com.example.commutingapp.views.MenuButtons.NavigationButton;
 import com.example.commutingapp.views.dialogs.DialogDirector;
-
-import com.example.commutingapp.views.MenuButtons.CustomBackButton;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -90,13 +89,13 @@ public class SignIn extends AppCompatActivity {
 
         activitySignInBinding = ActivitySignInBinding.inflate(getLayoutInflater());
         circularProgressbarBinding = CircularProgressbarBinding.bind(activitySignInBinding.getRoot());
-        new ScreenDimension(getWindow()).setWindowToFullScreen();
+        ScreenDimension.INSTANCE.setWindowToFullScreen(getWindow());
         setContentView(activitySignInBinding.getRoot());
         dialogDirector = new DialogDirector(this);
         firebaseUser = new FirebaseUserWrapper();
         userAuth = new UserAuthenticationProcessor(new FirebaseAuthenticatorWrapper());
         userData = new UserDataProcessor(firebaseUser);
-        userEmail =  new UserEmailProcessor(firebaseUser);
+        userEmail = new UserEmailProcessor(firebaseUser);
         director = new DialogDirector(this);
     }
 
@@ -116,7 +115,7 @@ public class SignIn extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                Timber.e( "facebook:onCancel");
+                Timber.e("facebook:onCancel");
             }
 
             @Override
@@ -205,7 +204,6 @@ public class SignIn extends AppCompatActivity {
     }
 
 
-
     private void createRequestSignOptionsGoogle() {
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -247,7 +245,7 @@ public class SignIn extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        new CustomBackButton(this, this).applyDoubleClickToExit();
+        NavigationButton.applyDoubleClickToExit(this);
     }
 
     public void SignInButtonIsClicked(View view) {
@@ -255,7 +253,7 @@ public class SignIn extends AppCompatActivity {
     }
 
     private void loginViaDefaultSignIn() {
-        UserValidatorManager user = new UserValidatorManager(new UserValidatorModel(this,
+        UserInputValidate user = new UserInputValidate(new ValidateInputModel(this,
                 activitySignInBinding.editloginTextEmail,
                 activitySignInBinding.editLoginTextPassword,
                 null));
@@ -346,7 +344,7 @@ public class SignIn extends AppCompatActivity {
 
     private void showMainScreenActivity() {
 
-        ActivitySwitcher.INSTANCE.startActivityOf(this, this, MainScreen.class);
+        ActivitySwitch.INSTANCE.startActivityOf(this, MainScreen.class);
     }
 
     private void showNoInternetActivity() {
@@ -356,11 +354,11 @@ public class SignIn extends AppCompatActivity {
 
     private void showEmailSentActivity() {
 
-        ActivitySwitcher.INSTANCE.startActivityOf(this, this, EmailSent.class);
+        ActivitySwitch.INSTANCE.startActivityOf(this, EmailSent.class);
     }
 
     private void showSignUpActivity() {
-        ActivitySwitcher.INSTANCE.startActivityOf(this, this, Signup.class);
+        ActivitySwitch.INSTANCE.startActivityOf(this, Signup.class);
     }
 
     public void googleButtonIsClicked(View view) {

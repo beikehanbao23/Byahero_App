@@ -17,8 +17,8 @@ import com.example.commutingapp.data.firebase.usr.UserDataProcessor
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
 import com.example.commutingapp.data.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
-import com.example.commutingapp.utils.ui_utilities.ActivitySwitcher
-import com.example.commutingapp.views.MenuButtons.CustomBackButton
+import com.example.commutingapp.utils.ui_utilities.ActivitySwitch
+import com.example.commutingapp.views.MenuButtons.NavigationButton
 import com.example.commutingapp.views.ui.fragments.CommuterFragment
 import com.example.commutingapp.views.ui.fragments.SettingsFragment
 import com.example.commutingapp.views.ui.fragments.StatisticsFragment
@@ -177,11 +177,11 @@ class MainScreen : AppCompatActivity() {
 
     private fun showSignInActivity() {
 
-        ActivitySwitcher.startActivityOf(this, this, SignIn::class.java)
+        ActivitySwitch.startActivityOf(this,  SignIn::class.java)
     }
 
     override fun onBackPressed() {
-        CustomBackButton(this, this).applyDoubleClickToExit()
+        NavigationButton.applyDoubleClickToExit(this)
     }
 
 
