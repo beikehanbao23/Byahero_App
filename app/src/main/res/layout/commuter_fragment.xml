@@ -16,15 +16,29 @@
         tools:ignore="SpeakableTextPresentCheck" />
 
     <Button
-        android:id="@+id/startCommute"
-        android:layout_width="127dp"
-        android:layout_height="55dp"
+        android:id="@+id/startButton"
+        android:layout_width="wrap_content"
+        android:layout_height="53dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="100dp"
+        android:layout_marginEnd="25dp"
         android:layout_marginBottom="16dp"
         android:text="@string/startCommuteButton"
-        app:layout_constraintBottom_toBottomOf="@+id/googleMapView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/finishButton"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/finishButton"
+        android:layout_width="97dp"
+        android:layout_height="53dp"
+        android:layout_gravity="center"
+
+        android:layout_marginEnd="72dp"
+        android:layout_marginBottom="16dp"
+        android:text="Finish"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
