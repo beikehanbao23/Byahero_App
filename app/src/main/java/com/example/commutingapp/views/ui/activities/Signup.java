@@ -50,9 +50,9 @@ public class Signup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeAttributes();
-        initializeObservers();
+        subscribeToObservers();
     }
-    private void initializeObservers(){
+    private void subscribeToObservers(){
         observeEmailVerification();
         observeInternet();
         observeExceptionMessage();

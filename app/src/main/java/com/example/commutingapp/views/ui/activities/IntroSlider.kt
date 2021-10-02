@@ -45,34 +45,36 @@ class IntroSlider : AppCompatActivity() {
     }
 
 
-
     private fun startTransitionToNextActivity() {
         viewModel.setUserSignInProvider()
-        viewModel.navigateToDetailsOnSuccess().observe(this){
-                if (it.getContentIfNotHandled() != null) {
-                    showMainScreenActivity()
-                }
+        viewModel.navigateToDetailsOnSuccess().observe(this) {
+
+            it.getContentIfNotHandled()?.let {
+                showMainScreenActivity()
             }
+
+        }
 
 
         if (viewModel.navigateToDetailsOnSuccess().value == null) {
-           showSignInActivity()
+            showSignInActivity()
         }
     }
+
     private fun showMainScreenActivity() {
         startActivityOf(this, MainScreen::class.java)
     }
 
 
+    private fun setupIntroSliders() {
 
-    private fun setupIntroSliders(){
-
-        provideViewPageDisplay()
+        setViewPageDisplay()
         setupIndicators()
 
         setCurrentIndicator(DEFAULT_INDICATOR_POSITION)
-        registerCallbacks()
+        setCallbacks()
     }
+
     private fun initializeAttributes() {
         ScreenDimension.setWindowToFullScreen(window)
         binding = ActivityIntroSliderBinding.inflate(layoutInflater)
@@ -81,9 +83,9 @@ class IntroSlider : AppCompatActivity() {
         preferences = getSharedPreferences("IntroSlider", Context.MODE_PRIVATE)
     }
 
-    private fun registerCallbacks(){
+    private fun setCallbacks() {
         with(binding?.viewPagerSliders, {
-            this?.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
+            this?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     transitionButtonName()
@@ -92,13 +94,14 @@ class IntroSlider : AppCompatActivity() {
             })
         })
     }
+
     private fun userHasAlreadySeenTheIntroSliders() =
         preferences.getBoolean(preferredShowIntro, false)
 
 
-    private fun provideViewPageDisplay() {
+    private fun setViewPageDisplay() {
 
-        binding?.viewPagerSliders?.adapter = IntroSliderAdapter(layoutInflater,this)
+        binding?.viewPagerSliders?.adapter = IntroSliderAdapter(layoutInflater, this)
     }
 
 
@@ -111,7 +114,6 @@ class IntroSlider : AppCompatActivity() {
         layoutParameters.setMargins(8, 0, 8, 0)
         renderIndicators(indicators, layoutParameters)
 
-        
 
     }
 
@@ -184,7 +186,7 @@ class IntroSlider : AppCompatActivity() {
     private fun slideHasNext() = binding!!.viewPagerSliders.currentItem < ITEMS_COUNT - 1
 
     private fun moveToNextSlide() {
-        binding!!.viewPagerSliders.currentItem +=1
+        binding!!.viewPagerSliders.currentItem += 1
 
     }
 
@@ -196,7 +198,7 @@ class IntroSlider : AppCompatActivity() {
     }
 
     private fun showSignInActivity() {
-      startActivityOf(this, SignIn::class.java)
+        startActivityOf(this, SignIn::class.java)
     }
 
     private fun userIsDoneWithIntroSliders() {
@@ -220,11 +222,10 @@ class IntroSlider : AppCompatActivity() {
     }
 
     private fun destroyBinding() {
-        IntroSliderAdapter(layoutInflater,this).destroyIntroSliderAdapterBinding()
+        IntroSliderAdapter(layoutInflater, this).destroyIntroSliderAdapterBinding()
         binding = null
 
     }
-
 
 
 }

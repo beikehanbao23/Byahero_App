@@ -33,7 +33,7 @@ public class EmailSent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initializeAttributes();
         displayUserEmailToTextView();
-        initializeObservers();
+        subscribeToObservers();
         viewModel.refreshEmailSynchronously();
 
 
@@ -48,7 +48,7 @@ public class EmailSent extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(EmailSentViewModel.class);
 
     }
-    private void initializeObservers() {
+    private void subscribeToObservers() {
         observeNoInternetActivityTransition();
         observeMainActivityTransition();
         observeEmailVerification();
