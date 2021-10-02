@@ -7,11 +7,15 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+
 import android.os.Build
 import android.os.Looper
+import android.util.Log
+
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.commutingapp.data.others.Constants.ACTION_PAUSE_SERVICE
 import com.example.commutingapp.data.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
@@ -20,7 +24,6 @@ import com.example.commutingapp.data.others.Constants.ACTION_STOP_SERVICE
 import com.example.commutingapp.data.others.Constants.FASTEST_LOCATION_UPDATE_INTERVAL
 import com.example.commutingapp.data.others.Constants.NORMAL_LOCATION_UPDATE_INTERVAL
 import com.example.commutingapp.data.others.Constants.NOTIFICATION_ID
-import com.example.commutingapp.data.others.TrackingPermissionUtility
 import com.example.commutingapp.data.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.views.ui.activities.MainScreen
 import com.google.android.gms.location.*
@@ -28,8 +31,8 @@ import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.maps.model.LatLng
 import timber.log.Timber
 
-typealias polyline = MutableList<LatLng>
-typealias polylines= MutableList<polyline>
+typealias innerPolyline = MutableList<LatLng>
+typealias outerPolyline = MutableList<innerPolyline>
 
 
 class TrackingService : LifecycleService() {
@@ -39,75 +42,85 @@ class TrackingService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        startActionCommand(intent)
+        receiveActionCommand(intent)
         return super.onStartCommand(intent, flags, startId)
     }
 
 
     companion object{
-    val isTracking = MutableLiveData<Boolean>()
-    val pathPoints = MutableLiveData<polylines>()
+    private val is_Tracking = MutableLiveData<Boolean>()
+    private val liveDataOuterPolyline = MutableLiveData<outerPolyline>()
 
     }
+
+    fun isTracking(): LiveData<Boolean> = is_Tracking
+    fun outerPolyline(): MutableLiveData<outerPolyline> = liveDataOuterPolyline
+
     private fun postInitialValues(){
-        isTracking.postValue(false)
-        pathPoints.postValue(mutableListOf()    )
+        is_Tracking.postValue(false)
+        liveDataOuterPolyline.postValue(mutableListOf()    )
     }
     override fun onCreate() {
         super.onCreate()
         postInitialValues()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        isTracking.observe(this){
-            createLocationRequest(it)
+        is_Tracking.observe(this){
+            createLocationRequest()
         }
     }
-
-    private fun addEmptyPolylines() = pathPoints.value?.apply {
+    private fun pauseService(){
+        is_Tracking.postValue(false)
+    }
+    private fun addEmptyPolylines() = liveDataOuterPolyline.value?.apply {
         add(mutableListOf())
-        pathPoints.postValue(this)//TODO try to remove
-    }?: pathPoints.postValue(mutableListOf(mutableListOf()))
+        liveDataOuterPolyline.postValue(this)
+    }?: liveDataOuterPolyline.postValue(mutableListOf(mutableListOf()))
 
 
     private val locationCallback = object : LocationCallback(){
-        override fun onLocationResult(result: LocationResult?) {
-            super.onLocationResult(result)
-            if(isTracking.value!!){
-                result?.locations?.let {
-                    for (location in it){
-                    addPathPoint(location)
+        override fun onLocationResult(locationResult: LocationResult?) {
+            if(is_Tracking.value!!){
+                locationResult ?: return
+                    for (location in locationResult.locations) {
+                        addPolyline(location)
+                        Log.e("Status:", "Lat: ${location.latitude}, Long:${location.longitude}")
                     }
                 }
             }
-        }
     }
 
-    private fun addPathPoint(location:Location?){
+    private fun addPolyline(location: Location?){
         location?.let {
             val position = LatLng(location.latitude,location.longitude)
-            pathPoints.value?.apply {
+            liveDataOuterPolyline.value?.apply {
                 last().add(position)
-                pathPoints.postValue(this)
+                liveDataOuterPolyline.postValue(this)
             }
         }
     }
     @SuppressLint("MissingPermission")
-    fun createLocationRequest(isTracking:Boolean) {
-        if(isTracking && hasLocationPermission(this)){
+    fun createLocationRequest() {
+
+        if(!is_Tracking.value!!){
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+            return
+        }
+
+        if(hasLocationPermission(this)){
         val locationRequest = LocationRequest.create().apply {
             interval = NORMAL_LOCATION_UPDATE_INTERVAL
             fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
             priority = PRIORITY_HIGH_ACCURACY
         }
-            fusedLocationClient.requestLocationUpdates(locationRequest,
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
                 locationCallback,
                 Looper.getMainLooper()
                 )
         }
 
 
-        if(!isTracking){
-            fusedLocationClient.removeLocationUpdates(locationCallback)
-        }
+
     }
 
 
@@ -115,7 +128,7 @@ class TrackingService : LifecycleService() {
 
 
 
-    private fun startActionCommand(intent:Intent?){
+    private fun receiveActionCommand(intent:Intent?){
         intent?.let {
             when (it.action) {
                 ACTION_START_OR_RESUME_SERVICE -> {
@@ -124,10 +137,11 @@ class TrackingService : LifecycleService() {
                         isFirstRun = false
                         return@let
                     }
+                    startForegroundService()//TODO fix later
                     Timber.e("Resumed")
                 }
                 ACTION_PAUSE_SERVICE -> {
-                    Timber.e("Paused")
+                  pauseService()
                 }
                 ACTION_STOP_SERVICE -> {
                     Timber.e("Stopped")
@@ -137,7 +151,7 @@ class TrackingService : LifecycleService() {
     }
     private fun startForegroundService() {
         addEmptyPolylines()
-        isTracking.postValue(true)
+        is_Tracking.postValue(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel()
         }
