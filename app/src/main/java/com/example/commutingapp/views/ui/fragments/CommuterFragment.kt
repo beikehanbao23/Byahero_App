@@ -1,9 +1,11 @@
 package com.example.commutingapp.views.ui.fragments
 
 import android.content.Intent
+import android.hardware.camera2.CameraOfflineSession
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.commutingapp.R
@@ -23,13 +25,15 @@ import com.example.commutingapp.views.dialogs.DialogDirector
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.*
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
 @AndroidEntryPoint
-class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks {
+class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks, OnMapReadyCallback {
+
     private val viewModel: MainViewModel by viewModels()
 
     private var googleMap:GoogleMap? = null
@@ -47,7 +51,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         buttonStart.setOnClickListener {
             requestRequiredSettings()
-            sendCommandToTrackingService(ACTION_START_OR_RESUME_SERVICE)
             toogleStartButton()
         }
 
@@ -64,6 +67,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             addAllPolylines()
         }
         subscribeToObservers()
+
+
     }
 
 
@@ -71,6 +76,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun subscribeToObservers(){
         TrackingService().isTracking().observe(viewLifecycleOwner){
+            isTracking = it
             updateButtons()
         }
 
@@ -132,7 +138,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
              customPolylineAppearance()
                 .add(preLastLatLng)
                 .add(lastLatLng).apply {
-                    googleMap?.addPolyline(this)
+                    googleMap?.addPolyline(this.clickable(true))
+
                 }
 
         }
@@ -145,6 +152,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         return PolylineOptions()
             .color(POLYLINE_COLOR)
             .width(POLYLINE_WIDTH)
+            .startCap(RoundCap())
+            .endCap(SquareCap())
+            .jointType(JointType.ROUND)
+
+
 
     }
 
@@ -225,5 +237,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
+
+
+
+
+    override fun onMapReady(p0: GoogleMap) {
+        TODO("Not yet implemented")
+    }
 
 }

@@ -18,11 +18,11 @@ object Constants {
     const val NOTIFICATION_ID = 1
     const val FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE"
 
-    const val FASTEST_LOCATION_UPDATE_INTERVAL = 12500L
+    const val FASTEST_LOCATION_UPDATE_INTERVAL = 8000L
     const val NORMAL_LOCATION_UPDATE_INTERVAL = 18000L
     const val DEFAULT_MAP_ZOOM = 15f
     const val POLYLINE_COLOR = Color.RED
-    const val POLYLINE_WIDTH = 8f
+    const val POLYLINE_WIDTH = 11.5f
     const val REGEX_NUMBER_VALUE="[0-9]"
     const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"
 }
