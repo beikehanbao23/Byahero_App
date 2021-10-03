@@ -28,6 +28,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserInfo
+import com.mapbox.mapboxsdk.Mapbox
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -108,6 +109,7 @@ class MainScreen : AppCompatActivity() {
 
     private fun initializeAttributes() {
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(activityMainScreenBinding?.root)
 
     }
