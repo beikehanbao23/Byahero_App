@@ -1,7 +1,7 @@
 package com.example.commutingapp.views.ui.fragments
 
+
 import android.content.Intent
-import android.hardware.camera2.CameraOfflineSession
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -22,26 +22,31 @@ import com.example.commutingapp.data.service.innerPolyline
 import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.viewmodels.MainViewModel
 import com.example.commutingapp.views.dialogs.DialogDirector
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.*
+import com.mapbox.mapboxsdk.annotations.PolylineOptions
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
+import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
 @AndroidEntryPoint
-class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks, OnMapReadyCallback {
+class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
+    OnMapReadyCallback {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private var googleMap:GoogleMap? = null
+    private var map: MapboxMap? = null
     private var isTracking = false
     private var outerPolyline = mutableListOf<innerPolyline>()
-    private lateinit var mapView:MapView
+    private lateinit var mapView: MapView
     private lateinit var buttonStart: Button
-    private lateinit var buttonStop:Button
+    private lateinit var buttonStop: Button
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,18 +58,16 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             requestRequiredSettings()
             toogleStartButton()
         }
-
-
         buttonStop.setOnClickListener { sendCommandToTrackingService(ACTION_STOP_SERVICE) }
 
 
 
         mapView = view.findViewById(R.id.googleMapView)
-
         mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync {
-            googleMap = it
-            addAllPolylines()
+        mapView.getMapAsync(this)
+        mapView.setOnLongClickListener {
+            Toast.makeText(requireContext(), "Long pressed", Toast.LENGTH_SHORT).show()
+            true
         }
         subscribeToObservers()
 
@@ -73,9 +76,26 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
 
+    override fun onMapReady(mapboxMap: MapboxMap) {
+        map = mapboxMap.apply {
+            uiSettings.isAttributionEnabled = false
 
-    private fun subscribeToObservers(){
-        TrackingService().isTracking().observe(viewLifecycleOwner){
+            uiSettings.isLogoEnabled = false
+            setStyle(
+                Style.MAPBOX_STREETS
+            ) { style ->
+                TrafficPlugin(mapView, mapboxMap, style).apply {
+                    setVisibility(true)
+                }
+            }
+        }
+        addAllPolylines()
+
+    }
+
+
+    private fun subscribeToObservers() {
+        TrackingService().isTracking().observe(viewLifecycleOwner) {
             isTracking = it
             updateButtons()
         }
@@ -86,23 +106,25 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             moveCameraToUser()
         }
     }
-    private fun sendCommandToTrackingService(action:String){
-        Intent(requireContext(),TrackingService::class.java).also {
+
+    private fun sendCommandToTrackingService(action: String) {
+        Intent(requireContext(), TrackingService::class.java).also {
             it.action = action
             requireContext().startService(it)
         }
     }
 
-    private fun toogleStartButton(){
-        if(isTracking){
+    private fun toogleStartButton() {
+        if (isTracking) {
             sendCommandToTrackingService(ACTION_PAUSE_SERVICE)
             return
         }
         sendCommandToTrackingService(ACTION_START_OR_RESUME_SERVICE)
     }
-    private fun updateButtons(){
-        
-        if(isTracking){
+
+    private fun updateButtons() {
+
+        if (isTracking) {
             buttonStart.text = "Stop"
             buttonStop.visibility = View.GONE
             return
@@ -112,33 +134,36 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
 
-    private fun moveCameraToUser(){
-        if(hasExistingInnerAndOuterPolyLines()){
-            googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                outerPolyline.last().last(),
-                DEFAULT_MAP_ZOOM
-            ))
+    private fun moveCameraToUser() {
+        if (hasExistingInnerAndOuterPolyLines()) {
+            map?.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    outerPolyline.last().last(),
+                    DEFAULT_MAP_ZOOM
+                )
+            )
         }
     }
-    private fun addAllPolylines(){
+
+    private fun addAllPolylines() {
 
         outerPolyline.forEach {
             customPolylineAppearance().addAll(it).apply {
-                googleMap?.addPolyline(this)
+                map?.addPolyline(this)
             }
         }
     }
 
-    private fun addLatestPolyline(){
-        if(hasExistingInnerPolyLines()){
+    private fun addLatestPolyline() {
+        if (hasExistingInnerPolyLines()) {
             val innerPolylinePosition = outerPolyline.last().size - 2
             val preLastLatLng = outerPolyline.last()[innerPolylinePosition]
             val lastLatLng = outerPolyline.last().last()
 
-             customPolylineAppearance()
+            customPolylineAppearance()
                 .add(preLastLatLng)
                 .add(lastLatLng).apply {
-                    googleMap?.addPolyline(this.clickable(true))
+                    map?.addPolyline(this)
 
                 }
 
@@ -146,30 +171,21 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
 
-
-    private fun customPolylineAppearance():PolylineOptions{
+    private fun customPolylineAppearance(): PolylineOptions {
 
         return PolylineOptions()
             .color(POLYLINE_COLOR)
             .width(POLYLINE_WIDTH)
-            .startCap(RoundCap())
-            .endCap(SquareCap())
-            .jointType(JointType.ROUND)
-
 
 
     }
 
 
-    private fun hasExistingInnerAndOuterPolyLines() = outerPolyline.last().isNotEmpty() && outerPolyline.isNotEmpty()
+    private fun hasExistingInnerAndOuterPolyLines() =
+        outerPolyline.last().isNotEmpty() && outerPolyline.isNotEmpty()
 
-    private fun hasExistingInnerPolyLines() = outerPolyline.isNotEmpty() && outerPolyline.last().size > 1
-
-
-
-
-
-
+    private fun hasExistingInnerPolyLines() =
+        outerPolyline.isNotEmpty() && outerPolyline.last().size > 1
 
 
     override fun onResume() {
@@ -205,7 +221,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun requestRequiredSettings() {
         if (hasLocationPermission(requireContext())) {
-            if (!Connection.hasLocationTurnedOn(requireContext())){
+            if (!Connection.hasLocationTurnedOn(requireContext())) {
                 DialogDirector(requireActivity()).constructRequestLocationDialog()
             }
             return
@@ -213,7 +229,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         requestPermission(this)
 
     }
-
 
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
@@ -238,11 +253,5 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
 
-
-
-
-    override fun onMapReady(p0: GoogleMap) {
-        TODO("Not yet implemented")
-    }
 
 }

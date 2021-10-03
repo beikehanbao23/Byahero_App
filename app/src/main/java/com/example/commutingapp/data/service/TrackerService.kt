@@ -28,7 +28,7 @@ import com.example.commutingapp.data.others.TrackingPermissionUtility.hasLocatio
 import com.example.commutingapp.views.ui.activities.MainScreen
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
-import com.google.android.gms.maps.model.LatLng
+import com.mapbox.mapboxsdk.geometry.LatLng
 import timber.log.Timber
 
 typealias innerPolyline = MutableList<LatLng>
