@@ -2,13 +2,14 @@ package com.example.commutingapp.views.ui.fragments
 
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.commutingapp.R
+import com.example.commutingapp.data.others.BitmapConvert
 import com.example.commutingapp.data.others.Constants.ACTION_PAUSE_SERVICE
 import com.example.commutingapp.data.others.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.commutingapp.data.others.Constants.ACTION_STOP_SERVICE
@@ -29,10 +30,13 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+
 
 @AndroidEntryPoint
 class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
@@ -43,10 +47,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private var map: MapboxMap? = null
     private var isTracking = false
     private var outerPolyline = mutableListOf<innerPolyline>()
-    private lateinit var mapView: MapView
+    private lateinit var mapBoxView: MapView
     private lateinit var buttonStart: Button
     private lateinit var buttonStop: Button
-
+    private lateinit var mapBoxStyle: Style
+    private lateinit var symbolManager: SymbolManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,13 +66,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         buttonStop.setOnClickListener { sendCommandToTrackingService(ACTION_STOP_SERVICE) }
 
 
-
-        mapView = view.findViewById(R.id.googleMapView)
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this)
-        mapView.setOnLongClickListener {
-            Toast.makeText(requireContext(), "Long pressed", Toast.LENGTH_SHORT).show()
-            true
+        mapBoxView = view.findViewById(R.id.googleMapView)
+        mapBoxView.apply {
+            onCreate(savedInstanceState)
+            isClickable = true
+        }.also {
+            it.getMapAsync(this)
         }
         subscribeToObservers()
 
@@ -75,21 +79,59 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
 
-
     override fun onMapReady(mapboxMap: MapboxMap) {
         map = mapboxMap.apply {
             uiSettings.isAttributionEnabled = false
-
             uiSettings.isLogoEnabled = false
-            setStyle(
-                Style.MAPBOX_STREETS
-            ) { style ->
-                TrafficPlugin(mapView, mapboxMap, style).apply {
-                    setVisibility(true)
-                }
+
+
+        }
+        setMapStyle(mapboxMap)
+        addMarkerOnMapLongClick(mapboxMap)
+        addAllPolylines()
+
+
+    }
+
+
+    private fun setMapStyle(mapboxMap: MapboxMap) {
+        mapboxMap.setStyle(
+            Style.MAPBOX_STREETS
+        ) { style ->
+            TrafficPlugin(mapBoxView, mapboxMap, style).apply {
+                setVisibility(true)
+            }
+            this.mapBoxStyle = style
+        }
+    }
+
+    private fun addMarkerOnMapLongClick(mapboxMap: MapboxMap) {
+
+        map?.let {
+            it.addOnMapLongClickListener { point ->
+                setMapMarker(point,mapboxMap)
+                true
             }
         }
-        addAllPolylines()
+
+    }
+
+    private fun setMapMarker(point: LatLng, mapboxMap: MapboxMap) {
+        symbolManager = SymbolManager(mapBoxView, mapboxMap, mapBoxStyle).apply {
+            iconAllowOverlap = true
+            iconIgnorePlacement = true
+        }
+
+        mapBoxStyle.addImage(
+            "space-station-icon-id",
+            BitmapConvert.getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location)
+        )
+        symbolManager.create(
+            SymbolOptions()
+                .withLatLng(point)
+                .withIconImage("space-station-icon-id")
+                .withIconSize(1.3f)
+        )
 
     }
 
@@ -190,33 +232,33 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     override fun onResume() {
         super.onResume()
-        mapView.onResume()
+        mapBoxView.onResume()
     }
 
     override fun onStart() {
         super.onStart()
-        mapView.onStart()
+        mapBoxView.onStart()
     }
 
     override fun onStop() {
         super.onStop()
-        mapView.onStop()
+        mapBoxView.onStop()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        mapView.onLowMemory()
+        mapBoxView.onLowMemory()
 
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mapView.onSaveInstanceState(outState)
+        mapBoxView.onSaveInstanceState(outState)
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.onPause()
+        mapBoxView.onPause()
     }
 
     private fun requestRequiredSettings() {
@@ -245,7 +287,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-
+        @Suppress("DEPRECATION")
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
 
