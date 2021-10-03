@@ -2,7 +2,6 @@ package com.example.commutingapp.views.ui.fragments
 
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -53,6 +52,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var mapBoxStyle: Style
     private lateinit var symbolManager: SymbolManager
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -83,10 +83,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         map = mapboxMap.apply {
             uiSettings.isAttributionEnabled = false
             uiSettings.isLogoEnabled = false
-
-
         }
-        setMapStyle(mapboxMap)
+        addMapStyle(mapboxMap)
         addMarkerOnMapLongClick(mapboxMap)
         addAllPolylines()
 
@@ -94,14 +92,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
 
-    private fun setMapStyle(mapboxMap: MapboxMap) {
-        mapboxMap.setStyle(
-            Style.MAPBOX_STREETS
-        ) { style ->
-            TrafficPlugin(mapBoxView, mapboxMap, style).apply {
-                setVisibility(true)
-            }
-            this.mapBoxStyle = style
+    private fun addMapStyle(mapboxMap: MapboxMap) {
+        mapboxMap.setStyle(Style.MAPBOX_STREETS) { TrafficPlugin(mapBoxView, mapboxMap, it).apply {setVisibility(true)}
+            this.mapBoxStyle = it
+
+
         }
     }
 
@@ -117,21 +112,25 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     private fun setMapMarker(point: LatLng, mapboxMap: MapboxMap) {
-        symbolManager = SymbolManager(mapBoxView, mapboxMap, mapBoxStyle).apply {
-            iconAllowOverlap = true
-            iconIgnorePlacement = true
-        }
-
         mapBoxStyle.addImage(
-            "space-station-icon-id",
+            "pin",
             BitmapConvert.getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location)
         )
-        symbolManager.create(
-            SymbolOptions()
-                .withLatLng(point)
-                .withIconImage("space-station-icon-id")
-                .withIconSize(1.3f)
-        )
+        if(!::symbolManager.isInitialized) {
+            symbolManager = SymbolManager(mapBoxView, mapboxMap, mapBoxStyle).apply {
+                iconAllowOverlap = true
+                iconIgnorePlacement = true
+
+            }
+        }
+            symbolManager.deleteAll()
+            symbolManager.create(
+                SymbolOptions()
+                    .withLatLng(point)
+                    .withIconImage("pin")
+                    .withIconSize(1.3f)
+            )
+
 
     }
 
