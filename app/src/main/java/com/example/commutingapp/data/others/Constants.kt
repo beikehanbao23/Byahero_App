@@ -1,7 +1,7 @@
 package com.example.commutingapp.data.others
 
 import android.graphics.Color
-import com.google.firebase.database.collection.LLRBNode
+
 
 object Constants {
     const val COMMUTER_DATABASE_FILE_NAME = "Commute_DB"
@@ -22,7 +22,11 @@ object Constants {
     const val NORMAL_LOCATION_UPDATE_INTERVAL = 18000L
     const val DEFAULT_MAP_ZOOM = 15.0
     const val POLYLINE_COLOR = Color.BLUE
-    const val POLYLINE_WIDTH = 8.5f
+    const val POLYLINE_WIDTH = 5.0f
+    const val MAP_MARKER_SIZE = 1.3f
+    const val MAP_MARKER_IMAGE_NAME = "PIN"
     const val REGEX_NUMBER_VALUE="[0-9]"
     const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"
+
+    const val REQUEST_CHECK_SETTING = 1001
 }
