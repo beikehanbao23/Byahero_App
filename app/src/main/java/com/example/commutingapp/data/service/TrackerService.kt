@@ -21,13 +21,11 @@ import com.example.commutingapp.data.others.Constants.ACTION_PAUSE_SERVICE
 import com.example.commutingapp.data.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
 import com.example.commutingapp.data.others.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.commutingapp.data.others.Constants.ACTION_STOP_SERVICE
-import com.example.commutingapp.data.others.Constants.FASTEST_LOCATION_UPDATE_INTERVAL
-import com.example.commutingapp.data.others.Constants.NORMAL_LOCATION_UPDATE_INTERVAL
 import com.example.commutingapp.data.others.Constants.NOTIFICATION_ID
 import com.example.commutingapp.data.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.views.ui.activities.MainScreen
+import com.example.commutingapp.views.ui.fragments.CommuterFragment
 import com.google.android.gms.location.*
-import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.mapbox.mapboxsdk.geometry.LatLng
 import timber.log.Timber
 
@@ -71,7 +69,7 @@ class TrackingService : LifecycleService() {
     private fun pauseService(){
         is_Tracking.postValue(false)
     }
-    private fun addEmptyPolylines() = liveDataOuterPolyline.value?.apply {
+    private fun addEmptyPolyLines() = liveDataOuterPolyline.value?.apply {
         add(mutableListOf())
         liveDataOuterPolyline.postValue(this)
     }?: liveDataOuterPolyline.postValue(mutableListOf(mutableListOf()))
@@ -107,13 +105,8 @@ class TrackingService : LifecycleService() {
         }
 
         if(hasLocationPermission(this)){
-        val locationRequest = LocationRequest.create().apply {
-            interval = NORMAL_LOCATION_UPDATE_INTERVAL
-            fastestInterval = FASTEST_LOCATION_UPDATE_INTERVAL
-            priority = PRIORITY_HIGH_ACCURACY
-        }
             fusedLocationClient.requestLocationUpdates(
-                locationRequest,
+                CommuterFragment().locationRequest,
                 locationCallback,
                 Looper.getMainLooper()
                 )
@@ -150,7 +143,7 @@ class TrackingService : LifecycleService() {
         }
     }
     private fun startForegroundService() {
-        addEmptyPolylines()
+        addEmptyPolyLines()
         is_Tracking.postValue(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel()
