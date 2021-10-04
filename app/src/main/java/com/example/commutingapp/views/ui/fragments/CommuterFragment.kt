@@ -131,9 +131,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                     REQUEST_CHECK_SETTING
                 )
             }
-            LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
-                // USER DEVICE DOES NOT HAVE LOCATION OPTION //TODo
-            }
         }
     }
     override fun onMapReady(mapboxMap: MapboxMap) {
@@ -161,8 +158,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun addMarkerOnMapLongClick(mapboxMap: MapboxMap) {
 
         map?.let {
-            it.addOnMapLongClickListener { point ->
-                setMapMarker(point, mapboxMap)
+            it.addOnMapLongClickListener { latLng ->
+                pinMapMarker(latLng, mapboxMap)
 
                 true
             }
@@ -170,25 +167,34 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
 
-    private fun setMapMarker(point: LatLng, mapboxMap: MapboxMap) {
+    private fun pinMapMarker(latLng: LatLng, mapboxMap: MapboxMap) {
         mapBoxStyle.addImage(MAP_MARKER_IMAGE_NAME,BitmapConvert.getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location))
         if (!::symbolManager.isInitialized) {
-            symbolManager = SymbolManager(mapBoxView, mapboxMap, mapBoxStyle).apply {
-                iconAllowOverlap = true
-                iconIgnorePlacement = true
+            symbolManager = SymbolManager(mapBoxView, mapboxMap, mapBoxStyle)
+            }
 
+       removePreviousMapMarker()
+       createMapMarker(latLng)
+
+
+        map?.let {
+            it.cameraPosition.zoom.apply {
+                moveCameraToUser(latLng, this)
             }
         }
+
+
+    }
+    private fun removePreviousMapMarker(){
         symbolManager.deleteAll()
+    }
+    private fun createMapMarker(latLng: LatLng){
         symbolManager.create(
             SymbolOptions()
-                .withLatLng(point)
+                .withLatLng(latLng)
                 .withIconImage(MAP_MARKER_IMAGE_NAME)
                 .withIconSize(MAP_MARKER_SIZE)
         )
-        //  moveCameraToUser()//TODO test
-
-
     }
 
 
@@ -201,7 +207,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         TrackingService().outerPolyline().observe(viewLifecycleOwner) {
             outerPolyline = it
             addLatestPolyline()
-            moveCameraToUser()
+            if (hasExistingInnerAndOuterPolyLines()) {
+                moveCameraToUser(outerPolyline.last().last(), DEFAULT_MAP_ZOOM  )
+            }
         }
     }
 
@@ -233,15 +241,15 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
 
-    private fun moveCameraToUser() {
-        if (hasExistingInnerAndOuterPolyLines()) {
+    private fun moveCameraToUser(latLng: LatLng,zoomLevel:Double) {
+
             map?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
-                    outerPolyline.last().last(),
-                    DEFAULT_MAP_ZOOM
+                    latLng,
+                    zoomLevel
                 )
             )
-        }
+
     }
 
     private fun addAllPolyLines() {
@@ -281,7 +289,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     private fun hasExistingInnerAndOuterPolyLines() =
-        outerPolyline.last().isNotEmpty() && outerPolyline.isNotEmpty()
+      outerPolyline.isNotEmpty()  &&  outerPolyline.last().isNotEmpty()
 
     private fun hasExistingInnerPolyLines() =
         outerPolyline.isNotEmpty() && outerPolyline.last().size > 1
