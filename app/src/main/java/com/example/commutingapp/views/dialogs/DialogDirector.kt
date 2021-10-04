@@ -6,10 +6,17 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.provider.Settings
+import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.Toast
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.InternetConnection.Connection
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
+
 import com.thecode.aestheticdialogs.*
 
 
@@ -70,21 +77,7 @@ class DialogDirector(val activity: Activity) {
     }
 
 
-    fun constructRequestLocationDialog(){
-        AlertDialog.Builder(activity).apply {
-            setTitle("Use location?")
-            setMessage("GPS is not enabled. Do you want to go to settings menu?")
-            setPositiveButton("Settings"){ _, _ ->
-                activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-            }
-            setNegativeButton("Cancel"){ dialog, _ -> dialog.cancel() }
-        }.apply {
-            show()
-        }
 
-
-
-    }
 
 }
 
