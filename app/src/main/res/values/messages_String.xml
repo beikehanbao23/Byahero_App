@@ -69,7 +69,7 @@
 
 
     <!-- Commuter Fragment-->
-    <string name="startCommuteButton">Start</string>
-
+    <string name="startButton">Start</string>
+    <string name="stopButton">Stop</string>
 
 </resources>
