@@ -22,19 +22,19 @@ class IntroSliderAdapter(
     ) : RecyclerView.Adapter<IntroSliderAdapter.IntroSliderViewHolder>() {
 
     private var binding: IntroSlidersAdapterBinding? = null
-    private val images = arrayListOf<Int>(
+    private val images = arrayListOf(
         ic_create_account,
         ic_traveller,
         ic_map,
         ic_weather
     )
-    private val headerText = arrayListOf<Int>(
+    private val headerText = arrayListOf(
         headerTextCreateAccountMessage,
         headerTextEnjoyTripsMessage,
         headerTextChooseDestinationMessage,
         headerTextAccurateWeatherMessage
     )
-    private val descriptionText = arrayListOf<Int>(
+    private val descriptionText = arrayListOf(
         descriptionTextCreateAccountMessage,
         descriptionTextEnjoyTripMessage,
         descriptionTextChooseDestinationMessage,

@@ -2,6 +2,8 @@ package com.example.commutingapp.views.ui.activities;
 
 import static com.example.commutingapp.R.string.resendEmailFailedMessage;
 import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -14,7 +16,7 @@ import com.example.commutingapp.databinding.CustomEmailsentDialogBinding;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch;
 import com.example.commutingapp.viewmodels.EmailSentViewModel;
 import com.example.commutingapp.views.dialogs.DialogDirector;
-import com.example.commutingapp.views.MenuButtons.NavigationButton;
+import com.example.commutingapp.views.menubuttons.NavigationButton;
 
 
 
@@ -110,7 +112,8 @@ public class EmailSent extends AppCompatActivity {
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
         long DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG = 2150;
         new Handler().postDelayed(() -> {
-            ActivitySwitch.INSTANCE.startActivityOf(this, MainScreen.class);
+            startActivity(new Intent(this,MainScreen.class));
+            finish();
         }, DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG);
 
     }

@@ -9,19 +9,26 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.commutingapp.R
 import com.example.commutingapp.data.others.BitmapConvert
+import com.example.commutingapp.data.others.Constants
 import com.example.commutingapp.data.others.Constants.ACTION_PAUSE_SERVICE
 import com.example.commutingapp.data.others.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.commutingapp.data.others.Constants.ACTION_STOP_SERVICE
 import com.example.commutingapp.data.others.Constants.DEFAULT_MAP_ZOOM
+import com.example.commutingapp.data.others.Constants.MAP_MARKER_IMAGE_NAME
+import com.example.commutingapp.data.others.Constants.MAP_MARKER_SIZE
 import com.example.commutingapp.data.others.Constants.POLYLINE_COLOR
 import com.example.commutingapp.data.others.Constants.POLYLINE_WIDTH
+import com.example.commutingapp.data.others.Constants.REQUEST_CHECK_SETTING
 import com.example.commutingapp.data.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.data.others.TrackingPermissionUtility.requestPermission
+
 import com.example.commutingapp.data.service.TrackingService
 import com.example.commutingapp.data.service.innerPolyline
-import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.viewmodels.MainViewModel
-import com.example.commutingapp.views.dialogs.DialogDirector
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -60,12 +67,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         buttonStop = view.findViewById(R.id.finishButton)
 
         buttonStart.setOnClickListener {
-            requestRequiredSettings()
-            toogleStartButton()
+            if (requestPermissionGranted()) {
+                checkLocationSetting()
+            }
+
         }
         buttonStop.setOnClickListener { sendCommandToTrackingService(ACTION_STOP_SERVICE) }
-
-
         mapBoxView = view.findViewById(R.id.googleMapView)
         mapBoxView.apply {
             onCreate(savedInstanceState)
@@ -78,7 +85,57 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
 
+    companion object {
+        val request: LocationRequest = LocationRequest.create().apply {
+            interval = Constants.NORMAL_LOCATION_UPDATE_INTERVAL
+            fastestInterval = Constants.FASTEST_LOCATION_UPDATE_INTERVAL
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
 
+    }
+
+    var locationRequest: LocationRequest = request
+
+    private fun checkLocationSetting() {
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(request)
+            .setAlwaysShow(true)
+
+
+        LocationServices.getSettingsClient(requireContext())
+            .checkLocationSettings(builder.build()).apply {
+                getLocationResult(this)
+            }
+
+
+    }
+
+    private fun getLocationResult(result: Task<LocationSettingsResponse>) {
+        result.addOnCompleteListener {
+            try {
+                it.getResult(ApiException::class.java)
+                toggleStartButton()
+            } catch (e: ApiException) {
+                handleLocationResultException(e)
+            }
+        }
+    }
+
+    private fun handleLocationResultException(e:ApiException){
+        when (e.statusCode) {
+            LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+                val resolvableApiException = e as ResolvableApiException
+                resolvableApiException.startResolutionForResult(
+                    requireActivity(),
+                    REQUEST_CHECK_SETTING
+                )
+            }
+            LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
+                // USER DEVICE DOES NOT HAVE LOCATION OPTION //TODo
+            }
+        }
+    }
     override fun onMapReady(mapboxMap: MapboxMap) {
         map = mapboxMap.apply {
             uiSettings.isAttributionEnabled = false
@@ -86,14 +143,15 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
         addMapStyle(mapboxMap)
         addMarkerOnMapLongClick(mapboxMap)
-        addAllPolylines()
+        addAllPolyLines()
 
 
     }
 
 
     private fun addMapStyle(mapboxMap: MapboxMap) {
-        mapboxMap.setStyle(Style.MAPBOX_STREETS) { TrafficPlugin(mapBoxView, mapboxMap, it).apply {setVisibility(true)}
+        mapboxMap.setStyle(Style.MAPBOX_STREETS) {
+            TrafficPlugin(mapBoxView, mapboxMap, it).apply { setVisibility(true) }
             this.mapBoxStyle = it
 
 
@@ -104,7 +162,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         map?.let {
             it.addOnMapLongClickListener { point ->
-                setMapMarker(point,mapboxMap)
+                setMapMarker(point, mapboxMap)
+
                 true
             }
         }
@@ -112,24 +171,22 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     private fun setMapMarker(point: LatLng, mapboxMap: MapboxMap) {
-        mapBoxStyle.addImage(
-            "pin",
-            BitmapConvert.getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location)
-        )
-        if(!::symbolManager.isInitialized) {
+        mapBoxStyle.addImage(MAP_MARKER_IMAGE_NAME,BitmapConvert.getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location))
+        if (!::symbolManager.isInitialized) {
             symbolManager = SymbolManager(mapBoxView, mapboxMap, mapBoxStyle).apply {
                 iconAllowOverlap = true
                 iconIgnorePlacement = true
 
             }
         }
-            symbolManager.deleteAll()
-            symbolManager.create(
-                SymbolOptions()
-                    .withLatLng(point)
-                    .withIconImage("pin")
-                    .withIconSize(1.3f)
-            )
+        symbolManager.deleteAll()
+        symbolManager.create(
+            SymbolOptions()
+                .withLatLng(point)
+                .withIconImage(MAP_MARKER_IMAGE_NAME)
+                .withIconSize(MAP_MARKER_SIZE)
+        )
+        //  moveCameraToUser()//TODO test
 
 
     }
@@ -155,7 +212,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
     }
 
-    private fun toogleStartButton() {
+    private fun toggleStartButton() {
         if (isTracking) {
             sendCommandToTrackingService(ACTION_PAUSE_SERVICE)
             return
@@ -166,11 +223,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun updateButtons() {
 
         if (isTracking) {
-            buttonStart.text = "Stop"
+            buttonStart.text =  getString(R.string.stopButton)
             buttonStop.visibility = View.GONE
             return
         }
-        buttonStart.text = "Start"
+
+        buttonStart.text =  getString(R.string.startButton)
         buttonStop.visibility = View.VISIBLE
     }
 
@@ -186,7 +244,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
     }
 
-    private fun addAllPolylines() {
+    private fun addAllPolyLines() {
 
         outerPolyline.forEach {
             customPolylineAppearance().addAll(it).apply {
@@ -260,14 +318,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         mapBoxView.onPause()
     }
 
-    private fun requestRequiredSettings() {
+    private fun requestPermissionGranted(): Boolean {
         if (hasLocationPermission(requireContext())) {
-            if (!Connection.hasLocationTurnedOn(requireContext())) {
-                DialogDirector(requireActivity()).constructRequestLocationDialog()
-            }
-            return
+            return true
         }
         requestPermission(this)
+        return false
 
     }
 

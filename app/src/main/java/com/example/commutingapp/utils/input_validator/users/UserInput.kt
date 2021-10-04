@@ -59,7 +59,7 @@ open class ValidateInputModel constructor(
     override fun validationPasswordFailed() = setPasswordError()?.isNotEmpty()
     private fun setPasswordError():CharSequence?{
         password.error = when{
-            userPassword.isNullOrBlank()->context.getString(string.fieldLeftBlankMessage)
+            userPassword.isEmpty()->context.getString(string.fieldLeftBlankMessage)
             else-> null
         }.also { password.requestFocus() }
         return password.error

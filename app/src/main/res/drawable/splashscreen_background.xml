@@ -3,7 +3,7 @@
     <item android:drawable="@color/white"/>
     <item
 
-        android:drawable="@drawable/ic_splashhh"
+        android:drawable="@drawable/ic_splash"
         android:gravity="center"
         />
 

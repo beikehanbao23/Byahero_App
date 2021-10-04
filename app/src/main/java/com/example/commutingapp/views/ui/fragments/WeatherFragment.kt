@@ -5,6 +5,4 @@ import com.example.commutingapp.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class WeatherFragment: Fragment(R.layout.weather_fragment)  {
-
-}
+class WeatherFragment: Fragment(R.layout.weather_fragment)

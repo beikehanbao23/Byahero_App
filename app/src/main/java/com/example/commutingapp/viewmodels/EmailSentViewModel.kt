@@ -21,7 +21,7 @@ class EmailSentViewModel : ViewModel() {
 
     private lateinit var verificationTimer: CountDownTimer
 
-    lateinit var coroutine_IO_Job: Job
+    lateinit var coroutineIOJob: Job
     private set
 
     private var timerOnRunningSecondsValue = MutableLiveData<Int>()
@@ -59,7 +59,7 @@ class EmailSentViewModel : ViewModel() {
     }
 
     fun refreshEmailSynchronously() {
-        coroutine_IO_Job = viewModelScope.launch(Dispatchers.IO) {
+        coroutineIOJob = viewModelScope.launch(Dispatchers.IO) {
             while (isActive) {
                 reloadUserEmail()
                 Log.d("COROUTINE STATUS: ", "$isActive")
@@ -101,7 +101,7 @@ class EmailSentViewModel : ViewModel() {
             } catch (networkException: FirebaseNetworkException) {
                 noInternetActivityTransition.value = true
             } finally {
-                coroutine_IO_Job.cancel()
+                coroutineIOJob.cancel()
             }
 
 

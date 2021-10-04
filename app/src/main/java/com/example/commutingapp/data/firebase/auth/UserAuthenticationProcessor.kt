@@ -11,7 +11,7 @@ constructor(private val userAuthenticator: UserAuthenticator<T>) {
         return userAuthenticator.createUserWithEmailAndPassword(email, password)
     }
 
-    fun signOut(): Unit {
+    fun signOut() {
         userAuthenticator.signOut()
     }
 

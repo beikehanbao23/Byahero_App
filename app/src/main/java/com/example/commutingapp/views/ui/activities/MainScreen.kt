@@ -18,7 +18,7 @@ import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
 import com.example.commutingapp.data.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch
-import com.example.commutingapp.views.MenuButtons.NavigationButton
+import com.example.commutingapp.views.menubuttons.NavigationButton
 import com.example.commutingapp.views.ui.fragments.CommuterFragment
 import com.example.commutingapp.views.ui.fragments.SettingsFragment
 import com.example.commutingapp.views.ui.fragments.StatisticsFragment
@@ -109,7 +109,7 @@ class MainScreen : AppCompatActivity() {
 
     private fun initializeAttributes() {
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
-        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token))
         setContentView(activityMainScreenBinding?.root)
 
     }

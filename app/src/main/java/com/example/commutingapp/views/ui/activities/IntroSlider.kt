@@ -17,7 +17,7 @@ import com.example.commutingapp.databinding.ActivityIntroSliderBinding
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch.startActivityOf
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.viewmodels.IntroSliderViewModel
-import com.example.commutingapp.views.MenuButtons.NavigationButton
+import com.example.commutingapp.views.menubuttons.NavigationButton
 import com.example.commutingapp.views.adapters.IntroSliderAdapter
 
 private const val ITEMS_COUNT = 4

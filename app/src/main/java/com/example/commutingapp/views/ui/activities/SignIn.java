@@ -23,7 +23,7 @@ import com.example.commutingapp.utils.input_validator.users.UserInputValidate;
 import com.example.commutingapp.utils.input_validator.users.ValidateInputModel;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
-import com.example.commutingapp.views.MenuButtons.NavigationButton;
+import com.example.commutingapp.views.menubuttons.NavigationButton;
 import com.example.commutingapp.views.dialogs.DialogDirector;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;

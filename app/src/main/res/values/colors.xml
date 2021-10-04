@@ -22,7 +22,7 @@
     <color name="Snow">#FFFAFA</color>
     <color name="FloralWhite">#FFFAF0</color>
     <color name="LemonChiffon">#FFFACD</color>
-    <color name="Cornsilk">#FFF8DC</color>
+    <color name="CornSilk">#FFF8DC</color>
     <color name="Seashell">#FFF5EE</color>
     <color name="LavenderBlush">#FFF0F5</color>
     <color name="PapayaWhip">#FFEFD5</color>
@@ -69,7 +69,7 @@
     <color name="LightCyan">#E0FFFF</color>
     <color name="BurlyWood">#DEB887</color>
     <color name="Plum">#DDA0DD</color>
-    <color name="Gainsboro">#DCDCDC</color>
+    <color name="GainsBoro">#DCDCDC</color>
     <color name="Crimson">#DC143C</color>
     <color name="PaleVioletRed">#DB7093</color>
     <color name="Goldenrod">#DAA520</color>

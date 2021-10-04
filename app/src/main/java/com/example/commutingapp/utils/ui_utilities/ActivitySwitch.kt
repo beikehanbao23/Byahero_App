@@ -13,12 +13,6 @@ object ActivitySwitch {
         activity.startActivity(Intent(activity,classToOpen))
         activity.finish()
     }
-    /**
-     * Start new activity without closing the previous activity, previous activity remains at the backstack
-     */
 
-    fun startActivityOf(contextOfThisClass: Context, classToOpen:Class<*>){
 
-        contextOfThisClass.startActivity(Intent(contextOfThisClass,classToOpen))
-    }
 }

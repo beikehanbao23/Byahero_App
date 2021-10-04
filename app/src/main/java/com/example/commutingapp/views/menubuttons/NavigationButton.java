@@ -1,9 +1,7 @@
-package com.example.commutingapp.views.MenuButtons;
+package com.example.commutingapp.views.menubuttons;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
-import android.widget.Toast;
+
 import com.rejowan.cutetoast.CuteToast;
 
 

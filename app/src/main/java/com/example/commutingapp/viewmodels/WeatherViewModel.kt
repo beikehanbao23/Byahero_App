@@ -1,5 +1,4 @@
 package com.example.commutingapp.viewmodels
 
 
-class WeatherViewModel {
-}
+class WeatherViewModel
