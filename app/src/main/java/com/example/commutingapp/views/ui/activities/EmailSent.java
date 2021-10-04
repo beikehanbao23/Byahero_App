@@ -112,8 +112,7 @@ public class EmailSent extends AppCompatActivity {
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
         long DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG = 2150;
         new Handler().postDelayed(() -> {
-            startActivity(new Intent(this,MainScreen.class));
-            finish();
+            ActivitySwitch.INSTANCE.startActivityOf(this, MainScreen.class);
         }, DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG);
 
     }
