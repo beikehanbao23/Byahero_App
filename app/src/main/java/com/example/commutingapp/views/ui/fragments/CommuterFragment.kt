@@ -58,7 +58,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var buttonStop: Button
     private lateinit var mapBoxStyle: Style
     private lateinit var symbolManager: SymbolManager
-
+    private lateinit var bundle: Bundle
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -140,7 +140,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
         addMapStyle(mapboxMap)
         addMarkerOnMapLongClick(mapboxMap)
-        addAllPolyLines()
+
 
 
     }
@@ -252,14 +252,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
 
-    private fun addAllPolyLines() {
-
-        outerPolyline.forEach {
-            customPolylineAppearance().addAll(it).apply {
-                map?.addPolyline(this)
-            }
-        }
-    }
 
     private fun addLatestPolyline() {
         if (hasExistingInnerPolyLines()) {
@@ -316,10 +308,17 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapBoxView.onSaveInstanceState(outState)
+
     }
+
+
 
     override fun onPause() {
         super.onPause()
