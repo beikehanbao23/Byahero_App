@@ -1,6 +1,7 @@
 package com.example.commutingapp.views.ui.fragments
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -42,6 +43,11 @@ import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import com.mapbox.mapboxsdk.location.LocationComponentOptions
+import com.mapbox.mapboxsdk.location.LocationComponent
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
+import com.mapbox.mapboxsdk.location.modes.CameraMode
+import com.mapbox.mapboxsdk.location.modes.RenderMode
 
 
 @AndroidEntryPoint
@@ -147,9 +153,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     private fun addMapStyle(mapboxMap: MapboxMap) {
-        mapboxMap.setStyle(Style.MAPBOX_STREETS) {
+        mapboxMap.setStyle(Style.DARK) {
             TrafficPlugin(mapBoxView, mapboxMap, it).apply { setVisibility(true) }
+            enableLocationComponent(it)
             this.mapBoxStyle = it
+
 
 
         }
@@ -196,7 +204,32 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 .withIconSize(MAP_MARKER_SIZE)
         )
     }
+    @SuppressLint("MissingPermission")
+    private fun enableLocationComponent(style:Style){
+     LocationComponentOptions.builder(requireContext())
+            .pulseEnabled(true)
+            .build().also { locationComponentOptions->
 
+              map?.locationComponent?.apply {
+
+                 activateLocationComponent(
+                     LocationComponentActivationOptions.builder(requireContext(), style)
+                         .locationComponentOptions(locationComponentOptions)
+                         .build())
+
+                  isLocationComponentEnabled = true;
+                  cameraMode = CameraMode.TRACKING;
+                  renderMode =RenderMode.COMPASS;
+             }
+
+         }
+
+
+
+
+
+
+    }
 
     private fun subscribeToObservers() {
         TrackingService().isTracking().observe(viewLifecycleOwner) {
