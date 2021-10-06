@@ -13,22 +13,23 @@
     <fragment
         android:id="@+id/commutersFragment"
         android:name="com.example.commutingapp.views.ui.fragments.CommuterFragment"
-        android:label="CommuterFragment"/>
+        android:label="@string/title_Commutes"/>
 
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.commutingapp.views.ui.fragments.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="@string/title_Settings" />
 
 
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="com.example.commutingapp.views.ui.fragments.StatisticsFragment"
-        android:label="StatisticsFragment" />
+        android:label="@string/title_Statistics" />
 
 
     <fragment
         android:id="@+id/weatherFragment"
         android:name="com.example.commutingapp.views.ui.fragments.WeatherFragment"
-        android:label="WeatherFragment" />
+        android:label="@string/title_Weather" />
+
 </navigation>
