@@ -65,6 +65,9 @@
         android:layout_marginBottom="1dp"
 
         app:itemIconSize="25.5sp"
+        app:itemTextAppearanceActive="@style/stockBottomNavigationView.Active"
+        app:itemTextAppearanceInactive="@style/stockBottomNavigationView.InActive"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

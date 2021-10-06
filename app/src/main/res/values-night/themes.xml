@@ -14,4 +14,17 @@
         <!-- Customize your theme here. -->
     </style>
 
+
+    <style name="stockBottomNavigationView.InActive" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="stockBottomNavigationView.Active" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">12.5sp</item>
+    </style>
+
+    <style name="splashScreenTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splashscreen_background</item>
+
+    </style>
 </resources>
