@@ -4,11 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
 import com.example.commutingapp.R
 import com.example.commutingapp.data.firebase.auth.FirebaseAuthenticatorWrapper
 import com.example.commutingapp.data.firebase.auth.UserAuthenticationProcessor
@@ -18,7 +17,6 @@ import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
 import com.example.commutingapp.data.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch
-import com.example.commutingapp.views.menubuttons.NavigationButton
 import com.example.commutingapp.views.ui.fragments.CommuterFragment
 import com.example.commutingapp.views.ui.fragments.SettingsFragment
 import com.example.commutingapp.views.ui.fragments.StatisticsFragment
@@ -48,27 +46,35 @@ class MainScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initializeAttributes()
 
-        val navigationToolbar = activityMainScreenBinding?.toolbar
         val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navigationController = navigationHostFragment.navController
 
         navigateToCommuterFragment(intent)
 
-        setSupportActionBar(navigationToolbar)
-        NavigationUI.setupWithNavController(navigationToolbar as Toolbar, navigationController)
+        setSupportActionBar( activityMainScreenBinding?.toolbar)
+        activityMainScreenBinding?.bottomNavigation?.setupWithNavController(navigationController)
         setupBottomNavigationListeners()
 
+
+
     }
+
     private fun setupBottomNavigationListeners(){
 
-        activityMainScreenBinding?.bottomNavigation?.setOnItemSelectedListener {
-            when(it.itemId){
-                R.id.commutersFragment->setCurrentFragment(CommuterFragment())
-                R.id.settingsFragment->setCurrentFragment(SettingsFragment())
-                R.id.statisticsFragment->setCurrentFragment(StatisticsFragment())
-                R.id.weatherFragment->setCurrentFragment(WeatherFragment())
+        activityMainScreenBinding?.bottomNavigation?.apply {
+
+            setOnItemSelectedListener {
+                when (it.itemId) {
+                    R.id.commutersFragment -> replaceFragment(CommuterFragment())
+                    R.id.settingsFragment -> replaceFragment(SettingsFragment())
+                    R.id.statisticsFragment -> replaceFragment(StatisticsFragment())
+                    R.id.weatherFragment -> replaceFragment(WeatherFragment())
+                }
+                true
+
             }
-            true
+
+
         }
     }
 
@@ -86,16 +92,34 @@ class MainScreen : AppCompatActivity() {
 
 
 
-    private fun setCurrentFragment(fragment: Fragment){
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.fragmentContainer,fragment)
-            addToBackStack(null)
-            commit()
+    private fun replaceFragment(fragment: Fragment){
+
+        supportFragmentManager.apply {
+            if (!fragment.isAdded) {
+                beginTransaction().apply {
+                        if (findFragmentByTag(fragment.javaClass.name) == null) {
+                            replace(R.id.fragmentContainer, fragment, fragment.javaClass.name)
+                            addToBackStack(fragment.javaClass.name)
+                        } else {
+                            findFragmentByTag(fragment.javaClass.name)?.let {
+                                replace(
+                                    R.id.fragmentContainer,
+                                    it,
+                                    fragment.javaClass.name
+                                )
+                            }
+                        }
+                        commit()
+                    }
+                }
+
         }
+
     }
 
-
-
+    override fun onBackPressed() {
+        try { super.onBackPressed() }catch (e:Exception){ }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -180,10 +204,6 @@ class MainScreen : AppCompatActivity() {
     private fun showSignInActivity() {
 
         ActivitySwitch.startActivityOf(this,  SignIn::class.java)
-    }
-
-    override fun onBackPressed() {
-        NavigationButton.applyDoubleClickToExit(this)
     }
 
 
