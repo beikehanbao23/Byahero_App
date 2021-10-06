@@ -5,22 +5,22 @@
     <item
         android:id="@+id/commutersFragment"
         android:icon="@drawable/ic_jeep"
-        android:title="Commutes" />
+        android:title="@string/title_Commutes" />
 
     <item
         android:id="@+id/statisticsFragment"
         android:icon="@drawable/ic_statistics"
-        android:title="Statistics" />
+        android:title="@string/title_Statistics" />
 
     <item
         android:id="@+id/weatherFragment"
         android:icon="@drawable/ic_weather_weather"
-        android:title="Weather" />
+        android:title="@string/title_Weather" />
 
     <item
         android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_settings"
-        android:title="Settings" />
+        android:title="@string/title_Settings" />
 
 
 </menu>

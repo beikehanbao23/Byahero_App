@@ -72,4 +72,10 @@
     <string name="startButton">Start</string>
     <string name="stopButton">Stop</string>
 
+
+    <!-- Bottom Navigation -->
+    <string name="title_Commutes">Commutes</string>
+    <string name="title_Statistics">Statistics</string>
+    <string name="title_Weather">Weather</string>
+    <string name="title_Settings">Settings</string>
 </resources>
