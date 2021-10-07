@@ -8,6 +8,8 @@ import android.view.View
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import com.example.commutingapp.R
 import com.example.commutingapp.data.others.BitmapConvert
 import com.example.commutingapp.data.others.Constants
@@ -22,9 +24,9 @@ import com.example.commutingapp.data.others.Constants.POLYLINE_WIDTH
 import com.example.commutingapp.data.others.Constants.REQUEST_CHECK_SETTING
 import com.example.commutingapp.data.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.data.others.TrackingPermissionUtility.requestPermission
-
 import com.example.commutingapp.data.service.TrackingService
 import com.example.commutingapp.data.service.innerPolyline
+import com.example.commutingapp.viewmodels.CommuterViewModel
 import com.example.commutingapp.viewmodels.MainViewModel
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
@@ -33,6 +35,10 @@ import com.google.android.gms.tasks.Task
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
+import com.mapbox.mapboxsdk.location.LocationComponentOptions
+import com.mapbox.mapboxsdk.location.modes.CameraMode
+import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
@@ -43,18 +49,13 @@ import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
-import com.mapbox.mapboxsdk.location.LocationComponentOptions
-import com.mapbox.mapboxsdk.location.LocationComponent
-import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
-import com.mapbox.mapboxsdk.location.modes.CameraMode
-import com.mapbox.mapboxsdk.location.modes.RenderMode
 
 
 @AndroidEntryPoint
 class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
     OnMapReadyCallback {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     private var map: MapboxMap? = null
     private var isTracking = false
@@ -64,10 +65,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var buttonStop: Button
     private lateinit var mapBoxStyle: Style
     private lateinit var symbolManager: SymbolManager
-    private lateinit var bundle: Bundle
+    private lateinit var commuterViewModel: CommuterViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        commuterViewModel = ViewModelProvider(this).get(CommuterViewModel::class.java)
 
         buttonStart = view.findViewById(R.id.startButton)
         buttonStop = view.findViewById(R.id.finishButton)
@@ -107,7 +109,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         val builder = LocationSettingsRequest.Builder()
             .addLocationRequest(request)
             .setAlwaysShow(true)
-
 
         LocationServices.getSettingsClient(requireContext())
             .checkLocationSettings(builder.build()).apply {
@@ -154,7 +155,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun addMapStyle(mapboxMap: MapboxMap) {
         mapboxMap.setStyle(Style.DARK) {
-            TrafficPlugin(mapBoxView, mapboxMap, it).apply { setVisibility(true) }
+            TrafficPlugin(mapBoxView, mapboxMap, it).apply {
+
+                setVisibility(true)
+            }
             enableLocationComponent(it)
             this.mapBoxStyle = it
 
@@ -219,7 +223,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
                   isLocationComponentEnabled = true;
                   cameraMode = CameraMode.TRACKING;
-                  renderMode =RenderMode.COMPASS;
+                  renderMode =RenderMode.NORMAL;
              }
 
          }
@@ -320,43 +324,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         outerPolyline.isNotEmpty() && outerPolyline.last().size > 1
 
 
-    override fun onResume() {
-        super.onResume()
-        mapBoxView.onResume()
-    }
 
-    override fun onStart() {
-        super.onStart()
-        mapBoxView.onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mapBoxView.onStop()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapBoxView.onLowMemory()
-
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        mapBoxView.onSaveInstanceState(outState)
-
-    }
-
-
-
-    override fun onPause() {
-        super.onPause()
-        mapBoxView.onPause()
-    }
 
     private fun requestPermissionGranted(): Boolean {
         if (hasLocationPermission(requireContext())) {
@@ -389,6 +357,5 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
-
 
 }
