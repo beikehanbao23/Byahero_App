@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.commutingapp.R
 import com.example.commutingapp.data.others.BitmapConvert
+import com.example.commutingapp.data.others.BitmapConvert.getBitmapFromVectorDrawable
 import com.example.commutingapp.data.others.Constants
 import com.example.commutingapp.data.others.Constants.ACTION_PAUSE_SERVICE
 import com.example.commutingapp.data.others.Constants.ACTION_START_OR_RESUME_SERVICE
@@ -33,6 +34,7 @@ import com.google.android.gms.tasks.Task
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.location.LocationComponent
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.location.LocationComponentOptions
 import com.mapbox.mapboxsdk.location.modes.CameraMode
@@ -41,6 +43,8 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.OnSymbolClickListener
+import com.mapbox.mapboxsdk.plugins.annotation.Symbol
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
@@ -51,7 +55,7 @@ import pub.devrel.easypermissions.EasyPermissions
 
 @AndroidEntryPoint
 class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
-    OnMapReadyCallback,MapboxMap.OnMapLongClickListener {
+    OnMapReadyCallback,MapboxMap.OnMapLongClickListener,OnSymbolClickListener {
 
     private val mainViewModel: MainViewModel by viewModels()
 
@@ -62,7 +66,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var buttonStart: Button
     private lateinit var buttonStop: Button
     private lateinit var mapBoxStyle: Style
-    private lateinit var symbolManager: SymbolManager
+    private lateinit var mapMarkerSymbol: SymbolManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -156,11 +160,16 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             TrafficPlugin(mapBoxView, mapboxMap, style).apply { setVisibility(true) }
             enableLocationComponent(style)
             mapBoxStyle = style
-            symbolManager = SymbolManager(mapBoxView, mapBoxMap, mapBoxStyle)
+            mapMarkerSymbol = SymbolManager(mapBoxView, mapBoxMap, mapBoxStyle).also {
+                it.addClickListener(this)
+            }
         }
     }
 
-
+    override fun onAnnotationClick(symbol: Symbol?): Boolean {
+        mapMarkerSymbol.delete(symbol)
+        return true
+    }
 
     override fun onMapLongClick(point: LatLng): Boolean {
       pointMapMarker(point)
@@ -170,7 +179,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     private fun pointMapMarker(latLng: LatLng) {
-        mapBoxStyle.addImage(MAP_MARKER_IMAGE_NAME,BitmapConvert.getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location))
+        mapBoxStyle.addImage(MAP_MARKER_IMAGE_NAME,getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location))
         if(!hasExistingMapMarker()) {
             createMapMarker(latLng)
 
@@ -181,19 +190,20 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
         }
     }
-    private fun hasExistingMapMarker() = symbolManager.annotations.size != 0
+    private fun hasExistingMapMarker() = mapMarkerSymbol.annotations.size != 0
     private fun createMapMarker(latLng: LatLng){
 
-            symbolManager.create(
+            mapMarkerSymbol.create(
                 SymbolOptions()
                     .withLatLng(latLng)
                     .withIconImage(MAP_MARKER_IMAGE_NAME)
                     .withIconSize(MAP_MARKER_SIZE)
+
             )
 
     }
 
-    @SuppressLint("MissingPermission")
+
     private fun enableLocationComponent(style:Style){
         LocationComponentOptions.builder(requireContext())
             .pulseEnabled(true)
@@ -203,12 +213,20 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                         LocationComponentActivationOptions.builder(requireContext(), style)
                             .locationComponentOptions(locationComponentOptions)
                             .build())
-                    isLocationComponentEnabled = true;
-                    cameraMode = CameraMode.TRACKING;
-                    renderMode =RenderMode.NORMAL;
-                    zoomWhileTracking(DEFAULT_MAP_ZOOM)
+                    createComponentsLocation(this)
                 }
             }
+    }
+
+
+    @SuppressLint("MissingPermission")
+    private fun createComponentsLocation(locationComponent:LocationComponent) {
+        locationComponent.apply {
+            isLocationComponentEnabled = true;
+            cameraMode = CameraMode.TRACKING;
+            renderMode = RenderMode.NORMAL;
+            zoomWhileTracking(DEFAULT_MAP_ZOOM)
+        }
     }
 
     private fun subscribeToObservers() {
@@ -333,6 +351,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
+
 
 
 }
