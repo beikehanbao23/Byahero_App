@@ -3,14 +3,15 @@ package com.example.commutingapp.views.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
+
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+
 import androidx.collection.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.commutingapp.R
-import com.example.commutingapp.data.others.BitmapConvert
 import com.example.commutingapp.data.others.BitmapConvert.getBitmapFromVectorDrawable
 import com.example.commutingapp.data.others.Constants
 import com.example.commutingapp.data.others.Constants.ACTION_PAUSE_SERVICE
@@ -197,26 +198,24 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 SymbolOptions()
                     .withLatLng(latLng)
                     .withIconImage(MAP_MARKER_IMAGE_NAME)
-                    .withIconSize(MAP_MARKER_SIZE)
-
-            )
+                    .withIconSize(MAP_MARKER_SIZE))
 
     }
 
 
     private fun enableLocationComponent(style:Style){
         LocationComponentOptions.builder(requireContext())
-            .pulseEnabled(true)
-            .build().also { locationComponentOptions->
+            .build().also { componentOptions->
                 mapBoxMap.locationComponent.apply {
                     activateLocationComponent(
                         LocationComponentActivationOptions.builder(requireContext(), style)
-                            .locationComponentOptions(locationComponentOptions)
+                            .locationComponentOptions(componentOptions)
                             .build())
                     createComponentsLocation(this)
                 }
             }
     }
+
 
 
     @SuppressLint("MissingPermission")
