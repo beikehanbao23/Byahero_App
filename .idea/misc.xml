@@ -74,7 +74,7 @@
         <entry key="app/src/main/res/layout/settings_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/setup_fragment.xml" value="0.2" />
         <entry key="app/src/main/res/layout/setup_statisctics.xml" value="0.54375" />
-        <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/tracking_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.271875" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.22" />
