@@ -18,8 +18,10 @@ import com.example.commutingapp.data.others.Constants.ACTION_PAUSE_SERVICE
 import com.example.commutingapp.data.others.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.commutingapp.data.others.Constants.ACTION_STOP_SERVICE
 import com.example.commutingapp.data.others.Constants.DEFAULT_MAP_ZOOM
+import com.example.commutingapp.data.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
 import com.example.commutingapp.data.others.Constants.MAP_MARKER_IMAGE_NAME
 import com.example.commutingapp.data.others.Constants.MAP_MARKER_SIZE
+import com.example.commutingapp.data.others.Constants.MAP_STYLE
 import com.example.commutingapp.data.others.Constants.POLYLINE_COLOR
 import com.example.commutingapp.data.others.Constants.POLYLINE_WIDTH
 import com.example.commutingapp.data.others.Constants.REQUEST_CHECK_SETTING
@@ -83,7 +85,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         buttonStop.setOnClickListener() { sendCommandToTrackingService(ACTION_STOP_SERVICE) }
 
         mapBoxView = view.findViewById(R.id.googleMapView)
+
         mapBoxView.apply {
+
             onCreate(savedInstanceState)
             isClickable = true
         }.also {
@@ -96,7 +100,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun moveCameraToLastKnownLocation(){
         LocationServices.getFusedLocationProviderClient(requireActivity())
             .lastLocation.addOnSuccessListener {
-                moveCameraToUser(LatLng(it.latitude,it.longitude), DEFAULT_MAP_ZOOM)
+                moveCameraToUser(LatLng(it.latitude,it.longitude), LAST_KNOWN_LOCATION_MAP_ZOOM)
             }
     }
 
@@ -157,8 +161,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
 
+
     private fun addMapStyle(mapboxMap: MapboxMap) {
-        mapboxMap.setStyle(Style.DARK) { style->
+        mapboxMap.setStyle(Style.Builder().fromUri(MAP_STYLE)) { style->
             TrafficPlugin(mapBoxView, mapboxMap, style).apply { setVisibility(true) }
             enableLocationComponent(style)
             mapBoxStyle = style
@@ -166,6 +171,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 it.addClickListener(this)
             }
         }
+
     }
 
     override fun onAnnotationClick(symbol: Symbol?): Boolean {
@@ -184,9 +190,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         mapBoxStyle.addImage(MAP_MARKER_IMAGE_NAME,getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location))
         if(!hasExistingMapMarker()) {
             createMapMarker(latLng)
-
             mapBoxMap.let {
-
                 it.cameraPosition.zoom.apply {
                     moveCameraToUser(latLng, this)
                 }
