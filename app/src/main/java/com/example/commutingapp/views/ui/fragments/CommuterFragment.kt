@@ -80,7 +80,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 checkLocationSetting()
             }
         }
-        buttonStop.setOnClickListener { sendCommandToTrackingService(ACTION_STOP_SERVICE) }
+        buttonStop.setOnClickListener() { sendCommandToTrackingService(ACTION_STOP_SERVICE) }
 
         mapBoxView = view.findViewById(R.id.googleMapView)
         mapBoxView.apply {
@@ -89,13 +89,16 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }.also {
             it.getMapAsync(this)
         }
-
         subscribeToObservers()
-
-
-
     }
 
+    @SuppressLint("MissingPermission")
+    private fun moveCameraToLastKnownLocation(){
+        LocationServices.getFusedLocationProviderClient(requireActivity())
+            .lastLocation.addOnSuccessListener {
+                moveCameraToUser(LatLng(it.latitude,it.longitude), DEFAULT_MAP_ZOOM)
+            }
+    }
 
     companion object {
         val request: LocationRequest = LocationRequest.create().apply {
@@ -103,7 +106,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             fastestInterval = Constants.FASTEST_LOCATION_UPDATE_INTERVAL
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
-
     }
 
     var locationRequest: LocationRequest = request
@@ -150,9 +152,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             uiSettings.isLogoEnabled = false
         }
         mapBoxMap.addOnMapLongClickListener(this)
-
         addMapStyle(mapboxMap)
-
+        moveCameraToLastKnownLocation()
     }
 
 
@@ -185,6 +186,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             createMapMarker(latLng)
 
             mapBoxMap.let {
+
                 it.cameraPosition.zoom.apply {
                     moveCameraToUser(latLng, this)
                 }
@@ -236,6 +238,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         TrackingService().outerPolyline().observe(viewLifecycleOwner) {
             outerPolyline = it
+
             addLatestPolyline()
             if (hasExistingInnerAndOuterPolyLines()) {
                 moveCameraToUser(outerPolyline.last().last(), DEFAULT_MAP_ZOOM  )
