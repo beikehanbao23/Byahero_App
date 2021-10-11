@@ -62,7 +62,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private val mainViewModel: MainViewModel by viewModels()
 
-    private lateinit var mapBoxMap: MapboxMap
+    private var mapBoxMap: MapboxMap? = null
     private var isTracking = false
     private var outerPolyline = mutableListOf<innerPolyline>()
     private lateinit var mapBoxView: MapView
@@ -155,7 +155,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             uiSettings.isAttributionEnabled = false
             uiSettings.isLogoEnabled = false
         }
-        mapBoxMap.addOnMapLongClickListener(this)
+        mapBoxMap?.addOnMapLongClickListener(this)
         addMapStyle(mapboxMap)
         moveCameraToLastKnownLocation()
     }
@@ -167,7 +167,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             TrafficPlugin(mapBoxView, mapboxMap, style).apply { setVisibility(true) }
             enableLocationComponent(style)
             mapBoxStyle = style
-            mapMarkerSymbol = SymbolManager(mapBoxView, mapBoxMap, mapBoxStyle).also {
+            mapMarkerSymbol = SymbolManager(mapBoxView, mapboxMap, mapBoxStyle).also {
                 it.addClickListener(this)
             }
         }
@@ -191,8 +191,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         if(!hasExistingMapMarker()) {
             createMapMarker(latLng)
             mapBoxMap.let {
-                it.cameraPosition.zoom.apply {
-                    moveCameraToUser(latLng, this)
+                it?.cameraPosition?.zoom.apply {
+                    this?.let { zoomLevel -> moveCameraToUser(latLng, zoomLevel) }
                 }
             }
         }
@@ -212,7 +212,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun enableLocationComponent(style:Style){
         LocationComponentOptions.builder(requireContext())
             .build().also { componentOptions->
-                mapBoxMap.locationComponent.apply {
+                mapBoxMap?.locationComponent?.apply {
                     activateLocationComponent(
                         LocationComponentActivationOptions.builder(requireContext(), style)
                             .locationComponentOptions(componentOptions)
@@ -279,8 +279,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     private fun moveCameraToUser(latLng: LatLng,zoomLevel:Double) {
-
-        mapBoxMap.animateCamera(
+        mapBoxMap?.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
                 latLng,
                 zoomLevel
@@ -299,7 +298,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             customPolylineAppearance()
                 .add(preLastLatLng)
                 .add(lastLatLng).apply {
-                    mapBoxMap.addPolyline(this)
+                    mapBoxMap?.addPolyline(this)
 
                 }
 
