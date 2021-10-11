@@ -2,6 +2,7 @@ package com.example.commutingapp.views.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -41,15 +42,17 @@ class MainScreen : AppCompatActivity() {
 
     private var activityMainScreenBinding: ActivityMainScreenBinding? = null
     private lateinit var navigationController: NavController
+    private var isCommuterFragmentAtForeground = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeAttributes()
-
+        navigateToCommuterFragment(intent)
         val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navigationController = navigationHostFragment.navController
 
-        navigateToCommuterFragment(intent)
+
 
         setSupportActionBar( activityMainScreenBinding?.toolbar)
         activityMainScreenBinding?.bottomNavigation?.setupWithNavController(navigationController)
@@ -85,7 +88,8 @@ class MainScreen : AppCompatActivity() {
     }
 
     private fun navigateToCommuterFragment(intent: Intent?){
-        if(intent?.action == ACTION_SHOW_COMMUTER_FRAGMENT){
+        if(intent?.action == ACTION_SHOW_COMMUTER_FRAGMENT && !isCommuterFragmentAtForeground){
+            isCommuterFragmentAtForeground = true
             navigationController.navigate(R.id.action_global_commuterFragment)
         }
     }
@@ -93,8 +97,8 @@ class MainScreen : AppCompatActivity() {
 
 
     private fun replaceFragment(fragment: Fragment){
-
         supportFragmentManager.apply {
+
             if (!fragment.isAdded) {
                 beginTransaction().apply {
                         if (findFragmentByTag(fragment.javaClass.name) == null) {
@@ -102,11 +106,7 @@ class MainScreen : AppCompatActivity() {
                             addToBackStack(fragment.javaClass.name)
                         } else {
                             findFragmentByTag(fragment.javaClass.name)?.let {
-                                replace(
-                                    R.id.fragmentContainer,
-                                    it,
-                                    fragment.javaClass.name
-                                )
+                                replace(R.id.fragmentContainer, it,fragment.javaClass.name)
                             }
                         }
                         commit()
