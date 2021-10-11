@@ -4,7 +4,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 
-interface Notifications<T> {
+interface Notification<T> {
     fun createNotification(context:Context,pendingIntent: PendingIntent?):T
-    fun createChannelNotifications(notificationManager: NotificationManager)
+    fun createChannelNotification(notificationManager: NotificationManager)
 }
