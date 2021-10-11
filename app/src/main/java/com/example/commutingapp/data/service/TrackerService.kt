@@ -3,7 +3,6 @@ package com.example.commutingapp.data.service
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -18,24 +17,25 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.commutingapp.data.others.Constants.ACTION_PAUSE_SERVICE
-import com.example.commutingapp.data.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
 import com.example.commutingapp.data.others.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.commutingapp.data.others.Constants.ACTION_STOP_SERVICE
 import com.example.commutingapp.data.others.Constants.NOTIFICATION_ID
 import com.example.commutingapp.data.others.TrackingPermissionUtility.hasLocationPermission
-import com.example.commutingapp.views.ui.activities.MainScreen
 import com.example.commutingapp.views.ui.fragments.CommuterFragment
 import com.google.android.gms.location.*
 import com.mapbox.mapboxsdk.geometry.LatLng
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import javax.inject.Inject
 
 typealias innerPolyline = MutableList<LatLng>
 typealias outerPolyline = MutableList<innerPolyline>
 
-
+@AndroidEntryPoint
 class TrackingService : LifecycleService() {
-    private val notifications: Notifications<NotificationCompat.Builder> = TrackerNotification()
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val notification: Notification<NotificationCompat.Builder> = TrackerNotification()
+    @Inject  lateinit var fusedLocationClient: FusedLocationProviderClient
+    @Inject  lateinit var mainActivityPendingIntent: PendingIntent
     private var isFirstRun = true
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -58,10 +58,10 @@ class TrackingService : LifecycleService() {
         is_Tracking.postValue(false)
         liveDataOuterPolyline.postValue(mutableListOf()    )
     }
+    @SuppressLint("VisibleForTests")
     override fun onCreate() {
         super.onCreate()
         postInitialValues()
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         is_Tracking.observe(this){
             createLocationRequest()
         }
@@ -150,28 +150,20 @@ class TrackingService : LifecycleService() {
         }
 
         startForeground(NOTIFICATION_ID,
-                notifications.createNotification(
+                notification.createNotification(
                 baseContext,
-                getMainActivityPendingIntent()
+                mainActivityPendingIntent
             ).build()
         )
 
     }
-    private fun getMainActivityPendingIntent() = PendingIntent.getActivity(
-        this,
-        0,
-        Intent(this, MainScreen::class.java).also {
-            it.action = ACTION_SHOW_COMMUTER_FRAGMENT
-        },
-        FLAG_UPDATE_CURRENT
 
-    )
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notifications.apply {
-            createChannelNotifications(notificationManager)
+        notification.apply {
+            createChannelNotification(notificationManager)
         }
     }
 

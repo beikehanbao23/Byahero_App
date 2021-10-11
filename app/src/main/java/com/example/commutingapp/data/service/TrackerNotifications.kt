@@ -13,9 +13,9 @@ import com.example.commutingapp.data.others.Constants.NOTIFICATION_CHANNEL_ID
 import com.example.commutingapp.data.others.Constants.NOTIFICATION_CHANNEL_NAME
 
 
-class TrackerNotification :Notifications<NotificationCompat.Builder>{
+class TrackerNotification :Notification<NotificationCompat.Builder>{
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun createChannelNotifications(notificationManager: NotificationManager){
+    override fun createChannelNotification(notificationManager: NotificationManager){
 
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
@@ -32,7 +32,7 @@ class TrackerNotification :Notifications<NotificationCompat.Builder>{
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_jeep)
             .setContentTitle("Commuting")
-            .setContentText("00:00:00")
+            .setContentText("Recording your commute.")
             .setContentIntent(pendingIntent)
 
     }
