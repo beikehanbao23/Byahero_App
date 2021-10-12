@@ -94,13 +94,13 @@ public class Signup extends AppCompatActivity {
     public void CreateButtonClicked(View view) {
 
 
-        UserInputValidate user = new UserInputValidate(new ValidateInputModel(this,
+        UserInputValidate input = new UserInputValidate(new ValidateInputModel(this,
                 activitySignupBinding.editTextSignUpEmailAddress,
                 activitySignupBinding.editTextSignUpPassword,
                 activitySignupBinding.editTextSignUpConfirmPassword));
 
 
-        if (user.signUpValidationFail()) {
+        if (!input.isValid()) {
             return;
         }
         if (!Connection.INSTANCE.hasInternetConnection(this)) {

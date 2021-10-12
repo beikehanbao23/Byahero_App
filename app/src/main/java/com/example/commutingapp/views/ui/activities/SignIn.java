@@ -5,6 +5,7 @@ import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -253,12 +254,12 @@ public class SignIn extends AppCompatActivity {
     }
 
     private void loginViaDefaultSignIn() {
-        UserInputValidate user = new UserInputValidate(new ValidateInputModel(this,
+        UserInputValidate input = new UserInputValidate(new ValidateInputModel(this,
                 activitySignInBinding.editloginTextEmail,
                 activitySignInBinding.editLoginTextPassword,
                 null));
 
-        if (user.signInValidationFail()) {
+        if (!input.isValid()) {
             return;
         }
 
