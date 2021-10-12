@@ -20,7 +20,7 @@ open class ValidateInputModel constructor(
 
 
 
-    override fun validationEmailFailed(): Boolean? = setEmailErrorText()?.isNotEmpty()
+    private fun validationEmailFailed(): Boolean? = setEmailErrorText()?.isNotEmpty()
     private fun setEmailErrorText(): CharSequence?{
         email.error = when {
             userEmail.isEmpty() -> context.getString(string.fieldLeftBlankMessage)
@@ -34,7 +34,7 @@ open class ValidateInputModel constructor(
 
 
 
-    override fun validationConfirmPasswordFailed():Boolean? = setConfirmPasswordErrorText()?.isNotEmpty()
+    private fun validationConfirmPasswordFailed():Boolean? = setConfirmPasswordErrorText()?.isNotEmpty()
     private fun setConfirmPasswordErrorText(): CharSequence? {
         confirmPassword?.error = when {
 
@@ -56,7 +56,7 @@ open class ValidateInputModel constructor(
 
 
 
-    override fun validationPasswordFailed() = setPasswordError()?.isNotEmpty()
+    private fun validationPasswordFailed() = setPasswordError()?.isNotEmpty()
     private fun setPasswordError():CharSequence?{
         password.error = when{
             userPassword.isEmpty()->context.getString(string.fieldLeftBlankMessage)
@@ -64,9 +64,10 @@ open class ValidateInputModel constructor(
         }.also { password.requestFocus() }
         return password.error
     }
-
-
-
+    /**kind of weird putting '== true' there, but it's part of kotlin null safety btw.*/
+    override fun isValid(): Boolean? {
+        return !(validationEmailFailed() == true || validationPasswordFailed() == true || validationConfirmPasswordFailed() == true)
+    }
 
 
 }
