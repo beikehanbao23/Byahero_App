@@ -26,15 +26,25 @@ object ServiceModule {
 
     @ServiceScoped
     @Provides
-    fun providerMainActivityPendingIntent(@ApplicationContext app:Context):PendingIntent= PendingIntent.getActivity(
+    fun provideMainActivityPendingIntent(@ApplicationContext app:Context):PendingIntent= PendingIntent.getActivity(
         app,
         0,
         Intent(app, MainScreen::class.java).also {
             it.action = Constants.ACTION_SHOW_COMMUTER_FRAGMENT
         },
         PendingIntent.FLAG_UPDATE_CURRENT
-
     )
 
+    @ServiceScoped
+    @Provides
+    fun provideTrackingNotification(@ApplicationContext app: Context,pendingIntent:PendingIntent):NotificationCompat.Builder{
+        return NotificationCompat.Builder(app, Constants.NOTIFICATION_CHANNEL_ID)
+            .setAutoCancel(false)
+            .setOngoing(true)
+            .setSmallIcon(R.drawable.ic_jeep)
+            .setContentTitle("Commuting")
+            .setContentText("Recording your commute.")
+            .setContentIntent(pendingIntent)
+    }
 
 }
