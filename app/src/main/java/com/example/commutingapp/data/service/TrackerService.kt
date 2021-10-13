@@ -1,17 +1,9 @@
 package com.example.commutingapp.data.service
 
 import android.annotation.SuppressLint
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.location.Location
-
 import android.os.Build
 import android.os.Looper
-import android.util.Log
-
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.LiveData
@@ -33,10 +25,10 @@ typealias outerPolyline = MutableList<innerPolyline>
 
 @AndroidEntryPoint
 class TrackingService : LifecycleService() {
-    private val notification: Notification<NotificationCompat.Builder> = TrackerNotification()
+
     @Inject  lateinit var fusedLocationClient: FusedLocationProviderClient
-    @Inject  lateinit var mainActivityPendingIntent: PendingIntent
     private var isFirstRun = true
+    @Inject lateinit var baseTrackingNotificationBuilder: NotificationCompat.Builder
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
@@ -46,17 +38,18 @@ class TrackingService : LifecycleService() {
 
 
     companion object{
-    private val is_Tracking = MutableLiveData<Boolean>()
-    private val liveDataOuterPolyline = MutableLiveData<outerPolyline>()
+    val polyLineCreator:PolyLineCreator = PolyLineCreator()
+    val is_Tracking = MutableLiveData<Boolean>()
+    private val liveDataOuterPolyline = polyLineCreator.polyLine()
 
     }
 
-    fun isTracking(): LiveData<Boolean> = is_Tracking
+    fun isCurrentlyTracking(): LiveData<Boolean> = is_Tracking
     fun outerPolyline(): MutableLiveData<outerPolyline> = liveDataOuterPolyline
 
     private fun postInitialValues(){
         is_Tracking.postValue(false)
-        liveDataOuterPolyline.postValue(mutableListOf()    )
+        liveDataOuterPolyline.postValue(mutableListOf())
     }
     @SuppressLint("VisibleForTests")
     override fun onCreate() {
@@ -69,10 +62,6 @@ class TrackingService : LifecycleService() {
     private fun pauseService(){
         is_Tracking.postValue(false)
     }
-    private fun addEmptyPolyLines() = liveDataOuterPolyline.value?.apply {
-        add(mutableListOf())
-        liveDataOuterPolyline.postValue(this)
-    }?: liveDataOuterPolyline.postValue(mutableListOf(mutableListOf()))
 
 
     private val locationCallback = object : LocationCallback(){
@@ -80,45 +69,23 @@ class TrackingService : LifecycleService() {
             if(is_Tracking.value!!){
                 locationResult ?: return
                     for (location in locationResult.locations) {
-                        addPolyline(location)
-                        Log.e("Status:", "Lat: ${location.latitude}, Long:${location.longitude}")
+                        polyLineCreator.addPolyline(location)
                     }
                 }
             }
     }
 
-    private fun addPolyline(location: Location?){
-        location?.let {
-            val position = LatLng(location.latitude,location.longitude)
-            liveDataOuterPolyline.value?.apply {
-                last().add(position)
-                liveDataOuterPolyline.postValue(this)
-            }
-        }
-    }
-    @SuppressLint("MissingPermission")
-    fun createLocationRequest() {
+
+
+    private fun createLocationRequest() {
 
         if(!is_Tracking.value!!){
             fusedLocationClient.removeLocationUpdates(locationCallback)
             return
         }
-
-        if(hasLocationPermission(this)){
-            fusedLocationClient.requestLocationUpdates(
-                CommuterFragment().locationRequest,
-                locationCallback,
-                Looper.getMainLooper()
-                )
-        }
-
-
+        requestLocationUpdates()
 
     }
-
-
-
-
 
 
     private fun receiveActionCommand(intent:Intent?){
@@ -142,29 +109,35 @@ class TrackingService : LifecycleService() {
             }
         }
     }
+
+
+
+
     private fun startForegroundService() {
-        addEmptyPolyLines()
-        is_Tracking.postValue(true)
+        polyLineCreator.addEmptyPolyLines()//TODO
+        is_Tracking.postValue(true)//TODo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel()
+            Notification().createNotificationChannel()
         }
 
         startForeground(NOTIFICATION_ID,
-                notification.createNotification(
-                baseContext,
-                mainActivityPendingIntent
-            ).build()
+         baseTrackingNotificationBuilder.build()
         )
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel() {
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notification.apply {
-            createChannelNotification(notificationManager)
+
+
+    @SuppressLint("MissingPermission")
+    private fun requestLocationUpdates(){
+        if(hasLocationPermission(this)){
+            fusedLocationClient.requestLocationUpdates(
+                CommuterFragment().locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
         }
     }
+
 
 }
