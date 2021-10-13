@@ -12,14 +12,15 @@ object Constants {
     const val ACTION_PAUSE_SERVICE = "ACTION_PAUSE_SERVICE"
     const val ACTION_STOP_SERVICE = "ACTION_STOP_SERVICE"
     const val ACTION_SHOW_COMMUTER_FRAGMENT = "ACTION_SHOW_COMMUTER_FRAGMENT"
-
+    const val REQUEST_CODE_PAUSE = 1
+    const val REQUEST_CODE_RESUME = 2
     const val NOTIFICATION_CHANNEL_ID = "tracking_channel"
     const val NOTIFICATION_CHANNEL_NAME = "Tracking"
     const val NOTIFICATION_ID = 1
     const val FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE"
 
-    const val FASTEST_LOCATION_UPDATE_INTERVAL = 8000L
-    const val NORMAL_LOCATION_UPDATE_INTERVAL = 18000L
+    const val FASTEST_LOCATION_UPDATE_INTERVAL = 5000L
+    const val NORMAL_LOCATION_UPDATE_INTERVAL = 12000L
     const val DEFAULT_MAP_ZOOM = 16.0
     const val LAST_KNOWN_LOCATION_MAP_ZOOM = 14.80
     const val POLYLINE_COLOR = Color.BLUE
@@ -28,6 +29,7 @@ object Constants {
     const val MAP_MARKER_IMAGE_NAME = "PIN"
     const val REGEX_NUMBER_VALUE="[0-9]"
     const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"
+    @Suppress("Warnings")
     const val MAP_STYLE = "mapbox://styles/johndominic/ckujw0oi96ns517ql91zs7j4g"
     const val REQUEST_CHECK_SETTING = 1001
 }
