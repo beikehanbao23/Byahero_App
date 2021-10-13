@@ -21,8 +21,11 @@ object Constants {
 
     const val FASTEST_LOCATION_UPDATE_INTERVAL = 5000L
     const val NORMAL_LOCATION_UPDATE_INTERVAL = 12000L
-    const val DEFAULT_MAP_ZOOM = 16.0
+    const val TRACKING_MAP_ZOOM = 16.0
     const val LAST_KNOWN_LOCATION_MAP_ZOOM = 14.80
+    const val DEFAULT_MAP_ZOOM = 4.00
+    const val DEFAULT_LATITUDE = 12.8797
+    const val DEFAULT_LONGTITUDE = 121.7740
     const val POLYLINE_COLOR = Color.BLUE
     const val POLYLINE_WIDTH = 5.0f
     const val MAP_MARKER_SIZE = 2.0f
