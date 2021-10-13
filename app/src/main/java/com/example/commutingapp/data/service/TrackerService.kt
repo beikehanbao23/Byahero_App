@@ -84,7 +84,6 @@ class TrackingService : LifecycleService() {
             return
         }
         requestLocationUpdates()
-
     }
 
 
@@ -114,8 +113,8 @@ class TrackingService : LifecycleService() {
 
 
     private fun startForegroundService() {
-        polyLineCreator.addEmptyPolyLines()//TODO
-        is_Tracking.postValue(true)//TODo
+        polyLineCreator.addEmptyPolyLines()
+        is_Tracking.postValue(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Notification().createNotificationChannel()
         }
