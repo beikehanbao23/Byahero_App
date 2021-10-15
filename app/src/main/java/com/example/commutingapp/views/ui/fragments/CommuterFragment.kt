@@ -5,8 +5,10 @@ import android.annotation.SuppressLint
 import android.content.Intent
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 
 import androidx.collection.size
 import androidx.fragment.app.Fragment
@@ -56,6 +58,10 @@ import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import com.mapbox.mapboxsdk.camera.CameraPosition
+
+
+
 
 
 @AndroidEntryPoint
@@ -238,7 +244,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun createComponentsLocation(locationComponent:LocationComponent) {
         locationComponent.apply {
             isLocationComponentEnabled = true;
-            cameraMode = CameraMode.TRACKING;
             renderMode = RenderMode.NORMAL;
             zoomWhileTracking(TRACKING_MAP_ZOOM)
         }
