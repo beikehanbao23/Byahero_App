@@ -13,16 +13,17 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import com.example.commutingapp.R
 import com.example.commutingapp.data.others.Constants
-import com.google.android.gms.location.FusedLocationProviderClient
+import com.example.commutingapp.data.others.Notification
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-@AndroidEntryPoint
-class Notification : LifecycleService() {
 
-    lateinit var currentTrackingNotificationBuilder:NotificationCompat.Builder
+@AndroidEntryPoint
+class TrackingNotification : LifecycleService(), Notification {
+
+    lateinit var currentTrackingNotificationBuilder: NotificationCompat.Builder
     private val tracking = MutableLiveData<Boolean>()
-    @Inject lateinit var fusedLocationClient: FusedLocationProviderClient
     @Inject lateinit var baseTrackingNotificationBuilder: NotificationCompat.Builder
+
     override fun onCreate() {
         super.onCreate()
         currentTrackingNotificationBuilder = baseTrackingNotificationBuilder
@@ -48,7 +49,8 @@ class Notification : LifecycleService() {
             action = if(tracking.value!!) Constants.ACTION_PAUSE_SERVICE else Constants.ACTION_START_OR_RESUME_SERVICE
         }
     }
-    private fun updateNotification(){
+
+    override fun updateNotification(){
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         currentTrackingNotificationBuilder.javaClass.getDeclaredField("mAction").apply {
@@ -60,9 +62,11 @@ class Notification : LifecycleService() {
 
         notificationManager.notify(Constants.NOTIFICATION_ID,currentTrackingNotificationBuilder.build())
 
+
+
     }
     @RequiresApi(Build.VERSION_CODES.O)
-     fun createNotificationChannel() {
+    override fun createNotificationChannel() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
