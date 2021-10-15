@@ -5,10 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 
 import androidx.collection.size
 import androidx.fragment.app.Fragment
@@ -26,6 +24,7 @@ import com.example.commutingapp.data.others.Constants.TRACKING_MAP_ZOOM
 import com.example.commutingapp.data.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
 import com.example.commutingapp.data.others.Constants.MAP_MARKER_IMAGE_NAME
 import com.example.commutingapp.data.others.Constants.MAP_MARKER_SIZE
+import com.example.commutingapp.data.others.Constants.MAP_STYLE
 import com.example.commutingapp.data.others.Constants.POLYLINE_COLOR
 import com.example.commutingapp.data.others.Constants.POLYLINE_WIDTH
 import com.example.commutingapp.data.others.Constants.REQUEST_CHECK_SETTING
@@ -44,7 +43,6 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.LocationComponent
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.location.LocationComponentOptions
-import com.mapbox.mapboxsdk.location.modes.CameraMode
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -58,10 +56,6 @@ import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
-import com.mapbox.mapboxsdk.camera.CameraPosition
-
-
-
 
 
 @AndroidEntryPoint
@@ -177,10 +171,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     private fun addMapStyle(mapboxMap: MapboxMap) {
-        mapboxMap.setStyle(Style.DARK) { style->
+        mapboxMap.setStyle(Style.Builder().fromUri(MAP_STYLE)) { style->
             mapBoxView?.let {mapView->
                 TrafficPlugin(mapView, mapboxMap, style).apply { setVisibility(true) }
-                enableLocationComponent(style)
                 mapBoxStyle = style
                 mapMarkerSymbol = SymbolManager(mapView, mapboxMap, mapBoxStyle).also {symbolManager->
                     symbolManager.addClickListener(this)
@@ -225,7 +218,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
 
-    private fun enableLocationComponent(style:Style){
+    private fun createLocationPuck(style:Style){
         LocationComponentOptions.builder(requireContext())
             .build().also { componentOptions->
                 mapBoxMap?.locationComponent?.apply {
@@ -243,7 +236,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     @SuppressLint("MissingPermission")
     private fun createComponentsLocation(locationComponent:LocationComponent) {
         locationComponent.apply {
-            isLocationComponentEnabled = true;
+            isLocationComponentEnabled = true
             renderMode = RenderMode.NORMAL;
             zoomWhileTracking(TRACKING_MAP_ZOOM)
         }
@@ -253,6 +246,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         TrackingService().isCurrentlyTracking().observe(viewLifecycleOwner) {
             isTracking = it
             updateButtons()
+            createLocationPuck(mapBoxStyle)
         }
 
         TrackingService().outerPolyline().observe(viewLifecycleOwner) {
