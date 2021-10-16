@@ -15,13 +15,15 @@ object TrackingPermissionUtility {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             EasyPermissions.hasPermissions(
                 context,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             )
         } else {
             EasyPermissions.hasPermissions(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             )
         }
 
@@ -32,7 +34,8 @@ object TrackingPermissionUtility {
                 fragment,
                 fragment.getString(R.string.requestLocationMessage),
                 REQUEST_CODE_LOCATION_PERMISSION,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             )
         }else{
             EasyPermissions.requestPermissions(
@@ -40,7 +43,8 @@ object TrackingPermissionUtility {
                 fragment.getString(R.string.requestLocationMessage),
                 REQUEST_CODE_LOCATION_PERMISSION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             )
         }
 
