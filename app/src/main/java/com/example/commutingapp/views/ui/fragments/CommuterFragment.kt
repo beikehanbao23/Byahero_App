@@ -352,14 +352,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
     }
 
-    private fun addAllPolyLines() {
 
-        outerPolyline.forEach {
-            customPolylineAppearance().addAll(it).apply {
-                mapBoxMap?.addPolyline(this)
-            }
-        }
-    }
 
     private fun customPolylineAppearance(): PolylineOptions {
 
