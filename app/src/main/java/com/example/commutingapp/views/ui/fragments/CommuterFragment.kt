@@ -2,6 +2,8 @@ package com.example.commutingapp.views.ui.fragments
 
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Activity.RESULT_CANCELED
 import android.content.Intent
 
 import android.os.Bundle
@@ -55,6 +57,7 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
 import android.app.Activity.RESULT_OK
+import android.util.Log
 import android.widget.Toast
 import com.example.commutingapp.data.others.Constants.REQUEST_CHECK_SETTING
 import com.google.android.gms.common.api.*
@@ -66,6 +69,8 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.example.commutingapp.data.others.Constants.TEN_METERS
 
 import com.google.android.gms.location.LocationSettingsResponse
+import com.mapbox.mapboxsdk.location.modes.CameraMode
+import com.mapbox.maps.extension.style.expressions.dsl.generated.lineProgress
 
 
 @AndroidEntryPoint
@@ -161,10 +166,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun handleLocationResultException(e:ApiException){
         when (e.statusCode) {
             LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-                val resolvableApiException = e as ResolvableApiException
-                startIntentSenderForResult(resolvableApiException.resolution.intentSender, REQUEST_CHECK_SETTING, null, 0, 0, 0, null);
-                resolvableApiException.startResolutionForResult(requireActivity(), REQUEST_CHECK_SETTING)
-            }
+                (e as ResolvableApiException).apply {
+                startIntentSenderForResult(this.resolution.intentSender, REQUEST_CHECK_SETTING, null, 0, 0, 0, null);
+            } }
         }
     }
 
@@ -174,6 +178,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                   RESULT_OK -> {
                       toggleStartButton()
                   }
+
               }
           }
       }
@@ -269,6 +274,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         locationComponent.apply {
             isLocationComponentEnabled = true
             renderMode = RenderMode.NORMAL;
+            cameraMode = CameraMode.NONE
             zoomWhileTracking(TRACKING_MAP_ZOOM)
         }
     }
