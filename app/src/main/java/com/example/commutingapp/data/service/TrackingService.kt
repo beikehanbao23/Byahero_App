@@ -24,11 +24,12 @@ typealias innerPolyline = MutableList<LatLng>
 typealias outerPolyline = MutableList<innerPolyline>
 
 @AndroidEntryPoint
-class TrackingService : LifecycleService() {
+open class TrackingService : LifecycleService() {
 
-    @Inject  lateinit var fusedLocationClient: FusedLocationProviderClient
+    @Inject lateinit var fusedLocationClient: FusedLocationProviderClient
+    @Inject lateinit var baseTrackingNotificationBuilder:NotificationCompat.Builder
     private var isFirstRun = true
-    @Inject lateinit var baseTrackingNotificationBuilder: NotificationCompat.Builder
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
@@ -38,9 +39,9 @@ class TrackingService : LifecycleService() {
 
 
     companion object{
-    val polyLineCreator:PolyLineCreator = PolyLineCreator()
+    val trackingPolyLine : TrackingPolyLine = TrackingPolyLine()
     val is_Tracking = MutableLiveData<Boolean>()
-    private val liveDataOuterPolyline = polyLineCreator.polyLine()
+    private val liveDataOuterPolyline = trackingPolyLine.polyLine()
 
     }
 
@@ -69,7 +70,7 @@ class TrackingService : LifecycleService() {
             if(is_Tracking.value!!){
                 locationResult ?: return
                     for (location in locationResult.locations) {
-                        polyLineCreator.addPolyline(location)
+                        trackingPolyLine.addPolyline(location)
                     }
                 }
             }
@@ -110,13 +111,16 @@ class TrackingService : LifecycleService() {
     }
 
 
-
+    private fun startTimer(){
+        trackingPolyLine.addEmptyPolyLines()
+        is_Tracking.postValue(true)
+    }
 
     private fun startForegroundService() {
-        polyLineCreator.addEmptyPolyLines()
+        trackingPolyLine.addEmptyPolyLines()
         is_Tracking.postValue(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification().createNotificationChannel()
+            TrackingNotification().createNotificationChannel()
         }
 
         startForeground(NOTIFICATION_ID,
@@ -124,8 +128,6 @@ class TrackingService : LifecycleService() {
         )
 
     }
-
-
 
     @SuppressLint("MissingPermission")
     private fun requestLocationUpdates(){
