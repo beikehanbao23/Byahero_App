@@ -1,8 +1,5 @@
 package com.example.commutingapp.data.service
 
-import android.util.Log
-import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.commutingapp.data.others.Constants.ONE_SECOND
 import com.example.commutingapp.data.others.Constants.STOPWATCH_INTERVAL
@@ -53,33 +50,32 @@ class TrackingStopWatch :  Watch {
 
         while(is_Tracking.value!!) {
             createLapTime()
-            incrementTimeRunInMillis()
+            increaseMillis()
             if (secondHasElapsed()) {
-                incrementTimeRunInSeconds()
-                incrementTimeStamp()
-                Log.e("Status","Running")
+                increaseSeconds()
+                increaseTimStamp()
             }
             delay(STOPWATCH_INTERVAL)
-            incrementTimeCommute()
         }
+        increaseTimeCommute()
     }
     private fun initializeTimer(){
         isTimerEnabled = true
         timeStarted = System.currentTimeMillis()
     }
-    private fun incrementTimeCommute(){
+    private fun increaseTimeCommute(){
         timeCommute += lapTime
     }
     private fun createLapTime(){
         lapTime = System.currentTimeMillis() - timeStarted
     }
-    private fun incrementTimeRunInMillis(){
+    private fun increaseMillis(){
         timeRunInMillis.postValue(timeCommute + lapTime)
     }
-    private fun incrementTimeRunInSeconds(){
+    private fun increaseSeconds(){
         timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
     }
-    private fun incrementTimeStamp(){
+    private fun increaseTimStamp(){
         lastSecondTimestamp += ONE_SECOND
     }
     private fun secondHasElapsed():Boolean{ return timeRunInMillis.value!! >= lastSecondTimestamp + ONE_SECOND}
