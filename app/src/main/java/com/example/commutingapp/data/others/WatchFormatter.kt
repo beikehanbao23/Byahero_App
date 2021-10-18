@@ -5,7 +5,7 @@ import java.text.NumberFormat
 import java.util.concurrent.TimeUnit
 
 object WatchFormatter {
-    private val numberFormat: NumberFormat = DecimalFormat("00")
+
     fun getFormattedStopWatchTime(ms: Long): String {
         var milliseconds = ms
         val hours = TimeUnit.MILLISECONDS.toHours(milliseconds)
@@ -13,7 +13,7 @@ object WatchFormatter {
         val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
         milliseconds -= TimeUnit.MINUTES.toMillis(minutes)
         val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds)
-        return "${numberFormat.format(hours)}:${numberFormat.format(minutes)}:${numberFormat.format(seconds)}"
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
 
