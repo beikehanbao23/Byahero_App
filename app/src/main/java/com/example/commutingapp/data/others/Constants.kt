@@ -37,4 +37,5 @@ object Constants {
     const val MAP_STYLE = "mapbox://styles/johndominic/ckujw0oi96ns517ql91zs7j4g"
     const val REQUEST_CHECK_SETTING = 1001
     const val STOPWATCH_INTERVAL = 50L
+    const val ONE_SECOND = 1000L
 }
