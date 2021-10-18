@@ -39,10 +39,12 @@ open class TrackingService : LifecycleService() {
 
 
     companion object{
-    val trackingPolyLine : TrackingPolyLine = TrackingPolyLine()
-    val is_Tracking = MutableLiveData<Boolean>()
+    private val trackingPolyLine : TrackingPolyLine = TrackingPolyLine()
     private val liveDataOuterPolyline = trackingPolyLine.polyLine()
+    private val stopWatch: TrackingStopWatch = TrackingStopWatch()
+    val is_Tracking = MutableLiveData<Boolean>()
 
+    val runTimeInMillis = stopWatch.getTimeRunMillis()
     }
 
     fun isCurrentlyTracking(): LiveData<Boolean> = is_Tracking
@@ -51,6 +53,7 @@ open class TrackingService : LifecycleService() {
     private fun postInitialValues(){
         is_Tracking.postValue(false)
         liveDataOuterPolyline.postValue(mutableListOf())
+        stopWatch.postInitialValues()
     }
     @SuppressLint("VisibleForTests")
     override fun onCreate() {
@@ -62,6 +65,7 @@ open class TrackingService : LifecycleService() {
     }
     private fun pauseService(){
         is_Tracking.postValue(false)
+        stopWatch.pause()
     }
 
 
@@ -94,10 +98,10 @@ open class TrackingService : LifecycleService() {
                 ACTION_START_OR_RESUME_SERVICE -> {
                     if (isFirstRun) {
                         startForegroundService()
-                        isFirstRun = false
+                        isFirstRun = false // todo fix startTimer
                         return@let
                     }
-                    startForegroundService()//TODO fix later
+                    startTimer()
                     Timber.e("Resumed")
                 }
                 ACTION_PAUSE_SERVICE -> {
@@ -114,10 +118,11 @@ open class TrackingService : LifecycleService() {
     private fun startTimer(){
         trackingPolyLine.addEmptyPolyLines()
         is_Tracking.postValue(true)
+        stopWatch.start()
     }
 
     private fun startForegroundService() {
-        trackingPolyLine.addEmptyPolyLines()
+        startTimer()
         is_Tracking.postValue(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             TrackingNotification().createNotificationChannel()
