@@ -67,10 +67,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.common.api.ResolvableApiException
 
 import com.example.commutingapp.data.others.Constants.TEN_METERS
-
+import com.example.commutingapp.data.others.WatchFormatter
 import com.google.android.gms.location.LocationSettingsResponse
-import com.mapbox.mapboxsdk.location.modes.CameraMode
-import com.mapbox.maps.extension.style.expressions.dsl.generated.lineProgress
+
 
 
 @AndroidEntryPoint
@@ -274,8 +273,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         locationComponent.apply {
             isLocationComponentEnabled = true
             renderMode = RenderMode.NORMAL;
-            cameraMode = CameraMode.NONE
-            zoomWhileTracking(TRACKING_MAP_ZOOM)
         }
     }
 
@@ -295,6 +292,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 moveCameraToUser(outerPolyline.last().last(), TRACKING_MAP_ZOOM)
             }
         }
+        TrackingService.runTimeInMillis.observe(viewLifecycleOwner){
+            Log.e("Time",WatchFormatter.getFormattedStopWatchTime(it))
+        }
+
+
     }
 
     private fun sendCommandToTrackingService(action: String) {
