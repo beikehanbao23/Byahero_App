@@ -55,6 +55,7 @@ import pub.devrel.easypermissions.EasyPermissions
 
 import android.app.Activity.RESULT_OK
 import android.util.Log
+import android.widget.Toast
 import com.example.commutingapp.BuildConfig.MAP_STYLE
 import com.example.commutingapp.data.others.Constants.CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.data.others.Constants.CAMERA_TILT_DEGREES
@@ -70,6 +71,7 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.example.commutingapp.data.others.Constants.TEN_METERS
 import com.example.commutingapp.data.others.WatchFormatter
 import com.google.android.gms.location.LocationSettingsResponse
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mapbox.mapboxsdk.camera.CameraPosition
 
 
@@ -84,6 +86,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private var mapBoxView: MapView? = null
     private lateinit var buttonStart: Button
     private lateinit var buttonStop: Button
+    private lateinit var locationButton: FloatingActionButton
     private  var mapBoxStyle: Style? = null
     private lateinit var mapMarkerSymbol: SymbolManager
 
@@ -92,6 +95,16 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         buttonStart = view.findViewById(R.id.startButton)
         buttonStop = view.findViewById(R.id.finishButton)
+        locationButton = view.findViewById(R.id.floatingActionButtonLocation)
+
+
+        locationButton.setOnClickListener {
+            mapBoxMap?.locationComponent?.lastKnownLocation?.let {location->
+                moveCameraToUser(LatLng(location.latitude, location.longitude),CAMERA_ZOOM_MAP_MARKER)
+            }
+
+        }
+
         buttonStart.setOnClickListener {
             if (requestPermissionGranted()) {
                 checkLocationSetting()
