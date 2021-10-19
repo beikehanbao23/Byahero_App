@@ -56,6 +56,8 @@ import pub.devrel.easypermissions.EasyPermissions
 
 import android.app.Activity.RESULT_OK
 import android.util.Log
+import com.example.commutingapp.data.others.Constants.CAMERA_TILT_DEGREES
+import com.example.commutingapp.data.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.data.others.Constants.MINIMUM_MAP_LEVEL
 import com.example.commutingapp.data.others.Constants.REQUEST_CHECK_SETTING
 import com.google.android.gms.common.api.*
@@ -67,7 +69,7 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.example.commutingapp.data.others.Constants.TEN_METERS
 import com.example.commutingapp.data.others.WatchFormatter
 import com.google.android.gms.location.LocationSettingsResponse
-
+import com.mapbox.mapboxsdk.camera.CameraPosition
 
 
 @AndroidEntryPoint
@@ -210,9 +212,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             mapBoxView?.let {mapView->
                 TrafficPlugin(mapView, mapboxMap, style).apply { setVisibility(true) }
                 mapBoxStyle = style
-
                 createLocationPuck(style)
-
                 mapMarkerSymbol = SymbolManager(mapView, mapboxMap, mapBoxStyle!!
                 ).also { symbolManager->
                     symbolManager.addClickListener(this)
@@ -238,11 +238,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         mapBoxStyle?.addImage(MAP_MARKER_IMAGE_NAME,getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location))
         if(!hasExistingMapMarker()) {
             createMapMarker(latLng)
-            mapBoxMap.let {map->
-                map?.cameraPosition?.zoom.apply {
-                    this?.let { zoomLevel -> moveCameraToUser(latLng, zoomLevel) }
-                }
-            }
+             mapBoxMap?.cameraPosition?.apply {
+                 moveCameraToUser(latLng, zoom)
+             }
+
+
         }
     }
     private fun hasExistingMapMarker() = mapMarkerSymbol.annotations.size != 0
@@ -332,15 +332,15 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     private fun moveCameraToUser(latLng: LatLng,zoomLevel:Double) {
-        mapBoxMap?.animateCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                latLng,
-                zoomLevel
-            )
-        )
-
+        mapBoxMap?.animateCamera(CameraUpdateFactory
+            .newCameraPosition(buildCameraPosition(latLng)), 7000);
     }
-
+    private fun buildCameraPosition(latLng: LatLng):CameraPosition =
+         CameraPosition.Builder()
+            .target(latLng)
+            .zoom(CAMERA_ZOOM_MAP_MARKER)
+            .tilt(CAMERA_TILT_DEGREES)
+            .build()
 
     private fun addLatestPolyline() {
         if (hasExistingInnerPolyLines()) {
@@ -352,12 +352,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 .add(preLastLatLng)
                 .add(lastLatLng).apply {
                     mapBoxMap?.addPolyline(this)
-
                 }
-
         }
     }
-
 
 
     private fun customPolylineAppearance(): PolylineOptions {
