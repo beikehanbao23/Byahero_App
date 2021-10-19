@@ -56,6 +56,7 @@ import pub.devrel.easypermissions.EasyPermissions
 
 import android.app.Activity.RESULT_OK
 import android.util.Log
+import com.example.commutingapp.data.others.Constants.CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.data.others.Constants.CAMERA_TILT_DEGREES
 import com.example.commutingapp.data.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.data.others.Constants.MINIMUM_MAP_LEVEL
@@ -74,11 +75,9 @@ import com.mapbox.mapboxsdk.camera.CameraPosition
 
 @AndroidEntryPoint
 class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
-    OnMapReadyCallback,MapboxMap.OnMapLongClickListener,OnSymbolClickListener
-  {
+    OnMapReadyCallback,MapboxMap.OnMapLongClickListener,OnSymbolClickListener {
 
     private val mainViewModel: MainViewModel by viewModels()
-
     private var mapBoxMap: MapboxMap? = null
     private var isTracking = false
     private var outerPolyline = mutableListOf<innerPolyline>()
@@ -236,18 +235,19 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun pointMapMarker(latLng: LatLng) {
         mapBoxStyle?.addImage(MAP_MARKER_IMAGE_NAME,getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location))
-        if(!hasExistingMapMarker()) {
-            createMapMarker(latLng)
-             mapBoxMap?.cameraPosition?.apply {
-                 moveCameraToUser(latLng, zoom)
-             }
-
-
+        if(hasExistingMapMarker()) {
+            mapMarkerSymbol.deleteAll()
         }
+        createMapMarker(latLng)
+        mapBoxMap?.cameraPosition?.apply {
+            moveCameraToUser(latLng, zoom)
+        }
+
+
     }
     private fun hasExistingMapMarker() = mapMarkerSymbol.annotations.size != 0
-    private fun createMapMarker(latLng: LatLng){
 
+    private fun createMapMarker(latLng: LatLng){
             mapMarkerSymbol.create(
                 SymbolOptions()
                     .withLatLng(latLng)
@@ -297,7 +297,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
         }
         TrackingService.timeInMillis.observe(viewLifecycleOwner){
-            Log.e("Time",WatchFormatter.getFormattedStopWatchTime(it))
+         //TODO implement later
         }
 
 
@@ -333,8 +333,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun moveCameraToUser(latLng: LatLng,zoomLevel:Double) {
         mapBoxMap?.animateCamera(CameraUpdateFactory
-            .newCameraPosition(buildCameraPosition(latLng)), 7000);
+            .newCameraPosition(buildCameraPosition(latLng)), CAMERA_ANIMATION_DURATION);
     }
+
     private fun buildCameraPosition(latLng: LatLng):CameraPosition =
          CameraPosition.Builder()
             .target(latLng)
