@@ -56,6 +56,7 @@ import pub.devrel.easypermissions.EasyPermissions
 
 import android.app.Activity.RESULT_OK
 import android.util.Log
+import com.example.commutingapp.data.others.Constants.MINIMUM_MAP_LEVEL
 import com.example.commutingapp.data.others.Constants.REQUEST_CHECK_SETTING
 import com.google.android.gms.common.api.*
 
@@ -184,14 +185,19 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             uiSettings.isAttributionEnabled = false
             uiSettings.isLogoEnabled = false
         }
+
         mapBoxMap?.addOnMapLongClickListener(this)
+        setMapZoomLevel()
         addMapStyle(mapboxMap)
         moveCameraToLastKnownLocation()
         addAllPolyLines()
     }
 
-    private fun addAllPolyLines() {
+    private fun setMapZoomLevel(){
+        mapBoxMap?.setMaxZoomPreference(MINIMUM_MAP_LEVEL)
+    }
 
+      private fun addAllPolyLines() {
         outerPolyline.forEach {
             customPolylineAppearance().addAll(it).apply {
                 mapBoxMap?.addPolyline(this)
@@ -204,6 +210,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             mapBoxView?.let {mapView->
                 TrafficPlugin(mapView, mapboxMap, style).apply { setVisibility(true) }
                 mapBoxStyle = style
+
                 createLocationPuck(style)
 
                 mapMarkerSymbol = SymbolManager(mapView, mapboxMap, mapBoxStyle!!

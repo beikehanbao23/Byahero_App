@@ -25,6 +25,7 @@ object Constants {
     const val TEN_METERS = 10.0f
     const val LAST_KNOWN_LOCATION_MAP_ZOOM = 14.80
     const val DEFAULT_MAP_ZOOM = 4.00
+    const val MINIMUM_MAP_LEVEL = 18.85
     const val DEFAULT_LATITUDE = 12.8797
     const val DEFAULT_LONGITUDE = 121.7740
     const val POLYLINE_COLOR = Color.BLUE
