@@ -2,8 +2,6 @@ package com.example.commutingapp.views.ui.fragments
 
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.Activity.RESULT_CANCELED
 import android.content.Intent
 
 import android.os.Bundle
@@ -58,7 +56,6 @@ import pub.devrel.easypermissions.EasyPermissions
 
 import android.app.Activity.RESULT_OK
 import android.util.Log
-import android.widget.Toast
 import com.example.commutingapp.data.others.Constants.REQUEST_CHECK_SETTING
 import com.google.android.gms.common.api.*
 
@@ -292,7 +289,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 moveCameraToUser(outerPolyline.last().last(), TRACKING_MAP_ZOOM)
             }
         }
-        TrackingService.runTimeInMillis.observe(viewLifecycleOwner){
+        TrackingService.timeInMillis.observe(viewLifecycleOwner){
             Log.e("Time",WatchFormatter.getFormattedStopWatchTime(it))
         }
 
