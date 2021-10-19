@@ -133,7 +133,7 @@ class MainScreen : AppCompatActivity() {
 
     private fun initializeAttributes() {
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
-        Mapbox.getInstance(this, getString(R.string.mapbox_access_token))
+        Mapbox.getInstance(this, getString(R.string.MapsToken))
         setContentView(activityMainScreenBinding?.root)
 
     }

@@ -1,7 +1,7 @@
 package com.example.commutingapp.data.others
 
 import android.graphics.Color
-import java.util.*
+
 
 
 object Constants {
@@ -19,7 +19,6 @@ object Constants {
     const val NOTIFICATION_CHANNEL_NAME = "Tracking"
     const val NOTIFICATION_ID = 1
     const val FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE"
-
     const val FASTEST_LOCATION_UPDATE_INTERVAL = 12000L
     const val NORMAL_LOCATION_UPDATE_INTERVAL = 18000L
     const val TRACKING_MAP_ZOOM = 16.0
@@ -39,7 +38,6 @@ object Constants {
     const val REGEX_NUMBER_VALUE="[0-9]"
     const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"
     @Suppress("Warnings")
-    const val MAP_STYLE = "mapbox://styles/johndominic/ckujw0oi96ns517ql91zs7j4g"
     const val REQUEST_CHECK_SETTING = 1001
     const val STOPWATCH_INTERVAL = 50L
     const val ONE_SECOND = 1000L

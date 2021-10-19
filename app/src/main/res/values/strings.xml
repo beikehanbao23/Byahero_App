@@ -1,9 +1,4 @@
 <resources>
     <string name="app_name">Byahero</string>
 
-    <string name="facebook_app_id">1431643380538458</string>
-    <string name="fb_login_protocol_scheme">fb1431643380538458</string>
-    <string name="google_maps_key">AIzaSyA4bnGiEsnho-CU-b0QBRzfwJzMRSeV1I8</string>
-    <string name="mapbox_access_token">sk.eyJ1Ijoiam9obmRvbWluaWMiLCJhIjoiY2t1YXYwOXg5MGtrNDJxbXJ4d3U1Z3VrbiJ9.rfiOXuvyhQOMLbV5uOXDPA</string>
-    <string name="maps_api_key">AIzaSyDA1RYVuzsz5yOHLeahSvXKuVguSyrxmRU</string>
 </resources>

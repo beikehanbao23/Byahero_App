@@ -15,17 +15,28 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
+
         applicationId "com.example.commutingapp"
         minSdkVersion 21
         //last minSdkVersion is 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        resValue "string","_default",""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+
+    debug{
+        def localProperties = new Properties()
+        localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+        resValue("string", "MapsToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
+        resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
+        resValue("string", "FBLoginProtocolScheme", localProperties.getProperty("FB_LOGIN_PROTOCOL_SCHEME"))
+        resValue("string", "MapsApiKey", localProperties.getProperty("MAPS_API_KEY"))
+    }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
