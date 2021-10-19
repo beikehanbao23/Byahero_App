@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.mapbox.mapboxsdk.geometry.LatLng
 
 class TrackingPolyLine :LifecycleService(){
+    //TODO remove lifecycle extension
     override fun onCreate() {
         super.onCreate()
         liveDataOuterPolyLine.postValue(mutableListOf())

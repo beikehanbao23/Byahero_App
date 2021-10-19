@@ -19,7 +19,7 @@ class TrackingStopWatch :  Watch {
          val timeRunInMillis = MutableLiveData<Long>()
     }
     fun getTimeRunMillis():MutableLiveData<Long> = timeRunInMillis
-
+    fun getTimeCommuteInSeconds():MutableLiveData<Long> = timeRunInSeconds
 
      fun postInitialValues(){
         timeRunInSeconds.postValue(0L)
