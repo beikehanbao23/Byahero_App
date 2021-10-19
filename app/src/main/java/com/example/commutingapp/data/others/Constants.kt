@@ -1,6 +1,7 @@
 package com.example.commutingapp.data.others
 
 import android.graphics.Color
+import java.util.*
 
 
 object Constants {
@@ -24,6 +25,7 @@ object Constants {
     const val TRACKING_MAP_ZOOM = 16.0
     const val TEN_METERS = 10.0f
     const val CAMERA_TILT_DEGREES = 30.00
+    const val CAMERA_ANIMATION_DURATION = 3200
     const val CAMERA_ZOOM_MAP_MARKER = 14.00
     const val LAST_KNOWN_LOCATION_MAP_ZOOM = 14.80
     const val DEFAULT_MAP_ZOOM = 4.00
