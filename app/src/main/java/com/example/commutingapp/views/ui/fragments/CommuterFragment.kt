@@ -24,7 +24,6 @@ import com.example.commutingapp.data.others.Constants.TRACKING_MAP_ZOOM
 import com.example.commutingapp.data.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
 import com.example.commutingapp.data.others.Constants.MAP_MARKER_IMAGE_NAME
 import com.example.commutingapp.data.others.Constants.MAP_MARKER_SIZE
-import com.example.commutingapp.data.others.Constants.MAP_STYLE
 import com.example.commutingapp.data.others.Constants.POLYLINE_COLOR
 import com.example.commutingapp.data.others.Constants.POLYLINE_WIDTH
 import com.example.commutingapp.data.others.TrackingPermissionUtility.hasLocationPermission
@@ -56,6 +55,7 @@ import pub.devrel.easypermissions.EasyPermissions
 
 import android.app.Activity.RESULT_OK
 import android.util.Log
+import com.example.commutingapp.BuildConfig.MAP_STYLE
 import com.example.commutingapp.data.others.Constants.CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.data.others.Constants.CAMERA_TILT_DEGREES
 import com.example.commutingapp.data.others.Constants.CAMERA_ZOOM_MAP_MARKER
