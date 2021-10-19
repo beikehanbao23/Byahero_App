@@ -15,6 +15,16 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="SpeakableTextPresentCheck" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="110dp"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/ic_baseline_my_location_24"
+        app:backgroundTint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
     <Button
         android:id="@+id/startButton"
         android:layout_width="wrap_content"
