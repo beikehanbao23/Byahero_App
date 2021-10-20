@@ -1,7 +1,7 @@
 package com.example.commutingapp.utils.input_validator
-import com.example.commutingapp.data.others.Constants.REGEX_SPECIAL_CHARACTERS_VALUE
+import com.example.commutingapp.utils.others.Constants.REGEX_SPECIAL_CHARACTERS_VALUE
 
-import com.example.commutingapp.data.others.Constants.REGEX_NUMBER_VALUE
+import com.example.commutingapp.utils.others.Constants.REGEX_NUMBER_VALUE
 import java.util.regex.Pattern
 
 

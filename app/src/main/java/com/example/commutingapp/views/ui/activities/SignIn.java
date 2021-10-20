@@ -5,7 +5,6 @@ import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +15,7 @@ import com.example.commutingapp.data.firebase.auth.UserAuthenticationProcessor;
 import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper;
 import com.example.commutingapp.data.firebase.usr.UserDataProcessor;
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor;
-import com.example.commutingapp.data.others.Constants;
+import com.example.commutingapp.utils.others.Constants;
 import com.example.commutingapp.databinding.ActivitySignInBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
 import com.example.commutingapp.utils.InternetConnection.Connection;

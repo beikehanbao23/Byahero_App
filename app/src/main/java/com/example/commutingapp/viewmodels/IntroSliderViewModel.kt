@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper
 import com.example.commutingapp.data.firebase.usr.UserDataProcessor
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
-import com.example.commutingapp.utils.ui_utilities.Event
+import com.example.commutingapp.utils.others.Event
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider

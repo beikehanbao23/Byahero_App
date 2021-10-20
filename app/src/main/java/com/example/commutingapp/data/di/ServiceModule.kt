@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.example.commutingapp.R
-import com.example.commutingapp.data.others.Constants
+import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.views.ui.activities.MainScreen
 import com.google.android.gms.location.FusedLocationProviderClient
 import dagger.Module

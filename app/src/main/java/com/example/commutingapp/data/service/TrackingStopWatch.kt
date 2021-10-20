@@ -1,9 +1,9 @@
 package com.example.commutingapp.data.service
 
 import androidx.lifecycle.MutableLiveData
-import com.example.commutingapp.data.others.Constants.ONE_SECOND
-import com.example.commutingapp.data.others.Constants.STOPWATCH_INTERVAL
-import com.example.commutingapp.data.others.Watch
+import com.example.commutingapp.utils.others.Constants.ONE_SECOND
+import com.example.commutingapp.utils.others.Constants.STOPWATCH_INTERVAL
+import com.example.commutingapp.utils.others.Watch
 import com.example.commutingapp.data.service.TrackingService.Companion.is_Tracking
 
 import kotlinx.coroutines.CoroutineScope

@@ -2,7 +2,6 @@ package com.example.commutingapp.views.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -15,7 +14,7 @@ import com.example.commutingapp.data.firebase.auth.UserAuthenticationProcessor
 import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper
 import com.example.commutingapp.data.firebase.usr.UserDataProcessor
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
-import com.example.commutingapp.data.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
+import com.example.commutingapp.utils.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch
 import com.example.commutingapp.views.ui.fragments.CommuterFragment

@@ -12,22 +12,22 @@ import androidx.collection.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.commutingapp.R
-import com.example.commutingapp.data.others.BitmapConvert.getBitmapFromVectorDrawable
-import com.example.commutingapp.data.others.Constants
-import com.example.commutingapp.data.others.Constants.ACTION_PAUSE_SERVICE
-import com.example.commutingapp.data.others.Constants.ACTION_START_OR_RESUME_SERVICE
-import com.example.commutingapp.data.others.Constants.ACTION_STOP_SERVICE
-import com.example.commutingapp.data.others.Constants.DEFAULT_LATITUDE
-import com.example.commutingapp.data.others.Constants.DEFAULT_LONGITUDE
-import com.example.commutingapp.data.others.Constants.DEFAULT_MAP_ZOOM
-import com.example.commutingapp.data.others.Constants.TRACKING_MAP_ZOOM
-import com.example.commutingapp.data.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
-import com.example.commutingapp.data.others.Constants.MAP_MARKER_IMAGE_NAME
-import com.example.commutingapp.data.others.Constants.MAP_MARKER_SIZE
-import com.example.commutingapp.data.others.Constants.POLYLINE_COLOR
-import com.example.commutingapp.data.others.Constants.POLYLINE_WIDTH
-import com.example.commutingapp.data.others.TrackingPermissionUtility.hasLocationPermission
-import com.example.commutingapp.data.others.TrackingPermissionUtility.requestPermission
+import com.example.commutingapp.utils.others.BitmapConvert.getBitmapFromVectorDrawable
+import com.example.commutingapp.utils.others.Constants
+import com.example.commutingapp.utils.others.Constants.ACTION_PAUSE_SERVICE
+import com.example.commutingapp.utils.others.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.example.commutingapp.utils.others.Constants.ACTION_STOP_SERVICE
+import com.example.commutingapp.utils.others.Constants.DEFAULT_LATITUDE
+import com.example.commutingapp.utils.others.Constants.DEFAULT_LONGITUDE
+import com.example.commutingapp.utils.others.Constants.DEFAULT_MAP_ZOOM
+import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
+import com.example.commutingapp.utils.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
+import com.example.commutingapp.utils.others.Constants.MAP_MARKER_IMAGE_NAME
+import com.example.commutingapp.utils.others.Constants.MAP_MARKER_SIZE
+import com.example.commutingapp.utils.others.Constants.POLYLINE_COLOR
+import com.example.commutingapp.utils.others.Constants.POLYLINE_WIDTH
+import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
+import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestPermission
 import com.example.commutingapp.data.service.TrackingService
 import com.example.commutingapp.data.service.innerPolyline
 import com.example.commutingapp.viewmodels.MainViewModel
@@ -54,22 +54,19 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
 import android.app.Activity.RESULT_OK
-import android.util.Log
-import android.widget.Toast
 import com.example.commutingapp.BuildConfig.MAP_STYLE
-import com.example.commutingapp.data.others.Constants.CAMERA_ANIMATION_DURATION
-import com.example.commutingapp.data.others.Constants.CAMERA_TILT_DEGREES
-import com.example.commutingapp.data.others.Constants.CAMERA_ZOOM_MAP_MARKER
-import com.example.commutingapp.data.others.Constants.MINIMUM_MAP_LEVEL
-import com.example.commutingapp.data.others.Constants.REQUEST_CHECK_SETTING
+import com.example.commutingapp.utils.others.Constants.CAMERA_ANIMATION_DURATION
+import com.example.commutingapp.utils.others.Constants.CAMERA_TILT_DEGREES
+import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
+import com.example.commutingapp.utils.others.Constants.MINIMUM_MAP_LEVEL
+import com.example.commutingapp.utils.others.Constants.REQUEST_CHECK_SETTING
 import com.google.android.gms.common.api.*
 
 import com.google.android.gms.location.LocationServices
 
 import com.google.android.gms.common.api.ResolvableApiException
 
-import com.example.commutingapp.data.others.Constants.TEN_METERS
-import com.example.commutingapp.data.others.WatchFormatter
+import com.example.commutingapp.utils.others.Constants.TEN_METERS
 import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mapbox.mapboxsdk.camera.CameraPosition
