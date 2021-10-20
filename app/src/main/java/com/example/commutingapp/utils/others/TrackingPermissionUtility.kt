@@ -1,11 +1,11 @@
-package com.example.commutingapp.data.others
+package com.example.commutingapp.utils.others
 
 import android.Manifest
 import android.content.Context
 import android.os.Build
 import androidx.fragment.app.Fragment
 import com.example.commutingapp.R
-import com.example.commutingapp.data.others.Constants.REQUEST_CODE_LOCATION_PERMISSION
+import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_LOCATION_PERMISSION
 import pub.devrel.easypermissions.EasyPermissions
 
 

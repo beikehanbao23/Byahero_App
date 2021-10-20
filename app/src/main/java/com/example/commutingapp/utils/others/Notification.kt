@@ -1,4 +1,4 @@
-package com.example.commutingapp.data.others
+package com.example.commutingapp.utils.others
 
 interface Notification {
     fun createNotification()

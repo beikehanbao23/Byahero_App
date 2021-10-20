@@ -1,7 +1,5 @@
-package com.example.commutingapp.data.others
+package com.example.commutingapp.utils.others
 
-import java.text.DecimalFormat
-import java.text.NumberFormat
 import java.util.concurrent.TimeUnit
 
 object WatchFormatter {

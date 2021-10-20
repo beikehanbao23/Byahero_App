@@ -1,4 +1,4 @@
-package com.example.commutingapp.utils.ui_utilities
+package com.example.commutingapp.utils.others
 /**
  * Used as a wrapper for data that is exposed via a LiveData that represents an event.
  */
