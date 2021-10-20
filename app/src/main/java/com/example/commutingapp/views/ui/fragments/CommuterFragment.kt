@@ -90,34 +90,44 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initializeComponents(view)
+        provideClickListeners()
+        setupMapBoxView(savedInstanceState)
+        subscribeToObservers()
+
+
+    }
+    private fun initializeComponents(view:View){
         buttonStart = view.findViewById(R.id.startButton)
         buttonStop = view.findViewById(R.id.finishButton)
         locationButton = view.findViewById(R.id.floatingActionButtonLocation)
-
-
-        locationButton.setOnClickListener {
-            mapBoxMap?.locationComponent?.lastKnownLocation?.let {location->
-                moveCameraToUser(LatLng(location.latitude, location.longitude),CAMERA_ZOOM_MAP_MARKER)
-            }
-
-        }
-
-        buttonStart.setOnClickListener {
-            if (requestPermissionGranted()) {
-                checkLocationSetting()
-            }
-        }
-        buttonStop.setOnClickListener() { sendCommandToTrackingService(ACTION_STOP_SERVICE) }
         mapBoxView = view.findViewById(R.id.googleMapView)
+
+    }
+    private fun setupMapBoxView(savedInstanceState:Bundle?){
+        provideClickListeners()
         mapBoxView?.apply {
             onCreate(savedInstanceState)
             isClickable = true
         }?.also {
             it.getMapAsync(this)
         }
-        subscribeToObservers()
+    }
 
-
+    private fun provideClickListeners(){
+        locationButton.setOnClickListener {
+            mapBoxMap?.locationComponent?.lastKnownLocation?.let {location->
+                moveCameraToUser(LatLng(location.latitude, location.longitude),CAMERA_ZOOM_MAP_MARKER)
+            }
+        }
+        buttonStart.setOnClickListener {
+            if (requestPermissionGranted()) {
+                checkLocationSetting()
+            }
+        }
+        buttonStop.setOnClickListener() {
+            sendCommandToTrackingService(ACTION_STOP_SERVICE)
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -131,8 +141,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 moveCameraToUser(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), DEFAULT_MAP_ZOOM)
             }
         }
-
-
     }
     companion object {
         val request: LocationRequest = LocationRequest.create().apply {
