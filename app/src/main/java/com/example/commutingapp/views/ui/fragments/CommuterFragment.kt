@@ -53,17 +53,19 @@ import pub.devrel.easypermissions.EasyPermissions
 import android.app.Activity.RESULT_OK
 
 import com.example.commutingapp.BuildConfig.MAP_STYLE
+import com.example.commutingapp.utils.InternetConnection.Connection
 
-import com.example.commutingapp.databinding.CommuterFragmentBinding
 import com.example.commutingapp.utils.others.Constants.CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.CAMERA_TILT_DEGREES
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
+import com.example.commutingapp.utils.others.Constants.INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
 import com.example.commutingapp.utils.others.Constants.MINIMUM_MAP_LEVEL
 import com.example.commutingapp.utils.others.Constants.REQUEST_CHECK_SETTING
 import com.google.android.gms.common.api.*
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.common.api.ResolvableApiException
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
+import com.example.commutingapp.utils.others.Constants.VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
 import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -79,7 +81,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private var isTracking = false
     private var outerPolyline = mutableListOf<innerPolyline>()
     private var mapBoxView: MapView? = null
-    private lateinit var buttonStart: Button
+    private lateinit var startButton: Button
     private lateinit var directionButton:Button
     private lateinit var saveButton:Button
     private lateinit var shareButton:Button
@@ -95,16 +97,67 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         provideClickListeners()
         setupMapBoxView(savedInstanceState)
         subscribeToObservers()
+    }
+
+    private fun showBottomSheet(){
+        provideBottomSheetsButton()
+        bottomSheetBehavior.peekHeight = VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
+    }
+    private fun provideBottomSheetsButton(){
+
+
+    if(!Connection.hasInternetConnection(requireContext()) && Connection.hasGPSConnection(requireContext())){
+        showNoInternetAndHasGpsBottomSheetLayout()
+        return
+    }
+    if(Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())){
+        showHasInternetAndNoGpsBottomSheetLayout()
+        return
+    }
+    if(!Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())){
+        showNoInternetAndNoGpsBottomSheetLayout()
+        return
+    }
+
+
+    showDefaultBottomSheetLayout()
+    }
+
+    private fun showNoInternetAndHasGpsBottomSheetLayout(){
+        shareButton.visibility = View.GONE
+        saveButton.visibility = View.GONE
+        directionButton.visibility = View.VISIBLE
+        startButton.visibility = View.VISIBLE
+    }
+
+    private fun showHasInternetAndNoGpsBottomSheetLayout(){
+        startButton.visibility = View.GONE
+        saveButton.visibility = View.VISIBLE
+        shareButton.visibility = View.VISIBLE
+        directionButton.visibility = View.VISIBLE
+    }
+    private fun showNoInternetAndNoGpsBottomSheetLayout(){
+        startButton.visibility = View.GONE
+        saveButton.visibility = View.GONE
+        shareButton.visibility = View.GONE
+        directionButton.visibility = View.VISIBLE
+    }
+    private fun showDefaultBottomSheetLayout(){
+        saveButton.visibility = View.VISIBLE
+        shareButton.visibility = View.VISIBLE
+        directionButton.visibility = View.VISIBLE
+        startButton.visibility = View.VISIBLE
 
     }
 
-    private fun showBottomSheet(){ bottomSheetBehavior.peekHeight=250}
-    private fun hideBottomSheet(){ bottomSheetBehavior.peekHeight=0}
+    private fun hideBottomSheet(){
+        bottomSheetBehavior.peekHeight= INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
+    }
 
     private fun initializeComponents(view:View){
 
         mapBoxView = view.findViewById(R.id.googleMapView)
-        buttonStart = view.findViewById(R.id.startButton)
+        startButton = view.findViewById(R.id.startButton)
         directionButton= view.findViewById(R.id.directionsButton)
         saveButton = view.findViewById(R.id.saveButton)
         shareButton = view.findViewById(R.id.shareButton)
@@ -130,7 +183,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 moveCameraToUser(LatLng(location.latitude, location.longitude),CAMERA_ZOOM_MAP_MARKER)
             }
         }
-        buttonStart.setOnClickListener {
+        startButton.setOnClickListener {
             if (requestPermissionGranted()) {
                 checkLocationSetting()
             }
@@ -356,11 +409,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun updateButtons() {
 
         if (isTracking) {
-            buttonStart.text =  getString(R.string.stopButton)
+            startButton.text =  getString(R.string.stopButton)
             return
         }
 
-        buttonStart.text =  getString(R.string.startButton)
+        startButton.text =  getString(R.string.startButton)
     }
 
 
