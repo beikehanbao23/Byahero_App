@@ -155,4 +155,5 @@
     <color name="DarkGreen">#006400</color>
     <color name="theme_color">#6c63ff</color>
     <color name="splash_screen_theme_color">#091E92</color>
+    <color name="BottomSheetButtonColors">#4254F8</color>
 </resources>

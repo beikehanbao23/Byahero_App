@@ -26,4 +26,9 @@
         <item name="android:windowBackground">@drawable/splashscreen_background</item>
 
     </style>
+
+        <style name="bottomSheetAnimation">
+            <item name="android:windowEnterAnimation">@anim/bottom_sheet_slide_in</item>
+            <item name="android:windowExitAnimation">@anim/bottom_sheet_slide_out</item>
+    </style>
 </resources>

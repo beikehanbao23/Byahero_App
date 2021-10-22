@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+
+            <Button
+                android:id="@+id/directionsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawableLeft="@drawable/ic_baseline_directions"
+                android:gravity="center"
+                android:paddingLeft="4dp"
+                android:text="Directions"
+                android:backgroundTint="@color/BottomSheetButtonColors"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/startButton"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+                android:drawableLeft="@drawable/ic_baseline_navigation"
+                android:gravity="center"
+                android:paddingLeft="4dp"
+                android:text="Start"
+                android:backgroundTint="@color/White"
+                android:textColor="@color/Black"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textSize="10sp" />
+
+
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_baseline_bookmark_border"
+                android:paddingLeft="4dp"
+                android:text="Save"
+                android:textAllCaps="false"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:backgroundTint="@color/White"
+                android:textColor="@color/Black"
+                android:layout_marginLeft="7dp"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/shareButton"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+                android:drawableLeft="@drawable/ic_baseline_share"
+                android:gravity="center"
+                android:paddingLeft="4dp"
+                android:text="Share"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/White"
+                android:textColor="@color/Black"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+
+    </HorizontalScrollView>
+</merge>

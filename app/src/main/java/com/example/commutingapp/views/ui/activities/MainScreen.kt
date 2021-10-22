@@ -22,6 +22,7 @@ import com.example.commutingapp.views.ui.fragments.SettingsFragment
 import com.example.commutingapp.views.ui.fragments.StatisticsFragment
 import com.example.commutingapp.views.ui.fragments.WeatherFragment
 import com.google.android.gms.tasks.Task
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
@@ -50,8 +51,6 @@ class MainScreen : AppCompatActivity() {
         navigateToCommuterFragment(intent)
         val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navigationController = navigationHostFragment.navController
-
-
 
         setSupportActionBar( activityMainScreenBinding?.toolbar)
         activityMainScreenBinding?.bottomNavigation?.setupWithNavController(navigationController)

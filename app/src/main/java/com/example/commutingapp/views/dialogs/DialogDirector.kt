@@ -21,7 +21,7 @@ class DialogDirector(val activity: Activity) {
             animation = android.R.style.Animation_Dialog,
             backgroundColorDrawable = ColorDrawable(Color.TRANSPARENT)
 
-        ).also { it.show() }.apply {
+        ).also { it.show()  }.apply {
             findViewById<View>(R.id.retry_button)?.setOnClickListener {
                 if (Connection.hasInternetConnection(activity)) {
                     dismiss()
@@ -33,6 +33,7 @@ class DialogDirector(val activity: Activity) {
             }
         }
     }
+
 
 
     private fun aestheticDialog(

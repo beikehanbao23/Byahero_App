@@ -16,7 +16,6 @@ import com.example.commutingapp.utils.others.BitmapConvert.getBitmapFromVectorDr
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.ACTION_PAUSE_SERVICE
 import com.example.commutingapp.utils.others.Constants.ACTION_START_OR_RESUME_SERVICE
-import com.example.commutingapp.utils.others.Constants.ACTION_STOP_SERVICE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LATITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_MAP_ZOOM
@@ -44,8 +43,6 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.plugins.annotation.OnSymbolClickListener
-import com.mapbox.mapboxsdk.plugins.annotation.Symbol
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
@@ -54,27 +51,28 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
 import android.app.Activity.RESULT_OK
+
 import com.example.commutingapp.BuildConfig.MAP_STYLE
+
+import com.example.commutingapp.databinding.CommuterFragmentBinding
 import com.example.commutingapp.utils.others.Constants.CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.CAMERA_TILT_DEGREES
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.MINIMUM_MAP_LEVEL
 import com.example.commutingapp.utils.others.Constants.REQUEST_CHECK_SETTING
 import com.google.android.gms.common.api.*
-
 import com.google.android.gms.location.LocationServices
-
 import com.google.android.gms.common.api.ResolvableApiException
-
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
 import com.google.android.gms.location.LocationSettingsResponse
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mapbox.mapboxsdk.camera.CameraPosition
 
 
 @AndroidEntryPoint
 class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
-    OnMapReadyCallback,MapboxMap.OnMapLongClickListener,OnSymbolClickListener {
+    OnMapReadyCallback,MapboxMap.OnMapLongClickListener,MapboxMap.OnMapClickListener {
 
     private val mainViewModel: MainViewModel by viewModels()
     private var mapBoxMap: MapboxMap? = null
@@ -82,30 +80,42 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private var outerPolyline = mutableListOf<innerPolyline>()
     private var mapBoxView: MapView? = null
     private lateinit var buttonStart: Button
-    private lateinit var buttonStop: Button
+    private lateinit var directionButton:Button
+    private lateinit var saveButton:Button
+    private lateinit var shareButton:Button
     private lateinit var locationButton: FloatingActionButton
     private  var mapBoxStyle: Style? = null
     private lateinit var mapMarkerSymbol: SymbolManager
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initializeComponents(view)
+        hideBottomSheet()
         provideClickListeners()
         setupMapBoxView(savedInstanceState)
         subscribeToObservers()
 
-
     }
+
+    private fun showBottomSheet(){ bottomSheetBehavior.peekHeight=250}
+    private fun hideBottomSheet(){ bottomSheetBehavior.peekHeight=0}
+
     private fun initializeComponents(view:View){
-        buttonStart = view.findViewById(R.id.startButton)
-        buttonStop = view.findViewById(R.id.finishButton)
-        locationButton = view.findViewById(R.id.floatingActionButtonLocation)
-        mapBoxView = view.findViewById(R.id.googleMapView)
 
+        mapBoxView = view.findViewById(R.id.googleMapView)
+        buttonStart = view.findViewById(R.id.startButton)
+        directionButton= view.findViewById(R.id.directionsButton)
+        saveButton = view.findViewById(R.id.saveButton)
+        shareButton = view.findViewById(R.id.shareButton)
+
+        locationButton = view.findViewById(R.id.floatingActionButtonLocation)
+        bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.bottomSheet)).apply {
+            state= BottomSheetBehavior.STATE_COLLAPSED
+        }
     }
+
     private fun setupMapBoxView(savedInstanceState:Bundle?){
-        provideClickListeners()
         mapBoxView?.apply {
             onCreate(savedInstanceState)
             isClickable = true
@@ -125,9 +135,16 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 checkLocationSetting()
             }
         }
-        buttonStop.setOnClickListener() {
-            sendCommandToTrackingService(ACTION_STOP_SERVICE)
+        directionButton.setOnClickListener {
+
         }
+        saveButton.setOnClickListener {
+
+        }
+        shareButton.setOnClickListener {
+
+        }
+
     }
 
     @SuppressLint("MissingPermission")
@@ -206,6 +223,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
 
         mapBoxMap?.addOnMapLongClickListener(this)
+        mapBoxMap?.addOnMapClickListener(this)
         setMapZoomLevel()
         addMapStyle(mapboxMap)
         moveCameraToLastKnownLocation()
@@ -231,24 +249,22 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 mapBoxStyle = style
                 createLocationPuck(style)
                 mapMarkerSymbol = SymbolManager(mapView, mapboxMap, mapBoxStyle!!
-                ).also { symbolManager->
-                    symbolManager.addClickListener(this)
-                }
+                )
             }
         }
-
     }
 
-      override fun onAnnotationClick(symbol: Symbol?): Boolean {
-        mapMarkerSymbol.delete(symbol)
-        return true
-    }
 
     override fun onMapLongClick(point: LatLng): Boolean {
       pointMapMarker(point)
       return true
     }
 
+    override fun onMapClick(point: LatLng): Boolean {
+        mapMarkerSymbol.deleteAll()
+        hideBottomSheet()
+        return true
+    }
 
 
     private fun pointMapMarker(latLng: LatLng) {
@@ -256,6 +272,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         if(hasExistingMapMarker()) {
             mapMarkerSymbol.deleteAll()
         }
+        showBottomSheet()
         createMapMarker(latLng)
         mapBoxMap?.cameraPosition?.apply {
             moveCameraToUser(latLng, zoom)
@@ -340,12 +357,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         if (isTracking) {
             buttonStart.text =  getString(R.string.stopButton)
-            buttonStop.visibility = View.GONE
             return
         }
 
         buttonStart.text =  getString(R.string.startButton)
-        buttonStop.visibility = View.VISIBLE
     }
 
 
