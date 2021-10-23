@@ -74,8 +74,8 @@
         <entry key="app/src/main/res/layout/activity_splashscreen.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_token_expired.xml" value="0.35" />
         <entry key="app/src/main/res/layout/application_icon_display.xml" value="0.35" />
-        <entry key="app/src/main/res/layout/bottom_sheet_buttons.xml" value="0.5" />
-        <entry key="app/src/main/res/layout/bottom_sheet_commuter_fragment.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/bottom_sheet_buttons.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/bottom_sheet_commuter_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/bottom_sheet_layout.xml" value="0.33" />
         <entry key="app/src/main/res/layout/circular_progressbar.xml" value="0.23177083333333334" />
         <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.4126984126984127" />
@@ -112,7 +112,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.12" />
+        <option name="scale" value="0.33" />
       </ProjectState>
     </option>
   </component>
