@@ -20,7 +20,7 @@
         android:id="@+id/floatingActionButtonLocation"
         android:layout_height="56dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="110dp"
+        android:layout_marginBottom="200dp"
         android:backgroundTint="@color/white"
         android:src="@drawable/ic_baseline_my_location_24"
         app:backgroundTint="#FFFFFF"

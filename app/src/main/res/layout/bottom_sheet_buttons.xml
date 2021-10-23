@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
     <HorizontalScrollView
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="-5dp"
+        android:layout_marginLeft="-6dp"
         android:scrollbars="none">
 
         <LinearLayout
@@ -11,17 +16,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+
             android:padding="8dp">
 
 
             <Button
                 android:id="@+id/directionsButton"
-                android:layout_width="wrap_content"
+                android:layout_width="110dp"
                 android:layout_height="match_parent"
                 android:drawableLeft="@drawable/ic_baseline_directions"
                 android:gravity="center"
                 android:paddingLeft="4dp"
                 android:text="Directions"
+
                 android:backgroundTint="@color/BottomSheetButtonColors"
                 android:textAlignment="center"
                 android:textAllCaps="false"
