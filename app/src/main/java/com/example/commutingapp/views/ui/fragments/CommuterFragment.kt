@@ -51,6 +51,7 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 
 import com.example.commutingapp.BuildConfig.MAP_STYLE
 import com.example.commutingapp.utils.InternetConnection.Connection
@@ -66,10 +67,12 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.common.api.ResolvableApiException
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
 import com.example.commutingapp.utils.others.Constants.VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
+import com.example.commutingapp.utils.others.FragmentToActivity
 import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mapbox.mapboxsdk.camera.CameraPosition
+import java.lang.ClassCastException
 
 
 @AndroidEntryPoint
@@ -89,6 +92,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private  var mapBoxStyle: Style? = null
     private lateinit var mapMarkerSymbol: SymbolManager
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+    private lateinit var notifyListener:FragmentToActivity
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -99,12 +104,26 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         subscribeToObservers()
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            this.notifyListener = context as FragmentToActivity
+        } catch (e: ClassCastException) { }
+    }
+
+
     private fun showBottomSheet(){
         provideBottomSheetsButton()
+        notifyListener.onFirstNotify()
         bottomSheetBehavior.peekHeight = VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
     }
-    private fun provideBottomSheetsButton(){
 
+    private fun hideBottomSheet(){
+        notifyListener.onSecondNotify()
+        bottomSheetBehavior.peekHeight= INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
+    }
+
+    private fun provideBottomSheetsButton(){
 
     if(!Connection.hasInternetConnection(requireContext()) && Connection.hasGPSConnection(requireContext())){
         showNoInternetAndHasGpsBottomSheetLayout()
@@ -118,7 +137,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         showNoInternetAndNoGpsBottomSheetLayout()
         return
     }
-
 
     showDefaultBottomSheetLayout()
     }
@@ -150,10 +168,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
 
-    private fun hideBottomSheet(){
-        bottomSheetBehavior.peekHeight= INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
-    }
-
     private fun initializeComponents(view:View){
 
         mapBoxView = view.findViewById(R.id.googleMapView)
@@ -161,7 +175,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         directionButton= view.findViewById(R.id.directionsButton)
         saveButton = view.findViewById(R.id.saveButton)
         shareButton = view.findViewById(R.id.shareButton)
-
         locationButton = view.findViewById(R.id.floatingActionButtonLocation)
         bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.bottomSheet)).apply {
             state= BottomSheetBehavior.STATE_COLLAPSED

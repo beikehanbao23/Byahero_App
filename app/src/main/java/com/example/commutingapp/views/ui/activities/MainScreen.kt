@@ -16,13 +16,13 @@ import com.example.commutingapp.data.firebase.usr.UserDataProcessor
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
 import com.example.commutingapp.utils.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
+import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch
 import com.example.commutingapp.views.ui.fragments.CommuterFragment
 import com.example.commutingapp.views.ui.fragments.SettingsFragment
 import com.example.commutingapp.views.ui.fragments.StatisticsFragment
 import com.example.commutingapp.views.ui.fragments.WeatherFragment
 import com.google.android.gms.tasks.Task
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
@@ -33,7 +33,7 @@ import java.util.*
 
 
 @AndroidEntryPoint
-class MainScreen : AppCompatActivity() {
+class MainScreen : AppCompatActivity(),FragmentToActivity {
     private val firebaseUser = FirebaseUserWrapper()
     private val userData: UserDataProcessor<List<UserInfo>?> = UserDataProcessor(firebaseUser)
     private val userEmail: UserEmailProcessor<Task<Void>?> = UserEmailProcessor(firebaseUser)
@@ -55,9 +55,21 @@ class MainScreen : AppCompatActivity() {
         setSupportActionBar( activityMainScreenBinding?.toolbar)
         activityMainScreenBinding?.bottomNavigation?.setupWithNavController(navigationController)
         setupBottomNavigationListeners()
+        Mapbox.getInstance(this, getString(R.string.MapsToken))
 
 
+    }
 
+    override fun onFirstNotify() {
+     activityMainScreenBinding?.bottomNavigation?.let {
+         it.visibility = View.GONE
+     }
+    }
+
+    override fun onSecondNotify() {
+        activityMainScreenBinding?.bottomNavigation?.let {
+            it.visibility = View.VISIBLE
+        }
     }
 
     private fun setupBottomNavigationListeners(){
@@ -131,9 +143,7 @@ class MainScreen : AppCompatActivity() {
 
     private fun initializeAttributes() {
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
-        Mapbox.getInstance(this, getString(R.string.MapsToken))
         setContentView(activityMainScreenBinding?.root)
-
     }
 
     private fun destroyBinding() {
