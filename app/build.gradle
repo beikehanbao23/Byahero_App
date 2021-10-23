@@ -38,7 +38,8 @@ android {
         resValue("string", "MapsApiKey", localProperties.getProperty("MAPS_API_KEY"))
     }
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
