@@ -41,4 +41,6 @@ object Constants {
     const val REQUEST_CHECK_SETTING = 1001
     const val STOPWATCH_INTERVAL = 50L
     const val ONE_SECOND = 1000L
+    const val VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 380
+    const val INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 0
 }
