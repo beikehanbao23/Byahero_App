@@ -16,16 +16,33 @@
         tools:ignore="SpeakableTextPresentCheck" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="56dp"
         android:id="@+id/floatingActionButtonLocation"
+        android:layout_width="56dp"
         android:layout_height="56dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginBottom="200dp"
         android:backgroundTint="@color/white"
         android:src="@drawable/ic_baseline_my_location_24"
-        app:backgroundTint="#FFFFFF"
+        app:backgroundTint="@color/White"
+        app:fabCustomSize="56dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="40dp"
+        android:id="@+id/chooseMapButton"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="5dp"
+        android:backgroundTint="@color/White"
+        android:src="@drawable/ic_baseline_choose_map"
+        app:backgroundTint="@color/White"
+        app:fabCustomSize="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"

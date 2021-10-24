@@ -28,6 +28,7 @@
         <entry key="app/src/main/res/drawable/dialog_background.xml" value="0.22280701754385965" />
         <entry key="app/src/main/res/drawable/ic_backbutton.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_baseline_bookmark_border.xml" value="0.5734375" />
+        <entry key="app/src/main/res/drawable/ic_baseline_choose_map.xml" value="0.57421875" />
         <entry key="app/src/main/res/drawable/ic_baseline_directions.xml" value="0.57421875" />
         <entry key="app/src/main/res/drawable/ic_baseline_my_location_24.xml" value="0.57421875" />
         <entry key="app/src/main/res/drawable/ic_baseline_navigation.xml" value="0.5734375" />
@@ -74,12 +75,13 @@
         <entry key="app/src/main/res/layout/activity_splashscreen.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_token_expired.xml" value="0.35" />
         <entry key="app/src/main/res/layout/application_icon_display.xml" value="0.35" />
-        <entry key="app/src/main/res/layout/bottom_sheet.xml" value="0.2" />
-        <entry key="app/src/main/res/layout/bottom_sheet_buttons.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/bottom_sheet.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/bottom_sheet_buttons.xml" value="0.5" />
         <entry key="app/src/main/res/layout/bottom_sheet_commuter_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/bottom_sheet_layout.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/choose_map_dialog.xml" value="0.55" />
         <entry key="app/src/main/res/layout/circular_progressbar.xml" value="0.23177083333333334" />
-        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.5" />
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.5" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.5" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />

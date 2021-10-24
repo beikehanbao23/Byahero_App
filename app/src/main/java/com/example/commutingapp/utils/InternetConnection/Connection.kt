@@ -22,7 +22,7 @@ object Connection {
 
     fun hasGPSConnection(context: Context):Boolean =
         (context.getSystemService(Context.LOCATION_SERVICE) as LocationManager).run {
-            isProviderEnabled(LocationManager.GPS_PROVIDER) && isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            isProviderEnabled(LocationManager.GPS_PROVIDER) || isProviderEnabled(LocationManager.NETWORK_PROVIDER)
         }
 
 
