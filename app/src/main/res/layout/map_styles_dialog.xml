@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="250dp"
     android:layout_height="330dp"
     android:layout_gravity="end|center"
@@ -22,6 +21,7 @@
 
 
             <ImageButton
+                android:importantForAccessibility="no"
                 android:id="@+id/trafficDayMapStyleButton"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
@@ -37,6 +37,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
+                android:importantForAccessibility="no"
                 android:id="@+id/trafficNightMapStyle"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
@@ -53,6 +54,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
+                android:importantForAccessibility="no"
                 android:id="@+id/darkMapStyleButton"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
@@ -73,7 +75,7 @@
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginStart="14dp"
-
+                android:importantForAccessibility="no"
                 android:layout_marginTop="18dp"
                 android:adjustViewBounds="true"
                 android:paddingTop="1dp"
@@ -87,6 +89,7 @@
 
             <ImageButton
                 android:id="@+id/lightMapStyle"
+                android:importantForAccessibility="no"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginStart="14dp"
@@ -102,6 +105,7 @@
 
             <ImageButton
                 android:id="@+id/satelliteStreetsMapStyleButton"
+                android:importantForAccessibility="no"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginTop="18dp"
@@ -118,6 +122,7 @@
 
             <ImageButton
                 android:id="@+id/outdoorsMapStyleButton"
+                android:importantForAccessibility="no"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginTop="18dp"
@@ -132,6 +137,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/darkMapStyleTextView" />
 
             <ImageButton
+                android:importantForAccessibility="no"
                 android:id="@+id/neonMapStyleButton"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
@@ -147,6 +153,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
             <ImageButton
+                android:importantForAccessibility="no"
                 android:id="@+id/satelliteMapStyleButton"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
@@ -167,10 +174,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="26dp"
                 android:layout_marginTop="4dp"
-                android:text="Default"
+                android:text="@string/defaultStyle"
                 android:textAlignment="center"
                 android:textColor="@color/Black"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/trafficDayMapStyleButton" />
@@ -180,10 +187,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Traffic Night"
+                android:text="@string/trafficNight"
                 android:textAlignment="center"
                 android:textColor="@color/Black"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:textStyle="normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.487"
@@ -197,9 +204,9 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="22dp"
                 android:textAlignment="center"
-                android:text="Dark Map"
+                android:text="@string/darkMapStyle"
                 android:textColor="@color/Black"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:textStyle="normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/darkMapStyleButton" />
@@ -210,10 +217,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="26dp"
                 android:layout_marginTop="4dp"
-                android:text="Streets"
+                android:text="@string/streetsStyle"
                 android:textAlignment="center"
                 android:textColor="@color/Black"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/streetMapStyleButton" />
@@ -223,10 +230,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Satellite Streets"
+                android:text="@string/satelliteStreetsStyle"
                 android:textColor="@color/Black"
                 android:textAlignment="center"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:textStyle="normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -238,10 +245,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="21dp"
-                android:text="Outdoors"
+                android:text="@string/outdoorsStyle"
                 android:textAlignment="center"
                 android:textColor="@color/Black"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:textStyle="normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/outdoorsMapStyleButton" />
@@ -253,9 +260,9 @@
                 android:layout_marginStart="31dp"
                 android:layout_marginTop="4dp"
                 android:textAlignment="center"
-                android:text="Light"
+                android:text="@string/lightStyle"
                 android:textColor="@color/Black"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/lightMapStyle" />
@@ -265,9 +272,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Neon"
+                android:text="@string/neonStyle"
                 android:textColor="@color/Black"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:textAlignment="center"
                 android:textStyle="normal"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -281,9 +288,9 @@
                 android:layout_marginTop="4dp"
                 android:textAlignment="center"
                 android:layout_marginEnd="23dp"
-                android:text="Satellite"
+                android:text="@string/satelliteStyle"
                 android:textColor="@color/Black"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:textStyle="normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/satelliteMapStyleButton" />
@@ -294,7 +301,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="13dp"
                 android:layout_marginTop="16dp"
-                android:text="Map Type"
+                android:text="@string/mapTypeTitle"
                 android:textAlignment="center"
                 android:textColor="@color/Black"
                 android:textSize="14sp"

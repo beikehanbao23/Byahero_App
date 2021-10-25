@@ -78,4 +78,20 @@
     <string name="title_Statistics">Statistics</string>
     <string name="title_Weather">Weather</string>
     <string name="title_Settings">Settings</string>
+
+
+
+    <!--Map styles dialog -->
+    <!-- TextViews -->
+    <string name="defaultStyle">Default</string>
+    <string name="trafficNight">Traffic Night</string>
+    <string name="darkMapStyle">Dark Map</string>
+    <string name="streetsStyle">Streets</string>
+    <string name="satelliteStreetsStyle">Satellite Streets</string>
+    <string name="outdoorsStyle">Outdoors</string>
+    <string name="lightStyle">Light</string>
+    <string name="neonStyle">Neon</string>
+    <string name="satelliteStyle">Satellite</string>
+    <string name="mapTypeTitle">Map Type</string>
+
 </resources>
