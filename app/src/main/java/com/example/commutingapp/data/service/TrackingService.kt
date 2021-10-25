@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -19,6 +20,8 @@ import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.ACTION_PAUSE_SERVICE
 import com.example.commutingapp.utils.others.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.commutingapp.utils.others.Constants.ACTION_STOP_SERVICE
+import com.example.commutingapp.utils.others.Constants.NOTIFICATION_CHANNEL_ID
+import com.example.commutingapp.utils.others.Constants.NOTIFICATION_CHANNEL_NAME
 import com.example.commutingapp.utils.others.Constants.NOTIFICATION_ID
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.utils.others.WatchFormatter
@@ -26,7 +29,6 @@ import com.example.commutingapp.views.ui.fragments.CommuterFragment
 import com.google.android.gms.location.*
 import com.mapbox.mapboxsdk.geometry.LatLng
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import javax.inject.Inject
 
 typealias innerPolyline = MutableList<LatLng>
@@ -52,7 +54,7 @@ open class TrackingService : LifecycleService() {
         private val trackingPolyLine: TrackingPolyLine = TrackingPolyLine()
         private val liveDataOuterPolyline = trackingPolyLine.polyLine()
         private val stopWatch = TrackingStopWatch()
-        val is_Tracking = MutableLiveData<Boolean>() //Todo (reason = refactor later create function for the query)
+        val is_Tracking = MutableLiveData<Boolean>()
         val timeInMillis = stopWatch.getTimeRunMillis()
 
     }
@@ -84,11 +86,20 @@ open class TrackingService : LifecycleService() {
         is_Tracking.postValue(false)
         stopWatch.pause()
     }
+    private fun startService() {
+        trackingPolyLine.addEmptyPolyLines()
+        is_Tracking.postValue(true)
+        stopWatch.start()
+    }
+    private fun stopService(){
+        is_Tracking.postValue(false)
+        stopWatch.stop()
+    }
 
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult?) {
-            if (isTracking()) {
+            if (is_Tracking.value!!) {
                 locationResult ?: return
                 for (location in locationResult.locations) {
                     trackingPolyLine.addPolyline(location)
@@ -100,7 +111,7 @@ open class TrackingService : LifecycleService() {
 
     private fun createLocationRequest() {
 
-        if (!isTracking()) {
+        if (!is_Tracking.value!!) {
             removeLocationUpdates()
             return
         }
@@ -117,39 +128,48 @@ open class TrackingService : LifecycleService() {
                         isFirstRun = false // todo fix startTimer
                         return@let
                     }
-                    startTimer()
-                    Timber.e("Resumed")
+                    startService()
                 }
                 ACTION_PAUSE_SERVICE -> {
                     pauseService()
                 }
                 ACTION_STOP_SERVICE -> {
-                    Timber.e("Stopped")
+                  stopForegroundService()
                 }
             }
         }
     }
 
 
-    private fun startTimer() {
-        trackingPolyLine.addEmptyPolyLines()
-        is_Tracking.postValue(true)
-        stopWatch.start()
-    }
 
     private fun startForegroundService() {
-        startTimer()
-        is_Tracking.postValue(true)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        startService()
+        if (androidVersionIsOreo()) {
             createNotificationChannel()
         }
 
         startForeground(NOTIFICATION_ID, baseTrackingNotificationBuilder.build())
+
         stopWatch.getTimeCommuteInSeconds().observe(this) {
             updateNotification(WatchFormatter.getFormattedStopWatchTime(it*1000L))
         }
 
     }
+
+
+    private fun stopForegroundService(){
+        stopService()
+        if(androidVersionIsOreo()){
+            deleteNotificationChannel()
+        }
+
+        stopForeground(true)
+        getNotificationManager().cancelAll()
+    }
+
+
+    private fun androidVersionIsOreo() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+
 
     @SuppressLint("MissingPermission")
     private fun requestLocationUpdates() {
@@ -162,10 +182,13 @@ open class TrackingService : LifecycleService() {
         }
     }
 
+
+
+    /* ****** */
     private fun removeLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
-    private fun isTracking() = is_Tracking.value!!
+
 
      private fun createNotification() {
         refreshNotificationActions()
@@ -182,17 +205,29 @@ open class TrackingService : LifecycleService() {
 
     @RequiresApi(Build.VERSION_CODES.O)
      fun createNotificationChannel() {
-        val notificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        NotificationChannel(
-            Constants.NOTIFICATION_CHANNEL_ID,
-            Constants.NOTIFICATION_CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_LOW
-        ).apply {
-            notificationManager.createNotificationChannel(this)
+        getNotificationChannel().apply {
+            getNotificationManager().createNotificationChannel(this)
         }
     }
+
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun deleteNotificationChannel() {
+        getNotificationManager().deleteNotificationChannel(NOTIFICATION_CHANNEL_ID)
+
+    }
+
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getNotificationChannel():NotificationChannel =  NotificationChannel(
+        NOTIFICATION_CHANNEL_ID,
+        NOTIFICATION_CHANNEL_NAME,
+        NotificationManager.IMPORTANCE_LOW)
+
+    private fun getNotificationManager():NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
 
 
 

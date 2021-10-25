@@ -34,6 +34,17 @@ class DialogDirector(val activity: Activity) {
         }
     }
 
+    fun constructChooseMapDialog():CustomDialogBuilder{
+        return CustomDialogBuilder(
+            activity = activity,
+            layout = R.layout.choose_map_dialog,
+            animation = android.R.style.Animation_Dialog,
+            backgroundColorDrawable = ColorDrawable(Color.TRANSPARENT)
+        ).also {
+            it.window?.setGravity(Gravity.END)
+            it.show()
+        }
+    }
 
 
     private fun aestheticDialog(

@@ -51,16 +51,18 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
 import android.app.Activity.RESULT_OK
+import android.app.Dialog
 import android.content.Context
-
 import com.example.commutingapp.BuildConfig.MAP_STYLE
+
 import com.example.commutingapp.utils.InternetConnection.Connection
 
-import com.example.commutingapp.utils.others.Constants.CAMERA_ANIMATION_DURATION
+import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.CAMERA_TILT_DEGREES
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
 import com.example.commutingapp.utils.others.Constants.MINIMUM_MAP_LEVEL
+import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.REQUEST_CHECK_SETTING
 import com.google.android.gms.common.api.*
 import com.google.android.gms.location.LocationServices
@@ -68,6 +70,7 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
 import com.example.commutingapp.utils.others.Constants.VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
 import com.example.commutingapp.utils.others.FragmentToActivity
+import com.example.commutingapp.views.dialogs.DialogDirector
 import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -193,7 +196,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideClickListeners(){
         locationButton.setOnClickListener {
             mapBoxMap?.locationComponent?.lastKnownLocation?.let {location->
-                moveCameraToUser(LatLng(location.latitude, location.longitude),CAMERA_ZOOM_MAP_MARKER)
+                moveCameraToUser(LatLng(location.latitude, location.longitude),CAMERA_ZOOM_MAP_MARKER,
+                    DEFAULT_CAMERA_ANIMATION_DURATION)
             }
         }
         startButton.setOnClickListener {
@@ -202,7 +206,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
         }
         directionButton.setOnClickListener {
-
+        DialogDirector(requireActivity()).constructChooseMapDialog()
         }
         saveButton.setOnClickListener {
 
@@ -217,11 +221,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun moveCameraToLastKnownLocation(){
         LocationServices.getFusedLocationProviderClient(requireActivity()).apply {
             lastLocation.addOnSuccessListener {it?.let {
-                latLng->  moveCameraToUser(LatLng(latLng.latitude,latLng.longitude), LAST_KNOWN_LOCATION_MAP_ZOOM)
+                latLng->  moveCameraToUser(LatLng(latLng.latitude,latLng.longitude), LAST_KNOWN_LOCATION_MAP_ZOOM, FAST_CAMERA_ANIMATION_DURATION)
             }
         }
             lastLocation.addOnFailureListener {
-                moveCameraToUser(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), DEFAULT_MAP_ZOOM)
+                moveCameraToUser(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), DEFAULT_MAP_ZOOM,
+                    DEFAULT_CAMERA_ANIMATION_DURATION)
             }
         }
     }
@@ -341,7 +346,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         showBottomSheet()
         createMapMarker(latLng)
         mapBoxMap?.cameraPosition?.apply {
-            moveCameraToUser(latLng, zoom)
+            moveCameraToUser(latLng, zoom, DEFAULT_CAMERA_ANIMATION_DURATION)
         }
 
 
@@ -394,7 +399,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
             addLatestPolyline()
             if (hasExistingInnerAndOuterPolyLines()) {
-                moveCameraToUser(outerPolyline.last().last(), TRACKING_MAP_ZOOM)
+                moveCameraToUser(outerPolyline.last().last(), TRACKING_MAP_ZOOM,
+                    DEFAULT_CAMERA_ANIMATION_DURATION)
             }
         }
         TrackingService.timeInMillis.observe(viewLifecycleOwner){
@@ -430,15 +436,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
 
-    private fun moveCameraToUser(latLng: LatLng,zoomLevel:Double) {
-        mapBoxMap?.animateCamera(CameraUpdateFactory
-            .newCameraPosition(buildCameraPosition(latLng)), CAMERA_ANIMATION_DURATION);
+    private fun moveCameraToUser(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int) {
+        mapBoxMap?.animateCamera(CameraUpdateFactory.newCameraPosition(buildCameraPosition(latLng,zoomLevel)), cameraAnimationDuration);
     }
 
-    private fun buildCameraPosition(latLng: LatLng):CameraPosition =
+    private fun buildCameraPosition(latLng: LatLng,zoomLevel: Double):CameraPosition =
          CameraPosition.Builder()
             .target(latLng)
-            .zoom(CAMERA_ZOOM_MAP_MARKER)
+            .zoom(zoomLevel)
             .tilt(CAMERA_TILT_DEGREES)
             .build()
 
