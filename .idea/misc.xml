@@ -68,24 +68,25 @@
         <entry key="app/src/main/res/font/audiowide.xml" value="0.37407407407407406" />
         <entry key="app/src/main/res/font/berkshire_swash.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/font/fonts.xml" value="0.18333333333333332" />
-        <entry key="app/src/main/res/layout/activity_intro_slider.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_intro_slider.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_splashscreen.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_token_expired.xml" value="0.35" />
         <entry key="app/src/main/res/layout/application_icon_display.xml" value="0.35" />
-        <entry key="app/src/main/res/layout/bottom_sheet.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/bottom_sheet_buttons.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/bottom_sheet.xml" value="0.16" />
+        <entry key="app/src/main/res/layout/bottom_sheet_buttons.xml" value="0.18" />
         <entry key="app/src/main/res/layout/bottom_sheet_commuter_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/bottom_sheet_layout.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/choose_map_dialog.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/choose_map_dialog.xml" value="0.2" />
         <entry key="app/src/main/res/layout/circular_progressbar.xml" value="0.23177083333333334" />
-        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.5" />
-        <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.16" />
+        <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.2" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.5" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/map_styles_dialog.xml" value="0.33" />
         <entry key="app/src/main/res/layout/settings_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/setup_fragment.xml" value="0.2" />
         <entry key="app/src/main/res/layout/setup_statisctics.xml" value="0.54375" />
@@ -110,13 +111,6 @@
       <set>
         <option value="Commuting_App.app" />
       </set>
-    </option>
-  </component>
-  <component name="VisualizationToolProject">
-    <option name="state">
-      <ProjectState>
-        <option name="scale" value="0.1" />
-      </ProjectState>
     </option>
   </component>
 </project>

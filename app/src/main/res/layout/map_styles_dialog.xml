@@ -21,13 +21,15 @@
 
 
             <ImageButton
-                android:importantForAccessibility="no"
-                android:id="@+id/trafficDayMapStyleButton"
+                android:id="@+id/defaultMapStyleButton"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginStart="14dp"
                 android:layout_marginTop="50dp"
                 android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:scaleType="centerCrop"
@@ -37,12 +39,14 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
-                android:importantForAccessibility="no"
-                android:id="@+id/trafficNightMapStyle"
+                android:id="@+id/trafficNightMapStyleButton"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginTop="50dp"
                 android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
+                android:clickable="true"
+                android:focusable="true"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:scaleType="centerCrop"
@@ -50,17 +54,19 @@
                 app:cornerRadius="20dp"
                 app:layout_constraintEnd_toStartOf="@+id/darkMapStyleButton"
                 app:layout_constraintHorizontal_bias="0.473"
-                app:layout_constraintStart_toEndOf="@+id/trafficDayMapStyleButton"
+                app:layout_constraintStart_toEndOf="@+id/defaultMapStyleButton"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
-                android:importantForAccessibility="no"
                 android:id="@+id/darkMapStyleButton"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginTop="50dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginEnd="14dp"
                 android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:scaleType="centerCrop"
@@ -75,9 +81,9 @@
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginStart="14dp"
-                android:importantForAccessibility="no"
                 android:layout_marginTop="18dp"
                 android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:scaleType="centerCrop"
@@ -89,12 +95,12 @@
 
             <ImageButton
                 android:id="@+id/lightMapStyle"
-                android:importantForAccessibility="no"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginStart="14dp"
                 android:layout_marginTop="18dp"
                 android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:scaleType="centerCrop"
@@ -105,11 +111,11 @@
 
             <ImageButton
                 android:id="@+id/satelliteStreetsMapStyleButton"
-                android:importantForAccessibility="no"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginTop="18dp"
                 android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:scaleType="centerCrop"
@@ -122,12 +128,12 @@
 
             <ImageButton
                 android:id="@+id/outdoorsMapStyleButton"
-                android:importantForAccessibility="no"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginTop="18dp"
                 android:layout_marginEnd="14dp"
                 android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:scaleType="centerCrop"
@@ -137,12 +143,12 @@
                 app:layout_constraintTop_toBottomOf="@+id/darkMapStyleTextView" />
 
             <ImageButton
-                android:importantForAccessibility="no"
                 android:id="@+id/neonMapStyleButton"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginTop="18dp"
                 android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:scaleType="centerCrop"
@@ -153,13 +159,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
             <ImageButton
-                android:importantForAccessibility="no"
                 android:id="@+id/satelliteMapStyleButton"
                 android:layout_width="57dp"
                 android:layout_height="59dp"
                 android:layout_marginTop="18dp"
                 android:layout_marginEnd="14dp"
                 android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:scaleType="centerCrop"
@@ -180,7 +186,7 @@
                 android:textSize="11sp"
                 android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/trafficDayMapStyleButton" />
+                app:layout_constraintTop_toBottomOf="@+id/defaultMapStyleButton" />
 
             <TextView
                 android:id="@+id/trafficNightMapStyleTextView"
@@ -192,19 +198,19 @@
                 android:textColor="@color/Black"
                 android:textSize="11sp"
                 android:textStyle="normal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.487"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/trafficNightMapStyle" />
+                app:layout_constraintEnd_toStartOf="@+id/darkMapStyleTextView"
+                app:layout_constraintHorizontal_bias="0.542"
+                app:layout_constraintStart_toEndOf="@+id/trafficMapStyleTextView"
+                app:layout_constraintTop_toBottomOf="@+id/trafficNightMapStyleButton" />
 
             <TextView
                 android:id="@+id/darkMapStyleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_marginEnd="22dp"
-                android:textAlignment="center"
+                android:layout_marginEnd="20dp"
                 android:text="@string/darkMapStyle"
+                android:textAlignment="center"
                 android:textColor="@color/Black"
                 android:textSize="11sp"
                 android:textStyle="normal"
@@ -231,12 +237,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/satelliteStreetsStyle"
-                android:textColor="@color/Black"
                 android:textAlignment="center"
+                android:textColor="@color/Black"
                 android:textSize="11sp"
                 android:textStyle="normal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/textView14"
+                app:layout_constraintStart_toEndOf="@+id/textView12"
                 app:layout_constraintTop_toBottomOf="@+id/satelliteStreetsMapStyleButton" />
 
             <TextView
@@ -259,8 +265,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="31dp"
                 android:layout_marginTop="4dp"
-                android:textAlignment="center"
                 android:text="@string/lightStyle"
+                android:textAlignment="center"
                 android:textColor="@color/Black"
                 android:textSize="11sp"
                 android:textStyle="normal"
@@ -271,14 +277,15 @@
                 android:id="@+id/textView16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/neonStyle"
+                android:textAlignment="center"
                 android:textColor="@color/Black"
                 android:textSize="11sp"
-                android:textAlignment="center"
                 android:textStyle="normal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/textView17"
+                app:layout_constraintStart_toEndOf="@+id/textView15"
                 app:layout_constraintTop_toBottomOf="@+id/neonMapStyleButton" />
 
             <TextView
@@ -286,9 +293,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textAlignment="center"
                 android:layout_marginEnd="23dp"
                 android:text="@string/satelliteStyle"
+                android:textAlignment="center"
                 android:textColor="@color/Black"
                 android:textSize="11sp"
                 android:textStyle="normal"
