@@ -3,7 +3,6 @@ package com.example.commutingapp.views.ui.activities;
 import static com.example.commutingapp.R.string.resendEmailFailedMessage;
 import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -70,10 +69,10 @@ public class EmailSent extends AppCompatActivity {
 
     private void observeEmailVerification() {
         viewModel.sendEmailOnSuccess().observe(this, task -> {
-            dialogDirector.constructSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
+            dialogDirector.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
         });
         viewModel.sendEmailOnFail().observe(this, task -> {
-            dialogDirector.constructWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
+            dialogDirector.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
         });
     }
 
