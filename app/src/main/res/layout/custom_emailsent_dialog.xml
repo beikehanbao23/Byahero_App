@@ -47,8 +47,6 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewConfirmYourEmailAddress" />
 
     <include
-
-        android:id="@+id/include"
         layout="@layout/circular_progressbar" />
 
     <TextView
