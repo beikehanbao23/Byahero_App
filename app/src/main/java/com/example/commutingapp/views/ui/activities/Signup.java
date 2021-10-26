@@ -59,13 +59,13 @@ public class Signup extends AppCompatActivity {
     }
     private void observeEmailVerification(){
         viewModel.sendEmailOnSuccess().observe(this, task-> showEmailSentActivity());
-        viewModel.sendEmailOnFailed().observe(this, task-> dialogDirector.constructErrorDialog("Error", getString(sendingEmailErrorMessage)));
+        viewModel.sendEmailOnFailed().observe(this, task-> dialogDirector.showErrorDialog("Error", getString(sendingEmailErrorMessage)));
     }
     private void observeInternet(){
         viewModel.noInternetStatus().observe(this, task-> dialogDirector.constructNoInternetDialog());
     }
     private void observeExceptionMessage(){
-        viewModel.getExceptionMessage().observe(this,errorMessage->dialogDirector.constructErrorDialog("Error", Objects.requireNonNull(errorMessage)));
+        viewModel.getExceptionMessage().observe(this,errorMessage->dialogDirector.showErrorDialog("Error", Objects.requireNonNull(errorMessage)));
     }
 
     private void initializeAttributes() {

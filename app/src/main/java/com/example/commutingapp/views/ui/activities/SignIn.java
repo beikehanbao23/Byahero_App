@@ -132,7 +132,7 @@ public class SignIn extends AppCompatActivity {
             return;
         }
         if (error.getMessage() != null) {
-            dialogDirector.constructErrorDialog("Error", error.getMessage());
+            dialogDirector.showErrorDialog("Error", error.getMessage());
             removeFacebookUserAccountPreviousToken();
         }
     }
@@ -223,7 +223,7 @@ public class SignIn extends AppCompatActivity {
                         return;
                     }
                     finishLoading();
-                    dialogDirector.constructErrorDialog("Error", "Authentication Failed. Please try again later.");
+                    dialogDirector.showErrorDialog("Error", "Authentication Failed. Please try again later.");
                 });
     }
 
@@ -309,16 +309,16 @@ public class SignIn extends AppCompatActivity {
         } catch (FirebaseAuthInvalidUserException firebaseAuthInvalidUserException) {
             handleUserAccountExceptions(firebaseAuthInvalidUserException);
         } catch (Exception e) {
-            dialogDirector.constructErrorDialog("Oops..", Objects.requireNonNull(e.getMessage()));
+            dialogDirector.showErrorDialog("Oops..", Objects.requireNonNull(e.getMessage()));
         }
     }
 
     private void handleUserAccountExceptions(FirebaseAuthInvalidUserException exception) {
         if (exception.getErrorCode().equals("ERROR_USER_DISABLED")) {
-            dialogDirector.constructErrorDialog("Oops..", getString(disabledAccountMessage));
+            dialogDirector.showErrorDialog("Oops..", getString(disabledAccountMessage));
             return;
         }
-        dialogDirector.constructErrorDialog("Oops..", getString(incorrectEmailOrPasswordMessage));
+        dialogDirector.showErrorDialog("Oops..", getString(incorrectEmailOrPasswordMessage));
 
     }
 

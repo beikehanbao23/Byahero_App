@@ -37,12 +37,11 @@ class DialogDirector(val activity: Activity) {
     fun constructChooseMapDialog():CustomDialogBuilder{
         return CustomDialogBuilder(
             activity = activity,
-            layout = R.layout.choose_map_dialog,
+            layout = R.layout.map_styles_dialog,
             animation = android.R.style.Animation_Dialog,
             backgroundColorDrawable = ColorDrawable(Color.TRANSPARENT)
         ).also {
             it.window?.setGravity(Gravity.END)
-            it.show()
         }
     }
 
@@ -67,16 +66,16 @@ class DialogDirector(val activity: Activity) {
     }
 
 
-    fun constructWarningDialog(title: String, message: String) {
+    fun showWarningDialog(title: String, message: String) {
         aestheticDialog(title, message, DialogType.WARNING)
     }
 
 
-    fun constructErrorDialog(title: String, message: String) {
+    fun showErrorDialog(title: String, message: String) {
         aestheticDialog(title, message, DialogType.ERROR)
     }
 
-    fun constructSuccessDialog(title: String, message: String) {
+    fun showSuccessDialog(title: String, message: String) {
         aestheticDialog(title,message,DialogType.SUCCESS)
     }
 
