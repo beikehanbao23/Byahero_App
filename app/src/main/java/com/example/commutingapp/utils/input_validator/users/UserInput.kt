@@ -5,9 +5,9 @@ import android.util.Patterns
 import android.widget.EditText
 import com.example.commutingapp.R.string
 import com.example.commutingapp.utils.input_validator.Validate
+import com.example.commutingapp.utils.others.Constants.USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS
 
 
-const val USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS = 8
 open class ValidateInputModel constructor(
     private var context: Context,
     private var email: EditText,

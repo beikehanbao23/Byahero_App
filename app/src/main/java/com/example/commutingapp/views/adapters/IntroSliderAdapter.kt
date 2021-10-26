@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.commutingapp.R.drawable.*
 import com.example.commutingapp.R.string.*
 import com.example.commutingapp.databinding.IntroSlidersAdapterBinding
+import com.example.commutingapp.utils.others.Constants.SLIDER_ITEM_COUNTS
+import com.facebook.appevents.internal.Constants
 
-
-const val ITEMS = 4
 
 /* Adapters provide a binding from an
  app-specific data set to views that are
@@ -78,7 +78,7 @@ class IntroSliderAdapter(
         val description = _context.getString(descriptionText[position])
     }
 
-    override fun getItemCount() = ITEMS
+    override fun getItemCount() = SLIDER_ITEM_COUNTS
 
     fun destroyIntroSliderAdapterBinding() {
         binding = null

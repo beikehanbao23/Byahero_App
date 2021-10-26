@@ -14,14 +14,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.ActivityIntroSliderBinding
+import com.example.commutingapp.utils.others.Constants.DEFAULT_INDICATOR_POSITION
+import com.example.commutingapp.utils.others.Constants.SLIDER_ITEM_COUNTS
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch.startActivityOf
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.viewmodels.IntroSliderViewModel
 import com.example.commutingapp.views.menubuttons.NavigationButton
 import com.example.commutingapp.views.adapters.IntroSliderAdapter
 
-private const val ITEMS_COUNT = 4
-private const val DEFAULT_INDICATOR_POSITION = 0
+
 
 
 class IntroSlider : AppCompatActivity() {
@@ -107,7 +108,7 @@ class IntroSlider : AppCompatActivity() {
 
     private fun setupIndicators() {
 
-        val indicators = arrayOfNulls<ImageView>(ITEMS_COUNT)
+        val indicators = arrayOfNulls<ImageView>(SLIDER_ITEM_COUNTS)
         val layoutParameters: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
 
@@ -183,14 +184,14 @@ class IntroSlider : AppCompatActivity() {
         userIsDoneWithIntroSliders()
     }
 
-    private fun slideHasNext() = binding!!.viewPagerSliders.currentItem < ITEMS_COUNT - 1
+    private fun slideHasNext() = binding!!.viewPagerSliders.currentItem < SLIDER_ITEM_COUNTS - 1
 
     private fun moveToNextSlide() {
         binding!!.viewPagerSliders.currentItem += 1
 
     }
 
-    private fun slideIsLastSlide() = binding?.viewPagerSliders?.currentItem == ITEMS_COUNT - 1
+    private fun slideIsLastSlide() = binding?.viewPagerSliders?.currentItem == SLIDER_ITEM_COUNTS - 1
 
     private fun transitionButtonName() {
         if (slideIsLastSlide()) binding?.nextButtonSliders?.text =

@@ -1,8 +1,10 @@
 package com.example.commutingapp.views.ui.activities;
 
 import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
+import static com.example.commutingapp.utils.others.Constants.SIGN_UP_LOADING_INTERVAL;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -115,6 +117,8 @@ public class Signup extends AppCompatActivity {
         }
         ProceedToSignUp();
 
+
+
     }
 
 
@@ -137,19 +141,21 @@ public class Signup extends AppCompatActivity {
 
         showLoading();
         viewModel.signUpAccount(userEmail,userConfirmPassword);
-        finishLoading();
+
     }
 
 
 
 
     private void showLoading() {
-        processLoading(false, View.VISIBLE);
-    }
 
-    private void finishLoading(){
+        new Handler().postDelayed(() -> {
+            processLoading(false, View.VISIBLE);
+        },SIGN_UP_LOADING_INTERVAL);
         processLoading(true,View.INVISIBLE);
     }
+
+
 
     private void processLoading(boolean attributesVisibility, int progressBarVisibility) {
         circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);

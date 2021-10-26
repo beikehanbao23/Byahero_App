@@ -84,10 +84,10 @@ class SignUpViewModel : ViewModel() {
 
         userEmailProcessor.sendEmailVerification()?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    sendEmailVerificationOnSuccess.postValue(true)
+                    sendEmailVerificationOnSuccess.value = true
                     return@addOnCompleteListener
                 }
-                sendEmailVerificationOnFail.postValue(true)
+                sendEmailVerificationOnFail.value = true
             }
 
     }

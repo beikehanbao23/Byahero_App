@@ -8,14 +8,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
+import com.example.commutingapp.utils.others.Constants
+import com.example.commutingapp.utils.others.Constants.ONE_SECOND_TO_MILLIS
+import com.example.commutingapp.utils.others.Constants.REFRESH_EMAIL_SYNCHRONOUSLY_INTERVAL
+import com.example.commutingapp.utils.others.Constants.TIMER_COUNTS
 import com.example.commutingapp.utils.others.Event
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseNetworkException
 import kotlinx.coroutines.*
 
-private const val timerCounts: Long = 120000
-private const val oneSecond: Long = 1000
-private const val coroutineInterval: Long = 2200
+
 
 class EmailSentViewModel : ViewModel() {
 
@@ -62,8 +64,7 @@ class EmailSentViewModel : ViewModel() {
         coroutineIOJob = viewModelScope.launch(Dispatchers.IO) {
             while (isActive) {
                 reloadUserEmail()
-                Log.d("COROUTINE STATUS: ", "$isActive")
-                delay(coroutineInterval)
+                delay(REFRESH_EMAIL_SYNCHRONOUSLY_INTERVAL)
             }
         }
     }
@@ -110,9 +111,9 @@ class EmailSentViewModel : ViewModel() {
 
     fun startTimer() {
         viewModelScope.launch(Dispatchers.Main) {
-            verificationTimer = object : CountDownTimer(timerCounts, oneSecond) {
+            verificationTimer = object : CountDownTimer(TIMER_COUNTS, ONE_SECOND_TO_MILLIS) {
                 override fun onTick(millisUntilFinished: Long) {
-                    val timeLeft = millisUntilFinished / oneSecond
+                    val timeLeft = millisUntilFinished / ONE_SECOND_TO_MILLIS
                     timerOnRunningSecondsValue.value = timeLeft.toInt()
                 }
 

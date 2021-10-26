@@ -44,4 +44,11 @@ object Constants {
     const val ONE_SECOND = 1000L
     const val VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 380
     const val INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 0
+    const val TIMER_COUNTS: Long = 120000
+    const val ONE_SECOND_TO_MILLIS: Long = 1000
+    const val REFRESH_EMAIL_SYNCHRONOUSLY_INTERVAL:Long = 2200
+    const val DEFAULT_INDICATOR_POSITION = 0
+    const val SLIDER_ITEM_COUNTS = 4
+    const val USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS = 8
+    const val SIGN_UP_LOADING_INTERVAL:Long = 100
 }
