@@ -109,7 +109,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity {
     private fun replaceFragment(fragment: Fragment){
         supportFragmentManager.apply {
 
-            if (!fragment.isAdded) {
+
                 beginTransaction().apply {
                         if (findFragmentByTag(fragment.javaClass.name) == null) {
                             replace(R.id.fragmentContainer, fragment, fragment.javaClass.name)
@@ -122,12 +122,15 @@ class MainScreen : AppCompatActivity(),FragmentToActivity {
                         commit()
                     }
                 }
-
-        }
-
     }
-
+    private fun getCurrentFragment(): Fragment? {
+        return supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+    }
     override fun onBackPressed() {
+        if(getCurrentFragment() is CommuterFragment){
+            finish()
+            return
+        }
         try { super.onBackPressed() }catch (e:Exception){ }
     }
 
@@ -144,6 +147,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity {
     private fun initializeAttributes() {
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
         setContentView(activityMainScreenBinding?.root)
+        replaceFragment(CommuterFragment())
     }
 
     private fun destroyBinding() {
