@@ -40,8 +40,6 @@ public class Signup extends AppCompatActivity {
     private ActivitySignupBinding activitySignupBinding;
     private CircularProgressbarBinding circularProgressbarBinding;
 
-    private FirebaseUserWrapper firebaseUser;
-
     private UserDataProcessor<List<UserInfo>> userData;
     private UserAuthenticationProcessor<Task<AuthResult>> userAuth;
     private UserEmailProcessor<Task<Void>> userEmail;
@@ -77,7 +75,7 @@ public class Signup extends AppCompatActivity {
         setContentView(activitySignupBinding.getRoot());
         dialogDirector = new DialogDirector(this);
         viewModel = new ViewModelProvider(this).get(SignUpViewModel.class);
-        firebaseUser = new FirebaseUserWrapper();
+        FirebaseUserWrapper firebaseUser = new FirebaseUserWrapper();
         userData = new UserDataProcessor(firebaseUser);
         userAuth = new UserAuthenticationProcessor(new FirebaseAuthenticatorWrapper());
         userEmail = new UserEmailProcessor(firebaseUser);

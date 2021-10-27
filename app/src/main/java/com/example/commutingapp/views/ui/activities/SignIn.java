@@ -65,8 +65,6 @@ public class SignIn extends AppCompatActivity {
     private CircularProgressbarBinding circularProgressbarBinding;
     private DialogDirector dialogDirector;
 
-    private FirebaseUserWrapper firebaseUser;
-
     private UserAuthenticationProcessor<Task<AuthResult>> userAuth;
     private UserDataProcessor<List<UserInfo>> userData;
     private UserEmailProcessor<Task<Void>> userEmail;
@@ -92,7 +90,7 @@ public class SignIn extends AppCompatActivity {
         ScreenDimension.INSTANCE.setWindowToFullScreen(getWindow());
         setContentView(activitySignInBinding.getRoot());
         dialogDirector = new DialogDirector(this);
-        firebaseUser = new FirebaseUserWrapper();
+        FirebaseUserWrapper firebaseUser = new FirebaseUserWrapper();
         userAuth = new UserAuthenticationProcessor(new FirebaseAuthenticatorWrapper());
         userData = new UserDataProcessor(firebaseUser);
         userEmail = new UserEmailProcessor(firebaseUser);
