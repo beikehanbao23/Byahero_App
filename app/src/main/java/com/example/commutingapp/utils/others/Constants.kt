@@ -51,4 +51,7 @@ object Constants {
     const val SLIDER_ITEM_COUNTS = 4
     const val USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS = 8
     const val SIGN_UP_LOADING_INTERVAL:Long = 100
+    const val FILE_NAME_INTRO_SLIDER_SHARED_PREFERENCE = "IntroSlider"
+    const val FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE = "MapsType"
+    const val KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE = "IntroSlider_StateOfSlides"
 }

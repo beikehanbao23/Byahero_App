@@ -15,6 +15,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.ActivityIntroSliderBinding
 import com.example.commutingapp.utils.others.Constants.DEFAULT_INDICATOR_POSITION
+import com.example.commutingapp.utils.others.Constants.FILE_NAME_INTRO_SLIDER_SHARED_PREFERENCE
+import com.example.commutingapp.utils.others.Constants.KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE
 import com.example.commutingapp.utils.others.Constants.SLIDER_ITEM_COUNTS
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch.startActivityOf
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
@@ -28,7 +30,6 @@ import com.example.commutingapp.views.adapters.IntroSliderAdapter
 class IntroSlider : AppCompatActivity() {
 
     private lateinit var preferences: SharedPreferences
-    private val preferredShowIntro = "IntroSlider_StateOfSlides"
     private var binding: ActivityIntroSliderBinding? = null
     private lateinit var viewModel: IntroSliderViewModel
 
@@ -81,7 +82,7 @@ class IntroSlider : AppCompatActivity() {
         binding = ActivityIntroSliderBinding.inflate(layoutInflater)
         setTheme(R.style.Theme_CommutingApp)
         setContentView(binding?.root)
-        preferences = getSharedPreferences("IntroSlider", Context.MODE_PRIVATE)
+        preferences = getSharedPreferences(FILE_NAME_INTRO_SLIDER_SHARED_PREFERENCE, Context.MODE_PRIVATE)
     }
 
     private fun setCallbacks() {
@@ -97,7 +98,7 @@ class IntroSlider : AppCompatActivity() {
     }
 
     private fun userHasAlreadySeenTheIntroSliders() =
-        preferences.getBoolean(preferredShowIntro, false)
+        preferences.getBoolean(KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE, false)
 
 
     private fun setViewPageDisplay() {
@@ -195,7 +196,7 @@ class IntroSlider : AppCompatActivity() {
 
     private fun transitionButtonName() {
         if (slideIsLastSlide()) binding?.nextButtonSliders?.text =
-            "Let's get started!" else binding?.nextButtonSliders?.text = "Next"
+            getString(R.string.letsGetStarted) else binding?.nextButtonSliders?.text = getString(R.string.nextButton)
     }
 
     private fun showSignInActivity() {
@@ -204,9 +205,8 @@ class IntroSlider : AppCompatActivity() {
 
     private fun userIsDoneWithIntroSliders() {
 
-        val editor = preferences.edit()
-        with(editor) {
-            putBoolean(preferredShowIntro, true)
+         preferences.edit().apply {
+            putBoolean(KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE, true)
             apply()
         }
     }
