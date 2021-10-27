@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,7 @@ import com.example.commutingapp.utils.others.Constants.DEFAULT_LATITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_MAP_ZOOM
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
+import com.example.commutingapp.utils.others.Constants.FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE
 import com.example.commutingapp.utils.others.Constants.INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
 import com.example.commutingapp.utils.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
 import com.example.commutingapp.utils.others.Constants.MAP_MARKER_IMAGE_NAME
@@ -65,6 +67,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.Symbol
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
@@ -95,6 +98,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var notifyListener: FragmentToActivity
 
+    private lateinit var preferences:SharedPreferences
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        commuterFragmentBinding = CommuterFragmentBinding.inflate(inflater,container,false)
+        return commuterFragmentBinding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -103,8 +111,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         provideClickListeners()
         setupMapBoxView(savedInstanceState)
         subscribeToObservers()
+        recoverMissingMapMarker()
     }
-
+    private fun recoverMissingMapMarker(){
+        mapBoxView?.addOnStyleImageMissingListener {
+            addMapMarkerImage(MAP_MARKER_IMAGE_NAME)
+        }
+    }
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
@@ -172,6 +185,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     private fun initializeComponents(view: View) {
+        preferences = requireContext().getSharedPreferences(FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,Context.MODE_PRIVATE)
         dialogDirector = DialogDirector(requireActivity())
         mapBoxView = view.findViewById(R.id.googleMapView)
         startButton = view.findViewById(R.id.startButton)
@@ -256,6 +270,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             findViewById<View>(R.id.satelliteMapStyleButton)?.setOnClickListener {
                 changeMapType(Style.SATELLITE)
             }
+
+        }.also {
+            recoverMissingMapMarker()
         }
     }
 
@@ -321,8 +338,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         when (e.statusCode) {
             LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                 (e as ResolvableApiException).apply {
-                startIntentSenderForResult(this.resolution.intentSender, REQUEST_CHECK_SETTING, null, 0, 0, 0, null);
-            } }
+                startIntentSenderForResult(this.resolution.intentSender, REQUEST_CHECK_SETTING, null, 0, 0, 0, null)
+                } }
         }
     }
 
@@ -346,7 +363,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         mapBoxMap?.addOnMapLongClickListener(this)
         mapBoxMap?.addOnMapClickListener(this)
         setMapZoomLevel()
-        addMapStyle(MAP_STYLE)
+        addMapStyle(getMapType())
         moveCameraToLastKnownLocation()
         addAllPolyLines()
     }
@@ -364,9 +381,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     private fun addMapStyle(mapType: String) {
-        mapBoxMap?.getStyle {
-            Toast.makeText(requireContext(), it.uri.toString(), Toast.LENGTH_SHORT).show()
-        }
         mapBoxMap?.setStyle(mapType) { style ->
             mapBoxView?.let { mapView ->
                 TrafficPlugin(mapView, mapBoxMap!!, style).apply { setVisibility(true) }
@@ -376,12 +390,17 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
         }
     }
-
     private fun changeMapType(mapType: String) {
-        mapBoxMap?.setStyle(mapType)
-
+        mapBoxMap?.setStyle(mapType){ mapBoxStyle = it }
+        saveMapTypeToSharedPreference(mapType)
     }
-
+    private fun saveMapTypeToSharedPreference(mapType:String){
+        preferences.edit().apply{
+            putString(FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,mapType)
+            apply()
+        }
+    }
+    private fun getMapType():String {return preferences.getString(FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,Style.TRAFFIC_DAY).toString()}
 
     override fun onMapLongClick(point: LatLng): Boolean {
         pointMapMarker(point)
@@ -394,12 +413,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         return true
     }
 
-
-    private fun pointMapMarker(latLng: LatLng) {
-        mapBoxStyle?.addImage(
-            MAP_MARKER_IMAGE_NAME,
-            getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location)
+    private fun addMapMarkerImage(imageName:String){
+        mapBoxStyle?.addImage(imageName, getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location)
         )
+    }
+    private fun pointMapMarker(latLng: LatLng) {
+        addMapMarkerImage(MAP_MARKER_IMAGE_NAME)
+
         if (hasExistingMapMarker()) {
             mapMarkerSymbol.deleteAll()
         }
@@ -408,7 +428,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         mapBoxMap?.cameraPosition?.apply {
             moveCameraToUser(latLng, zoom, DEFAULT_CAMERA_ANIMATION_DURATION)
         }
-
 
     }
 
@@ -439,12 +458,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
     }
 
-
     @SuppressLint("MissingPermission")
     private fun createComponentsLocation(locationComponent: LocationComponent) {
         locationComponent.apply {
             isLocationComponentEnabled = true
-            renderMode = RenderMode.NORMAL;
+            renderMode = RenderMode.NORMAL
         }
     }
 
@@ -467,10 +485,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 )
             }
         }
+
+        /*
         TrackingService.timeInMillis.observe(viewLifecycleOwner) {
             //TODO implement later
         }
 
+
+         */
 
     }
 
@@ -501,7 +523,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     private fun moveCameraToUser(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int) {
-        mapBoxMap?.animateCamera(CameraUpdateFactory.newCameraPosition(buildCameraPosition(latLng,zoomLevel)), cameraAnimationDuration);
+        mapBoxMap?.animateCamera(CameraUpdateFactory.newCameraPosition(buildCameraPosition(latLng,zoomLevel)), cameraAnimationDuration)
     }
 
     private fun buildCameraPosition(latLng: LatLng, zoomLevel: Double): CameraPosition =
