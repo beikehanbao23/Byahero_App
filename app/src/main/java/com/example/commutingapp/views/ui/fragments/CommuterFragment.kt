@@ -25,12 +25,11 @@ import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.ACTION_PAUSE_SERVICE
 import com.example.commutingapp.utils.others.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.commutingapp.utils.others.Constants.CAMERA_TILT_DEGREES
-import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LATITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_MAP_ZOOM
-import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
+import com.example.commutingapp.utils.others.Constants.ULTRA_FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE
 import com.example.commutingapp.utils.others.Constants.INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
 import com.example.commutingapp.utils.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
@@ -80,10 +79,13 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.widget.ImageViewCompat
+import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
+import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 
 
 @AndroidEntryPoint
@@ -222,21 +224,17 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         commuterFragmentBinding.floatingActionButtonChooseMap.setOnClickListener {
             dialogDirector.constructChooseMapDialog().apply {
+                createMapTypeIndicator(this)
                 setMapTypeListeners(this)
                 show()
-            }
-            if(Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())){
-
-            }
-
-
-
-        }
+            } }
         commuterFragmentBinding.floatingActionButtonLocation.setOnClickListener {
 
             mapBoxMap?.locationComponent?.lastKnownLocation?.let { location ->
                 moveCameraToUser(LatLng(location.latitude, location.longitude), CAMERA_ZOOM_MAP_MARKER,
-                    DEFAULT_CAMERA_ANIMATION_DURATION)
+                    FAST_CAMERA_ANIMATION_DURATION) }
+            if(Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())){
+                checkLocationSetting()
             }
         }
 
@@ -293,7 +291,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location_24)
         }else{
             changeLocationFloatingButtonIconColor(Color.RED)
-            changeLocationFloatingButtonIconColor(R.drawable.ic_location_asking)
+            changeLocationFloatingButtonIcon(R.drawable.ic_location_asking)
         }
     }
 
@@ -309,39 +307,69 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     private fun setMapTypeListeners(customDialogBuilder: CustomDialogBuilder) {
         customDialogBuilder.apply {
+
             findViewById<View>(R.id.defaultMapStyleButton)?.setOnClickListener {
-                changeMapType(Style.TRAFFIC_DAY)
+                changeMapType(this,Style.TRAFFIC_DAY)
             }
             findViewById<View>(R.id.trafficNightMapStyleButton)?.setOnClickListener {
-                changeMapType(Style.TRAFFIC_NIGHT)
+                changeMapType(this,Style.TRAFFIC_NIGHT)
             }
             findViewById<View>(R.id.darkMapStyleButton)?.setOnClickListener {
-                changeMapType(Style.DARK)
+                changeMapType(this,Style.DARK)
             }
             findViewById<View>(R.id.streetMapStyleButton)?.setOnClickListener {
-                changeMapType(Style.MAPBOX_STREETS)
+                changeMapType(this,Style.MAPBOX_STREETS)
             }
             findViewById<View>(R.id.satelliteStreetsMapStyleButton)?.setOnClickListener {
-                changeMapType(Style.SATELLITE_STREETS)
+                changeMapType(this,Style.SATELLITE_STREETS)
             }
             findViewById<View>(R.id.outdoorsMapStyleButton)?.setOnClickListener {
-                changeMapType(Style.OUTDOORS)
+                changeMapType(this,Style.OUTDOORS)
             }
             findViewById<View>(R.id.lightMapStyle)?.setOnClickListener {
-                changeMapType(Style.LIGHT)
+                changeMapType(this,Style.LIGHT)
             }
             findViewById<View>(R.id.neonMapStyleButton)?.setOnClickListener {
-                changeMapType(MAP_STYLE)
+                changeMapType(this,MAP_STYLE)
             }
             findViewById<View>(R.id.satelliteMapStyleButton)?.setOnClickListener {
-                changeMapType(Style.SATELLITE)
+                changeMapType(this,Style.SATELLITE)
             }
-
         }.also {
             recoverMissingMapMarker()
         }
     }
+    private fun createMapTypeIndicator(customDialogBuilder: CustomDialogBuilder){
+        customDialogBuilder.apply {
+        findViewById<View>(getMapTypeButtons().getValue(getMapType()))?.setBackgroundResource(R.drawable.map_type_visible_image_button_background)
+        }
+    }
 
+    private fun removePreviousMapTypeIndicator(customDialogBuilder: CustomDialogBuilder){
+        customDialogBuilder.apply {
+       for(i in getMapTypeButtons()){
+           if(i.key == getMapType()){
+               continue
+           }else{
+               findViewById<View>(i.value)?.setBackgroundColor(Color.WHITE)
+           }
+       }
+        }
+    }
+
+    private fun getMapTypeButtons():HashMap<String,Int> =
+    HashMap<String,Int>().apply {
+        this[Style.TRAFFIC_DAY] = R.id.defaultMapStyleButton
+        this[Style.TRAFFIC_NIGHT] = R.id.trafficNightMapStyleButton
+        this[Style.DARK] = R.id.darkMapStyleButton
+        this[Style.MAPBOX_STREETS] = R.id.streetMapStyleButton
+        this[Style.SATELLITE_STREETS] = R.id.satelliteStreetsMapStyleButton
+        this[Style.OUTDOORS] = R.id.outdoorsMapStyleButton
+        this[Style.LIGHT] = R.id.lightMapStyle
+        this[MAP_STYLE] = R.id.neonMapStyleButton
+        this[Style.SATELLITE] = R.id.satelliteMapStyleButton
+
+    }
     @SuppressLint("MissingPermission")
     private fun moveCameraToLastKnownLocation() {
         LocationServices.getFusedLocationProviderClient(requireActivity()).apply {
@@ -350,7 +378,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                     moveCameraToUser(
                         LatLng(latLng.latitude, latLng.longitude),
                         LAST_KNOWN_LOCATION_MAP_ZOOM,
-                        FAST_CAMERA_ANIMATION_DURATION
+                        ULTRA_FAST_CAMERA_ANIMATION_DURATION
                     )
                 }
             }
@@ -459,15 +487,19 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
         }
     }
-    private fun changeMapType(mapType: String) {
+    private fun changeMapType(customDialogBuilder: CustomDialogBuilder,mapType: String) {
         mapBoxMap?.setStyle(mapType){ mapBoxStyle = it }
+
         saveMapTypeToSharedPreference(mapType)
+        removePreviousMapTypeIndicator(customDialogBuilder)
+        createMapTypeIndicator(customDialogBuilder)
     }
     private fun saveMapTypeToSharedPreference(mapType:String){
         preferences.edit().apply{
             putString(FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,mapType)
             apply()
         }
+
     }
     private fun getMapType():String {return preferences.getString(FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,Style.TRAFFIC_DAY).toString()}
 
@@ -515,13 +547,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun createLocationPuck(style: Style) {
         LocationComponentOptions.builder(requireContext())
+            .accuracyAlpha(0.3f)
+            .compassAnimationEnabled(true)
+            .accuracyAnimationEnabled(true)
             .build().also { componentOptions ->
                 mapBoxMap?.locationComponent?.apply {
-                    activateLocationComponent(
-                        LocationComponentActivationOptions.builder(requireContext(), style)
+                    activateLocationComponent(LocationComponentActivationOptions.builder(requireContext(), style)
                             .locationComponentOptions(componentOptions)
-                            .build()
-                    )
+                            .build())
                     createComponentsLocation(this)
                 }
             }
@@ -531,7 +564,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun createComponentsLocation(locationComponent: LocationComponent) {
         locationComponent.apply {
             isLocationComponentEnabled = true
-            renderMode = RenderMode.NORMAL
+            renderMode = RenderMode.COMPASS
         }
     }
 
