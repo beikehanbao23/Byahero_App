@@ -3,15 +3,13 @@ package com.example.commutingapp.views.ui.fragments
 
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.collection.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -67,13 +65,24 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
 import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.plugins.annotation.Symbol
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import android.content.Intent
+
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
+import android.content.res.ColorStateList
+import android.graphics.Color
+
+import android.os.Build
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
+import androidx.core.widget.ImageViewCompat
 
 
 @AndroidEntryPoint
@@ -104,6 +113,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         return commuterFragmentBinding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeComponents(view)
@@ -112,6 +122,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         setupMapBoxView(savedInstanceState)
         subscribeToObservers()
         recoverMissingMapMarker()
+        updateLocationFloatingButtonIcon()
     }
     private fun recoverMissingMapMarker(){
         mapBoxView?.addOnStyleImageMissingListener {
@@ -215,11 +226,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
         }
         commuterFragmentBinding.floatingActionButtonLocation.setOnClickListener {
+
             mapBoxMap?.locationComponent?.lastKnownLocation?.let { location ->
-                moveCameraToUser(
-                    LatLng(location.latitude, location.longitude), CAMERA_ZOOM_MAP_MARKER,
-                    DEFAULT_CAMERA_ANIMATION_DURATION
-                )
+                moveCameraToUser(LatLng(location.latitude, location.longitude), CAMERA_ZOOM_MAP_MARKER,
+                    DEFAULT_CAMERA_ANIMATION_DURATION)
             }
         }
 
@@ -241,6 +251,54 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION).apply {
+            addAction(Intent.ACTION_PROVIDER_CHANGED)
+            requireActivity().registerReceiver(locationSwitchStateReceiver(), this)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().unregisterReceiver(locationSwitchStateReceiver())
+    }
+
+    private fun locationSwitchStateReceiver()=
+        object: BroadcastReceiver(){
+            @RequiresApi(Build.VERSION_CODES.M)
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if(LocationManager.PROVIDERS_CHANGED_ACTION == intent?.action){
+                    updateLocationFloatingButtonIcon()
+                }
+            }
+
+    }
+
+
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun updateLocationFloatingButtonIcon(){
+        if(Connection.hasGPSConnection(requireContext())){
+            changeLocationFloatingButtonIconColor(Color.BLACK)
+            changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location_24)
+        }else{
+            changeLocationFloatingButtonIconColor(Color.RED)
+            changeLocationFloatingButtonIconColor(R.drawable.ic_location_asking)
+        }
+    }
+
+    private fun changeLocationFloatingButtonIconColor(@ColorInt color:Int){
+        ImageViewCompat.setImageTintList(
+            commuterFragmentBinding.floatingActionButtonLocation,
+            ColorStateList.valueOf(color)
+        );
+
+    }
+    private fun changeLocationFloatingButtonIcon(@DrawableRes imageId:Int){
+        commuterFragmentBinding.floatingActionButtonLocation.setImageResource(imageId)
+    }
     private fun setMapTypeListeners(customDialogBuilder: CustomDialogBuilder) {
         customDialogBuilder.apply {
             findViewById<View>(R.id.defaultMapStyleButton)?.setOnClickListener {
