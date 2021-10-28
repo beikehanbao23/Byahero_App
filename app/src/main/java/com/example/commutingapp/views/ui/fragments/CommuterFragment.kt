@@ -2,6 +2,7 @@ package com.example.commutingapp.views.ui.fragments
 
 
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.*
 import android.location.LocationManager
@@ -224,6 +225,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 setMapTypeListeners(this)
                 show()
             }
+            if(Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())){
+
+            }
+
+
+
         }
         commuterFragmentBinding.floatingActionButtonLocation.setOnClickListener {
 
@@ -236,6 +243,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         startButton.setOnClickListener {
             if (requestPermissionGranted()) {
                 checkLocationSetting()
+               // toggleStartButton()
             }
         }
         directionButton.setOnClickListener {
@@ -385,7 +393,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         result.addOnCompleteListener {
             try {
                 it.getResult(ApiException::class.java)
-                toggleStartButton()
+
             } catch (e: ApiException) {
                 handleLocationResultException(e)
             }
@@ -403,11 +411,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            REQUEST_CHECK_SETTING -> when (resultCode) {
+            REQUEST_CHECK_SETTING ->
+                when (resultCode) {
                 RESULT_OK -> {
-                    toggleStartButton()
+                    //toggleStartButton()
                 }
+                RESULT_CANCELED->{
 
+                }
             }
         }
     }
