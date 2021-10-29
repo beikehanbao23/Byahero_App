@@ -86,11 +86,12 @@ import androidx.annotation.RequiresApi
 import androidx.core.widget.ImageViewCompat
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
+import com.mapbox.android.gestures.MoveGestureDetector
 
 
 @AndroidEntryPoint
 class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
-    OnMapReadyCallback, MapboxMap.OnMapLongClickListener, MapboxMap.OnMapClickListener {
+    OnMapReadyCallback, MapboxMap.OnMapLongClickListener, MapboxMap.OnMapClickListener,MapboxMap.OnMoveListener {
 
     private val mainViewModel: MainViewModel by viewModels()
     private var mapBoxMap: MapboxMap? = null
@@ -228,11 +229,15 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 setMapTypeListeners(this)
                 show()
             } }
+
         commuterFragmentBinding.floatingActionButtonLocation.setOnClickListener {
 
             mapBoxMap?.locationComponent?.lastKnownLocation?.let { location ->
-                moveCameraToUser(LatLng(location.latitude, location.longitude), CAMERA_ZOOM_MAP_MARKER,
-                    FAST_CAMERA_ANIMATION_DURATION) }
+                moveCameraToUser(LatLng(location.latitude, location.longitude), CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION)
+                changeLocationFloatingButtonIconColor(Color.BLUE)
+                changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location_24)
+            }
+
             if(Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())){
                 checkLocationSetting()
             }
@@ -244,6 +249,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                // toggleStartButton()
             }
         }
+
         directionButton.setOnClickListener {
 
         }
@@ -459,6 +465,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         mapBoxMap?.addOnMapLongClickListener(this)
         mapBoxMap?.addOnMapClickListener(this)
+        mapBoxMap?.addOnMoveListener(this)
         setMapZoomLevel()
         addMapStyle(getMapType())
         moveCameraToLastKnownLocation()
@@ -505,6 +512,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     override fun onMapLongClick(point: LatLng): Boolean {
         pointMapMarker(point)
+        showBottomSheet()
         return true
     }
 
@@ -515,7 +523,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     private fun addMapMarkerImage(imageName:String){
-        mapBoxStyle?.addImage(imageName, getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location)
+        mapBoxStyle?.addImage(imageName, getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location_map_marker)
         )
     }
     private fun pointMapMarker(latLng: LatLng) {
@@ -524,7 +532,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         if (hasExistingMapMarker()) {
             mapMarkerSymbol.deleteAll()
         }
-        showBottomSheet()
         createMapMarker(latLng)
         mapBoxMap?.cameraPosition?.apply {
             moveCameraToUser(latLng, zoom, DEFAULT_CAMERA_ANIMATION_DURATION)
@@ -592,8 +599,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         TrackingService.timeInMillis.observe(viewLifecycleOwner) {
             //TODO implement later
         }
-
-
          */
 
     }
@@ -698,6 +703,20 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
+
+
+
+
+
+    override fun onMoveBegin(detector: MoveGestureDetector){}
+
+    @SuppressLint("ResourceAsColor")
+    override fun onMove(detector: MoveGestureDetector) {
+        changeLocationFloatingButtonIconColor(Color.BLACK)
+        changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location_24)
+    }
+
+    override fun onMoveEnd(detector: MoveGestureDetector) {}
 
 
 }
