@@ -51,8 +51,6 @@ class MainScreen : AppCompatActivity(),FragmentToActivity {
         navigateToCommuterFragment(intent)
         val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navigationController = navigationHostFragment.navController
-
-        setSupportActionBar( activityMainScreenBinding?.toolbar)
         activityMainScreenBinding?.bottomNavigation?.setupWithNavController(navigationController)
         setupBottomNavigationListeners()
         Mapbox.getInstance(this, getString(R.string.MapsToken))
