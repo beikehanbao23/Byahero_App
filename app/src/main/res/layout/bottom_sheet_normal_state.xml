@@ -8,10 +8,10 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/bottomSheet"
+        android:id="@+id/bottomSheetNormalState"
         android:layout_width="match_parent"
         android:layout_height="135dp"
-        android:background="@drawable/bottom_sheet_background"
+        android:background="@drawable/bottom_sheet_normal_state_background"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <TextView
@@ -34,19 +34,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
 
-            android:layout_marginTop="-8dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_baseline_remove"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <include layout="@layout/bottom_sheet_line_image"/>
 
-        <include layout="@layout/bottom_sheet_buttons" />
+        <include layout="@layout/bottom_sheet_normal_state_buttons" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

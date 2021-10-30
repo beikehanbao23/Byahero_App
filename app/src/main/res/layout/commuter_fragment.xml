@@ -19,13 +19,14 @@
         android:id="@+id/floatingActionButtonLocation"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="200dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="280dp"
         android:backgroundTint="@color/white"
+        android:importantForAccessibility="no"
         android:src="@drawable/ic_baseline_my_location_24"
+        android:translationZ="-10dp"
         app:backgroundTint="@color/White"
         app:fabCustomSize="56dp"
-        android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -43,9 +44,19 @@
         app:fabCustomSize="40dp"
         android:importantForAccessibility="no"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+/>
 
-    </com.google.android.material.floatingactionbutton.FloatingActionButton>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+       />
+        <include
+            layout="@layout/bottom_sheet_normal_state" />
+
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -55,8 +66,7 @@
         app:layout_constraintStart_toStartOf="parent"
         >
         <include
-            layout="@layout/bottom_sheet" />
-
+            layout="@layout/bottom_sheet_tracking_state" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
