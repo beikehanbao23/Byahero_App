@@ -43,7 +43,8 @@ object Constants {
     const val REQUEST_CHECK_SETTING = 1001
     const val STOPWATCH_INTERVAL = 50L
     const val ONE_SECOND = 1000L
-    const val VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 380
+    const val LOW_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 380
+    const val HIGH_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 1280
     const val INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 0
     const val TIMER_COUNTS: Long = 120000
     const val ONE_SECOND_TO_MILLIS: Long = 1000
@@ -55,4 +56,8 @@ object Constants {
     const val FILE_NAME_INTRO_SLIDER_SHARED_PREFERENCE = "IntroSlider"
     const val FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE = "MapsType"
     const val KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE = "IntroSlider_StateOfSlides"
+    const val REQUEST_CODE_AUTOCOMPLETE = 1
+    const val GEO_JSON_SOURCE_LAYER_ID = "geojsonSourceLayerId"
+
+
 }

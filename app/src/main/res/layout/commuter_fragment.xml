@@ -13,7 +13,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="SpeakableTextPresentCheck" />
+        tools:ignore="SpeakableTextPresentCheck" >
+    </com.mapbox.mapboxsdk.maps.MapView>
+
+     <include layout="@layout/search_view_location"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButtonLocation"
@@ -65,8 +68,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         >
-        <include
-            layout="@layout/bottom_sheet_tracking_state" />
+        <include layout="@layout/bottom_sheet_tracking_state" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
