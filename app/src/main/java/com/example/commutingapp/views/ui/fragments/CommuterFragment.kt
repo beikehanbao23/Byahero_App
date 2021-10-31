@@ -41,7 +41,7 @@ import com.example.commutingapp.utils.others.Constants.POLYLINE_WIDTH
 import com.example.commutingapp.utils.others.Constants.REQUEST_CHECK_SETTING
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
 import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
-import com.example.commutingapp.utils.others.Constants.VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
+import com.example.commutingapp.utils.others.Constants.LOW_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestPermission
@@ -50,7 +50,7 @@ import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.*
+
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
@@ -79,7 +79,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
@@ -87,6 +86,24 @@ import androidx.core.widget.ImageViewCompat
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 import com.mapbox.android.gestures.MoveGestureDetector
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
+import com.google.gson.JsonObject
+
+import com.mapbox.api.geocoding.v5.models.CarmenFeature
+
+import com.mapbox.geojson.Point
+import com.example.commutingapp.utils.others.Constants.GEO_JSON_SOURCE_LAYER_ID
+import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+
+
+import androidx.appcompat.widget.AppCompatButton
+import com.google.android.gms.location.*
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 
 
 @AndroidEntryPoint
@@ -105,12 +122,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var shareButton: Button
     private lateinit var dialogDirector: DialogDirector
     private lateinit var commuterFragmentBinding: CommuterFragmentBinding
-
+    private lateinit var searchLocationButton: AppCompatButton
     private var mapBoxStyle: Style? = null
     private lateinit var mapMarkerSymbol: SymbolManager
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+    private lateinit var startingBottomSheet: BottomSheetBehavior<View>
+    private lateinit var trackingBottomSheet: BottomSheetBehavior<View>
     private lateinit var notifyListener: FragmentToActivity
-
+    private lateinit var home: CarmenFeature
+    private lateinit var work: CarmenFeature
     private lateinit var preferences:SharedPreferences
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         commuterFragmentBinding = CommuterFragmentBinding.inflate(inflater,container,false)
@@ -121,7 +140,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeComponents(view)
-        hideBottomSheet()
+        hideStartingBottomSheet()
+        showBottomNavigation()
+        hideTrackingBottomSheet()
         provideClickListeners()
         setupMapBoxView(savedInstanceState)
         subscribeToObservers()
@@ -143,13 +164,29 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun showBottomSheet() {
         provideBottomSheetsButton()
-        notifyListener.onFirstNotify()
-        bottomSheetBehavior.peekHeight = VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
+        startingBottomSheet.peekHeight = LOW_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
     }
 
-    private fun hideBottomSheet() {
+    private fun hideStartingBottomSheet() {
+        startingBottomSheet.peekHeight = INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
+    }
+    private fun showTrackingBottomSheet(){
+        trackingBottomSheet.peekHeight = 300//todo
+    }
+    private fun hideTrackingBottomSheet(){
+        trackingBottomSheet.peekHeight = INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
+    }
+    private fun showLocationFloatingButton(){
+        commuterFragmentBinding.floatingActionButtonLocation.visibility = View.VISIBLE
+    }
+    private fun hideLocationFloatingButton(){
+        commuterFragmentBinding.floatingActionButtonLocation.visibility = View.GONE
+    }
+    private fun showBottomNavigation(){
         notifyListener.onSecondNotify()
-        bottomSheetBehavior.peekHeight = INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
+    }
+    private fun hideBottomNavigation(){
+        notifyListener.onFirstNotify()
     }
 
     private fun provideBottomSheetsButton() {
@@ -207,8 +244,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         directionButton = view.findViewById(R.id.directionsButton)
         saveButton = view.findViewById(R.id.saveButton)
         shareButton = view.findViewById(R.id.shareButton)
-        bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.bottomSheet)).apply {
+        searchLocationButton = view.findViewById(R.id.buttonLocationSearch)
+        startingBottomSheet = BottomSheetBehavior.from(view.findViewById(R.id.bottomSheetNormalState)).apply {
             state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+        trackingBottomSheet = BottomSheetBehavior.from(view.findViewById(R.id.bottomSheetTrackingState)).apply {
+            state = BottomSheetBehavior.STATE_COLLAPSED
+            isHideable=false
+
         }
     }
 
@@ -234,8 +277,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
             mapBoxMap?.locationComponent?.lastKnownLocation?.let { location ->
                 moveCameraToUser(LatLng(location.latitude, location.longitude), CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION)
-                changeLocationFloatingButtonIconColor(Color.BLUE)
-                changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location_24)
+                changeFloatingButtonIconBlue()
             }
 
             if(Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())){
@@ -245,8 +287,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         startButton.setOnClickListener {
             if (requestPermissionGranted()) {
+                showTrackingBottomSheet()
+                hideStartingBottomSheet()
+                hideBottomNavigation()
+                hideLocationFloatingButton()
                 checkLocationSetting()
-               // toggleStartButton()
+
             }
         }
 
@@ -259,7 +305,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         shareButton.setOnClickListener {
 
         }
-
 
     }
 
@@ -288,24 +333,26 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
 
-
-
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun updateLocationFloatingButtonIcon(){
-        if(Connection.hasGPSConnection(requireContext())){
-            changeLocationFloatingButtonIconColor(Color.BLACK)
-            changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location_24)
-        }else{
-            changeLocationFloatingButtonIconColor(Color.RED)
-            changeLocationFloatingButtonIcon(R.drawable.ic_location_asking)
-        }
-    }
+    private fun updateLocationFloatingButtonIcon()=
+        if(Connection.hasGPSConnection(requireContext())) changeFloatingButtonIconBlack() else changeFloatingButtonIconRed()
 
+    private fun changeFloatingButtonIconRed(){
+        changeLocationFloatingButtonIconColor(Color.RED)
+        changeLocationFloatingButtonIcon(R.drawable.ic_location_asking)
+    }
+    private fun changeFloatingButtonIconBlack(){
+        changeLocationFloatingButtonIconColor(Color.BLACK)
+        changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location_24)
+    }
+    private fun changeFloatingButtonIconBlue(){
+        changeLocationFloatingButtonIconColor(Color.BLUE)
+        changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location_24)
+    }
     private fun changeLocationFloatingButtonIconColor(@ColorInt color:Int){
         ImageViewCompat.setImageTintList(
             commuterFragmentBinding.floatingActionButtonLocation,
-            ColorStateList.valueOf(color)
-        );
+            ColorStateList.valueOf(color))
 
     }
     private fun changeLocationFloatingButtonIcon(@DrawableRes imageId:Int){
@@ -417,13 +464,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         LocationServices.getSettingsClient(requireContext())
             .checkLocationSettings(builder.build()).apply {
-                getLocationResult(this)
+                getLocationSettingResult(this)
             }
 
 
     }
 
-    private fun getLocationResult(result: Task<LocationSettingsResponse>) {
+    private fun getLocationSettingResult(result: Task<LocationSettingsResponse>) {
         result.addOnCompleteListener {
             try {
                 it.getResult(ApiException::class.java)
@@ -444,19 +491,37 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            REQUEST_CHECK_SETTING ->
-                when (resultCode) {
-                RESULT_OK -> {
-                    //toggleStartButton()
-                }
-                RESULT_CANCELED->{
+        getGPSDialogSettingResult(requestCode, resultCode)
+        getLocationSearchResult(requestCode, resultCode, data)
 
-                }
+
+    }
+
+    private fun getLocationSearchResult(requestCode: Int,resultCode: Int, data:Intent?){
+
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_AUTOCOMPLETE) {
+            val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
+            mapBoxMap?.let { map->
+                val source: GeoJsonSource = map.style?.getSourceAs(GEO_JSON_SOURCE_LAYER_ID)!!
+                source.setGeoJson(FeatureCollection.fromFeatures(arrayOf(Feature.fromJson(selectedCarmenFeature.toJson()))))
+                val location = LatLng((selectedCarmenFeature.geometry() as Point).latitude(),(selectedCarmenFeature.geometry() as Point).longitude())
+                moveCameraToUser(location,TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
             }
         }
     }
+    private fun getGPSDialogSettingResult(requestCode: Int,resultCode: Int){
+        when (requestCode) {
+            REQUEST_CHECK_SETTING ->
+                when (resultCode) {
+                    RESULT_OK -> {
+                        //toggleStartButton()
+                    }
+                    RESULT_CANCELED->{
 
+                    }
+                }
+        }
+    }
     override fun onMapReady(mapboxMap: MapboxMap) {
         mapBoxMap = mapboxMap.apply {
             uiSettings.isAttributionEnabled = false
@@ -471,7 +536,37 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         moveCameraToLastKnownLocation()
         addAllPolyLines()
     }
+    private fun initializeSearchFABLocation(){
+        searchLocationButton.setOnClickListener {
+            val autoCompleteIntent = PlaceAutocomplete.IntentBuilder()
+                .accessToken(requireContext().getString(R.string.MapsToken))
+                .placeOptions(buildPlaceOptions())
+                .build(requireActivity())
+            startActivityForResult(autoCompleteIntent, REQUEST_CODE_AUTOCOMPLETE);
+        }
+    }
+    private fun buildPlaceOptions() =  PlaceOptions.builder()
+        .backgroundColor(Color.parseColor("#EEEEEE"))
+        .limit(10)
+        .addInjectedFeature(home)
+        .addInjectedFeature(work)
+        .build(PlaceOptions.MODE_CARDS)
 
+    private fun addUserLocations() {
+        home = CarmenFeature.builder()
+            .text("Mapbox SF Office")
+            .geometry(Point.fromLngLat(-122.3964485, 37.7912561))
+            .placeName("50 Beale St, San Francisco, CA")
+            .id("mapbox-sf")
+            .properties(JsonObject())
+            .build()
+        work = CarmenFeature.builder().text("Mapbox DC Office")
+            .placeName("740 15th Street NW, Washington DC")
+            .geometry(Point.fromLngLat(-77.0338348, 38.899750))
+            .id("mapbox-dc")
+            .properties(JsonObject())
+            .build()
+    }
     private fun setMapZoomLevel() {
         mapBoxMap?.setMaxZoomPreference(MINIMUM_MAP_LEVEL)
     }
@@ -486,6 +581,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun addMapStyle(mapType: String) {
         mapBoxMap?.setStyle(mapType) { style ->
+            initializeSearchFABLocation()
+            addUserLocations()
+            style.addImage(MAP_MARKER_IMAGE_NAME,getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location_map_marker))
+            setUpSource(style)
+            setupLayer(style)
             mapBoxView?.let { mapView ->
                 TrafficPlugin(mapView, mapBoxMap!!, style).apply { setVisibility(true) }
                 mapBoxStyle = style
@@ -493,6 +593,18 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 mapMarkerSymbol = SymbolManager(mapView, mapBoxMap!!, mapBoxStyle!!)
             }
         }
+    }
+    private fun setUpSource(loadedMapStyle: Style) {
+        loadedMapStyle.addSource(GeoJsonSource(GEO_JSON_SOURCE_LAYER_ID))
+    }
+    private fun setupLayer(loadedMapStyle: Style) {
+        loadedMapStyle.addLayer(
+            SymbolLayer("SYMBOL_LAYER_ID", GEO_JSON_SOURCE_LAYER_ID).withProperties(
+                iconImage(MAP_MARKER_IMAGE_NAME),
+                iconOffset(arrayOf(0f, -8f)),
+                iconSize(MAP_MARKER_SIZE)
+            )
+        )
     }
     private fun changeMapType(customDialogBuilder: CustomDialogBuilder,mapType: String) {
         mapBoxMap?.setStyle(mapType){ mapBoxStyle = it }
@@ -511,14 +623,17 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun getMapType():String {return preferences.getString(FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,Style.TRAFFIC_DAY).toString()}
 
     override fun onMapLongClick(point: LatLng): Boolean {
+
         pointMapMarker(point)
         showBottomSheet()
+        hideBottomNavigation()
         return true
     }
 
     override fun onMapClick(point: LatLng): Boolean {
         mapMarkerSymbol.deleteAll()
-        hideBottomSheet()
+        hideStartingBottomSheet()
+        showBottomNavigation()
         return true
     }
 
@@ -624,7 +739,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             startButton.text = getString(R.string.stopButton)
             return
         }
-
         startButton.text = getString(R.string.startButton)
     }
 
@@ -639,7 +753,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             .zoom(zoomLevel)
             .tilt(CAMERA_TILT_DEGREES)
             .build()
-
     private fun addLatestPolyline() {
         if (hasExistingInnerPolyLines()) {
             val innerPolylinePosition = outerPolyline.last().size - 2
@@ -663,8 +776,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     }
-
-
     private fun hasExistingInnerAndOuterPolyLines() =
         outerPolyline.isNotEmpty() && outerPolyline.last().isNotEmpty()
 
@@ -704,16 +815,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
 
-
-
-
-
     override fun onMoveBegin(detector: MoveGestureDetector){}
 
     @SuppressLint("ResourceAsColor")
     override fun onMove(detector: MoveGestureDetector) {
-        changeLocationFloatingButtonIconColor(Color.BLACK)
-        changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location_24)
+        changeFloatingButtonIconBlack()
     }
 
     override fun onMoveEnd(detector: MoveGestureDetector) {}
