@@ -16,7 +16,8 @@ import com.example.commutingapp.utils.ui_utilities.ActivitySwitch;
 import com.example.commutingapp.viewmodels.EmailSentViewModel;
 import com.example.commutingapp.views.dialogs.DialogDirector;
 import com.example.commutingapp.views.menubuttons.NavigationButton;
-
+import static com.example.commutingapp.utils.others.Constants.DELAY_INTERVAL_FOR_MAIN_SCREEN_ACTIVITY;
+import static com.example.commutingapp.utils.others.Constants.DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG;
 
 
 public class EmailSent extends AppCompatActivity {
@@ -69,10 +70,10 @@ public class EmailSent extends AppCompatActivity {
 
     private void observeEmailVerification() {
         viewModel.sendEmailOnSuccess().observe(this, task -> {
-            dialogDirector.showSuccessDialog("New email sent", getString(resendEmailSuccessMessage));
+            dialogDirector.showSuccessDialog(getString(R.string.newEmailSent), getString(R.string.resendEmailSuccessMessage));
         });
         viewModel.sendEmailOnFail().observe(this, task -> {
-            dialogDirector.showWarningDialog("Please check your inbox", getString(resendEmailFailedMessage));
+            dialogDirector.showWarningDialog(getString(R.string.pleaseCheckYourInbox), getString(R.string.resendEmailFailedMessage));
         });
     }
 
@@ -100,7 +101,6 @@ public class EmailSent extends AppCompatActivity {
 
     private void showNoInternetActivity() {
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
-        long DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG = 2000;
         new Handler().postDelayed(() -> {
             dialogDirector.constructNoInternetDialog().setOnDismissListener(T->viewModel.refreshEmailSynchronously());
             progressbarBinding.circularProgressBar.setVisibility(View.INVISIBLE);
@@ -109,10 +109,9 @@ public class EmailSent extends AppCompatActivity {
 
     private void showMainScreenActivity() {
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
-        long DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG = 2150;
         new Handler().postDelayed(() -> {
             ActivitySwitch.INSTANCE.startActivityOf(this, MainScreen.class);
-        }, DELAY_INTERVAL_FOR_MAIN_SCREEN_DIALOG);
+        }, DELAY_INTERVAL_FOR_MAIN_SCREEN_ACTIVITY);
 
     }
 
@@ -133,13 +132,13 @@ public class EmailSent extends AppCompatActivity {
 
     private void displayWhenVerificationTimerStarted(long secondsLeft) {
         emailDialogBinding.ResendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.gray));
-        emailDialogBinding.ResendVerificationButton.setText("Resend verification in " + secondsLeft + "s");
+        emailDialogBinding.ResendVerificationButton.setText(new StringBuilder().append(getString(R.string.resendVerification)).append(" in").append(secondsLeft).append("s").toString());
         emailDialogBinding.ResendVerificationButton.setEnabled(false);
     }
 
     private void displayWhenVerificationTimerIsFinished() {
         emailDialogBinding.ResendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.blue2));
-        emailDialogBinding.ResendVerificationButton.setText("Resend verification");
+        emailDialogBinding.ResendVerificationButton.setText(getString(R.string.resendVerification));
         emailDialogBinding.ResendVerificationButton.setEnabled(true);
     }
 

@@ -12,7 +12,8 @@
     <string name="resendEmailFailedMessage">Please check your inbox. A verification email is already sent to your email address.</string>
     <string name="resendEmailSuccessMessage">New verification email has been sent to your email address.</string>
     <string name="sendingEmailErrorMessage">There was an error trying to send the verification email. Please try again.</string>
-
+    <string name="newEmailSent">New email sent</string>
+    <string name="pleaseCheckYourInbox">Please check your inbox</string>
 
     <!--Intro slider-->
     <string name="headerTextChooseDestinationMessage">Choose your destination</string>

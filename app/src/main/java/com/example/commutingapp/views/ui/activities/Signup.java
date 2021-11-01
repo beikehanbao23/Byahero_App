@@ -139,21 +139,18 @@ public class Signup extends AppCompatActivity {
 
         showLoading();
         viewModel.signUpAccount(userEmail,userConfirmPassword);
-
+        finishLoading();
     }
-
 
 
 
     private void showLoading() {
-
-        new Handler().postDelayed(() -> {
-            processLoading(false, View.VISIBLE);
-        },SIGN_UP_LOADING_INTERVAL);
-        processLoading(true,View.INVISIBLE);
+        processLoading(false, View.VISIBLE);
     }
 
-
+    private void finishLoading(){
+        processLoading(true,View.INVISIBLE);
+    }
 
     private void processLoading(boolean attributesVisibility, int progressBarVisibility) {
         circularProgressbarBinding.circularProgressBar.setVisibility(progressBarVisibility);

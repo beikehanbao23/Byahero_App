@@ -48,7 +48,9 @@ object Constants {
     const val INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 0
     const val TIMER_COUNTS: Long = 120000
     const val ONE_SECOND_TO_MILLIS: Long = 1000
-    const val REFRESH_EMAIL_SYNCHRONOUSLY_INTERVAL:Long = 2200
+    const val REFRESH_EMAIL_SYNCHRONOUSLY_INTERVAL:Long = 800
+    const val DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG = 1500
+    const val DELAY_INTERVAL_FOR_MAIN_SCREEN_ACTIVITY = 300
     const val DEFAULT_INDICATOR_POSITION = 0
     const val SLIDER_ITEM_COUNTS = 4
     const val USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS = 8
@@ -58,6 +60,8 @@ object Constants {
     const val KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE = "IntroSlider_StateOfSlides"
     const val REQUEST_CODE_AUTOCOMPLETE = 1
     const val GEO_JSON_SOURCE_LAYER_ID = "geojsonSourceLayerId"
+
+    const val SYMBOL_LAYER_ID = "SYMBOL_LAYER_ID"
 
 
 }
