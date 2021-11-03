@@ -1,4 +1,15 @@
 <resources>
+    <style name="already_hav">
+
+        <item name="android:textSize">
+            15sp
+        </item>
+
+        <item name="android:textColor">
+            #800C0808
+        </item>
+
+    </style>
 
 
 </resources>

@@ -60,8 +60,7 @@
     <string name="connectUsing"> Or connect using</string>
     <string name="googleButton">Google</string>
     <string name="facebookButton">Facebook</string>
-    <string name="askIfDontHaveAccount">Don\'t have an account?</string>
-    <string name="askToSignUpHere">Sign up here</string>
+    <string name="askIfDontHaveAccount">Don\'t have an account? Sign up here</string>
     <string name="askToLoginAccount">Login your account to Byahero</string>
 
 
@@ -94,5 +93,8 @@
     <string name="neonStyle">Neon</string>
     <string name="satelliteStyle">Satellite</string>
     <string name="mapTypeTitle">Map Type</string>
+
+
+    <string name="alreadyHaveAnAccount">Already have an account? Log In</string>
 
 </resources>
