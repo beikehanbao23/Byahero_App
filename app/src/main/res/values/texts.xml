@@ -47,16 +47,15 @@
     <string name="confirmPassword">Confirm Password</string>
     <string name="passwordTextView">Password</string>
     <string name="emailTextView">Email</string>
-    <string name="loginHere">Login here</string>
     <string name="letsGetStarted">Let\'s Get Started!</string>
     <string name="createAnAccountInByahero">Create an account to Byahero</string>
-    <string name="askIfHaveAccount">Already have an account?</string>
-    <string name="buttonCreate">Create</string>
+    <string name="askIfHaveAccount">Already have an account? Login Here</string>
+    <string name="buttonCreate">Sign Up</string>
 
 
     <!--Sign In XML -->
     <string name="welcomeMessage">Welcome to Byahero!</string>
-    <string name="loginButton">Log in</string>
+    <string name="loginButton">Sign In</string>
     <string name="connectUsing"> Or connect using</string>
     <string name="googleButton">Google</string>
     <string name="facebookButton">Facebook</string>

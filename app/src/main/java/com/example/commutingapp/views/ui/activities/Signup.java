@@ -5,6 +5,7 @@ import static com.example.commutingapp.utils.others.Constants.SIGN_UP_LOADING_IN
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,6 +52,11 @@ public class Signup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initializeAttributes();
         subscribeToObservers();
+        highLightSpecificText();
+    }
+    private void highLightSpecificText(){
+        String text = "Already have an account?"+"<b>" +" Login here "+ "</b> " ;
+        activitySignupBinding.TextViewAlreadyHaveAccount.setText(Html.fromHtml(text));
     }
     private void subscribeToObservers(){
         observeEmailVerification();
@@ -158,7 +164,6 @@ public class Signup extends AppCompatActivity {
         activitySignupBinding.editTextSignUpPassword.setEnabled(attributesVisibility);
         activitySignupBinding.editTextSignUpConfirmPassword.setEnabled(attributesVisibility);
         activitySignupBinding.TextViewAlreadyHaveAccount.setEnabled(attributesVisibility);
-        activitySignupBinding.TextViewLoginHere.setEnabled(attributesVisibility);
         activitySignupBinding.BackButton.setEnabled(attributesVisibility);
         activitySignupBinding.CreateButton.setEnabled(attributesVisibility);
     }

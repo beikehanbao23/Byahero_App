@@ -87,6 +87,7 @@
         android:onClick="resendEmailIsClicked"
         android:text="@string/resendVerification"
         android:gravity="center"
+        android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/blue2"
         android:textSize="19.5sp"

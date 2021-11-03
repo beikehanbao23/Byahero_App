@@ -8,7 +8,7 @@
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerSliders"
-        android:layout_width="361dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="140dp"
         app:layout_constraintBottom_toBottomOf="parent"

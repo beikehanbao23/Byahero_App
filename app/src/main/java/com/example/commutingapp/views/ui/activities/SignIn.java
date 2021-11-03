@@ -5,6 +5,7 @@ import static com.example.commutingapp.R.string.incorrectEmailOrPasswordMessage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -78,10 +79,13 @@ public class SignIn extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         facebookCallBackManager = CallbackManager.Factory.create();
         removeFacebookUserAccountPreviousToken();
-
+        highLightSpecificText();
     }
 
-
+    private void highLightSpecificText(){
+        String text = "Don't have an account? "+"<b>" +" Sign up here "+ "</b> " ;
+        activitySignInBinding.TextViewDontHaveAnAccount.setText(Html.fromHtml(text));
+    }
     private void initializeAttributes() {
 
 
@@ -336,7 +340,7 @@ public class SignIn extends AppCompatActivity {
         activitySignInBinding.FacebookButton.setEnabled(visible);
         activitySignInBinding.GoogleButton.setEnabled(visible);
         activitySignInBinding.TextViewDontHaveAnAccount.setEnabled(visible);
-        activitySignInBinding.TextViewSignUp.setEnabled(visible);
+
 
     }
 
