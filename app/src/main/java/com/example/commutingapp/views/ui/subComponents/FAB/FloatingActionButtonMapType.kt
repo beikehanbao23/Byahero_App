@@ -12,7 +12,7 @@ import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.mapbox.mapboxsdk.maps.Style
 
 class FloatingActionButtonMapType(private val context: Context) {
-    private  var preferences: SharedPreferences = context.getSharedPreferences(
+    private var preferences: SharedPreferences = context.getSharedPreferences(
         Constants.FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,
         Context.MODE_PRIVATE)
 
@@ -35,7 +35,7 @@ class FloatingActionButtonMapType(private val context: Context) {
         }
     }
 
-    private fun getMapTypeButtons():HashMap<String,Int> =
+     fun getMapTypeButtons():HashMap<String,Int> =
         HashMap<String,Int>().apply {
             this[Style.TRAFFIC_DAY] = R.id.defaultMapStyleButton
             this[Style.TRAFFIC_NIGHT] = R.id.trafficNightMapStyleButton

@@ -238,7 +238,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION).apply {
@@ -252,8 +251,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         requireActivity().unregisterReceiver(locationSwitchStateReceiver())
     }
 
-    private fun locationSwitchStateReceiver()=
-        object: BroadcastReceiver(){
+    private fun locationSwitchStateReceiver()= object: BroadcastReceiver(){
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onReceive(context: Context?, intent: Intent?) {
                 if(LocationManager.PROVIDERS_CHANGED_ACTION == intent?.action){
@@ -265,48 +263,20 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     private fun setMapTypeListeners(customDialogBuilder: CustomDialogBuilder) {
-        customDialogBuilder.apply {
 
-            findViewById<View>(R.id.defaultMapStyleButton)?.setOnClickListener {
-                mapTypeFAB.changeMapType(this,Style.TRAFFIC_DAY)
-                updateMapStyle(Style.TRAFFIC_DAY)
-            }
-            findViewById<View>(R.id.trafficNightMapStyleButton)?.setOnClickListener {
-                mapTypeFAB.changeMapType(this,Style.TRAFFIC_NIGHT)
-                updateMapStyle(Style.TRAFFIC_NIGHT)
-            }
-            findViewById<View>(R.id.darkMapStyleButton)?.setOnClickListener {
-                mapTypeFAB.changeMapType(this,Style.DARK)
-                updateMapStyle(Style.DARK)
-            }
-            findViewById<View>(R.id.streetMapStyleButton)?.setOnClickListener {
-                mapTypeFAB.changeMapType(this,Style.MAPBOX_STREETS)
-                updateMapStyle(Style.MAPBOX_STREETS)
-            }
-            findViewById<View>(R.id.satelliteStreetsMapStyleButton)?.setOnClickListener {
-                mapTypeFAB.changeMapType(this,Style.SATELLITE_STREETS)
-                updateMapStyle(Style.SATELLITE_STREETS)
-            }
-            findViewById<View>(R.id.outdoorsMapStyleButton)?.setOnClickListener {
-                mapTypeFAB.changeMapType(this,Style.OUTDOORS)
-                updateMapStyle(Style.OUTDOORS)
-            }
-            findViewById<View>(R.id.lightMapStyle)?.setOnClickListener {
-                mapTypeFAB.changeMapType(this,Style.LIGHT)
-                updateMapStyle(Style.LIGHT)
-            }
-            findViewById<View>(R.id.neonMapStyleButton)?.setOnClickListener {
-                mapTypeFAB.changeMapType(this,MAP_STYLE)
-                updateMapStyle(MAP_STYLE)
-            }
-            findViewById<View>(R.id.satelliteMapStyleButton)?.setOnClickListener {
-                mapTypeFAB.changeMapType(this,Style.SATELLITE)
-                updateMapStyle(Style.SATELLITE)
-            }
+
+        customDialogBuilder.also { mapTypeListener->
+            mapTypeFAB.getMapTypeButtons().forEach { hashMap->
+               mapTypeListener.findViewById<View>(hashMap.value )?.setOnClickListener {
+                   mapTypeFAB.changeMapType(mapTypeListener,hashMap.key)
+                   updateMapStyle(hashMap.key)
+               }
+           }
         }.also {
             recoverMissingMapMarker()
         }
     }
+
     private fun updateMapStyle(style:String){
         mapBoxMap?.setStyle(style){ mapStyle -> mapBoxStyle = mapStyle}
     }
@@ -624,6 +594,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             .zoom(zoomLevel)
             .tilt(CAMERA_TILT_DEGREES)
             .build()
+
     private fun addLatestPolyline() {
         if (hasExistingInnerPolyLines()) {
             val innerPolylinePosition = outerPolyline.last().size - 2
