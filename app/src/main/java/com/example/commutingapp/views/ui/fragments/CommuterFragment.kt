@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.collection.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.commutingapp.R
@@ -19,21 +18,15 @@ import com.example.commutingapp.data.service.TrackingService
 import com.example.commutingapp.data.service.innerPolyline
 import com.example.commutingapp.databinding.CommuterFragmentBinding
 import com.example.commutingapp.utils.InternetConnection.Connection
-import com.example.commutingapp.utils.others.BitmapConvert.getBitmapFromVectorDrawable
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.ACTION_PAUSE_SERVICE
 import com.example.commutingapp.utils.others.Constants.ACTION_START_OR_RESUME_SERVICE
-import com.example.commutingapp.utils.others.Constants.CAMERA_TILT_DEGREES
 import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LATITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_MAP_ZOOM
 import com.example.commutingapp.utils.others.Constants.ULTRA_FAST_CAMERA_ANIMATION_DURATION
-import com.example.commutingapp.utils.others.Constants.FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE
 import com.example.commutingapp.utils.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
-import com.example.commutingapp.utils.others.Constants.MAP_MARKER_IMAGE_NAME
-import com.example.commutingapp.utils.others.Constants.MAP_MARKER_SIZE
-import com.example.commutingapp.utils.others.Constants.MINIMUM_MAP_LEVEL
 import com.example.commutingapp.utils.others.Constants.POLYLINE_COLOR
 import com.example.commutingapp.utils.others.Constants.POLYLINE_WIDTH
 import com.example.commutingapp.utils.others.Constants.REQUEST_CHECK_SETTING
@@ -50,20 +43,10 @@ import com.google.android.gms.common.api.ResolvableApiException
 
 import com.google.android.gms.tasks.Task
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
-import com.mapbox.mapboxsdk.camera.CameraPosition
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.LocationComponent
-import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
-import com.mapbox.mapboxsdk.location.LocationComponentOptions
 import com.mapbox.mapboxsdk.location.modes.RenderMode
-import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback
-import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
-import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -71,52 +54,39 @@ import android.content.Intent
 
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
-import android.graphics.Color
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 import com.mapbox.android.gestures.MoveGestureDetector
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
-import com.google.gson.JsonObject
 
-import com.mapbox.api.geocoding.v5.models.CarmenFeature
-
-import com.mapbox.geojson.Point
-import com.example.commutingapp.utils.others.Constants.GEO_JSON_SOURCE_LAYER_ID
 import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
-import com.mapbox.mapboxsdk.style.layers.SymbolLayer
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 
 
 import androidx.appcompat.widget.AppCompatButton
-import com.example.commutingapp.utils.others.Constants.SYMBOL_LAYER_ID
+import com.example.commutingapp.views.ui.mapComponents.maps.MapBox
+import com.example.commutingapp.views.ui.mapComponents.maps.MapWrapper
 import com.example.commutingapp.views.ui.subComponents.BottomNavigation
 import com.example.commutingapp.views.ui.subComponents.Component
 import com.example.commutingapp.views.ui.subComponents.FAB.FloatingActionButtonLocation
 import com.example.commutingapp.views.ui.subComponents.FAB.FloatingActionButtonMapType
 import com.google.android.gms.location.*
-import com.mapbox.geojson.Feature
-import com.mapbox.geojson.FeatureCollection
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 
 import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
-import java.lang.RuntimeException
 
 
 @AndroidEntryPoint
 class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
-    OnMapReadyCallback, MapboxMap.OnMapLongClickListener, MapboxMap.OnMapClickListener,MapboxMap.OnMoveListener {
+     MapboxMap.OnMapLongClickListener, MapboxMap.OnMapClickListener,MapboxMap.OnMoveListener {
 
     private val mainViewModel: MainViewModel by viewModels()
-    private var mapBoxMap: MapboxMap? = null
+
     private var isTracking = false
     private var outerPolyline = mutableListOf<innerPolyline>()
-    private var mapBoxView: MapView? = null
+
 
     private lateinit var startButton: Button
     private lateinit var directionButton: Button
@@ -125,17 +95,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var dialogDirector: DialogDirector
     private lateinit var commuterFragmentBinding: CommuterFragmentBinding
     private lateinit var searchLocationButton: AppCompatButton
-    private var mapBoxStyle: Style? = null
-    private lateinit var mapMarkerSymbol: SymbolManager
     private lateinit var notifyListener: FragmentToActivity
-    private lateinit var home: CarmenFeature
-    private lateinit var work: CarmenFeature
-    private lateinit var preferences:SharedPreferences
     private lateinit var normalBottomSheet: Component
     private lateinit var trackingBottomSheet:Component
     private lateinit var bottomNavigation:Component
     private lateinit var locationFAB:FloatingActionButtonLocation
     private lateinit var mapTypeFAB:FloatingActionButtonMapType
+    private lateinit var map:MapWrapper<MapboxMap>
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         commuterFragmentBinding = CommuterFragmentBinding.inflate(inflater,container,false)
         return commuterFragmentBinding.root
@@ -149,17 +115,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomNavigation.show()
         trackingBottomSheet.hide()
         provideClickListeners()
-        setupMapBoxView(savedInstanceState)
+        map.setupMap(savedInstanceState,mapTypeFAB.loadMapType())
         subscribeToObservers()
-        recoverMissingMapMarker()
+        map.recoverMissingMapMarker()
         locationFAB.updateLocationFloatingButtonIcon()
     }
-    private fun recoverMissingMapMarker(){
 
-        mapBoxView?.addOnStyleImageMissingListener {
-            setupMapMarkerImage()
-        }
-    }
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
@@ -173,9 +134,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
      */
 
     private fun initializeComponents(view: View) {
-        preferences = requireContext().getSharedPreferences(FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,Context.MODE_PRIVATE)
         dialogDirector = DialogDirector(requireActivity())
-        mapBoxView = view.findViewById(R.id.googleMapView)
+
         startButton = view.findViewById(R.id.startButton)
         directionButton = view.findViewById(R.id.directionsButton)
         saveButton = view.findViewById(R.id.saveButton)
@@ -186,15 +146,23 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomNavigation = Component(BottomNavigation(notifyListener))
         locationFAB = FloatingActionButtonLocation(commuterFragmentBinding,requireContext())
         mapTypeFAB = FloatingActionButtonMapType(requireContext())
-    }
-    private fun setupMapBoxView(savedInstanceState: Bundle?) {
-        mapBoxView?.apply {
-            onCreate(savedInstanceState)
-            isClickable = true
-        }?.also {
-            it.getMapAsync(this)
+        val mapbox = object : MapBox(view,requireActivity()){
+            override fun onMapReady(mapboxMap: MapboxMap) {
+                mapboxMap.addOnMapLongClickListener(this@CommuterFragment)
+                mapboxMap.addOnMapClickListener(this@CommuterFragment)
+                mapboxMap.addOnMoveListener(this@CommuterFragment)
+
+                moveCameraToLastKnownLocation()
+                addAllPolyLines()
+            }
+
+            override fun onSearchCompleted(intent: Intent) {
+            startActivityForResult(intent,REQUEST_CODE_AUTOCOMPLETE)
+            }
         }
+        map = MapWrapper(mapbox)
     }
+
 
     private fun provideClickListeners() {
         provideMapTypeDialogListener()
@@ -216,10 +184,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideLocationButtonListener(){
         commuterFragmentBinding.floatingActionButtonLocation.setOnClickListener {
             if(requestPermissionGranted()) {
-                mapBoxMap?.locationComponent?.lastKnownLocation?.let { location ->
-                    moveCameraToUser(LatLng(location.latitude, location.longitude), CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION)
+                map.getLastKnownLocation()?.let { location -> map.moveCameraToUser(location, CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION) }
                     locationFAB.changeFloatingButtonIconBlue()
-                }
+
                 if (Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())) {
                     checkLocationSetting().apply {
                         this.addOnCompleteListener {
@@ -249,7 +216,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
             }
         }
-
     private fun provideDirectionButtonListener(){
         directionButton.setOnClickListener {
 
@@ -274,12 +240,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             requireActivity().registerReceiver(locationSwitchStateReceiver(), this)
         }
     }
-
     override fun onDestroy() {
         super.onDestroy()
         requireActivity().unregisterReceiver(locationSwitchStateReceiver())
     }
-
     private fun locationSwitchStateReceiver()= object: BroadcastReceiver(){
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -289,33 +253,27 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
 
     }
-
-
     private fun setMapTypeListeners(customDialogBuilder: CustomDialogBuilder) {
-
-
         customDialogBuilder.also { mapTypeListener->
             mapTypeFAB.getMapTypeButtons().forEach { hashMap->
                mapTypeListener.findViewById<View>(hashMap.value )?.setOnClickListener {
                    mapTypeFAB.changeMapType(mapTypeListener,hashMap.key)
-                   updateMapStyle(hashMap.key)
+                   map.updateMapStyle(hashMap.key)
                }
            }
         }.also {
-            recoverMissingMapMarker()
+            map.recoverMissingMapMarker()
         }
     }
 
-    private fun updateMapStyle(style:String){
-        mapBoxMap?.setStyle(style){ mapStyle -> mapBoxStyle = mapStyle}
-    }
+
 
     @SuppressLint("MissingPermission")
     private fun moveCameraToLastKnownLocation() {
         LocationServices.getFusedLocationProviderClient(requireActivity()).apply {
             lastLocation.addOnSuccessListener {
                 it?.let { latLng ->
-                    moveCameraToUser(
+                    map.moveCameraToUser(
                         LatLng(latLng.latitude, latLng.longitude),
                         LAST_KNOWN_LOCATION_MAP_ZOOM,
                         ULTRA_FAST_CAMERA_ANIMATION_DURATION
@@ -323,7 +281,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 }
             }
             lastLocation.addOnFailureListener {
-                moveCameraToUser(
+                map.moveCameraToUser(
                     LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), DEFAULT_MAP_ZOOM,
                     DEFAULT_CAMERA_ANIMATION_DURATION
                 )
@@ -354,16 +312,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
 
-    private fun getLocationSettingResult(result: Task<LocationSettingsResponse>) {
-        result.addOnCompleteListener {
-            try {
-                it.getResult(ApiException::class.java)
-
-            } catch (e: ApiException) {
-
-            }
-        }
-    }
     private fun handleLocationResultException(e: ApiException) {
         when (e.statusCode) {
             LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
@@ -374,22 +322,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         getGPSDialogSettingResult(requestCode, resultCode)
-        getLocationSearchResult(requestCode, resultCode, data)
-
+        map.getLocationSearchResult(requestCode, resultCode, data)
 
     }
-    private fun getLocationSearchResult(requestCode: Int,resultCode: Int, data:Intent?){
 
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_AUTOCOMPLETE) {
-            val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
-            mapBoxMap?.let { map->
-                val source: GeoJsonSource = map.style?.getSourceAs(GEO_JSON_SOURCE_LAYER_ID)!!
-                source.setGeoJson(FeatureCollection.fromFeatures(arrayOf(Feature.fromJson(selectedCarmenFeature.toJson()))))
-                val location = LatLng((selectedCarmenFeature.geometry() as Point).latitude(),(selectedCarmenFeature.geometry() as Point).longitude())
-                moveCameraToUser(location,TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
-            }
-        }
-    }
     private fun getGPSDialogSettingResult(requestCode: Int,resultCode: Int){
         when (requestCode) {
             REQUEST_CHECK_SETTING ->
@@ -403,163 +339,39 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 }
         }
     }
-    override fun onMapReady(mapboxMap: MapboxMap) {
-        mapBoxMap = mapboxMap.apply {
-            uiSettings.isAttributionEnabled = false
-            uiSettings.isLogoEnabled = false
-            uiSettings.setCompassMargins(0,480,50,0)
-        }
 
-        mapBoxMap?.addOnMapLongClickListener(this)
-        mapBoxMap?.addOnMapClickListener(this)
-        mapBoxMap?.addOnMoveListener(this)
-        setMapZoomLevel()
-        addMapStyle(mapTypeFAB.loadMapType())
-        moveCameraToLastKnownLocation()
-        addAllPolyLines()
-    }
-    private fun initializeSearchFABLocation(){
-        searchLocationButton.setOnClickListener {
-            val autoCompleteIntent = PlaceAutocomplete.IntentBuilder()
-                .accessToken(requireContext().getString(R.string.MapsToken))
-                .placeOptions(buildPlaceOptions())
-                .build(requireActivity())
-            startActivityForResult(autoCompleteIntent, REQUEST_CODE_AUTOCOMPLETE);
-        }
-    }
-    private fun buildPlaceOptions() =  PlaceOptions.builder()
-        .backgroundColor(Color.parseColor("#EEEEEE"))
-        .limit(10)
-        .addInjectedFeature(home)
-        .addInjectedFeature(work)
-        .build(PlaceOptions.MODE_CARDS)
 
-    private fun addUserLocations() {
-        home = CarmenFeature.builder()
-            .text("Mapbox SF Office")
-            .geometry(Point.fromLngLat(-122.3964485, 37.7912561))
-            .placeName("50 Beale St, San Francisco, CA")
-            .id("mapbox-sf")
-            .properties(JsonObject())
-            .build()
-        work = CarmenFeature.builder().text("Mapbox DC Office")
-            .placeName("740 15th Street NW, Washington DC")
-            .geometry(Point.fromLngLat(-77.0338348, 38.899750))
-            .id("mapbox-dc")
-            .properties(JsonObject())
-            .build()
-    }
-    private fun setMapZoomLevel() {
-        mapBoxMap?.setMaxZoomPreference(MINIMUM_MAP_LEVEL)
-    }
 
     private fun addAllPolyLines() {
         outerPolyline.forEach {
             customPolylineAppearance().addAll(it).apply {
-                mapBoxMap?.addPolyline(this)
+                map.getMapInstance()?.addPolyline(this)
             }
         }
-    }
-
-    private fun addMapStyle(mapType: String) {
-        mapBoxMap?.setStyle(mapType) { style ->
-            mapBoxView?.let { mapView ->
-                TrafficPlugin(mapView, mapBoxMap!!, style).apply { setVisibility(true) }
-                mapBoxStyle = style
-                createLocationPuck(style)
-                mapMarkerSymbol = SymbolManager(mapView, mapBoxMap!!, mapBoxStyle!!)
-            }
-            initializeSearchFABLocation()
-            addUserLocations()
-            setupMapMarkerImage()
-            setUpSource(style)
-            setupLayer(style)
-        }
-    }
-    private fun setUpSource(loadedMapStyle: Style) {
-        loadedMapStyle.addSource(GeoJsonSource(GEO_JSON_SOURCE_LAYER_ID))
-    }
-    private fun setupLayer(loadedMapStyle: Style) {
-        loadedMapStyle.addLayer(
-            SymbolLayer(SYMBOL_LAYER_ID, GEO_JSON_SOURCE_LAYER_ID).withProperties(
-                iconImage(MAP_MARKER_IMAGE_NAME),
-                iconOffset(arrayOf(0f, -8f)),
-                iconSize(MAP_MARKER_SIZE)
-            )
-        )
     }
 
 
     override fun onMapLongClick(point: LatLng): Boolean {
 
-        pointMapMarker(point)
+        map.pointMapMarker(point)
         normalBottomSheet.show()
         bottomNavigation.hide()
         return true
     }
     override fun onMapClick(point: LatLng): Boolean {
-        mapMarkerSymbol.deleteAll()
+        map.deleteAllMapMarker()
         normalBottomSheet.hide()
         bottomNavigation.show()
         return true
     }
 
-    private fun setupMapMarkerImage(){
-        mapBoxStyle?.addImage(MAP_MARKER_IMAGE_NAME, getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_location_map_marker)
-        )
-
-    }
-    private fun pointMapMarker(latLng: LatLng) {
-        if (hasExistingMapMarker()) {
-            mapMarkerSymbol.deleteAll()
-        }
-        createMapMarker(latLng)
-        mapBoxMap?.cameraPosition?.apply {
-            moveCameraToUser(latLng, zoom, DEFAULT_CAMERA_ANIMATION_DURATION)
-        }
-
-    }
-
-    private fun hasExistingMapMarker() = mapMarkerSymbol.annotations.size != 0
-
-    private fun createMapMarker(latLng: LatLng) {
-        mapMarkerSymbol.create(
-            SymbolOptions()
-                .withLatLng(latLng)
-                .withIconImage(MAP_MARKER_IMAGE_NAME)
-                .withIconSize(MAP_MARKER_SIZE)
-        )
-
-    }
 
 
-    private fun createLocationPuck(style: Style) {
-        LocationComponentOptions.builder(requireContext())
-            .accuracyAlpha(0.3f)
-            .compassAnimationEnabled(true)
-            .accuracyAnimationEnabled(true)
-            .build().also { componentOptions ->
-                mapBoxMap?.locationComponent?.apply {
-                    activateLocationComponent(LocationComponentActivationOptions.builder(requireContext(), style)
-                            .locationComponentOptions(componentOptions)
-                            .build())
-                    createComponentsLocation(this)
-                }
-            }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun createComponentsLocation(locationComponent: LocationComponent) {
-        locationComponent.apply {
-            isLocationComponentEnabled = true
-            renderMode = RenderMode.COMPASS
-        }
-    }
 
     private fun subscribeToObservers() {
         TrackingService().isCurrentlyTracking().observe(viewLifecycleOwner) {
             isTracking = it
-            mapBoxStyle?.let { style -> createLocationPuck(style) }
+            map.createLocationPuck()
             updateButtons()
 
         }
@@ -569,7 +381,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
             addLatestPolyline()
             if (hasExistingInnerAndOuterPolyLines()) {
-                moveCameraToUser(
+                map.moveCameraToUser(
                     outerPolyline.last().last(), TRACKING_MAP_ZOOM,
                     DEFAULT_CAMERA_ANIMATION_DURATION
                 )
@@ -609,16 +421,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
 
-    private fun moveCameraToUser(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int) {
-        mapBoxMap?.animateCamera(CameraUpdateFactory.newCameraPosition(buildCameraPosition(latLng,zoomLevel)), cameraAnimationDuration)
-    }
 
-    private fun buildCameraPosition(latLng: LatLng, zoomLevel: Double): CameraPosition =
-        CameraPosition.Builder()
-            .target(latLng)
-            .zoom(zoomLevel)
-            .tilt(CAMERA_TILT_DEGREES)
-            .build()
 
     private fun addLatestPolyline() {
         if (hasExistingInnerPolyLines()) {
@@ -629,7 +432,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             customPolylineAppearance()
                 .add(preLastLatLng)
                 .add(lastLatLng).apply {
-                    mapBoxMap?.addPolyline(this)
+                    map.getMapInstance()?.addPolyline(this)
                 }
         }
     }
@@ -684,7 +487,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     override fun onMoveBegin(detector: MoveGestureDetector){}
 
-    @SuppressLint("ResourceAsColor")
+
     override fun onMove(detector: MoveGestureDetector) {
         locationFAB.changeFloatingButtonIconBlack()
     }
