@@ -14,7 +14,6 @@ import android.widget.Button
 import androidx.collection.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.commutingapp.BuildConfig.MAP_STYLE
 import com.example.commutingapp.R
 import com.example.commutingapp.data.service.TrackingService
 import com.example.commutingapp.data.service.innerPolyline
@@ -72,14 +71,11 @@ import android.content.Intent
 
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
-import android.content.res.ColorStateList
 import android.graphics.Color
 
 import android.os.Build
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
+import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.widget.ImageViewCompat
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 import com.mapbox.android.gestures.MoveGestureDetector
@@ -97,7 +93,6 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 
 
 import androidx.appcompat.widget.AppCompatButton
-import com.example.commutingapp.utils.others.Constants.COMMUTER_DATABASE_FILE_NAME
 import com.example.commutingapp.utils.others.Constants.SYMBOL_LAYER_ID
 import com.example.commutingapp.views.ui.subComponents.BottomNavigation
 import com.example.commutingapp.views.ui.subComponents.Component
@@ -110,7 +105,7 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 
 import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.lang.RuntimeException
 
 
 @AndroidEntryPoint
@@ -160,6 +155,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         locationFAB.updateLocationFloatingButtonIcon()
     }
     private fun recoverMissingMapMarker(){
+
         mapBoxView?.addOnStyleImageMissingListener {
             setupMapMarkerImage()
         }
@@ -201,42 +197,75 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     private fun provideClickListeners() {
+        provideMapTypeDialogListener()
+        provideLocationButtonListener()
+        provideStartButtonListener()
+        provideDirectionButtonListener()
+        provideSaveButtonListener()
+        provideShareButtonListener()
+
+    }
+    private fun provideMapTypeDialogListener(){
         commuterFragmentBinding.floatingActionButtonChooseMap.setOnClickListener {
             dialogDirector.constructChooseMapDialog().apply {
                 mapTypeFAB.createMapTypeIndicator(this)
                 setMapTypeListeners(this)
                 show()
             } }
-
+    }
+    private fun provideLocationButtonListener(){
         commuterFragmentBinding.floatingActionButtonLocation.setOnClickListener {
-            mapBoxMap?.locationComponent?.lastKnownLocation?.let { location ->
-                moveCameraToUser(LatLng(location.latitude, location.longitude), CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION)
-                locationFAB.changeFloatingButtonIconBlue()
-            }
-            if(Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())){
-                checkLocationSetting()
+            if(requestPermissionGranted()) {
+                mapBoxMap?.locationComponent?.lastKnownLocation?.let { location ->
+                    moveCameraToUser(LatLng(location.latitude, location.longitude), CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION)
+                    locationFAB.changeFloatingButtonIconBlue()
+                }
+                if (Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())) {
+                    checkLocationSetting().apply {
+                        this.addOnCompleteListener {
+                            try{ it.getResult(ApiException::class.java) }catch (e:ApiException){ }
+                        }
+                    }
+                }
             }
         }
+    }
+    private fun provideStartButtonListener(){
         startButton.setOnClickListener {
             if (requestPermissionGranted()) {
                 trackingBottomSheet.show()
                 normalBottomSheet.hide()
                 bottomNavigation.hide()
                 locationFAB.hideLocationFloatingButton()
-                checkLocationSetting()
+                checkLocationSetting().addOnCompleteListener {
+                       try{
+                           it.getResult(ApiException::class.java)
+                           toggleStartButton()
+                       }catch (e:ApiException){
+                         handleLocationResultException(e)
+                       }
+                }
+
+            }
             }
         }
+
+    private fun provideDirectionButtonListener(){
         directionButton.setOnClickListener {
 
         }
+    }
+    private fun provideSaveButtonListener(){
         saveButton.setOnClickListener {
 
         }
+    }
+    private fun provideShareButtonListener(){
         shareButton.setOnClickListener {
 
         }
-
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -281,8 +310,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         mapBoxMap?.setStyle(style){ mapStyle -> mapBoxStyle = mapStyle}
     }
 
-
-
     @SuppressLint("MissingPermission")
     private fun moveCameraToLastKnownLocation() {
         LocationServices.getFusedLocationProviderClient(requireActivity()).apply {
@@ -316,26 +343,24 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     var locationRequest: LocationRequest = request
 
-    private fun checkLocationSetting() {
 
+    private fun checkLocationSetting():Task<LocationSettingsResponse>{
         val builder = LocationSettingsRequest.Builder()
             .addLocationRequest(request)
             .setAlwaysShow(true)
 
-        LocationServices.getSettingsClient(requireContext())
-            .checkLocationSettings(builder.build()).apply {
-                getLocationSettingResult(this)
-            }
-
+        return LocationServices.getSettingsClient(requireContext())
+            .checkLocationSettings(builder.build())
 
     }
+
     private fun getLocationSettingResult(result: Task<LocationSettingsResponse>) {
         result.addOnCompleteListener {
             try {
                 it.getResult(ApiException::class.java)
 
             } catch (e: ApiException) {
-                handleLocationResultException(e)
+
             }
         }
     }
@@ -370,7 +395,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             REQUEST_CHECK_SETTING ->
                 when (resultCode) {
                     RESULT_OK -> {
-                        //toggleStartButton()
+                        toggleStartButton()
                     }
                     RESULT_CANCELED->{
 
