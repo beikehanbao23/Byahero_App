@@ -111,6 +111,7 @@ open class TrackingService : LifecycleService() {
                 ACTION_START_OR_RESUME_SERVICE -> {
                     if (isFirstRun) {
                         startForegroundService()
+                        startService()
                         isFirstRun = false // todo fix startTimer
                         return@let
                     }
