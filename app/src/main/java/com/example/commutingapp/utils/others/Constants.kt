@@ -36,7 +36,7 @@ object Constants {
     const val POLYLINE_COLOR = Color.BLUE
     const val POLYLINE_WIDTH = 5.0f
     const val MAP_MARKER_SIZE = 2.0f
-    const val MAP_MARKER_IMAGE_NAME = "PIN"
+    const val MAP_MARKER_IMAGE_ID = "PIN"
     const val REGEX_NUMBER_VALUE="[0-9]"
     const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"
     @Suppress("Warnings")
@@ -60,7 +60,8 @@ object Constants {
     const val KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE = "IntroSlider_StateOfSlides"
     const val REQUEST_CODE_AUTOCOMPLETE = 1
     const val GEO_JSON_SOURCE_LAYER_ID = "geojsonSourceLayerId"
-
+    const val ICON_SOURCE_ID = "icon-sourceID";
+    const val ICON_LAYER_ID = "icon-layerID";
     const val SYMBOL_LAYER_ID = "SYMBOL_LAYER_ID"
 
 

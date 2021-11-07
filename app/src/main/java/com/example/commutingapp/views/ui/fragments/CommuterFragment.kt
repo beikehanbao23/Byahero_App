@@ -44,8 +44,6 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.tasks.Task
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.mapboxsdk.location.LocationComponent
-import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -65,8 +63,8 @@ import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
 
 
 import androidx.appcompat.widget.AppCompatButton
-import com.example.commutingapp.views.ui.mapComponents.maps.MapBox
-import com.example.commutingapp.views.ui.mapComponents.maps.MapWrapper
+import com.example.commutingapp.views.ui.subComponents.maps.MapBox
+import com.example.commutingapp.views.ui.subComponents.maps.MapWrapper
 import com.example.commutingapp.views.ui.subComponents.BottomNavigation
 import com.example.commutingapp.views.ui.subComponents.Component
 import com.example.commutingapp.views.ui.subComponents.FAB.FloatingActionButtonLocation
@@ -76,6 +74,7 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 
 import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
+import com.mapbox.maps.MapView
 
 
 @AndroidEntryPoint
@@ -115,7 +114,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomNavigation.show()
         trackingBottomSheet.hide()
         provideClickListeners()
-        map.setupMap(savedInstanceState,mapTypeFAB.loadMapType())
+        map.setupMap(savedInstanceState)
+        map.setupUI(mapTypeFAB.loadMapType())
         subscribeToObservers()
         map.recoverMissingMapMarker()
         locationFAB.updateLocationFloatingButtonIcon()
@@ -128,10 +128,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         } catch (e: ClassCastException) { }
     }
 
-    /*
-    search view
-    map marker
-     */
 
     private fun initializeComponents(view: View) {
         dialogDirector = DialogDirector(requireActivity())
@@ -147,11 +143,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         locationFAB = FloatingActionButtonLocation(commuterFragmentBinding,requireContext())
         mapTypeFAB = FloatingActionButtonMapType(requireContext())
         val mapbox = object : MapBox(view,requireActivity()){
+
             override fun onMapReady(mapboxMap: MapboxMap) {
                 mapboxMap.addOnMapLongClickListener(this@CommuterFragment)
                 mapboxMap.addOnMapClickListener(this@CommuterFragment)
                 mapboxMap.addOnMoveListener(this@CommuterFragment)
-
                 moveCameraToLastKnownLocation()
                 addAllPolyLines()
             }

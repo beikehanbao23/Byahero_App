@@ -1,7 +1,8 @@
-package com.example.commutingapp.views.ui.mapComponents.maps
+package com.example.commutingapp.views.ui.subComponents.maps
 
 import android.content.Intent
 import android.os.Bundle
+import com.example.commutingapp.views.ui.subComponents.FAB.FloatingActionButtonMapType
 import com.mapbox.mapboxsdk.geometry.LatLng
 
 class MapWrapper<T>(private val map:IMap<T>) {
@@ -21,8 +22,11 @@ class MapWrapper<T>(private val map:IMap<T>) {
     fun pointMapMarker(latLng: LatLng){
         map.pointMapMarker(latLng)
     }
-    fun setupMap(savedInstanceBundle: Bundle?, mapType:String){
-        map.setupMap(savedInstanceBundle, mapType)
+    fun setupMap(savedInstanceBundle: Bundle?){
+        map.setupMap(savedInstanceBundle)
+    }
+    fun setupUI(mapType: String){
+        map.setupUI(mapType)
     }
     fun recoverMissingMapMarker(){
         map.recoverMissingMapMarker()
@@ -34,6 +38,6 @@ class MapWrapper<T>(private val map:IMap<T>) {
         map.updateMapStyle(style)
     }
     fun createLocationPuck(){
-        map.createLocationPuck()
+        map.initializeLocationPuck()
     }
 }

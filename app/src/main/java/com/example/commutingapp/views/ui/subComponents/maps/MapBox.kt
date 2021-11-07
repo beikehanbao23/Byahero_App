@@ -1,4 +1,4 @@
-package com.example.commutingapp.views.ui.mapComponents.maps
+package com.example.commutingapp.views.ui.subComponents.maps
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -7,11 +7,18 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.AppCompatButton
-import androidx.collection.size
-import androidx.core.app.ActivityCompat.startActivityForResult
+import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.BitmapConvert
 import com.example.commutingapp.utils.others.Constants
+import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
+import com.example.commutingapp.utils.others.Constants.GEO_JSON_SOURCE_LAYER_ID
+import com.example.commutingapp.utils.others.Constants.ICON_LAYER_ID
+import com.example.commutingapp.utils.others.Constants.ICON_SOURCE_ID
+import com.example.commutingapp.utils.others.Constants.MAP_MARKER_IMAGE_ID
+import com.example.commutingapp.utils.others.Constants.MINIMUM_MAP_LEVEL
+import com.example.commutingapp.utils.others.Constants.SYMBOL_LAYER_ID
+import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
 import com.google.gson.JsonObject
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.geojson.Feature
@@ -27,12 +34,11 @@ import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
+import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 
@@ -41,50 +47,55 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
     private var mapBoxMap:MapboxMap? = null
     private var mapBoxView: MapView = view.findViewById(R.id.googleMapView)
     private var mapBoxStyle: Style? = null
-    private lateinit var mapMarkerSymbol: SymbolManager
     private var searchLocationButton: AppCompatButton  = view.findViewById(R.id.buttonLocationSearch)
     private lateinit var home: CarmenFeature
     private lateinit var work: CarmenFeature
 
 
     override fun getMapInstance():MapboxMap? = mapBoxMap
-    override fun deleteAllMapMarker() = mapMarkerSymbol.deleteAll()
-    override fun setupMap(savedInstanceState: Bundle?,mapType: String) {
+    override fun deleteAllMapMarker(){
+        initializeType(BuildConfig.MAP_STYLE)
+    }
+
+    override fun setupMap(savedInstanceState: Bundle?) {
          mapBoxView.apply {
              onCreate(savedInstanceState)
              isClickable = true
-         }.also { mapBoxView->
-             mapBoxView.getMapAsync {map->
-                 mapBoxMap = map
-                 with(mapBoxMap!!){
-                    uiSettings.isAttributionEnabled = false
-                    uiSettings.isLogoEnabled = false
-                    uiSettings.setCompassMargins(0,480,50,0)
-                    setMaxZoomPreference(Constants.MINIMUM_MAP_LEVEL)
-                    onMapReady(this)
-                    addMapStyle(mapType)
-                 }
-
-             }
          }
     }
+
+    override fun setupUI(mapType: String){
+        mapBoxView.getMapAsync {map->
+            mapBoxMap = map
+                initializeMap()
+                initializeType(mapType)
+                initializeLocationPuck()
+                initializeSearchFABLocation()
+                initializeUserLocations()
+                initializeMapMarkerImage()
+        }
+    }
+    private fun initializeMap() {
+        with(mapBoxMap!!) {
+            uiSettings.isAttributionEnabled = false
+            uiSettings.isLogoEnabled = false
+            uiSettings.setCompassMargins(0, 480, 50, 0)
+            setMaxZoomPreference(MINIMUM_MAP_LEVEL)
+            onMapReady(this)
+        }
+    }
+
     abstract fun onMapReady(mapboxMap: MapboxMap)
 
-
-    private fun addMapStyle(mapType:String){
+    private fun initializeType(mapType:String){
         mapBoxMap?.setStyle(mapType) { style ->
             mapBoxView.let { mapView ->
                 TrafficPlugin(mapView, mapBoxMap!!, style).apply { setVisibility(true) }
                 mapBoxStyle = style
-                createLocationPuck()
-                mapMarkerSymbol = SymbolManager(mapView, mapBoxMap!!, mapBoxStyle!!)
             }
-
-            initializeSearchFABLocation()
-            addUserLocations()
-            setupMapMarkerImage()
             setUpSource(style)
             setupLayer(style)
+
         }
     }
 
@@ -93,39 +104,37 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
     }
     override fun recoverMissingMapMarker(){
         mapBoxView.addOnStyleImageMissingListener {
-            setupMapMarkerImage()
+            initializeMapMarkerImage()
         }
     }
 
     override fun updateMapStyle(style:String){
         mapBoxMap?.setStyle(style){ mapStyle -> mapBoxStyle = mapStyle}
     }
+
     override fun getLocationSearchResult(requestCode: Int,resultCode: Int, data: Intent?){
 
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_CODE_AUTOCOMPLETE) {
             val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
             mapBoxMap?.let { map->
-                val source: GeoJsonSource? = map.style?.getSourceAs(Constants.GEO_JSON_SOURCE_LAYER_ID)
+                val source: GeoJsonSource? = map.style?.getSourceAs(GEO_JSON_SOURCE_LAYER_ID)
                 source?.setGeoJson(FeatureCollection.fromFeatures(arrayOf(Feature.fromJson(selectedCarmenFeature.toJson()))))
                 val location = LatLng((selectedCarmenFeature.geometry() as Point).latitude(),(selectedCarmenFeature.geometry() as Point).longitude())
-                moveCameraToUser(location,
-                    Constants.TRACKING_MAP_ZOOM,
-                    Constants.DEFAULT_CAMERA_ANIMATION_DURATION
-                )
+                moveCameraToUser(location, TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
             }
         }
 
     }
-    private  fun setupMapMarkerImage(){
+    private fun initializeMapMarkerImage(){
         mapBoxStyle?.addImage(
-            Constants.MAP_MARKER_IMAGE_NAME,
+            MAP_MARKER_IMAGE_ID,
             BitmapConvert.getBitmapFromVectorDrawable(
                 activity,
                 R.drawable.ic_location_map_marker
             )
         )
     }
-    override fun createLocationPuck() {
+    override fun initializeLocationPuck() {
         LocationComponentOptions.builder(activity)
             .accuracyAlpha(0.3f)
             .compassAnimationEnabled(true)
@@ -171,7 +180,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
         .addInjectedFeature(work)
         .build(PlaceOptions.MODE_CARDS)
 
-    private fun addUserLocations() {
+    private fun initializeUserLocations() {
         home = CarmenFeature.builder()
             .text("Mapbox SF Office")
             .geometry(Point.fromLngLat(-122.3964485, 37.7912561))
@@ -187,24 +196,25 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
             .build()
     }
 
-
     private fun setUpSource(loadedMapStyle: Style) {
-        loadedMapStyle.addSource(GeoJsonSource(Constants.GEO_JSON_SOURCE_LAYER_ID))
+        loadedMapStyle.addSource(GeoJsonSource(GEO_JSON_SOURCE_LAYER_ID))
+        loadedMapStyle.addSource(GeoJsonSource(ICON_SOURCE_ID))
     }
     private fun setupLayer(loadedMapStyle: Style) {
-        loadedMapStyle.addLayer(
-            SymbolLayer(Constants.SYMBOL_LAYER_ID, Constants.GEO_JSON_SOURCE_LAYER_ID).withProperties(
-                PropertyFactory.iconImage(Constants.MAP_MARKER_IMAGE_NAME),
-                PropertyFactory.iconOffset(arrayOf(0f, -8f)),
-                PropertyFactory.iconSize(Constants.MAP_MARKER_SIZE)
-            )
-        )
+
+        loadedMapStyle.apply {
+            addLayer(SymbolLayer(SYMBOL_LAYER_ID,GEO_JSON_SOURCE_LAYER_ID).withProperties(*symbolLayerProperties()))
+            addLayer(SymbolLayer(ICON_LAYER_ID, ICON_SOURCE_ID).withProperties(*symbolLayerProperties()))
+        }
     }
+    private fun symbolLayerProperties()= arrayOf<PropertyValue<*>>(
+        PropertyFactory.iconImage(MAP_MARKER_IMAGE_ID),
+        PropertyFactory.iconOffset(arrayOf(0f, -8f)),
+        PropertyFactory.iconSize(Constants.MAP_MARKER_SIZE)
+    )
 
     override fun pointMapMarker(latLng: LatLng) {
-        if (hasExistingMapMarker()) {
-            mapMarkerSymbol.deleteAll()
-        }
+
         createMapMarker(latLng)
         mapBoxMap?.cameraPosition?.apply {
             moveCameraToUser(latLng, zoom, Constants.DEFAULT_CAMERA_ANIMATION_DURATION)
@@ -212,15 +222,16 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
 
     }
 
-    private fun hasExistingMapMarker() = mapMarkerSymbol.annotations.size != 0
-
     private fun createMapMarker(latLng: LatLng) {
-        mapMarkerSymbol.create(
-            SymbolOptions()
-                .withLatLng(latLng)
-                .withIconImage(Constants.MAP_MARKER_IMAGE_NAME)
-                .withIconSize(Constants.MAP_MARKER_SIZE)
-        )
+
+        val destinationLocation = Point.fromLngLat(latLng.longitude,latLng.latitude)
+        val source:GeoJsonSource? = mapBoxMap?.style?.getSourceAs(ICON_SOURCE_ID)
+        val feature:Feature = Feature.fromGeometry(destinationLocation)
+        source?.let {
+            it.setGeoJson(feature)
+        }
+
+
 
     }
     override fun moveCameraToUser(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int) {
