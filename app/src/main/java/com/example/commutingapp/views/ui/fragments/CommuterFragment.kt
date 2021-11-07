@@ -54,6 +54,8 @@ import android.content.BroadcastReceiver
 import android.content.IntentFilter
 
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.RequiresApi
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
@@ -63,6 +65,7 @@ import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
 
 
 import androidx.appcompat.widget.AppCompatButton
+import androidx.lifecycle.lifecycleScope
 import com.example.commutingapp.views.ui.subComponents.maps.MapBox
 import com.example.commutingapp.views.ui.subComponents.maps.MapWrapper
 import com.example.commutingapp.views.ui.subComponents.BottomNavigation
@@ -75,6 +78,10 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
 import com.mapbox.maps.MapView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -318,7 +325,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         getGPSDialogSettingResult(requestCode, resultCode)
-        map.getLocationSearchResult(requestCode, resultCode, data)
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            map.deleteAllMapMarker()
+            delay(100)
+            map.getLocationSearchResult(requestCode, resultCode, data)
+        }
+
 
     }
 
@@ -349,7 +362,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     override fun onMapLongClick(point: LatLng): Boolean {
 
-        map.pointMapMarker(point)
+
+        lifecycleScope.launch(Dispatchers.Main){
+            map.deleteAllMapMarker()
+            delay(100)
+            map.pointMapMarker(point)
+        }
         normalBottomSheet.show()
         bottomNavigation.hide()
         return true

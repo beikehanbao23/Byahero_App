@@ -55,6 +55,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
     override fun getMapInstance():MapboxMap? = mapBoxMap
     override fun deleteAllMapMarker(){
         initializeType(BuildConfig.MAP_STYLE)
+
     }
 
     override fun setupMap(savedInstanceState: Bundle?) {
@@ -69,7 +70,6 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
             mapBoxMap = map
                 initializeMap()
                 initializeType(mapType)
-                initializeLocationPuck()
                 initializeSearchFABLocation()
                 initializeUserLocations()
                 initializeMapMarkerImage()
@@ -92,9 +92,10 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
             mapBoxView.let { mapView ->
                 TrafficPlugin(mapView, mapBoxMap!!, style).apply { setVisibility(true) }
                 mapBoxStyle = style
+                buildLocationPuck(style)
             }
-            setUpSource(style)
-            setupLayer(style)
+            addSource(style)
+            addLayer(style)
 
         }
     }
@@ -116,8 +117,8 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
 
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_CODE_AUTOCOMPLETE) {
             val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
-            mapBoxMap?.let { map->
-                val source: GeoJsonSource? = map.style?.getSourceAs(GEO_JSON_SOURCE_LAYER_ID)
+            mapBoxMap?.style?.let { style->
+                val source: GeoJsonSource? = style.getSourceAs(GEO_JSON_SOURCE_LAYER_ID)
                 source?.setGeoJson(FeatureCollection.fromFeatures(arrayOf(Feature.fromJson(selectedCarmenFeature.toJson()))))
                 val location = LatLng((selectedCarmenFeature.geometry() as Point).latitude(),(selectedCarmenFeature.geometry() as Point).longitude())
                 moveCameraToUser(location, TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
@@ -135,23 +136,33 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
         )
     }
     override fun initializeLocationPuck() {
+        mapBoxStyle?.let(this::buildLocationPuck)
+    }
+
+    private fun buildLocationPuck(style: Style){
         LocationComponentOptions.builder(activity)
             .accuracyAlpha(0.3f)
             .compassAnimationEnabled(true)
             .accuracyAnimationEnabled(true)
             .build().also { componentOptions ->
                 mapBoxMap?.locationComponent?.apply {
-                    mapBoxStyle?.let {
                         activateLocationComponent(
-                            LocationComponentActivationOptions.builder(activity, it)
+                            LocationComponentActivationOptions.builder(activity, style)
                                 .locationComponentOptions(componentOptions)
                                 .build()
                         )
                         createComponentsLocation(this)
-                    }
+
                 }
             }
     }
+    /*
+    camera
+    marker
+    place
+    search
+    puck
+     */
     @SuppressLint("MissingPermission")
     private fun createComponentsLocation(locationComponent: LocationComponent) {
         locationComponent.apply {
@@ -170,6 +181,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
         }
 
     }
+
     abstract fun onSearchCompleted(intent:Intent)
 
 
@@ -196,11 +208,11 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
             .build()
     }
 
-    private fun setUpSource(loadedMapStyle: Style) {
+    private fun addSource(loadedMapStyle: Style) {
         loadedMapStyle.addSource(GeoJsonSource(GEO_JSON_SOURCE_LAYER_ID))
         loadedMapStyle.addSource(GeoJsonSource(ICON_SOURCE_ID))
     }
-    private fun setupLayer(loadedMapStyle: Style) {
+    private fun addLayer(loadedMapStyle: Style) {
 
         loadedMapStyle.apply {
             addLayer(SymbolLayer(SYMBOL_LAYER_ID,GEO_JSON_SOURCE_LAYER_ID).withProperties(*symbolLayerProperties()))
@@ -235,6 +247,9 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
 
     }
     override fun moveCameraToUser(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int) {
+        moveCamera(latLng, zoomLevel, cameraAnimationDuration)
+    }
+    private fun moveCamera(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int){
         mapBoxMap?.animateCamera(CameraUpdateFactory.newCameraPosition(buildCameraPosition(latLng,zoomLevel)), cameraAnimationDuration)
     }
     private fun buildCameraPosition(latLng: LatLng, zoomLevel: Double): CameraPosition =
