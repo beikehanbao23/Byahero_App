@@ -58,7 +58,7 @@ import com.mapbox.android.gestures.MoveGestureDetector
 import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
 import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
-import com.example.commutingapp.views.ui.subComponents.maps.MapBox
+import com.example.commutingapp.views.ui.subComponents.maps.MapBox.MapBox
 import com.example.commutingapp.views.ui.subComponents.maps.MapWrapper
 import com.example.commutingapp.views.ui.subComponents.BottomNavigation
 import com.example.commutingapp.views.ui.subComponents.Component
@@ -330,7 +330,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         lifecycleScope.launch(Dispatchers.Main) {
             map.deleteAllMapMarker()
-            delay(100)
+            delay(20)
             map.getLocationSearchResult(requestCode, resultCode, data)
         }
 
@@ -367,7 +367,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         lifecycleScope.launch(Dispatchers.Main){
             map.deleteAllMapMarker()
-            delay(100)
+            delay(20)
             map.pointMapMarker(point)
         }
         normalBottomSheet.show()

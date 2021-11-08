@@ -25,7 +25,7 @@ object Constants {
     const val CAMERA_TILT_DEGREES = 30.00
     const val DEFAULT_CAMERA_ANIMATION_DURATION = 3000
     const val ULTRA_FAST_CAMERA_ANIMATION_DURATION = 1
-    const val FAST_CAMERA_ANIMATION_DURATION = 800
+    const val FAST_CAMERA_ANIMATION_DURATION = 700
     const val CAMERA_ZOOM_MAP_MARKER = 14.80
     const val LAST_KNOWN_LOCATION_MAP_ZOOM = 14.80
     const val DEFAULT_MAP_ZOOM = 4.00
@@ -59,10 +59,10 @@ object Constants {
     const val FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE = "MapsType"
     const val KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE = "IntroSlider_StateOfSlides"
     const val REQUEST_CODE_AUTOCOMPLETE = 1
-    const val GEO_JSON_SOURCE_LAYER_ID = "geojsonSourceLayerId"
-    const val ICON_SOURCE_ID = "icon-sourceID";
-    const val ICON_LAYER_ID = "icon-layerID";
-    const val SYMBOL_LAYER_ID = "SYMBOL_LAYER_ID"
+    const val ON_SEARCH_SOURCE_ID = "geojsonSourceLayerId"
+    const val ON_MAP_CLICK_SOURCE_ID = "icon-sourceID";
+    const val ON_MAP_CLICK_LAYER_ID = "icon-layerID";
+    const val ON_SEARCH_LAYER_ID = "symbol-layer-id"
 
 
 }
