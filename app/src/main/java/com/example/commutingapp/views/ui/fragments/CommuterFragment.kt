@@ -40,7 +40,6 @@ import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
-
 import com.google.android.gms.tasks.Task
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -49,21 +48,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import android.content.Intent
-
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
-
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import androidx.annotation.RequiresApi
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 import com.mapbox.android.gestures.MoveGestureDetector
-
 import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
-
-
 import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
 import com.example.commutingapp.views.ui.subComponents.maps.MapBox
@@ -74,11 +66,9 @@ import com.example.commutingapp.views.ui.subComponents.FAB.FloatingActionButtonL
 import com.example.commutingapp.views.ui.subComponents.FAB.FloatingActionButtonMapType
 import com.google.android.gms.location.*
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
-
 import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
-import com.mapbox.maps.MapView
-import kotlinx.coroutines.CoroutineScope
+import com.mapbox.mapboxsdk.maps.MapView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -107,7 +97,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var bottomNavigation:Component
     private lateinit var locationFAB:FloatingActionButtonLocation
     private lateinit var mapTypeFAB:FloatingActionButtonMapType
-    private lateinit var map:MapWrapper<MapboxMap>
+    private lateinit var map:MapWrapper<MapboxMap,MapView>
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         commuterFragmentBinding = CommuterFragmentBinding.inflate(inflater,container,false)
         return commuterFragmentBinding.root
@@ -121,7 +111,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomNavigation.show()
         trackingBottomSheet.hide()
         provideClickListeners()
-        map.setupMap(savedInstanceState)
+        map.getMapView().apply {
+            onCreate(savedInstanceState)
+            isClickable = true
+        }
         map.setupUI(mapTypeFAB.loadMapType())
         subscribeToObservers()
         map.recoverMissingMapMarker()
@@ -238,15 +231,24 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION).apply {
-            addAction(Intent.ACTION_PROVIDER_CHANGED)
-            requireActivity().registerReceiver(locationSwitchStateReceiver(), this)
-        }
+        registerReceiver()
     }
-    override fun onDestroy() {
-        super.onDestroy()
+    private fun registerReceiver(){
+        try {
+            IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION).apply {
+                addAction(Intent.ACTION_PROVIDER_CHANGED)
+                requireActivity().registerReceiver(locationSwitchStateReceiver(), this)
+            }
+        }catch (e:IllegalArgumentException){}
+    }
+    private fun unregisterReceiver(){
+        try {
         requireActivity().unregisterReceiver(locationSwitchStateReceiver())
+        }catch (e:IllegalArgumentException){}
     }
+
+
+
     private fun locationSwitchStateReceiver()= object: BroadcastReceiver(){
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -354,7 +356,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun addAllPolyLines() {
         outerPolyline.forEach {
             customPolylineAppearance().addAll(it).apply {
-                map.getMapInstance()?.addPolyline(this)
+                map.getMap()?.addPolyline(this)
             }
         }
     }
@@ -446,7 +448,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             customPolylineAppearance()
                 .add(preLastLatLng)
                 .add(lastLatLng).apply {
-                    map.getMapInstance()?.addPolyline(this)
+                    map.getMap()?.addPolyline(this)
                 }
         }
     }
@@ -476,6 +478,52 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
 
+
+
+
+    override fun onStart() {
+        super.onStart();
+        map.getMapView().onStart()
+    }
+
+
+    override fun onResume() {
+        super.onResume();
+        map.getMapView().onResume()
+        registerReceiver()
+    }
+
+
+    override fun onPause() {
+        super.onPause();
+        map.getMapView().onPause()
+    }
+
+
+    override fun onStop() {
+        super.onStop();
+        map.getMapView().onStop()
+        unregisterReceiver()
+    }
+
+
+    override fun onSaveInstanceState(outState:Bundle) {
+        super.onSaveInstanceState(outState);
+        map.getMapView().onSaveInstanceState(outState)
+    }
+
+
+    override fun onLowMemory() {
+        super.onLowMemory();
+        map.getMapView().onLowMemory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        map.getMapView().onDestroy()
+        unregisterReceiver()
+
+    }
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {

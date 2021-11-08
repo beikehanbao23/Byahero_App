@@ -42,7 +42,7 @@ import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 
-abstract class MapBox(private val view: View,private val activity: Activity):IMap<MapboxMap> {
+abstract class MapBox(private val view: View,private val activity: Activity):IMap<MapboxMap,MapView> {
 
     private var mapBoxMap:MapboxMap? = null
     private var mapBoxView: MapView = view.findViewById(R.id.googleMapView)
@@ -58,12 +58,10 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
 
     }
 
-    override fun setupMap(savedInstanceState: Bundle?) {
-         mapBoxView.apply {
-             onCreate(savedInstanceState)
-             isClickable = true
-         }
-    }
+    override fun getMapViewInstance():MapView = mapBoxView
+
+
+
 
     override fun setupUI(mapType: String){
         mapBoxView.getMapAsync {map->
@@ -92,7 +90,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
             mapBoxView.let { mapView ->
                 TrafficPlugin(mapView, mapBoxMap!!, style).apply { setVisibility(true) }
                 mapBoxStyle = style
-                buildLocationPuck(style)
+                buildLocationPuck(mapBoxStyle!!)
             }
             addSource(style)
             addLayer(style)
@@ -136,7 +134,9 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
         )
     }
     override fun initializeLocationPuck() {
-        mapBoxStyle?.let(this::buildLocationPuck)
+        try {
+            mapBoxStyle?.let(this::buildLocationPuck)
+        }catch (e:IllegalArgumentException){}
     }
 
     private fun buildLocationPuck(style: Style){
@@ -147,6 +147,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):IMa
             .build().also { componentOptions ->
                 mapBoxMap?.locationComponent?.apply {
                         activateLocationComponent(
+
                             LocationComponentActivationOptions.builder(activity, style)
                                 .locationComponentOptions(componentOptions)
                                 .build()

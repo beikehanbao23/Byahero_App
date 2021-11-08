@@ -5,9 +5,9 @@ import android.os.Bundle
 import com.example.commutingapp.views.ui.subComponents.FAB.FloatingActionButtonMapType
 import com.mapbox.mapboxsdk.geometry.LatLng
 
-class MapWrapper<T>(private val map:IMap<T>) {
+class MapWrapper<T,V>(private val map:IMap<T,V>) {
 
-    fun getMapInstance():T?{
+    fun getMap():T?{
         return map.getMapInstance()
     }
     fun moveCameraToUser(latLng: LatLng, zoomLevel:Double, cameraAnimationDuration:Int){
@@ -22,9 +22,7 @@ class MapWrapper<T>(private val map:IMap<T>) {
     fun pointMapMarker(latLng: LatLng){
         map.pointMapMarker(latLng)
     }
-    fun setupMap(savedInstanceBundle: Bundle?){
-        map.setupMap(savedInstanceBundle)
-    }
+
     fun setupUI(mapType: String){
         map.setupUI(mapType)
     }
@@ -39,5 +37,8 @@ class MapWrapper<T>(private val map:IMap<T>) {
     }
     fun createLocationPuck(){
         map.initializeLocationPuck()
+    }
+    fun getMapView():V{
+        return map.getMapViewInstance()
     }
 }
