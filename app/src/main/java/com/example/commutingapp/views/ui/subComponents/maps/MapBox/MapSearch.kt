@@ -14,34 +14,47 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.PropertyValue
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 
-class MapSearch(private val activity:Activity,private val style: Style?) {
+class MapSearch(private val activity:Activity,private val style: Style?):MapLayer {
     private lateinit var home: CarmenFeature
     private lateinit var work: CarmenFeature
+    private lateinit var result:CarmenFeature
     init {
         initializeUserLocations()
     }
 
     fun getLocationSearchResult(requestCode: Int,resultCode: Int, data: Intent?):LatLng?{
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_CODE_AUTOCOMPLETE) {
-            val selectedCarmenFeature = PlaceAutocomplete.getPlace(data)
-            style?.let { style->
-                val source: GeoJsonSource? = style.getSourceAs(Constants.ON_SEARCH_SOURCE_ID)
-                source?.setGeoJson(FeatureCollection.fromFeatures(arrayOf(Feature.fromJson(selectedCarmenFeature.toJson()))))
-                return LatLng((selectedCarmenFeature.geometry() as Point).latitude(),(selectedCarmenFeature.geometry() as Point).longitude())
+            this.result = PlaceAutocomplete.getPlace(data)
+                create()
+                return LatLng((result.geometry() as Point).latitude(),(result.geometry() as Point).longitude())
             }
-        }
         return null
     }
-    fun addLayer(properties: Array<PropertyValue<*>>){
-        style?.addLayer(SymbolLayer(Constants.ON_SEARCH_LAYER_ID, Constants.ON_SEARCH_SOURCE_ID).withProperties(*properties))
+
+    override fun create() {
+            val source: GeoJsonSource? = style?.getSourceAs(Constants.ON_SEARCH_SOURCE_ID)
+            source?.setGeoJson(FeatureCollection.fromFeatures(arrayOf( Feature.fromJson(result.toJson()))))
     }
-    fun addSource(){
-        style?.addSource(GeoJsonSource(Constants.ON_SEARCH_SOURCE_ID))
+
+    override fun initialize() {
+        style?.apply {
+            addSource(GeoJsonSource(Constants.ON_SEARCH_SOURCE_ID))
+            addLayer(
+                SymbolLayer(
+                    Constants.ON_SEARCH_LAYER_ID,
+                    Constants.ON_SEARCH_SOURCE_ID
+                ).withProperties(
+                    PropertyFactory.iconImage(Constants.MAP_MARKER_IMAGE_ID),
+                    PropertyFactory.iconOffset(arrayOf(0f, -8f)),
+                    PropertyFactory.iconSize(Constants.MAP_MARKER_SIZE)))
+        }
     }
+
 
     fun getLocationSearchIntent(): Intent {
         return PlaceAutocomplete.IntentBuilder()

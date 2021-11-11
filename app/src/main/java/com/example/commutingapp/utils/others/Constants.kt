@@ -30,7 +30,8 @@ object Constants {
     const val LAST_KNOWN_LOCATION_MAP_ZOOM = 14.80
     const val DEFAULT_MAP_ZOOM = 4.00
     const val TRACKING_MAP_ZOOM = 16.0
-    const val MINIMUM_MAP_LEVEL = 18.85
+    const val MAX_ZOOM_LEVEL_MAPS = 18.85
+    const val MIN_ZOOM_LEVEL_MAPS = 3.00
     const val DEFAULT_LATITUDE = 12.8797
     const val DEFAULT_LONGITUDE = 121.7740
     const val POLYLINE_COLOR = Color.BLUE
@@ -63,6 +64,8 @@ object Constants {
     const val ON_MAP_CLICK_SOURCE_ID = "icon-sourceID";
     const val ON_MAP_CLICK_LAYER_ID = "icon-layerID";
     const val ON_SEARCH_LAYER_ID = "symbol-layer-id"
+    const val POLYLINE_SOURCE_ID = "polyline-sourceID"
+    const val POLYLINE_LAYER_ID = "polyline-layerID"
 
 
 }

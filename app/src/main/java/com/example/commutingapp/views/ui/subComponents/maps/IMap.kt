@@ -1,8 +1,6 @@
 package com.example.commutingapp.views.ui.subComponents.maps
 
 import android.content.Intent
-import android.os.Bundle
-import com.example.commutingapp.views.ui.subComponents.FAB.FloatingActionButtonMapType
 import com.mapbox.mapboxsdk.geometry.LatLng
 
 interface IMap<T,V> {

@@ -62,13 +62,14 @@ import com.example.commutingapp.views.ui.subComponents.maps.MapBox.MapBox
 import com.example.commutingapp.views.ui.subComponents.maps.MapWrapper
 import com.example.commutingapp.views.ui.subComponents.BottomNavigation
 import com.example.commutingapp.views.ui.subComponents.Component
-import com.example.commutingapp.views.ui.subComponents.FAB.FloatingActionButtonLocation
-import com.example.commutingapp.views.ui.subComponents.FAB.FloatingActionButtonMapType
+import com.example.commutingapp.views.ui.subComponents.FAB.LocationButton
+import com.example.commutingapp.views.ui.subComponents.FAB.MapTypes
 import com.google.android.gms.location.*
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
 import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.plugins.annotation.LineManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -77,6 +78,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
      MapboxMap.OnMapLongClickListener, MapboxMap.OnMapClickListener,MapboxMap.OnMoveListener {
+
 
     private val mainViewModel: MainViewModel by viewModels()
 
@@ -95,9 +97,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var normalBottomSheet: Component
     private lateinit var trackingBottomSheet:Component
     private lateinit var bottomNavigation:Component
-    private lateinit var locationFAB:FloatingActionButtonLocation
-    private lateinit var mapTypeFAB:FloatingActionButtonMapType
+    private lateinit var locationFAB:LocationButton
+    private lateinit var mapTypesFAB:MapTypes
     private lateinit var map:MapWrapper<MapboxMap,MapView>
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         commuterFragmentBinding = CommuterFragmentBinding.inflate(inflater,container,false)
         return commuterFragmentBinding.root
@@ -115,7 +118,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             onCreate(savedInstanceState)
             isClickable = true
         }
-        map.setupUI(mapTypeFAB.loadMapType())
+        map.setupUI(mapTypesFAB.loadMapType())
         subscribeToObservers()
         map.recoverMissingMapMarker()
         locationFAB.updateLocationFloatingButtonIcon()
@@ -140,8 +143,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         normalBottomSheet = Component(StartingBottomSheet(view,requireContext()))
         trackingBottomSheet = Component(TrackingBottomSheet(view))
         bottomNavigation = Component(BottomNavigation(notifyListener))
-        locationFAB = FloatingActionButtonLocation(commuterFragmentBinding,requireContext())
-        mapTypeFAB = FloatingActionButtonMapType(requireContext())
+        locationFAB = LocationButton(commuterFragmentBinding,requireContext())
+        mapTypesFAB = MapTypes(requireContext())
         val mapbox = object : MapBox(view,requireActivity()){
 
             override fun onMapReady(mapboxMap: MapboxMap) {
@@ -172,7 +175,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideMapTypeDialogListener(){
         commuterFragmentBinding.floatingActionButtonChooseMap.setOnClickListener {
             dialogDirector.constructChooseMapDialog().apply {
-                mapTypeFAB.createMapTypeIndicator(this)
+                mapTypesFAB.createMapTypeIndicator(this)
                 setMapTypeListeners(this)
                 show()
             } }
@@ -260,9 +263,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     private fun setMapTypeListeners(customDialogBuilder: CustomDialogBuilder) {
         customDialogBuilder.also { mapTypeListener->
-            mapTypeFAB.getMapTypeButtons().forEach { hashMap->
+            mapTypesFAB.getMapTypeButtons().forEach { hashMap->
                mapTypeListener.findViewById<View>(hashMap.value )?.setOnClickListener {
-                   mapTypeFAB.changeMapType(mapTypeListener,hashMap.key)
+                   mapTypesFAB.changeMapType(mapTypeListener,hashMap.key)
                    map.updateMapStyle(hashMap.key)
                }
            }
@@ -440,6 +443,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     private fun addLatestPolyline() {
+
         if (hasExistingInnerPolyLines()) {
             val innerPolylinePosition = outerPolyline.last().size - 2
             val preLastLatLng = outerPolyline.last()[innerPolylinePosition]

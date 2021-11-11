@@ -6,14 +6,13 @@ import android.graphics.Color
 import android.view.View
 import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
-import com.example.commutingapp.databinding.CommuterFragmentBinding
-import com.example.commutingapp.utils.others.Constants
+import com.example.commutingapp.utils.others.Constants.FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.mapbox.mapboxsdk.maps.Style
 
-class FloatingActionButtonMapType(private val context: Context) {
+class MapTypes(private val context: Context) {
     private var preferences: SharedPreferences = context.getSharedPreferences(
-        Constants.FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,
+        FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,
         Context.MODE_PRIVATE)
 
 
@@ -55,14 +54,13 @@ class FloatingActionButtonMapType(private val context: Context) {
         createMapTypeIndicator(customDialogBuilder)
     }
 
-     fun loadMapType():String {return preferences.getString(Constants.FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,Style.TRAFFIC_DAY).toString()}
+     fun loadMapType():String {return preferences.getString(FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,Style.TRAFFIC_DAY).toString()}
 
     private fun saveMapTypeToSharedPreference(mapType:String){
         preferences.edit().apply{
-            putString(Constants.FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,mapType)
+            putString(FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,mapType)
             apply()
         }
-
     }
 
 

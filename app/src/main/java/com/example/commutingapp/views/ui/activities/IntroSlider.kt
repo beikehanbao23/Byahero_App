@@ -173,7 +173,7 @@ class IntroSlider : AppCompatActivity() {
 
     }
 
-    fun nextButtonSlidersIsClicked(view: View) {
+     fun nextButtonSlidersIsClicked(view: View) {
 
         if (slideHasNext()) {
             transitionButtonName()
@@ -217,7 +217,7 @@ class IntroSlider : AppCompatActivity() {
     }
 
 
-    fun skipButtonSlidersIsClicked(view: View) {
+     fun skipButtonSlidersIsClicked(view: View) {
         showSignInActivity()
         userIsDoneWithIntroSliders()
     }

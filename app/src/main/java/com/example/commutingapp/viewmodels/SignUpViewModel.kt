@@ -40,13 +40,6 @@ class SignUpViewModel : ViewModel() {
 
 
 
-
-
-
-
-
-
-
     fun signUpAccount(email: String, password: String) {
 
         viewModelScope.launch(Dispatchers.IO) {

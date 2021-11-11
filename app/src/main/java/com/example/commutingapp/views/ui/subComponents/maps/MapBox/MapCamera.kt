@@ -6,7 +6,7 @@ import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 
-class MapCamera(private val mapBoxMap:MapboxMap){
+class MapCamera(private val mapBoxMap:MapboxMap?){
 
 
     fun move(latLng: LatLng, zoomLevel:Double, animationDuration:Int){

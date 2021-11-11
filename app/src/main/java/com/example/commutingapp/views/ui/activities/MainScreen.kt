@@ -107,7 +107,6 @@ class MainScreen : AppCompatActivity(),FragmentToActivity {
     private fun replaceFragment(fragment: Fragment){
         supportFragmentManager.apply {
 
-
                 beginTransaction().apply {
                         if (findFragmentByTag(fragment.javaClass.name) == null) {
                             replace(R.id.fragmentContainer, fragment, fragment.javaClass.name)

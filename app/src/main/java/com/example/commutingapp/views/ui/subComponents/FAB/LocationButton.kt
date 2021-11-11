@@ -15,7 +15,7 @@ import com.example.commutingapp.R
 import com.example.commutingapp.databinding.CommuterFragmentBinding
 import com.example.commutingapp.utils.InternetConnection.Connection
 
-class FloatingActionButtonLocation(private val commuterFragmentBinding: CommuterFragmentBinding,private val context:Context) {
+class LocationButton(private val commuterFragmentBinding: CommuterFragmentBinding, private val context:Context) {
 
      fun showLocationFloatingButton(){
         commuterFragmentBinding.floatingActionButtonLocation.visibility = View.VISIBLE
