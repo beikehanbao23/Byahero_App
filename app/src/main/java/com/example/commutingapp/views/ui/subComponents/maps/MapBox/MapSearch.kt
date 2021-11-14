@@ -5,6 +5,9 @@ import android.content.Intent
 import android.graphics.Color
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants
+import com.example.commutingapp.utils.others.Constants.MAP_MARKER_IMAGE_ID
+import com.example.commutingapp.utils.others.Constants.ON_SEARCH_LAYER_ID
+import com.example.commutingapp.utils.others.Constants.ON_SEARCH_SOURCE_ID
 import com.google.gson.JsonObject
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.geojson.Feature
@@ -14,15 +17,17 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory
-import com.mapbox.mapboxsdk.style.layers.PropertyValue
-import com.mapbox.mapboxsdk.style.layers.SymbolLayer
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+
 
 class MapSearch(private val activity:Activity,private val style: Style?):MapLayer {
     private lateinit var home: CarmenFeature
     private lateinit var work: CarmenFeature
     private lateinit var result:CarmenFeature
+    private var mapSymbol:MapSymbolLayers = MapSymbolLayers(style,
+        ON_SEARCH_SOURCE_ID,
+        ON_SEARCH_LAYER_ID,
+        MAP_MARKER_IMAGE_ID)
+
     init {
         initializeUserLocations()
     }
@@ -37,23 +42,11 @@ class MapSearch(private val activity:Activity,private val style: Style?):MapLaye
     }
 
     override fun create() {
-            val source: GeoJsonSource? = style?.getSourceAs(Constants.ON_SEARCH_SOURCE_ID)
-            source?.setGeoJson(FeatureCollection.fromFeatures(arrayOf( Feature.fromJson(result.toJson()))))
+
+            val feature = FeatureCollection.fromFeatures(arrayOf( Feature.fromJson(result.toJson())))
+            mapSymbol.create(feature)
     }
 
-    override fun initialize() {
-        style?.apply {
-            addSource(GeoJsonSource(Constants.ON_SEARCH_SOURCE_ID))
-            addLayer(
-                SymbolLayer(
-                    Constants.ON_SEARCH_LAYER_ID,
-                    Constants.ON_SEARCH_SOURCE_ID
-                ).withProperties(
-                    PropertyFactory.iconImage(Constants.MAP_MARKER_IMAGE_ID),
-                    PropertyFactory.iconOffset(arrayOf(0f, -8f)),
-                    PropertyFactory.iconSize(Constants.MAP_MARKER_SIZE)))
-        }
-    }
 
 
     fun getLocationSearchIntent(): Intent {

@@ -2,39 +2,26 @@ package com.example.commutingapp.views.ui.subComponents.maps.MapBox
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.appcompat.widget.AppCompatButton
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.BitmapConvert
-import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.MAP_MARKER_IMAGE_ID
 import com.example.commutingapp.utils.others.Constants.MAX_ZOOM_LEVEL_MAPS
 import com.example.commutingapp.utils.others.Constants.MIN_ZOOM_LEVEL_MAPS
-import com.example.commutingapp.utils.others.Constants.POLYLINE_LAYER_ID
-import com.example.commutingapp.utils.others.Constants.POLYLINE_SOURCE_ID
 import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
 import com.example.commutingapp.views.ui.subComponents.FAB.MapTypes
 import com.example.commutingapp.views.ui.subComponents.maps.IMap
-import com.mapbox.geojson.Feature
-import com.mapbox.geojson.FeatureCollection
-import com.mapbox.geojson.LineString
-import com.mapbox.geojson.Point
-import com.mapbox.geojson.Point.fromLngLat
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.annotation.LineManager
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
-import com.mapbox.mapboxsdk.style.layers.LineLayer
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory
-import com.mapbox.mapboxsdk.style.layers.PropertyValue
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import timber.log.Timber
 import java.lang.IllegalStateException
 
@@ -56,7 +43,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     override fun getMapInstance():MapboxMap? = mapBoxMap
     override fun deleteAllMapMarker(){
-       initializeType(mapTypes.loadMapType())
+       initializeStyles(mapTypes.loadMapType())
     }
 
     override fun getMapViewInstance():MapView = mapBoxView
@@ -66,7 +53,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         mapBoxView.getMapAsync {map->
             mapBoxMap = map
                 initializeMap()
-                initializeType(mapType)
+                initializeStyles(mapType)
                 initializeSearchFABLocation()
                 initializeSearchFABLocation()
                 initializeMapMarkerImage()
@@ -99,15 +86,15 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     abstract fun onMapReady(mapboxMap: MapboxMap)
 
-    private fun initializeType(mapType:String){
+    private fun initializeStyles(mapType:String){
         mapBoxMap?.setStyle(mapType) { style ->
             mapBoxStyle = style
             mapBoxView.apply {
                 TrafficPlugin(this, mapBoxMap!!, style).apply { setVisibility(true) }
                 polyLine = LineManager(this,mapBoxMap!!,style)
             }
-                marker = MapMarker(style).also { it.initialize() }
-                search = MapSearch(activity, style).also { it.initialize() }
+                marker = MapMarker(style)
+                search = MapSearch(activity, style)
 
         }
     }
