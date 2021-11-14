@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.commutingapp.R
 import com.example.commutingapp.data.service.TrackingService
-import com.example.commutingapp.data.service.innerPolyline
 import com.example.commutingapp.databinding.CommuterFragmentBinding
 import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.utils.others.Constants
@@ -27,8 +26,6 @@ import com.example.commutingapp.utils.others.Constants.DEFAULT_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_MAP_ZOOM
 import com.example.commutingapp.utils.others.Constants.ULTRA_FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
-import com.example.commutingapp.utils.others.Constants.POLYLINE_COLOR
-import com.example.commutingapp.utils.others.Constants.POLYLINE_WIDTH
 import com.example.commutingapp.utils.others.Constants.REQUEST_CHECK_SETTING
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
 import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
@@ -41,7 +38,6 @@ import com.example.commutingapp.views.dialogs.DialogDirector
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.tasks.Task
-import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,6 +54,7 @@ import com.mapbox.android.gestures.MoveGestureDetector
 import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
 import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
+import com.example.commutingapp.data.service.TrackingPolyLine
 import com.example.commutingapp.views.ui.subComponents.maps.MapBox.MapBox
 import com.example.commutingapp.views.ui.subComponents.maps.MapWrapper
 import com.example.commutingapp.views.ui.subComponents.BottomNavigation
@@ -69,7 +66,6 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
 import com.mapbox.mapboxsdk.maps.MapView
-import com.mapbox.mapboxsdk.plugins.annotation.LineManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -83,9 +79,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private val mainViewModel: MainViewModel by viewModels()
 
     private var isTracking = false
-    private var outerPolyline = mutableListOf<innerPolyline>()
 
-
+    private lateinit var trackingPolyLine: TrackingPolyLine
     private lateinit var startButton: Button
     private lateinit var directionButton: Button
     private lateinit var saveButton: Button
@@ -130,8 +125,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             this.notifyListener = context as FragmentToActivity
         } catch (e: ClassCastException) { }
     }
-
-
     private fun initializeComponents(view: View) {
         dialogDirector = DialogDirector(requireActivity())
 
@@ -152,7 +145,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 mapboxMap.addOnMapClickListener(this@CommuterFragment)
                 mapboxMap.addOnMoveListener(this@CommuterFragment)
                 moveCameraToLastKnownLocation()
-                addAllPolyLines()
+                trackingPolyLine.getAllPolyLines()?.let { map.getMap()?.addPolyline(it) }
+
             }
 
             override fun onSearchCompleted(intent: Intent) {
@@ -160,9 +154,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
         }
         map = MapWrapper(mapbox)
+        trackingPolyLine = TrackingPolyLine()
     }
-
-
     private fun provideClickListeners() {
         provideMapTypeDialogListener()
         provideLocationButtonListener()
@@ -186,10 +179,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 map.getLastKnownLocation()?.let { location -> map.moveCameraToUser(location, CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION) }
                     locationFAB.changeFloatingButtonIconBlue()
 
-                if (Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())) {
-                    checkLocationSetting().apply {
-                        this.addOnCompleteListener {
-                            try{ it.getResult(ApiException::class.java) }catch (e:ApiException){ }
+            if (Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())) {
+                checkLocationSetting().apply {
+                this.addOnCompleteListener {
+                try{ it.getResult(ApiException::class.java) }catch (e:ApiException){ }
                         }
                     }
                 }
@@ -204,17 +197,17 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 bottomNavigation.hide()
                 locationFAB.hideLocationFloatingButton()
                 checkLocationSetting().addOnCompleteListener {
-                       try{
-                           it.getResult(ApiException::class.java)
-                           toggleStartButton()
-                       }catch (e:ApiException){
-                         handleLocationResultException(e)
-                       }
+                try{
+                it.getResult(ApiException::class.java)
+                toggleStartButton()
+                }catch (e:ApiException){
+                    handleLocationResultException(e)
                 }
+             }
+          }
+       }
+    }
 
-            }
-            }
-        }
     private fun provideDirectionButtonListener(){
         directionButton.setOnClickListener {
 
@@ -230,8 +223,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         }
     }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerReceiver()
@@ -249,9 +240,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         requireActivity().unregisterReceiver(locationSwitchStateReceiver())
         }catch (e:IllegalArgumentException){}
     }
-
-
-
     private fun locationSwitchStateReceiver()= object: BroadcastReceiver(){
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -273,7 +261,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             map.recoverMissingMapMarker()
         }
     }
-
 
 
     @SuppressLint("MissingPermission")
@@ -306,10 +293,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
 
     }
-
     var locationRequest: LocationRequest = request
-
-
     private fun checkLocationSetting():Task<LocationSettingsResponse>{
         val builder = LocationSettingsRequest.Builder()
             .addLocationRequest(request)
@@ -330,7 +314,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         getGPSDialogSettingResult(requestCode, resultCode)
-
         lifecycleScope.launch(Dispatchers.Main) {
             map.deleteAllMapMarker()
             delay(20)
@@ -339,7 +322,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     }
-
     private fun getGPSDialogSettingResult(requestCode: Int,resultCode: Int){
         when (requestCode) {
             REQUEST_CHECK_SETTING ->
@@ -356,18 +338,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
 
-    private fun addAllPolyLines() {
-        outerPolyline.forEach {
-            customPolylineAppearance().addAll(it).apply {
-                map.getMap()?.addPolyline(this)
-            }
-        }
-    }
 
 
     override fun onMapLongClick(point: LatLng): Boolean {
-
-
         lifecycleScope.launch(Dispatchers.Main){
             map.deleteAllMapMarker()
             delay(20)
@@ -383,27 +356,20 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomNavigation.show()
         return true
     }
-
-
-
-
     private fun subscribeToObservers() {
         TrackingService().isCurrentlyTracking().observe(viewLifecycleOwner) {
             isTracking = it
             map.createLocationPuck()
             updateButtons()
-
         }
 
         TrackingService().outerPolyline().observe(viewLifecycleOwner) {
-            outerPolyline = it
-
-            addLatestPolyline()
-            if (hasExistingInnerAndOuterPolyLines()) {
-                map.moveCameraToUser(
-                    outerPolyline.last().last(), TRACKING_MAP_ZOOM,
-                    DEFAULT_CAMERA_ANIMATION_DURATION
-                )
+            TrackingPolyLine.outerPolyline = it
+            trackingPolyLine.getLatestPolyLine()?.let { it1 -> map.getMap()?.addPolyline(it1) }
+            if (trackingPolyLine.hasExistingInnerAndOuterPolyLines()) {
+                    trackingPolyLine.getPolyLineLastLocation()?.let { location ->
+                        map.moveCameraToUser(location, TRACKING_MAP_ZOOM,DEFAULT_CAMERA_ANIMATION_DURATION)
+                    }
             }
         }
 
@@ -414,14 +380,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
          */
 
     }
-
     private fun sendCommandToTrackingService(action: String) {
         Intent(requireContext(), TrackingService::class.java).also {
             it.action = action
             requireContext().startService(it)
         }
     }
-
     private fun toggleStartButton() {
         if (isTracking) {
             sendCommandToTrackingService(ACTION_PAUSE_SERVICE)
@@ -429,50 +393,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
         sendCommandToTrackingService(ACTION_START_OR_RESUME_SERVICE)
     }
-
     private fun updateButtons() {
-
         if (isTracking) {
             startButton.text = getString(R.string.stopButton)
             return
         }
         startButton.text = getString(R.string.startButton)
     }
-
-
-
-
-    private fun addLatestPolyline() {
-
-        if (hasExistingInnerPolyLines()) {
-            val innerPolylinePosition = outerPolyline.last().size - 2
-            val preLastLatLng = outerPolyline.last()[innerPolylinePosition]
-            val lastLatLng = outerPolyline.last().last()
-
-            customPolylineAppearance()
-                .add(preLastLatLng)
-                .add(lastLatLng).apply {
-                    map.getMap()?.addPolyline(this)
-                }
-        }
-    }
-
-
-    private fun customPolylineAppearance(): PolylineOptions {
-
-        return PolylineOptions()
-            .color(POLYLINE_COLOR)
-            .width(POLYLINE_WIDTH)
-
-
-    }
-    private fun hasExistingInnerAndOuterPolyLines() =
-        outerPolyline.isNotEmpty() && outerPolyline.last().isNotEmpty()
-
-    private fun hasExistingInnerPolyLines() =
-        outerPolyline.isNotEmpty() && outerPolyline.last().size > 1
-
-
     private fun requestPermissionGranted(): Boolean {
         if (hasLocationPermission(requireContext())) {
             return true
@@ -481,54 +408,38 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         return false
 
     }
-
-
-
-
     override fun onStart() {
         super.onStart();
         map.getMapView().onStart()
     }
-
-
     override fun onResume() {
         super.onResume();
         map.getMapView().onResume()
         registerReceiver()
     }
-
-
     override fun onPause() {
         super.onPause();
         map.getMapView().onPause()
     }
-
-
     override fun onStop() {
         super.onStop();
         map.getMapView().onStop()
         unregisterReceiver()
     }
-
-
     override fun onSaveInstanceState(outState:Bundle) {
         super.onSaveInstanceState(outState);
         map.getMapView().onSaveInstanceState(outState)
     }
-
-
     override fun onLowMemory() {
         super.onLowMemory();
         map.getMapView().onLowMemory()
     }
-
     override fun onDestroy() {
         super.onDestroy()
         map.getMapView().onDestroy()
         unregisterReceiver()
 
     }
-
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             AppSettingsDialog.Builder(this).build().show()
@@ -536,28 +447,17 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             requestPermission(this)
         }
     }
-
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         @Suppress("DEPRECATION")
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
 
     }
-
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
-
     override fun onMoveBegin(detector: MoveGestureDetector){}
-
-
     override fun onMove(detector: MoveGestureDetector) {
         locationFAB.changeFloatingButtonIconBlack()
     }
-
     override fun onMoveEnd(detector: MoveGestureDetector) {}
 
 

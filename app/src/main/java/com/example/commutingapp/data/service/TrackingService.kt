@@ -26,9 +26,7 @@ import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocati
 import com.example.commutingapp.utils.others.WatchFormatter
 import com.example.commutingapp.views.ui.fragments.CommuterFragment
 import com.google.android.gms.location.*
-import com.mapbox.mapboxsdk.geometry.LatLng
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -50,7 +48,7 @@ open class TrackingService : LifecycleService() {
 
     companion object {
         private val trackingPolyLine: TrackingPolyLine = TrackingPolyLine()
-        private val liveDataOuterPolyline = trackingPolyLine.polyLine()
+        private val outerPolyline = trackingPolyLine.polyLine()
         private val stopWatch = TrackingStopWatch()
         val is_Tracking = MutableLiveData<Boolean>()
         val timeInMillis = stopWatch.getTimeRunMillis()
@@ -58,11 +56,11 @@ open class TrackingService : LifecycleService() {
     }
 
     fun isCurrentlyTracking(): LiveData<Boolean> = is_Tracking
-    fun outerPolyline(): MutableLiveData<outerPolyline> = liveDataOuterPolyline
+    fun outerPolyline(): MutableLiveData<alias_outerPolyline> = outerPolyline
 
     private fun postInitialValues() {
         is_Tracking.postValue(false)
-        liveDataOuterPolyline.postValue(mutableListOf())
+        outerPolyline.postValue(mutableListOf())
         stopWatch.postInitialValues()
     }
 
@@ -71,6 +69,7 @@ open class TrackingService : LifecycleService() {
         currentTrackingNotificationBuilder = baseTrackingNotificationBuilder
         postInitialValues()
         subscribeToObservers()
+
 
     }
     private fun subscribeToObservers(){

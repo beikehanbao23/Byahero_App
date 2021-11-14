@@ -129,19 +129,6 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         mapBoxMap?.setStyle(style){ mapStyle -> mapBoxStyle = mapStyle}
     }
 
-    private fun initRouteCoordinates(style: Style) {
-        val routeCoordinates = mutableListOf<Point>()
-
-        val geoJson = FeatureCollection.fromFeatures(arrayOf(Feature.fromGeometry(LineString.fromLngLats(routeCoordinates))))
-        style.addSource(GeoJsonSource(POLYLINE_SOURCE_ID,geoJson))
-
-        style.addLayer(
-            LineLayer(POLYLINE_LAYER_ID, POLYLINE_SOURCE_ID).withProperties(
-                PropertyFactory.lineWidth(10f),
-                PropertyFactory.lineColor(Color.parseColor("#F3E217"))
-            )
-        )
-    }
 
     override fun getLocationSearchResult(requestCode: Int,resultCode: Int, data: Intent?) {
     try {
@@ -174,11 +161,6 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
     abstract fun onSearchCompleted(intent:Intent)
 
-    private fun symbolLayerProperties()= arrayOf<PropertyValue<*>>(
-        PropertyFactory.iconImage(MAP_MARKER_IMAGE_ID),
-        PropertyFactory.iconOffset(arrayOf(0f, -8f)),
-        PropertyFactory.iconSize(Constants.MAP_MARKER_SIZE)
-    )
     override fun pointMapMarker(latLng: LatLng) {
         mapBoxMap?.getStyle {
             marker.latLng = latLng
