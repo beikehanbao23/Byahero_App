@@ -1,4 +1,4 @@
-package com.example.commutingapp.views.ui.subComponents.maps.MapBox
+package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
 import android.app.Activity
 import android.content.Intent
@@ -14,7 +14,7 @@ import com.example.commutingapp.utils.others.Constants.MAP_MARKER_IMAGE_ID
 import com.example.commutingapp.utils.others.Constants.MAX_ZOOM_LEVEL_MAPS
 import com.example.commutingapp.utils.others.Constants.MIN_ZOOM_LEVEL_MAPS
 import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
-import com.example.commutingapp.views.ui.subComponents.FAB.MapTypes
+import com.example.commutingapp.views.ui.subComponents.fab.MapTypes
 import com.example.commutingapp.views.ui.subComponents.maps.IMap
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
@@ -150,7 +150,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     override fun pointMapMarker(latLng: LatLng) {
         mapBoxMap?.getStyle {
-            marker.latLng = latLng
+            marker.setLocation(latLng)
             marker.create()
         }
         mapBoxMap?.cameraPosition?.also {zoomLevel->

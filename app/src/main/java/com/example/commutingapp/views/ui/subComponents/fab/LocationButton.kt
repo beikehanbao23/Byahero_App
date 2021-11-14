@@ -1,12 +1,10 @@
-package com.example.commutingapp.views.ui.subComponents.FAB
+package com.example.commutingapp.views.ui.subComponents.fab
 
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
-import android.view.ContextMenu
 import android.view.View
-import android.widget.Button
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi

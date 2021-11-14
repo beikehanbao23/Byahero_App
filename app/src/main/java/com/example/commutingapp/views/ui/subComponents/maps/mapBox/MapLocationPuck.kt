@@ -1,4 +1,4 @@
-package com.example.commutingapp.views.ui.subComponents.maps.MapBox
+package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
 import android.annotation.SuppressLint
 import android.app.Activity

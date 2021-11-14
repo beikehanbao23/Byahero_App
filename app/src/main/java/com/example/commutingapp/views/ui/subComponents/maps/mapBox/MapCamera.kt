@@ -1,4 +1,4 @@
-package com.example.commutingapp.views.ui.subComponents.maps.MapBox
+package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
 import com.example.commutingapp.utils.others.Constants
 import com.mapbox.mapboxsdk.camera.CameraPosition

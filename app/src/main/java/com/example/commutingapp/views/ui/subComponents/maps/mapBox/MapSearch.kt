@@ -1,13 +1,14 @@
-package com.example.commutingapp.views.ui.subComponents.maps.MapBox
+package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants
-import com.example.commutingapp.utils.others.Constants.MAP_MARKER_IMAGE_ID
-import com.example.commutingapp.utils.others.Constants.ON_SEARCH_LAYER_ID
-import com.example.commutingapp.utils.others.Constants.ON_SEARCH_SOURCE_ID
+import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.MapLayer
+import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.MapSymbolLayers
+import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.properties.OnClickMapMarkerProperties
+import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.properties.OnSearchMapMarkerProperties
 import com.google.gson.JsonObject
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.geojson.Feature
@@ -19,14 +20,11 @@ import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 
 
-class MapSearch(private val activity:Activity,private val style: Style?):MapLayer {
+class MapSearch(private val activity:Activity,private val style: Style?) {
     private lateinit var home: CarmenFeature
     private lateinit var work: CarmenFeature
     private lateinit var result:CarmenFeature
-    private var mapSymbol:MapSymbolLayers = MapSymbolLayers(style,
-        ON_SEARCH_SOURCE_ID,
-        ON_SEARCH_LAYER_ID,
-        MAP_MARKER_IMAGE_ID)
+    private var mapSymbol:MapSymbolLayers = MapSymbolLayers(style,OnSearchMapMarkerProperties())
 
     init {
         initializeUserLocations()
@@ -41,7 +39,7 @@ class MapSearch(private val activity:Activity,private val style: Style?):MapLaye
         return null
     }
 
-    override fun create() {
+    fun create() {
 
             val feature = FeatureCollection.fromFeatures(arrayOf( Feature.fromJson(result.toJson())))
             mapSymbol.create(feature)
