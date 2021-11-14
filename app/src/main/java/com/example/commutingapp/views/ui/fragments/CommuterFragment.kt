@@ -55,12 +55,12 @@ import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
 import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
 import com.example.commutingapp.data.service.TrackingPolyLine
-import com.example.commutingapp.views.ui.subComponents.maps.MapBox.MapBox
+import com.example.commutingapp.views.ui.subComponents.maps.mapBox.MapBox
 import com.example.commutingapp.views.ui.subComponents.maps.MapWrapper
 import com.example.commutingapp.views.ui.subComponents.BottomNavigation
 import com.example.commutingapp.views.ui.subComponents.Component
-import com.example.commutingapp.views.ui.subComponents.FAB.LocationButton
-import com.example.commutingapp.views.ui.subComponents.FAB.MapTypes
+import com.example.commutingapp.views.ui.subComponents.fab.LocationButton
+import com.example.commutingapp.views.ui.subComponents.fab.MapTypes
 import com.google.android.gms.location.*
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
