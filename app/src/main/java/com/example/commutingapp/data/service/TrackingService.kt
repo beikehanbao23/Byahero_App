@@ -31,8 +31,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
 
-typealias innerPolyline = MutableList<LatLng>
-typealias outerPolyline = MutableList<innerPolyline>
 
 @AndroidEntryPoint
 open class TrackingService : LifecycleService() {

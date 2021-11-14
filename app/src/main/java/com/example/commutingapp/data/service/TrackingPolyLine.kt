@@ -4,6 +4,8 @@ import android.location.Location
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import com.mapbox.mapboxsdk.geometry.LatLng
+typealias innerPolyline = MutableList<LatLng>
+typealias outerPolyline = MutableList<innerPolyline>
 
 class TrackingPolyLine :LifecycleService(){
     //TODO remove lifecycle extension
@@ -22,9 +24,9 @@ class TrackingPolyLine :LifecycleService(){
 
      fun addPolyline(location: Location?){
         location?.let {
-            val position = LatLng(location.latitude,location.longitude)
+            val userLocation = LatLng(location.latitude,location.longitude)
                 liveDataOuterPolyLine.value?.apply {
-                last().add(position)
+                last().add(userLocation)
                  liveDataOuterPolyLine.postValue(this)
             }
         }
