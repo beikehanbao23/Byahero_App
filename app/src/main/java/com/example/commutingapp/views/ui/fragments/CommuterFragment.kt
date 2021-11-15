@@ -147,6 +147,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 moveCameraToLastKnownLocation()
                 trackingPolyLine.getAllPolyLines()?.let { map.getMap()?.addPolyline(it) }
 
+
             }
 
             override fun onSearchCompleted(intent: Intent) {

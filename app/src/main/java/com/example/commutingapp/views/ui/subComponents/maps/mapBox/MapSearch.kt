@@ -7,8 +7,6 @@ import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.MapLayer
 import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.MapSymbolLayers
-import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.properties.OnClickMapMarkerProperties
-import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.properties.OnSearchMapMarkerProperties
 import com.google.gson.JsonObject
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.geojson.Feature
@@ -24,7 +22,7 @@ class MapSearch(private val activity:Activity,private val style: Style?) {
     private lateinit var home: CarmenFeature
     private lateinit var work: CarmenFeature
     private lateinit var result:CarmenFeature
-    private var mapSymbol:MapSymbolLayers = MapSymbolLayers(style,OnSearchMapMarkerProperties())
+    private var mapSymbol: MapLayer = MapSymbolLayers(style,Constants.ON_SEARCH_SOURCE_ID,Constants.ON_SEARCH_LAYER_ID)
 
     init {
         initializeUserLocations()

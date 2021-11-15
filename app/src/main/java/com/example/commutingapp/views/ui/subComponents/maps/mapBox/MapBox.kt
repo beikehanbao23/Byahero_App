@@ -16,6 +16,7 @@ import com.example.commutingapp.utils.others.Constants.MIN_ZOOM_LEVEL_MAPS
 import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
 import com.example.commutingapp.views.ui.subComponents.fab.MapTypes
 import com.example.commutingapp.views.ui.subComponents.maps.IMap
+import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -37,6 +38,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private lateinit var search:MapSearch
     private lateinit var locationPuck: MapLocationPuck
     private lateinit var polyLine: LineManager
+    private lateinit var directions: MapDirections
     private var mapTypes:MapTypes = MapTypes(activity)
 
 
@@ -64,6 +66,9 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private fun initializeMapComponents(){
 
         locationPuck = MapLocationPuck(activity,mapBoxMap)
+
+
+
 
         Handler(Looper.getMainLooper()).postDelayed({
             mapBoxStyle?.let(locationPuck::buildLocationPuck)
@@ -149,9 +154,17 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     abstract fun onSearchCompleted(intent:Intent)
 
     override fun pointMapMarker(latLng: LatLng) {
-        mapBoxMap?.getStyle {
+        mapBoxMap?.getStyle {style->
             marker.setLocation(latLng)
             marker.create()
+            directions = MapDirections(style,activity)
+
+            getLastKnownLocation()?.let {location->
+                val origin:Point = Point.fromLngLat(location.longitude,location.latitude)
+                val destination = Point.fromLngLat(latLng.longitude,latLng.latitude)
+                directions.getRoute(origin,destination)
+            }
+
         }
         mapBoxMap?.cameraPosition?.also {zoomLevel->
             moveCameraToUser(latLng, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION)
