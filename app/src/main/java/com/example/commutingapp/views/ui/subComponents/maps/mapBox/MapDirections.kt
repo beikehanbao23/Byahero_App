@@ -1,6 +1,7 @@
 package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
 import android.app.Activity
+import android.util.Log
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants.ROUTE_LAYER_ID
 import com.example.commutingapp.utils.others.Constants.ROUTE_SOURCE_ID
@@ -20,7 +21,9 @@ import retrofit2.Call
 import retrofit2.Response
 import com.mapbox.core.constants.Constants.PRECISION_6
 import com.mapbox.geojson.FeatureCollection
-import timber.log.Timber
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MapDirections(private val style:Style?, private val activity: Activity) {
@@ -30,22 +33,22 @@ class MapDirections(private val style:Style?, private val activity: Activity) {
 
 
     fun getRoute(locationOrigin:Point, destinationLocation:Point){
+        CoroutineScope(Dispatchers.Default).launch {
+
         getClient(locationOrigin, destinationLocation).enqueueCall(object: Callback<DirectionsResponse> {
             override fun onResponse(call: Call<DirectionsResponse>, response: Response<DirectionsResponse>) {
                 response.body()?.let {response->
-
                     if(response.routes().size < 1){
-                        Timber.d("No routes found!")
+                        Log.e("Routes:"," No routes found!")
                         return;
                     }
                     drawNavigationRoute(response.routes()[0])
                 }
             }
-
             override fun onFailure(call: Call<DirectionsResponse>, t: Throwable) {
-                Timber.d("Error: %s", t.message);
-            }
-        })
+                Log.e("Routes:","On Failure")
+            }})
+        }
     }
 
     private fun getClient(locationOrigin: Point,destinationLocation: Point) = MapboxDirections.builder()

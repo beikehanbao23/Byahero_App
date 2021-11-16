@@ -17,4 +17,5 @@ interface IMap<T,V> {
     fun updateMapStyle(style:String)
     fun initializeLocationPuck()
     fun getMapViewInstance():V
+    fun createDirections()
 }

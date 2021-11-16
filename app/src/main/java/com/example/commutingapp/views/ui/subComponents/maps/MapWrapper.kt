@@ -39,4 +39,8 @@ class MapWrapper<T,V>(private val map:IMap<T,V>) {
     fun getMapView():V{
         return map.getMapViewInstance()
     }
+    fun createRouteDirections(){
+        map.createDirections()
+    }
+
 }

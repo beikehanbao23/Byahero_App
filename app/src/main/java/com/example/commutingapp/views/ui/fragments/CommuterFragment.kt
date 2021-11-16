@@ -211,7 +211,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun provideDirectionButtonListener(){
         directionButton.setOnClickListener {
-
+            map.createRouteDirections()
         }
     }
     private fun provideSaveButtonListener(){

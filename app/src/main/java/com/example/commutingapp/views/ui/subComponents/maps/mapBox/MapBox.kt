@@ -1,9 +1,11 @@
 package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatButton
 import com.example.commutingapp.R
@@ -23,7 +25,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.annotation.LineManager
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
-import timber.log.Timber
+
 import java.lang.IllegalStateException
 
 abstract class MapBox(private val view: View,private val activity: Activity):
@@ -40,7 +42,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private lateinit var polyLine: LineManager
     private lateinit var directions: MapDirections
     private var mapTypes:MapTypes = MapTypes(activity)
-
+    private var destinationLocation:LatLng? = null
 
 
     override fun getMapInstance():MapboxMap? = mapBoxMap
@@ -52,6 +54,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
 
     override fun setupUI(mapType: String){
+
         mapBoxView.getMapAsync {map->
             mapBoxMap = map
                 initializeMap()
@@ -100,15 +103,18 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             }
                 marker = MapMarker(style)
                 search = MapSearch(activity, style)
-
+                directions = MapDirections(style, activity)
         }
     }
 
+    @SuppressLint("LogNotTimber")
     override fun getLastKnownLocation():LatLng?{
         try {
             return mapBoxMap?.locationComponent?.lastKnownLocation?.run {
                 LatLng(this.latitude, this.longitude)
-            } }catch (e:Exception){}
+            } }catch (e:Exception){
+            Log.e("Last known location",e.message.toString())
+            }
         return null
     }
     override fun recoverMissingMapMarker(){
@@ -126,7 +132,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     try {
         search.getLocationSearchResult(requestCode, resultCode, data)?.let { location ->
             moveCameraToUser(location, TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
-        }}catch(e:IllegalStateException){ Timber.d("Loading style error")}
+        }}catch(e:IllegalStateException){     Log.e("Style loading error ",e.message.toString())}
     }
 
     private fun initializeMapMarkerImage(){
@@ -141,7 +147,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     override fun initializeLocationPuck() {
         try {
             mapBoxStyle?.let(locationPuck::buildLocationPuck)
-        }catch (e:IllegalArgumentException){}
+        }catch (e:IllegalArgumentException){Log.e("Location puck failed! ",e.message.toString())}
     }
 
 
@@ -153,18 +159,21 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
     abstract fun onSearchCompleted(intent:Intent)
 
+    override fun createDirections() {
+            getLastKnownLocation()?.let { latLngLastLocation ->
+                destinationLocation?.let { latLngDestinationLocation->
+                    val origin: Point = Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude)
+                    val destination = Point.fromLngLat(latLngDestinationLocation.longitude, latLngDestinationLocation.latitude)
+                    directions.getRoute(origin, destination)
+                }
+        }
+    }
+
     override fun pointMapMarker(latLng: LatLng) {
-        mapBoxMap?.getStyle {style->
+        mapBoxMap?.getStyle {
             marker.setLocation(latLng)
             marker.create()
-            directions = MapDirections(style,activity)
-
-            getLastKnownLocation()?.let {location->
-                val origin:Point = Point.fromLngLat(location.longitude,location.latitude)
-                val destination = Point.fromLngLat(latLng.longitude,latLng.latitude)
-                directions.getRoute(origin,destination)
-            }
-
+            destinationLocation = latLng
         }
         mapBoxMap?.cameraPosition?.also {zoomLevel->
             moveCameraToUser(latLng, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION)
