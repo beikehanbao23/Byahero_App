@@ -3,8 +3,6 @@ package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatButton
@@ -25,8 +23,11 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.annotation.LineManager
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
-
-import java.lang.IllegalStateException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.ArrayList
 
 abstract class MapBox(private val view: View,private val activity: Activity):
     IMap<MapboxMap, MapView> {
@@ -47,66 +48,62 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     override fun getMapInstance():MapboxMap? = mapBoxMap
     override fun deleteAllMapMarker(){
-       initializeStyles(mapTypes.loadMapType())
+        CoroutineScope(Dispatchers.Main).launch {
+            initializeStyles(mapTypes.loadMapType())
+        }
     }
 
     override fun getMapViewInstance():MapView = mapBoxView
 
 
-    override fun setupUI(mapType: String){
+    override fun setupUI(mapType: String) {
 
-        mapBoxView.getMapAsync {map->
-            mapBoxMap = map
+        mapBoxView.getMapAsync { map ->
+            CoroutineScope(Dispatchers.Main).launch {
+                mapBoxMap = map
                 initializeMap()
                 initializeStyles(mapType)
                 initializeSearchFABLocation()
-                initializeSearchFABLocation()
                 initializeMapMarkerImage()
                 initializeMapComponents()
-
-        }
+            }
     }
-    private fun initializeMapComponents(){
-
-        locationPuck = MapLocationPuck(activity,mapBoxMap)
-
-
-
-
-        Handler(Looper.getMainLooper()).postDelayed({
+    }
+    private suspend fun initializeMapComponents(){
+            locationPuck = MapLocationPuck(activity, mapBoxMap)
+            delay(10)
             mapBoxStyle?.let(locationPuck::buildLocationPuck)
-        }, 10)
-
-
-
 
     }
     private fun initializeMap() {
-        with(mapBoxMap!!) {
-            uiSettings.isAttributionEnabled = false
-            uiSettings.isLogoEnabled = false
-            uiSettings.setCompassMargins(0, 480, 50, 0)
-            setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
-            setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
-            onMapReady(this)
-        }
+
+            with(mapBoxMap!!) {
+                uiSettings.isAttributionEnabled = false
+                uiSettings.isLogoEnabled = false
+                uiSettings.setCompassMargins(0, 480, 50, 0)
+                setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
+                setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
+                onMapReady(this)
+            }
+
     }
 
     abstract fun onMapReady(mapboxMap: MapboxMap)
 
-    private fun initializeStyles(mapType:String){
-        mapBoxMap?.setStyle(mapType) { style ->
-            mapBoxStyle = style
-            mapBoxView.apply {
-                TrafficPlugin(this, mapBoxMap!!, style).apply { setVisibility(true) }
-                polyLine = LineManager(this,mapBoxMap!!,style)
-            }
+    private  fun initializeStyles(mapType:String) {
+
+            mapBoxMap?.setStyle(mapType) { style ->
+                mapBoxStyle = style
+                mapBoxView.apply {
+                    TrafficPlugin(this, mapBoxMap!!, style).apply { setVisibility(true) }
+                    polyLine = LineManager(this, mapBoxMap!!, style)
+                }
+
                 marker = MapMarker(style)
                 search = MapSearch(activity, style)
                 directions = MapDirections(style, activity)
         }
     }
-
     @SuppressLint("LogNotTimber")
     override fun getLastKnownLocation():LatLng?{
         try {
@@ -114,13 +111,16 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                 LatLng(this.latitude, this.longitude)
             } }catch (e:Exception){
             Log.e("Last known location",e.message.toString())
+            mapBoxStyle?.let( locationPuck::buildLocationPuck)
             }
         return null
     }
     override fun recoverMissingMapMarker(){
-        mapBoxView.addOnStyleImageMissingListener {
-            initializeMapMarkerImage()
-        }
+            mapBoxView.addOnStyleImageMissingListener {
+                CoroutineScope(Dispatchers.Main).launch {
+                initializeMapMarkerImage()
+            }
+    }
     }
 
     override fun updateMapStyle(style:String){
@@ -128,31 +128,40 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
 
-    override fun getLocationSearchResult(requestCode: Int,resultCode: Int, data: Intent?) {
-    try {
-        search.getLocationSearchResult(requestCode, resultCode, data)?.let { location ->
-            moveCameraToUser(location, TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
-        }}catch(e:IllegalStateException){     Log.e("Style loading error ",e.message.toString())}
+    override fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                search.getLocationSearchResult(requestCode, resultCode, data)?.let { location ->
+                    moveCameraToUser(location, TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
+                }
+            } catch (e: IllegalStateException) {
+                Log.e("Style loading error ", e.message.toString())
+            }
+        }
     }
 
-    private fun initializeMapMarkerImage(){
-        mapBoxStyle?.addImage(
-            MAP_MARKER_IMAGE_ID,
-            BitmapConvert.getBitmapFromVectorDrawable(
-                activity,
-                R.drawable.ic_location_map_marker
+    private  fun initializeMapMarkerImage()=
+            mapBoxStyle?.addImage(
+                MAP_MARKER_IMAGE_ID,
+                BitmapConvert.getBitmapFromVectorDrawable(
+                    activity,
+                    R.drawable.ic_location_map_marker
+                )
             )
-        )
-    }
-    override fun initializeLocationPuck() {
-        try {
-            mapBoxStyle?.let(locationPuck::buildLocationPuck)
-        }catch (e:IllegalArgumentException){Log.e("Location puck failed! ",e.message.toString())}
-    }
 
+    override fun initializeLocationPuck() {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                mapBoxStyle?.let( locationPuck::buildLocationPuck)
+            } catch (e: IllegalArgumentException) {
+                Log.e("Location puck failed! ", e.message.toString())
+            }
+        }
+
+    }
 
     private fun initializeSearchFABLocation(){
-        searchLocationButton.setOnClickListener {
+            searchLocationButton.setOnClickListener {
                 onSearchCompleted(search.getLocationSearchIntent())
         }
 
@@ -160,29 +169,40 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     abstract fun onSearchCompleted(intent:Intent)
 
     override fun createDirections() {
+        CoroutineScope(Dispatchers.Main).launch {
             getLastKnownLocation()?.let { latLngLastLocation ->
-                destinationLocation?.let { latLngDestinationLocation->
-                    val origin: Point = Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude)
-                    val destination = Point.fromLngLat(latLngDestinationLocation.longitude, latLngDestinationLocation.latitude)
-                    directions.getRoute(origin, destination)
+                destinationLocation?.let { latLngDestinationLocation ->
+                    val origin: Point =
+                        Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude)
+                    val destination = Point.fromLngLat(
+                        latLngDestinationLocation.longitude,
+                        latLngDestinationLocation.latitude
+                    )
+
+                    directions.getRoute(origin,destination)
                 }
+            }
         }
     }
 
     override fun pointMapMarker(latLng: LatLng) {
-        mapBoxMap?.getStyle {
-            marker.setLocation(latLng)
-            marker.create()
-            destinationLocation = latLng
-        }
-        mapBoxMap?.cameraPosition?.also {zoomLevel->
-            moveCameraToUser(latLng, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION)
-        }
+        CoroutineScope(Dispatchers.Main).launch {
+            mapBoxMap?.getStyle {
 
+                marker.setLocation(latLng)
+                marker.create()
+                destinationLocation = latLng
+
+                mapBoxMap?.cameraPosition?.also { zoomLevel ->
+                    moveCameraToUser(latLng, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION)
+                }
+            }
+        }
     }
     override fun moveCameraToUser(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int) {
-        camera = MapCamera(mapBoxMap)
-        camera.move(latLng, zoomLevel, cameraAnimationDuration)
+        CoroutineScope(Dispatchers.Main).launch {
+            camera = MapCamera(mapBoxMap)
+            camera.move(latLng, zoomLevel, cameraAnimationDuration)
+        }
     }
-
 }

@@ -9,26 +9,30 @@ import com.mapbox.mapboxsdk.location.LocationComponentOptions
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
+import kotlinx.coroutines.coroutineScope
+import kotlin.coroutines.coroutineContext
 
 class MapLocationPuck(private val activity: Activity, private val mapBoxMap: MapboxMap?) {
 
-     fun buildLocationPuck( style: Style){
-        LocationComponentOptions.builder(activity)
+      fun buildLocationPuck(style: Style){
+
+             getLocationComponentOptions().also { componentOptions ->
+                 mapBoxMap?.locationComponent?.apply {
+                     activateLocationComponent(
+                         LocationComponentActivationOptions.builder(activity, style)
+                             .locationComponentOptions(componentOptions)
+                             .build()
+                     )
+                     createComponentsLocation(this)
+                 }
+             }
+
+    }
+    private fun getLocationComponentOptions() = LocationComponentOptions.builder(activity)
             .accuracyAlpha(0.3f)
             .compassAnimationEnabled(true)
             .accuracyAnimationEnabled(true)
-            .build().also { componentOptions ->
-                mapBoxMap?.locationComponent?.apply {
-                    activateLocationComponent(
-                        LocationComponentActivationOptions.builder(activity, style!!)
-                            .locationComponentOptions(componentOptions)
-                            .build()
-                    )
-                    createComponentsLocation(this)
-
-                }
-            }
-    }
+            .build()
 
     @SuppressLint("MissingPermission")
     private fun createComponentsLocation(locationComponent: LocationComponent) {

@@ -6,6 +6,6 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 
 interface MapLayer {
     fun create(featureCollection: FeatureCollection)
-    fun create(feature: Feature)
+     fun create(feature: Feature)
 
 }

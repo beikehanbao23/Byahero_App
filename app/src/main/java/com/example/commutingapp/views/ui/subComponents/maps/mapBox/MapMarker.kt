@@ -14,7 +14,7 @@ class MapMarker(private val style: Style?) {
     private var latLng: LatLng? = null
     private var mapSymbol: MapLayer = MapSymbolLayers(style, ON_MAP_CLICK_SOURCE_ID, ON_MAP_CLICK_LAYER_ID)
 
-     fun create(){
+      fun create(){
         val destinationLocation = latLng?.let {
             Point.fromLngLat(it.longitude,it.latitude)
         }

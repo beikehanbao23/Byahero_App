@@ -147,7 +147,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 moveCameraToLastKnownLocation()
                 trackingPolyLine.getAllPolyLines()?.let { map.getMap()?.addPolyline(it) }
 
-
             }
 
             override fun onSearchCompleted(intent: Intent) {
@@ -155,6 +154,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
         }
         map = MapWrapper(mapbox)
+        map.createLocationPuck()
         trackingPolyLine = TrackingPolyLine()
     }
     private fun provideClickListeners() {
@@ -199,8 +199,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 locationFAB.hideLocationFloatingButton()
                 checkLocationSetting().addOnCompleteListener {
                 try{
-                it.getResult(ApiException::class.java)
-                toggleStartButton()
+                    it.getResult(ApiException::class.java)
+                     toggleStartButton()
                 }catch (e:ApiException){
                     handleLocationResultException(e)
                 }

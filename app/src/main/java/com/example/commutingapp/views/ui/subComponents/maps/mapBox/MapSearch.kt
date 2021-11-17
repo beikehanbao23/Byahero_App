@@ -28,17 +28,19 @@ class MapSearch(private val activity:Activity,private val style: Style?) {
         initializeUserLocations()
     }
 
-    fun getLocationSearchResult(requestCode: Int,resultCode: Int, data: Intent?):LatLng?{
+    suspend fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?): LatLng? {
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_CODE_AUTOCOMPLETE) {
             this.result = PlaceAutocomplete.getPlace(data)
-                create()
-                return LatLng((result.geometry() as Point).latitude(),(result.geometry() as Point).longitude())
-            }
+            createMarker()
+            return LatLng(
+                (result.geometry() as Point).latitude(),
+                (result.geometry() as Point).longitude()
+            )
+        }
         return null
     }
 
-    fun create() {
-
+    private suspend fun createMarker() {
             val feature = FeatureCollection.fromFeatures(arrayOf( Feature.fromJson(result.toJson())))
             mapSymbol.create(feature)
     }
