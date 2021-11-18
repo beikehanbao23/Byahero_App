@@ -1,10 +1,11 @@
 package com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers
 
 import android.graphics.Color
-import android.util.Log
 import com.example.commutingapp.utils.others.Constants
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.GeoJson
+import com.mapbox.geojson.Geometry
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.style.layers.LineLayer
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
@@ -34,6 +35,15 @@ class MapLineLayers(
     }
 
 
+    override fun create(feature: Feature) {
+
+    }
+
+    override fun create(geometry: Geometry) {
+        source = style?.getSourceAs(sourceId)
+        source?.let { it.setGeoJson(geometry) }
+    }
+
     override  fun create(featureCollection: FeatureCollection): Unit {
 
         source = style?.getSourceAs(sourceId)
@@ -42,6 +52,5 @@ class MapLineLayers(
     }
 
 
-    override  fun create(feature: Feature) {}
 
 }

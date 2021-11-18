@@ -3,17 +3,15 @@ package com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers
 import com.example.commutingapp.utils.others.Constants
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.Geometry
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class MapSymbolLayers(private val style: Style?, private val sourceId:String, private val layerId:String ):MapLayer {
-
+    private var source:GeoJsonSource? = null
     init {
         style?.apply {
            runBlocking {
@@ -30,13 +28,17 @@ class MapSymbolLayers(private val style: Style?, private val sourceId:String, pr
     }
 
     override fun create(feature:Feature){
-        val source:GeoJsonSource? = style?.getSourceAs(sourceId)
+        source = style?.getSourceAs(sourceId)
         source?.setGeoJson(feature)
     }
     override fun create(featureCollection: FeatureCollection){
-        val source:GeoJsonSource? = style?.getSourceAs(sourceId)
+
+        source = style?.getSourceAs(sourceId)
         source?.setGeoJson(featureCollection)
     }
 
+    override fun create(geometry: Geometry) {
+
+    }
 }
 
