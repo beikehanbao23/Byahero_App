@@ -34,9 +34,10 @@ object Constants {
     const val MIN_ZOOM_LEVEL_MAPS = 3.00
     const val DEFAULT_LATITUDE = 12.8797
     const val DEFAULT_LONGITUDE = 121.7740
-    const val POLYLINE_COLOR = Color.BLUE
+    const val POLYLINE_COLOR = "#021AE9"
+    const val ROUTE_COLOR = "#2E86C1"
     const val POLYLINE_WIDTH = 5.0f
-    const val MAP_MARKER_SIZE = 2.0f
+    const val MAP_MARKER_SIZE = 0.4f
     const val MAP_MARKER_IMAGE_ID = "PIN"
     const val REGEX_NUMBER_VALUE="[0-9]"
     const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"

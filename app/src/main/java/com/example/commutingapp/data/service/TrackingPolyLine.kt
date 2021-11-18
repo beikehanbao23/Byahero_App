@@ -1,6 +1,7 @@
 package com.example.commutingapp.data.service
 
 import android.app.Activity
+import android.graphics.Color
 import android.location.Location
 import androidx.lifecycle.MutableLiveData
 import com.example.commutingapp.utils.others.Constants
@@ -79,7 +80,7 @@ class TrackingPolyLine {
     private fun customPolylineAppearance(): PolylineOptions {
 
         return PolylineOptions()
-            .color(Constants.POLYLINE_COLOR)
+            .color(Color.parseColor(Constants.POLYLINE_COLOR))
             .width(Constants.POLYLINE_WIDTH)
 
 

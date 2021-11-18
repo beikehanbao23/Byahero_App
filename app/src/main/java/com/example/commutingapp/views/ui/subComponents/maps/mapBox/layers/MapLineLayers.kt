@@ -26,7 +26,7 @@ class MapLineLayers(
                   addSource(GeoJsonSource(sourceId))
                   addLayerBelow(
                       LineLayer(layerId, sourceId).withProperties(
-                          PropertyFactory.lineColor(Color.CYAN),
+                          PropertyFactory.lineColor(Color.parseColor(Constants.ROUTE_COLOR)),
                           PropertyFactory.lineWidth(Constants.POLYLINE_WIDTH)
                       ), Constants.ON_MAP_CLICK_LAYER_ID
                   )
