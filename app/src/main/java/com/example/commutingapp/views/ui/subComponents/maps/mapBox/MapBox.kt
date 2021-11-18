@@ -144,12 +144,10 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
-    @Suppress("Deprecation")
     private  fun initializeMapMarkerImage()=
-        BitmapUtils.getBitmapFromDrawable(activity.resources.getDrawable(R.drawable.red_marker))?.let {
-            mapBoxStyle?.addImage(MAP_MARKER_IMAGE_ID, it)
-        }
+        activity.getDrawable(R.drawable.red_marker)
+            ?.let { mapBoxStyle?.addImage(MAP_MARKER_IMAGE_ID, it) }
+
 
     override fun initializeLocationPuck() {
         CoroutineScope(Dispatchers.Main).launch {
