@@ -28,7 +28,7 @@ class MapSearch(private val activity:Activity,private val style: Style?) {
         initializeUserLocations()
     }
 
-    suspend fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?): LatLng? {
+     fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?): LatLng? {
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_CODE_AUTOCOMPLETE) {
             this.result = PlaceAutocomplete.getPlace(data)
             createMarker()
@@ -40,7 +40,7 @@ class MapSearch(private val activity:Activity,private val style: Style?) {
         return null
     }
 
-    private suspend fun createMarker() {
+    private fun createMarker() {
             val feature = FeatureCollection.fromFeatures(arrayOf( Feature.fromJson(result.toJson())))
             mapSymbol.create(feature)
     }

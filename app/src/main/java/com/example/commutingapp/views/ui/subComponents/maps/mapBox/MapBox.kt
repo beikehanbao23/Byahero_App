@@ -134,8 +134,14 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     override fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                search.getLocationSearchResult(requestCode, resultCode, data)?.let { location ->
-                    moveCameraToUser(location, TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
+                mapBoxMap?.getStyle {
+                    search.getLocationSearchResult(requestCode, resultCode, data)?.let { location ->
+                        moveCameraToUser(
+                            location,
+                            TRACKING_MAP_ZOOM,
+                            DEFAULT_CAMERA_ANIMATION_DURATION
+                        )
+                    }
                 }
             } catch (e: IllegalStateException) {
                 Log.e("Style loading error ", e.message.toString())
