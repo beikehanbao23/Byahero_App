@@ -17,18 +17,21 @@ import com.example.commutingapp.utils.others.Constants.MIN_ZOOM_LEVEL_MAPS
 import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
 import com.example.commutingapp.views.ui.subComponents.fab.MapTypes
 import com.example.commutingapp.views.ui.subComponents.maps.IMap
+import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.annotation.LineManager
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import com.mapbox.mapboxsdk.utils.BitmapUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 abstract class MapBox(private val view: View,private val activity: Activity):
@@ -107,13 +110,13 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                 directions = MapDirections(style, activity)
         }
     }
-    @SuppressLint("LogNotTimber")
+
     override fun getLastKnownLocation():LatLng?{
         try {
             return mapBoxMap?.locationComponent?.lastKnownLocation?.run {
                 LatLng(this.latitude, this.longitude)
             } }catch (e:Exception){
-            Log.e("Last known location",e.message.toString())
+            Timber.e("Last known location"+e.message.toString())
             mapBoxStyle?.let( locationPuck::buildLocationPuck)
             }
         return null
@@ -135,16 +138,14 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 mapBoxMap?.getStyle {
+
                     search.getLocationSearchResult(requestCode, resultCode, data)?.let { location ->
-                        moveCameraToUser(
-                            location,
-                            TRACKING_MAP_ZOOM,
-                            DEFAULT_CAMERA_ANIMATION_DURATION
-                        )
+                        moveCameraToUser(location, TRACKING_MAP_ZOOM,DEFAULT_CAMERA_ANIMATION_DURATION)
+                        destinationLocation = location
                     }
                 }
             } catch (e: IllegalStateException) {
-                Log.e("Style loading error ", e.message.toString())
+                Timber.e("Style loading error "+ e.message.toString())
             }
         }
 
@@ -160,7 +161,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             try {
                 mapBoxStyle?.let( locationPuck::buildLocationPuck)
             } catch (e: IllegalArgumentException) {
-                Log.e("Location puck failed! ", e.message.toString())
+                Timber.e("Location puck failed! "+ e.message.toString())
             }
         }
 
@@ -198,7 +199,6 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                 marker.setLocation(latLng)
                 marker.create()
                 destinationLocation = latLng
-
                 mapBoxMap?.cameraPosition?.also { zoomLevel ->
                     moveCameraToUser(latLng, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION)
                 }

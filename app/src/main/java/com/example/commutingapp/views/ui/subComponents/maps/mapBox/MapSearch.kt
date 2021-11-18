@@ -21,7 +21,7 @@ import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 class MapSearch(private val activity:Activity,private val style: Style?) {
     private lateinit var home: CarmenFeature
     private lateinit var work: CarmenFeature
-    private lateinit var result:CarmenFeature
+    private lateinit var resultDestination :CarmenFeature
     private var mapSymbol: MapLayer = MapSymbolLayers(style,Constants.ON_SEARCH_SOURCE_ID,Constants.ON_SEARCH_LAYER_ID)
 
     init {
@@ -30,18 +30,16 @@ class MapSearch(private val activity:Activity,private val style: Style?) {
 
      fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?): LatLng? {
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_CODE_AUTOCOMPLETE) {
-            this.result = PlaceAutocomplete.getPlace(data)
+            this.resultDestination = PlaceAutocomplete.getPlace(data)//todo
             createMarker()
-            return LatLng(
-                (result.geometry() as Point).latitude(),
-                (result.geometry() as Point).longitude()
+            return LatLng((resultDestination.geometry() as Point).latitude(), (resultDestination.geometry() as Point).longitude()
             )
         }
         return null
     }
 
     private fun createMarker() {
-            val feature = FeatureCollection.fromFeatures(arrayOf( Feature.fromJson(result.toJson())))
+            val feature = FeatureCollection.fromFeatures(arrayOf( Feature.fromJson(resultDestination.toJson())))
             mapSymbol.create(feature)
     }
 
