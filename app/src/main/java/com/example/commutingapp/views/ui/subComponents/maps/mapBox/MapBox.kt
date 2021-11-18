@@ -18,18 +18,18 @@ import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
 import com.example.commutingapp.views.ui.subComponents.fab.MapTypes
 import com.example.commutingapp.views.ui.subComponents.maps.IMap
 import com.mapbox.geojson.Point
-import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.annotation.LineManager
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
+import com.mapbox.mapboxsdk.utils.BitmapUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.ArrayList
+
 
 abstract class MapBox(private val view: View,private val activity: Activity):
     IMap<MapboxMap, MapView> {
@@ -95,6 +95,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private  fun initializeStyles(mapType:String) {
 
             mapBoxMap?.setStyle(mapType) { style ->
+
                 mapBoxStyle = style
                 mapBoxView.apply {
                     TrafficPlugin(this, mapBoxMap!!, style).apply { setVisibility(true) }
@@ -140,16 +141,15 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                 Log.e("Style loading error ", e.message.toString())
             }
         }
+
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
+    @Suppress("Deprecation")
     private  fun initializeMapMarkerImage()=
-            mapBoxStyle?.addImage(
-                MAP_MARKER_IMAGE_ID,
-                BitmapConvert.getBitmapFromVectorDrawable(
-                    activity,
-                    R.drawable.ic_location_map_marker
-                )
-            )
+        BitmapUtils.getBitmapFromDrawable(activity.resources.getDrawable(R.drawable.red_marker))?.let {
+            mapBoxStyle?.addImage(MAP_MARKER_IMAGE_ID, it)
+        }
 
     override fun initializeLocationPuck() {
         CoroutineScope(Dispatchers.Main).launch {
