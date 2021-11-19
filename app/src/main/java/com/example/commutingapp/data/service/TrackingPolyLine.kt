@@ -1,12 +1,14 @@
 package com.example.commutingapp.data.service
 
-import android.app.Activity
 import android.graphics.Color
 import android.location.Location
 import androidx.lifecycle.MutableLiveData
 import com.example.commutingapp.utils.others.Constants
 import com.mapbox.mapboxsdk.annotations.PolylineOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 typealias alias_innerPolyline = MutableList<LatLng>
@@ -45,20 +47,25 @@ class TrackingPolyLine {
         return null
     }
 
-     fun getLatestPolyLine():PolylineOptions? {
+    fun getLatestPolyLine(): PolylineOptions? {
+        var result: PolylineOptions? = null
+        CoroutineScope(Dispatchers.Main).launch {
 
-        if (hasExistingInnerPolyLines()) {
-            val innerPolylinePosition = outerPolyline.last().size - 2
-            val preLastLatLng = outerPolyline.last()[innerPolylinePosition]
-            val lastLatLng = outerPolyline.last().last()
+            if (hasExistingInnerPolyLines()) {
+                val innerPolylinePosition = outerPolyline.last().size - 2
+                val preLastLatLng = outerPolyline.last()[innerPolylinePosition]
+                val lastLatLng = outerPolyline.last().last()
 
-            customPolylineAppearance()
-                .add(preLastLatLng)
-                .add(lastLatLng).apply {
-                    return this
-                } }
+                customPolylineAppearance()
+                    .add(preLastLatLng)
+                    .add(lastLatLng).apply {
+                        result = this@apply
+                    }
+            }
 
-        return null
+
+        }
+        return result
     }
 
 

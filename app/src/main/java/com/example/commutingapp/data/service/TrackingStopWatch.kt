@@ -1,11 +1,10 @@
 package com.example.commutingapp.data.service
 
 import androidx.lifecycle.MutableLiveData
+import com.example.commutingapp.data.service.TrackingService.Companion.is_Tracking
 import com.example.commutingapp.utils.others.Constants.ONE_SECOND
 import com.example.commutingapp.utils.others.Constants.STOPWATCH_INTERVAL
 import com.example.commutingapp.utils.others.Watch
-import com.example.commutingapp.data.service.TrackingService.Companion.is_Tracking
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -53,7 +52,7 @@ class TrackingStopWatch :  Watch {
             increaseMillis()
             if (secondHasElapsed()) {
                 increaseSeconds()
-                increaseTimStamp()
+                increaseTimeStamp()
             }
             delay(STOPWATCH_INTERVAL)
         }
@@ -75,7 +74,7 @@ class TrackingStopWatch :  Watch {
     private fun increaseSeconds(){
         timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
     }
-    private fun increaseTimStamp(){
+    private fun increaseTimeStamp(){
         lastSecondTimestamp += ONE_SECOND
     }
     private fun secondHasElapsed():Boolean{ return timeRunInMillis.value!! >= lastSecondTimestamp + ONE_SECOND}

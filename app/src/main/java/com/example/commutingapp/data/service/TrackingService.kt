@@ -27,6 +27,9 @@ import com.example.commutingapp.utils.others.WatchFormatter
 import com.example.commutingapp.views.ui.fragments.CommuterFragment
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -148,8 +151,10 @@ open class TrackingService : LifecycleService() {
         }
 
         startForeground(NOTIFICATION_ID, baseTrackingNotificationBuilder.build())
-        stopWatch.getTimeCommuteInSeconds().observe(this) {
-            updateNotification(WatchFormatter.getFormattedStopWatchTime(it*1000L))
+        CoroutineScope(Dispatchers.Main).launch {
+            stopWatch.getTimeCommuteInSeconds().observe(this@TrackingService) {
+                updateNotification(WatchFormatter.getFormattedStopWatchTime(it * 1000L))
+            }
         }
 
     }
