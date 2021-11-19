@@ -1,14 +1,10 @@
 package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatButton
 import com.example.commutingapp.R
-import com.example.commutingapp.utils.others.BitmapConvert
-import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.MAP_MARKER_IMAGE_ID
@@ -17,16 +13,13 @@ import com.example.commutingapp.utils.others.Constants.MIN_ZOOM_LEVEL_MAPS
 import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
 import com.example.commutingapp.views.ui.subComponents.fab.MapTypes
 import com.example.commutingapp.views.ui.subComponents.maps.IMap
-import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.annotation.LineManager
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
-import com.mapbox.mapboxsdk.utils.BitmapUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -179,14 +172,10 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         CoroutineScope(Dispatchers.Main).launch {
             getLastKnownLocation()?.let { latLngLastLocation ->
                 destinationLocation?.let { latLngDestinationLocation ->
-                    val origin: Point =
-                        Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude)
-                    val destination = Point.fromLngLat(
-                        latLngDestinationLocation.longitude,
-                        latLngDestinationLocation.latitude
-                    )
-
-                    directions.getRoute(origin,destination)
+                    val list = mutableListOf<Point>()
+                    list.add(Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude))
+                    list.add(Point.fromLngLat(latLngDestinationLocation.longitude, latLngDestinationLocation.latitude))
+                    directions.getRoute(list)
                 }
             }
         }
