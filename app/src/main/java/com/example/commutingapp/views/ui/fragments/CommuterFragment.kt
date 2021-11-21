@@ -6,69 +6,65 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.*
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.commutingapp.R
+import com.example.commutingapp.data.service.TrackingPolyLine
 import com.example.commutingapp.data.service.TrackingService
 import com.example.commutingapp.databinding.CommuterFragmentBinding
 import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.ACTION_PAUSE_SERVICE
 import com.example.commutingapp.utils.others.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LATITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_MAP_ZOOM
-import com.example.commutingapp.utils.others.Constants.ULTRA_FAST_CAMERA_ANIMATION_DURATION
+import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
 import com.example.commutingapp.utils.others.Constants.REQUEST_CHECK_SETTING
+import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
 import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
+import com.example.commutingapp.utils.others.Constants.ULTRA_FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestPermission
 import com.example.commutingapp.viewmodels.MainViewModel
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.tasks.Task
-import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.mapboxsdk.maps.MapboxMap
-import dagger.hilt.android.AndroidEntryPoint
-import pub.devrel.easypermissions.AppSettingsDialog
-import pub.devrel.easypermissions.EasyPermissions
-import android.content.Intent
-import android.content.BroadcastReceiver
-import android.content.IntentFilter
-import android.os.Build
-import androidx.annotation.RequiresApi
-import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
-import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
-import com.mapbox.android.gestures.MoveGestureDetector
-import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
-import androidx.appcompat.widget.AppCompatButton
-import androidx.lifecycle.lifecycleScope
-import com.example.commutingapp.data.service.TrackingPolyLine
-import com.example.commutingapp.views.ui.subComponents.maps.mapBox.MapBox
-import com.example.commutingapp.views.ui.subComponents.maps.MapWrapper
 import com.example.commutingapp.views.ui.subComponents.BottomNavigation
 import com.example.commutingapp.views.ui.subComponents.Component
+import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
 import com.example.commutingapp.views.ui.subComponents.fab.LocationButton
 import com.example.commutingapp.views.ui.subComponents.fab.MapTypes
+import com.example.commutingapp.views.ui.subComponents.maps.MapWrapper
+import com.example.commutingapp.views.ui.subComponents.maps.mapBox.MapBox
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
-import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
-import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
+import com.google.android.gms.tasks.Task
+import com.mapbox.android.gestures.MoveGestureDetector
+import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pub.devrel.easypermissions.AppSettingsDialog
+import pub.devrel.easypermissions.EasyPermissions
 
 
 @AndroidEntryPoint
@@ -90,7 +86,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var searchLocationButton: AppCompatButton
     private lateinit var notifyListener: FragmentToActivity
     private lateinit var normalBottomSheet: Component
-    private lateinit var trackingBottomSheet:Component
     private lateinit var bottomNavigation:Component
     private lateinit var locationFAB:LocationButton
     private lateinit var mapTypesFAB:MapTypes
@@ -107,7 +102,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         initializeComponents(view)
         normalBottomSheet.hide()
         bottomNavigation.show()
-        trackingBottomSheet.hide()
         provideClickListeners()
         map.getMapView().apply {
             onCreate(savedInstanceState)
@@ -134,7 +128,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         shareButton = view.findViewById(R.id.shareButton)
         searchLocationButton = view.findViewById(R.id.buttonLocationSearch)
         normalBottomSheet = Component(StartingBottomSheet(view,requireContext()))
-        trackingBottomSheet = Component(TrackingBottomSheet(view))
+
         bottomNavigation = Component(BottomNavigation(notifyListener))
         locationFAB = LocationButton(commuterFragmentBinding,requireContext())
         mapTypesFAB = MapTypes(requireContext())
@@ -193,7 +187,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideStartButtonListener(){
         startButton.setOnClickListener {
             if (requestPermissionGranted()) {
-                trackingBottomSheet.show()
                 normalBottomSheet.hide()
                 bottomNavigation.hide()
                 locationFAB.hideLocationFloatingButton()
@@ -216,7 +209,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     private fun provideSaveButtonListener(){
         saveButton.setOnClickListener {
-
+           notifyListener.onThirdNotify()
         }
     }
     private fun provideShareButtonListener(){

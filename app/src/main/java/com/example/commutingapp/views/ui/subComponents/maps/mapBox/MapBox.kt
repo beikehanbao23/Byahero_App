@@ -172,10 +172,15 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         CoroutineScope(Dispatchers.Main).launch {
             getLastKnownLocation()?.let { latLngLastLocation ->
                 destinationLocation?.let { latLngDestinationLocation ->
-                    val list = mutableListOf<Point>()
-                    list.add(Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude))
-                    list.add(Point.fromLngLat(latLngDestinationLocation.longitude, latLngDestinationLocation.latitude))
-                    directions.getRoute(list)
+                    val origin = Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude)
+                    val destination = Point.fromLngLat(latLngDestinationLocation.longitude, latLngDestinationLocation.latitude)
+
+                    mutableListOf<Point>().apply {
+                        this.add(origin)
+                        this.add(destination)
+                        directions.getRoute(this)
+                    }
+
                 }
             }
         }

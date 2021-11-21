@@ -3,6 +3,7 @@ package com.example.commutingapp.views.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -14,14 +15,11 @@ import com.example.commutingapp.data.firebase.auth.UserAuthenticationProcessor
 import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper
 import com.example.commutingapp.data.firebase.usr.UserDataProcessor
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
-import com.example.commutingapp.utils.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
+import com.example.commutingapp.utils.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch
-import com.example.commutingapp.views.ui.fragments.CommuterFragment
-import com.example.commutingapp.views.ui.fragments.SettingsFragment
-import com.example.commutingapp.views.ui.fragments.StatisticsFragment
-import com.example.commutingapp.views.ui.fragments.WeatherFragment
+import com.example.commutingapp.views.ui.fragments.*
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
@@ -47,6 +45,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         initializeAttributes()
         navigateToCommuterFragment(intent)
         val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
@@ -68,6 +67,10 @@ class MainScreen : AppCompatActivity(),FragmentToActivity {
         activityMainScreenBinding?.bottomNavigation?.let {
             it.visibility = View.VISIBLE
         }
+    }
+
+    override fun onThirdNotify() {
+        replaceFragment(NavigationFragment())
     }
 
     private fun setupBottomNavigationListeners(){
@@ -120,11 +123,11 @@ class MainScreen : AppCompatActivity(),FragmentToActivity {
                     }
                 }
     }
-    private fun getCurrentFragment(): Fragment? {
+    private fun currentFragment(): Fragment? {
         return supportFragmentManager.findFragmentById(R.id.fragmentContainer)
     }
     override fun onBackPressed() {
-        if(getCurrentFragment() is CommuterFragment){
+        if(currentFragment() is CommuterFragment){
             finish()
             return
         }
@@ -138,6 +141,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity {
 
     override fun onStart() {
         super.onStart()
+        //ActivitySwitch.startActivityOf(this, TurnByTurnExperienceActivity::class.java)
         displayUserProfileName()
     }
 

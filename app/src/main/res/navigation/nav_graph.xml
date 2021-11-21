@@ -32,4 +32,8 @@
         android:name="com.example.commutingapp.views.ui.fragments.WeatherFragment"
         android:label="@string/title_Weather" />
 
+
+    <fragment
+        android:id="@+id/navigationFragment"
+        android:name="com.example.commutingapp.views.ui.fragments.NavigationFragment"/>
 </navigation>
