@@ -28,6 +28,7 @@ import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.navigation.base.TimeFormat
 import com.mapbox.navigation.base.extensions.applyDefaultNavigationOptions
 import com.mapbox.navigation.base.extensions.applyLanguageAndVoiceUnitOptions
+import com.mapbox.navigation.base.formatter.UnitType
 import com.mapbox.navigation.base.options.NavigationOptions
 import com.mapbox.navigation.base.route.RouterCallback
 import com.mapbox.navigation.base.route.RouterFailure
@@ -335,18 +336,21 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             viewportDataSource.followingPadding = followingPadding
         }
 
-        val distanceFormatterOptions = mapboxNavigation.navigationOptions.distanceFormatterOptions
+        val distanceFormatterOptions = mapboxNavigation.navigationOptions.distanceFormatterOptions.toBuilder()
+            .unitType(UnitType.METRIC)
+            .build()
 
         maneuverApi = MapboxManeuverApi(
             MapboxDistanceFormatter(distanceFormatterOptions)
-        )
+        )//todo change miles to km
 
         tripProgressApi = MapboxTripProgressApi(
-            TripProgressUpdateFormatter.Builder(requireContext())
+            TripProgressUpdateFormatter.Builder(requireContext())//todo change miles to km
                 .distanceRemainingFormatter(DistanceRemainingFormatter(distanceFormatterOptions))
                 .timeRemainingFormatter(TimeRemainingFormatter(requireContext()))
                 .percentRouteTraveledFormatter(PercentDistanceTraveledFormatter())
                 .estimatedTimeToArrivalFormatter(EstimatedTimeToArrivalFormatter(requireContext(), TimeFormat.NONE_SPECIFIED))
+
                 .build())
 
 
