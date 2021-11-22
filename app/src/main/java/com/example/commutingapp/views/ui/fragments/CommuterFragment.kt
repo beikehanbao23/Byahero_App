@@ -18,13 +18,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.commutingapp.R
-import com.example.commutingapp.data.service.TrackingPolyLine
-import com.example.commutingapp.data.service.TrackingService
 import com.example.commutingapp.databinding.CommuterFragmentBinding
 import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.utils.others.Constants
-import com.example.commutingapp.utils.others.Constants.ACTION_PAUSE_SERVICE
-import com.example.commutingapp.utils.others.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LATITUDE
@@ -35,7 +31,6 @@ import com.example.commutingapp.utils.others.Constants.LAST_KNOWN_LOCATION_MAP_Z
 import com.example.commutingapp.utils.others.Constants.REQUEST_CHECK_SETTING
 import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
-import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
 import com.example.commutingapp.utils.others.Constants.ULTRA_FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
@@ -74,9 +69,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private val mainViewModel: MainViewModel by viewModels()
 
-    private var isTracking = false
 
-    private lateinit var trackingPolyLine: TrackingPolyLine
     private lateinit var startButton: Button
     private lateinit var directionButton: Button
     private lateinit var saveButton: Button
@@ -108,7 +101,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             isClickable = true
         }
         map.setupUI(mapTypesFAB.loadMapType())
-        subscribeToObservers()
         map.recoverMissingMapMarker()
         locationFAB.updateLocationFloatingButtonIcon()
     }
@@ -139,7 +131,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 mapboxMap.addOnMapClickListener(this@CommuterFragment)
                 mapboxMap.addOnMoveListener(this@CommuterFragment)
                 moveCameraToLastKnownLocation()
-                trackingPolyLine.getAllPolyLines()?.let { map.getMap()?.addPolyline(it) }
+
 
             }
 
@@ -149,7 +141,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
         map = MapWrapper(mapbox)
         map.createLocationPuck()
-        trackingPolyLine = TrackingPolyLine()
+
     }
     private fun provideClickListeners() {
         provideMapTypeDialogListener()
@@ -193,7 +185,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 checkLocationSetting().addOnCompleteListener {
                 try{
                     it.getResult(ApiException::class.java)
-                     toggleStartButton()
+
                 }catch (e:ApiException){
                     handleLocationResultException(e)
                 }
@@ -321,7 +313,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             REQUEST_CHECK_SETTING ->
                 when (resultCode) {
                     RESULT_OK -> {
-                        toggleStartButton()
+                        //TODO
                     }
                     RESULT_CANCELED->{
 
@@ -350,50 +342,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomNavigation.show()
         return true
     }
-    private fun subscribeToObservers() {
-        TrackingService().isCurrentlyTracking().observe(viewLifecycleOwner) {
-            isTracking = it
-            map.createLocationPuck()
-            updateButtons()
-        }
 
-        TrackingService().outerPolyline().observe(viewLifecycleOwner) {
-            TrackingPolyLine.outerPolyline = it
-            trackingPolyLine.getLatestPolyLine()?.let { it1 -> map.getMap()?.addPolyline(it1) }
-            if (trackingPolyLine.hasExistingInnerAndOuterPolyLines()) {
-                    trackingPolyLine.getPolyLineLastLocation()?.let { location ->
-                        map.moveCameraToUser(location, TRACKING_MAP_ZOOM,DEFAULT_CAMERA_ANIMATION_DURATION)
-                    }
-            }
-        }
 
-        /*
-        TrackingService.timeInMillis.observe(viewLifecycleOwner) {
-            //TODO implement later
-        }
-         */
 
-    }
-    private fun sendCommandToTrackingService(action: String) {
-        Intent(requireContext(), TrackingService::class.java).also {
-            it.action = action
-            requireContext().startService(it)
-        }
-    }
-    private fun toggleStartButton() {
-        if (isTracking) {
-            sendCommandToTrackingService(ACTION_PAUSE_SERVICE)
-            return
-        }
-        sendCommandToTrackingService(ACTION_START_OR_RESUME_SERVICE)
-    }
-    private fun updateButtons() {
-        if (isTracking) {
-            startButton.text = getString(R.string.stopButton)
-            return
-        }
-        startButton.text = getString(R.string.startButton)
-    }
     private fun requestPermissionGranted(): Boolean {
         if (hasLocationPermission(requireContext())) {
             return true
