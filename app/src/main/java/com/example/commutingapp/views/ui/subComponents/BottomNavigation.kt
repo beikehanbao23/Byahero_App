@@ -1,9 +1,9 @@
 package com.example.commutingapp.views.ui.subComponents
 
-import android.content.Context
+import androidx.fragment.app.Fragment
 import com.example.commutingapp.utils.others.FragmentToActivity
 
-class BottomNavigation(private val notifyListener:FragmentToActivity):IComponent {
+class BottomNavigation(private val notifyListener:FragmentToActivity<Fragment>):IComponent {
 
 
     override fun show() {

@@ -1,5 +1,7 @@
 package com.example.commutingapp.views.ui.fragments
+
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.location.Location
@@ -12,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.FragmentNavigationBinding
+import com.example.commutingapp.utils.others.FragmentToActivity
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
@@ -75,6 +78,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private lateinit var mapboxNavigation: MapboxNavigation
     private lateinit var navigationCamera: NavigationCamera
     private lateinit var viewportDataSource: MapboxNavigationViewportDataSource
+    private lateinit var notifyListener: FragmentToActivity<Fragment>
     private val pixelDensity = Resources.getSystem().displayMetrics.density
     private val overviewPadding: EdgeInsets by lazy {
         EdgeInsets(
@@ -114,6 +118,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private lateinit var routeLineView: MapboxRouteLineView
     private val routeArrowApi: MapboxRouteArrowApi = MapboxRouteArrowApi()
     private lateinit var routeArrowView: MapboxRouteArrowView
+
 
     private val navigationLocationProvider = NavigationLocationProvider()
 
@@ -220,10 +225,17 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-    {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentNavigationBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    @Suppress("Warnings")
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            this.notifyListener = context as FragmentToActivity<Fragment>
+        } catch (e: ClassCastException) { }
     }
 
     @SuppressLint("MissingPermission")
@@ -272,7 +284,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 NavigationCameraState.IDLE -> binding.recenter.visibility = View.VISIBLE
             }
         }
-        // todo set the padding values depending on screen orientation and visible view layout
+
         // todo
         if (this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             viewportDataSource.overviewPadding = landscapeOverviewPadding
@@ -292,6 +304,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         maneuverApi = MapboxManeuverApi(
             MapboxDistanceFormatter(distanceFormatterOptions)
         )
+
 
         tripProgressApi = MapboxTripProgressApi(
             TripProgressUpdateFormatter.Builder(requireContext())
@@ -314,7 +327,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         routeArrowView = MapboxRouteArrowView(routeArrowOptions)
 
         mapboxMap.loadStyleUri(
-            Style.MAPBOX_STREETS
+            Style.MAPBOX_STREETS// TODO CHANGE STYLES
         ) {
 
             binding.mapView.gestures.addOnMapLongClickListener { point ->
@@ -326,6 +339,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
         binding.stop.setOnClickListener {
             clearRouteAndStopNavigation()
+            notifyListener.onThirdNotify(CommuterFragment())
         }
         binding.recenter.setOnClickListener {
             navigationCamera.requestNavigationCameraToFollowing()
@@ -337,7 +351,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         }
 
         mapboxNavigation.startTripSession()
-        
+
 
     }
 

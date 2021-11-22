@@ -1,7 +1,7 @@
 package com.example.commutingapp.utils.others
 
-interface FragmentToActivity {
+interface FragmentToActivity<in T> {
     fun onFirstNotify()
     fun onSecondNotify()
-    fun onThirdNotify()
+    fun onThirdNotify(t:T)
 }

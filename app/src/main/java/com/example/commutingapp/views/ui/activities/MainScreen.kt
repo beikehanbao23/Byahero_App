@@ -3,7 +3,6 @@ package com.example.commutingapp.views.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -19,7 +18,10 @@ import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch
-import com.example.commutingapp.views.ui.fragments.*
+import com.example.commutingapp.views.ui.fragments.CommuterFragment
+import com.example.commutingapp.views.ui.fragments.SettingsFragment
+import com.example.commutingapp.views.ui.fragments.StatisticsFragment
+import com.example.commutingapp.views.ui.fragments.WeatherFragment
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
@@ -31,7 +33,7 @@ import java.util.*
 
 
 @AndroidEntryPoint
-class MainScreen : AppCompatActivity(),FragmentToActivity {
+class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
     private val firebaseUser = FirebaseUserWrapper()
     private val userData: UserDataProcessor<List<UserInfo>?> = UserDataProcessor(firebaseUser)
     private val userEmail: UserEmailProcessor<Task<Void>?> = UserEmailProcessor(firebaseUser)
@@ -69,8 +71,8 @@ class MainScreen : AppCompatActivity(),FragmentToActivity {
         }
     }
 
-    override fun onThirdNotify() {
-        replaceFragment(NavigationFragment())
+    override fun onThirdNotify(fragment: Fragment) {
+        replaceFragment(fragment)
     }
 
     private fun setupBottomNavigationListeners(){

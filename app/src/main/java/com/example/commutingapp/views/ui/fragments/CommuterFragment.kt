@@ -77,7 +77,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var dialogDirector: DialogDirector
     private lateinit var commuterFragmentBinding: CommuterFragmentBinding
     private lateinit var searchLocationButton: AppCompatButton
-    private lateinit var notifyListener: FragmentToActivity
+    private lateinit var notifyListener: FragmentToActivity<Fragment>
     private lateinit var normalBottomSheet: Component
     private lateinit var bottomNavigation:Component
     private lateinit var locationFAB:LocationButton
@@ -104,11 +104,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         map.recoverMissingMapMarker()
         locationFAB.updateLocationFloatingButtonIcon()
     }
-
+    @Suppress("Warnings")
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            this.notifyListener = context as FragmentToActivity
+            this.notifyListener = context as FragmentToActivity<Fragment>
         } catch (e: ClassCastException) { }
     }
     private fun initializeComponents(view: View) {
@@ -201,7 +201,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     private fun provideSaveButtonListener(){
         saveButton.setOnClickListener {
-           notifyListener.onThirdNotify()
+           notifyListener.onThirdNotify(NavigationFragment())
         }
     }
     private fun provideShareButtonListener(){
