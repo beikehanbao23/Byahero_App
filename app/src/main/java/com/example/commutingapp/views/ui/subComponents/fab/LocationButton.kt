@@ -31,11 +31,11 @@ class LocationButton(private val commuterFragmentBinding: CommuterFragmentBindin
     }
      fun changeFloatingButtonIconBlack(){
         changeLocationFloatingButtonIconColor(Color.BLACK)
-        changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location_24)
+        changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location)
     }
      fun changeFloatingButtonIconBlue(){
         changeLocationFloatingButtonIconColor(Color.BLUE)
-        changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location_24)
+        changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location)
     }
      private fun changeLocationFloatingButtonIconColor(@ColorInt color:Int){
         ImageViewCompat.setImageTintList(
