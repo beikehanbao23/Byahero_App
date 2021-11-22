@@ -9,7 +9,7 @@
    <androidx.appcompat.widget.AppCompatButton
        android:layout_width="match_parent"
        android:id="@+id/buttonLocationSearch"
-       android:layout_height="65dp"
+       android:layout_height="52dp"
        android:drawableLeft="@drawable/ic_baseline_search_24"
        android:hint="    Search places"
        android:textAlignment="textStart"
