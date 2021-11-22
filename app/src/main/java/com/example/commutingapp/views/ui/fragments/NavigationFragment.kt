@@ -15,7 +15,6 @@ import com.example.commutingapp.databinding.FragmentNavigationBinding
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
-import com.mapbox.bindgen.Expected
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.maps.EdgeInsets
@@ -43,8 +42,6 @@ import com.mapbox.navigation.core.replay.route.ReplayRouteMapper
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult
 import com.mapbox.navigation.core.trip.session.LocationObserver
 import com.mapbox.navigation.core.trip.session.RouteProgressObserver
-import com.mapbox.navigation.core.trip.session.VoiceInstructionsObserver
-import com.mapbox.navigation.ui.base.util.MapboxNavigationConsumer
 import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi
 import com.mapbox.navigation.ui.maps.camera.NavigationCamera
 import com.mapbox.navigation.ui.maps.camera.data.MapboxNavigationViewportDataSource
@@ -61,14 +58,7 @@ import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions
 import com.mapbox.navigation.ui.maps.route.line.model.RouteLine
 import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi
 import com.mapbox.navigation.ui.tripprogress.model.*
-import com.mapbox.navigation.ui.voice.api.MapboxSpeechApi
-import com.mapbox.navigation.ui.voice.api.MapboxVoiceInstructionsPlayer
-import com.mapbox.navigation.ui.voice.model.SpeechAnnouncement
-import com.mapbox.navigation.ui.voice.model.SpeechError
-import com.mapbox.navigation.ui.voice.model.SpeechValue
-import com.mapbox.navigation.ui.voice.model.SpeechVolume
 import timber.log.Timber
-import java.util.*
 
 class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
@@ -124,46 +114,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private lateinit var routeLineView: MapboxRouteLineView
     private val routeArrowApi: MapboxRouteArrowApi = MapboxRouteArrowApi()
     private lateinit var routeArrowView: MapboxRouteArrowView
-    private var isVoiceInstructionsMuted = false
-        set(value) {
-            field = value
-            if (value) {
-                binding.soundButton.muteAndExtend(BUTTON_ANIMATION_DURATION)
-                voiceInstructionsPlayer.volume(SpeechVolume(0f))
-            } else {
-                binding.soundButton.unmuteAndExtend(BUTTON_ANIMATION_DURATION)
-                voiceInstructionsPlayer.volume(SpeechVolume(1f))
-            }
-        }
-    private lateinit var speechApi: MapboxSpeechApi
-    private lateinit var voiceInstructionsPlayer: MapboxVoiceInstructionsPlayer
-    private val voiceInstructionsObserver = VoiceInstructionsObserver { voiceInstructions ->
-        speechApi.generate(voiceInstructions, speechCallback)
-    }
-    private val speechCallback =
-        MapboxNavigationConsumer<Expected<SpeechError, SpeechValue>> { expected ->
-            expected.fold(
-                { error ->
 
-                    voiceInstructionsPlayer.play(
-                        error.fallback,
-                        voiceInstructionsPlayerCallback
-                    )
-                },
-                { value ->
-
-                    voiceInstructionsPlayer.play(
-                        value.announcement,
-                        voiceInstructionsPlayerCallback
-                    )
-                }
-            )
-        }
-
-    private val voiceInstructionsPlayerCallback =
-        MapboxNavigationConsumer<SpeechAnnouncement> { value ->
-            speechApi.clean(value)
-        }
     private val navigationLocationProvider = NavigationLocationProvider()
 
 
@@ -173,7 +124,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         @SuppressLint("BinaryOperationInTimber")
         override fun onNewRawLocation(rawLocation: Location) {
             val location:LatLng = LatLng(rawLocation.latitude,rawLocation.longitude)
-        Timber.d("New Raw Location"+location.toString())
+             Timber.d("New Raw Location"+location.toString())
         }
 
         override fun onNewLocationMatcherResult(locationMatcherResult: LocationMatcherResult) {
@@ -297,8 +248,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 NavigationOptions.Builder(requireActivity().applicationContext)
                     .accessToken(getString(R.string.MapsToken))
                     .build()
-
-
             )
         }
 
@@ -342,26 +291,16 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
         maneuverApi = MapboxManeuverApi(
             MapboxDistanceFormatter(distanceFormatterOptions)
-        )//todo change miles to km
+        )
 
         tripProgressApi = MapboxTripProgressApi(
-            TripProgressUpdateFormatter.Builder(requireContext())//todo change miles to km
+            TripProgressUpdateFormatter.Builder(requireContext())
                 .distanceRemainingFormatter(DistanceRemainingFormatter(distanceFormatterOptions))
                 .timeRemainingFormatter(TimeRemainingFormatter(requireContext()))
                 .percentRouteTraveledFormatter(PercentDistanceTraveledFormatter())
                 .estimatedTimeToArrivalFormatter(EstimatedTimeToArrivalFormatter(requireContext(), TimeFormat.NONE_SPECIFIED))
 
                 .build())
-
-
-        speechApi = MapboxSpeechApi(
-            requireContext(),
-            getString(R.string.MapsToken),
-            Locale.US.language)
-        voiceInstructionsPlayer = MapboxVoiceInstructionsPlayer(
-            requireContext(),
-            getString(R.string.MapsToken),
-            Locale.US.language)
 
 
         val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(requireContext())
@@ -396,16 +335,10 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             navigationCamera.requestNavigationCameraToOverview()
             binding.recenter.showTextAndExtend(BUTTON_ANIMATION_DURATION)
         }
-        binding.soundButton.setOnClickListener {
-
-            isVoiceInstructionsMuted = !isVoiceInstructionsMuted
-        }
-
-
-        binding.soundButton.unmute()
-
 
         mapboxNavigation.startTripSession()
+        
+
     }
 
     @SuppressLint("MissingPermission")
@@ -421,7 +354,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxNavigation.registerRoutesObserver(routesObserver)
         mapboxNavigation.registerRouteProgressObserver(routeProgressObserver)
         mapboxNavigation.registerLocationObserver(locationObserver)
-        mapboxNavigation.registerVoiceInstructionsObserver(voiceInstructionsObserver)
         mapboxNavigation.registerRouteProgressObserver(replayProgressObserver)
 
         if (mapboxNavigation.getRoutes().isEmpty()) {
@@ -445,15 +377,12 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxNavigation.unregisterRoutesObserver(routesObserver)
         mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
         mapboxNavigation.unregisterLocationObserver(locationObserver)
-        mapboxNavigation.unregisterVoiceInstructionsObserver(voiceInstructionsObserver)
         mapboxNavigation.unregisterRouteProgressObserver(replayProgressObserver)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         MapboxNavigationProvider.destroy()
-        speechApi.cancel()
-        voiceInstructionsPlayer.shutdown()
     }
 
     private fun findRoute(destination: Point) {
@@ -498,9 +427,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
         mapboxNavigation.setRoutes(routes)
         startSimulation(routes.first())
-
-
-        binding.soundButton.visibility = View.VISIBLE
         binding.routeOverview.visibility = View.VISIBLE
         binding.tripProgressCard.visibility = View.VISIBLE
 
@@ -510,7 +436,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private fun clearRouteAndStopNavigation() {
         mapboxNavigation.setRoutes(listOf())
         mapboxReplayer.stop()
-        binding.soundButton.visibility = View.INVISIBLE
         binding.maneuverView.visibility = View.INVISIBLE
         binding.routeOverview.visibility = View.INVISIBLE
         binding.tripProgressCard.visibility = View.INVISIBLE
