@@ -10,26 +10,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.FragmentNavigationBinding
+import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
-import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.navigation.base.TimeFormat
 import com.mapbox.navigation.base.extensions.applyDefaultNavigationOptions
 import com.mapbox.navigation.base.extensions.applyLanguageAndVoiceUnitOptions
+import com.mapbox.navigation.base.formatter.DistanceFormatterOptions
 import com.mapbox.navigation.base.formatter.UnitType
 import com.mapbox.navigation.base.options.NavigationOptions
 import com.mapbox.navigation.base.route.RouterCallback
@@ -242,13 +243,16 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mapboxMap = binding.mapView.getMapboxMap()
+
+        mapboxMap.setBounds(CameraBoundsOptions.Builder()
+            .minZoom(Constants.MIN_ZOOM_LEVEL_MAPS)
+            .build())
+
+        val distanceFormatterOptions  = DistanceFormatterOptions.Builder(requireContext().applicationContext)
+            .unitType(UnitType.METRIC)
+            .build()
+
         binding.mapView.location.apply {
-            this.locationPuck = LocationPuck2D(
-                bearingImage = ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.mapbox_navigation_puck_icon
-                )
-            )
             setLocationProvider(navigationLocationProvider)
             enabled = true
         }
@@ -259,9 +263,11 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             MapboxNavigationProvider.create(
                 NavigationOptions.Builder(requireActivity().applicationContext)
                     .accessToken(getString(R.string.MapsToken))
+                    .distanceFormatterOptions(distanceFormatterOptions)
                     .build()
             )
         }
+
 
 
         viewportDataSource = MapboxNavigationViewportDataSource(mapboxMap)
@@ -297,14 +303,10 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             viewportDataSource.followingPadding = followingPadding
         }
 
-        val distanceFormatterOptions = mapboxNavigation.navigationOptions.distanceFormatterOptions.toBuilder()
-            .unitType(UnitType.METRIC)
-            .build()
 
         maneuverApi = MapboxManeuverApi(
             MapboxDistanceFormatter(distanceFormatterOptions)
         )
-
 
         tripProgressApi = MapboxTripProgressApi(
             TripProgressUpdateFormatter.Builder(requireContext())
@@ -331,7 +333,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         ) {
 
             binding.mapView.gestures.addOnMapLongClickListener { point ->
-                findRoute(point)//todo change later
+                //findRoute(point)//todo change later
                 true
             }
         }
