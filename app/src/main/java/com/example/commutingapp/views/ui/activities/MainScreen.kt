@@ -28,6 +28,7 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserInfo
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.geometry.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -71,7 +72,13 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
         }
     }
 
-    override fun onThirdNotify(fragment: Fragment) {
+    override fun onThirdNotify(fragment: Fragment,latLng: LatLng?) {
+        val bundle = Bundle()
+        latLng?.let {
+            bundle.putDouble("lat", it.latitude)
+            bundle.putDouble("lng", it.longitude)
+        }
+        fragment.arguments = bundle
         replaceFragment(fragment)
     }
 
@@ -143,7 +150,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
     override fun onStart() {
         super.onStart()
-        //ActivitySwitch.startActivityOf(this, TurnByTurnExperienceActivity::class.java)
+
         displayUserProfileName()
     }
 

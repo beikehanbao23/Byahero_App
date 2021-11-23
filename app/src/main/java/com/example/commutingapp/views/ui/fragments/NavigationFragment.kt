@@ -25,7 +25,6 @@ import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.animation.camera
-import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.navigation.base.TimeFormat
 import com.mapbox.navigation.base.extensions.applyDefaultNavigationOptions
@@ -332,16 +331,15 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             Style.MAPBOX_STREETS// TODO CHANGE STYLES
         ) {
 
-            binding.mapView.gestures.addOnMapLongClickListener { point ->
-                //findRoute(point)//todo change later
-                true
+        this.arguments?.let {
+                findRoute(Point.fromLngLat(it.getDouble("lng"),it.getDouble("lat")))
             }
         }
 
 
         binding.stop.setOnClickListener {
             clearRouteAndStopNavigation()
-            notifyListener.onThirdNotify(CommuterFragment())
+            notifyListener.onThirdNotify(CommuterFragment(),null)
         }
         binding.recenter.setOnClickListener {
             navigationCamera.requestNavigationCameraToFollowing()

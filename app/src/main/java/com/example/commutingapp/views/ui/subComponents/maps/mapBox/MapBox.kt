@@ -1,5 +1,6 @@
 package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.view.View
@@ -104,12 +105,14 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         }
     }
 
+    @SuppressLint("BinaryOperationInTimber")
     override fun getLastKnownLocation():LatLng?{
         try {
             return mapBoxMap?.locationComponent?.lastKnownLocation?.run {
                 LatLng(this.latitude, this.longitude)
             } }catch (e:Exception){
-            Timber.e("Last known location"+e.message.toString())
+            Timber.e("Last known location "+e.message.toString())
+            }finally {
             mapBoxStyle?.let( locationPuck::buildLocationPuck)
             }
         return null
@@ -127,6 +130,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
 
+    @SuppressLint("BinaryOperationInTimber")
     override fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
@@ -144,11 +148,13 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private  fun initializeMapMarkerImage()=
         activity.getDrawable(R.drawable.red_marker)
             ?.let { mapBoxStyle?.addImage(MAP_MARKER_IMAGE_ID, it) }
 
 
+    @SuppressLint("BinaryOperationInTimber")
     override fun initializeLocationPuck() {
         CoroutineScope(Dispatchers.Main).launch {
             try {

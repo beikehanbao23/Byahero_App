@@ -83,7 +83,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var locationFAB:LocationButton
     private lateinit var mapTypesFAB:MapTypes
     private lateinit var map:MapWrapper<MapboxMap,MapView>
-
+    private var latLng: LatLng? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         commuterFragmentBinding = CommuterFragmentBinding.inflate(inflater,container,false)
         return commuterFragmentBinding.root
@@ -185,7 +185,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 checkLocationSetting().addOnCompleteListener {
                 try{
                     it.getResult(ApiException::class.java)
-
+                    latLng?.let {latLng->
+                        notifyListener.onThirdNotify(NavigationFragment(),latLng)
+                    }
                 }catch (e:ApiException){
                     handleLocationResultException(e)
                 }
@@ -199,9 +201,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             map.createRouteDirections()
         }
     }
-    private fun provideSaveButtonListener(){
+    private fun provideSaveButtonListener() {
         saveButton.setOnClickListener {
-           notifyListener.onThirdNotify(NavigationFragment())
         }
     }
     private fun provideShareButtonListener(){
@@ -279,7 +280,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
 
     }
-    var locationRequest: LocationRequest = request
     private fun checkLocationSetting():Task<LocationSettingsResponse>{
         val builder = LocationSettingsRequest.Builder()
             .addLocationRequest(request)
@@ -289,7 +289,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             .checkLocationSettings(builder.build())
 
     }
-
     private fun handleLocationResultException(e: ApiException) {
         when (e.statusCode) {
             LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
@@ -321,16 +320,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 }
         }
     }
-
-
-
-
-
     override fun onMapLongClick(point: LatLng): Boolean {
         lifecycleScope.launch(Dispatchers.Main){
             map.deleteAllMapMarker()
             delay(20)
             map.pointMapMarker(point)
+            latLng = point
         }
         normalBottomSheet.show()
         bottomNavigation.hide()
@@ -342,9 +337,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomNavigation.show()
         return true
     }
-
-
-
     private fun requestPermissionGranted(): Boolean {
         if (hasLocationPermission(requireContext())) {
             return true
