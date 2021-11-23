@@ -4,13 +4,12 @@ import android.graphics.Color
 import com.example.commutingapp.utils.others.Constants
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
-import com.mapbox.geojson.GeoJson
 import com.mapbox.geojson.Geometry
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.style.layers.LineLayer
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 
 class MapLineLayers(
     private val style: Style?,
@@ -27,7 +26,7 @@ class MapLineLayers(
                   addLayerBelow(
                       LineLayer(layerId, sourceId).withProperties(
                           PropertyFactory.lineColor(Color.parseColor(Constants.ROUTE_COLOR)),
-                          PropertyFactory.lineWidth(Constants.POLYLINE_WIDTH)
+                          PropertyFactory.lineWidth(Constants.ROUTE_WIDTH)
                       ), Constants.ON_MAP_CLICK_LAYER_ID
                   )
               }

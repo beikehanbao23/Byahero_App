@@ -26,7 +26,7 @@ object Constants {
     const val DEFAULT_LONGITUDE = 121.7740
 
     const val ROUTE_COLOR = "#1297F0"
-    const val POLYLINE_WIDTH = 5.0f
+    const val ROUTE_WIDTH = 7.3f
     const val MAP_MARKER_SIZE = 0.4f
     const val MAP_MARKER_IMAGE_ID = "PIN"
     const val REGEX_NUMBER_VALUE="[0-9]"
