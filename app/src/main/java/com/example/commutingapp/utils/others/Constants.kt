@@ -1,23 +1,13 @@
 package com.example.commutingapp.utils.others
 
-import android.graphics.Color
-
 
 
 object Constants {
     const val COMMUTER_DATABASE_FILE_NAME = "Commute_DB"
 
     const val REQUEST_CODE_LOCATION_PERMISSION = 1
-
-    const val ACTION_START_OR_RESUME_SERVICE = "ACTION_START_OR_RESUME_SERVICE"
-    const val ACTION_PAUSE_SERVICE = "ACTION_PAUSE_SERVICE"
-    const val ACTION_STOP_SERVICE = "ACTION_STOP_SERVICE"
     const val ACTION_SHOW_COMMUTER_FRAGMENT = "ACTION_SHOW_COMMUTER_FRAGMENT"
-    const val REQUEST_CODE_PAUSE = 1
-    const val REQUEST_CODE_RESUME = 2
     const val NOTIFICATION_CHANNEL_ID = "tracking_channel"
-    const val NOTIFICATION_CHANNEL_NAME = "Tracking"
-    const val NOTIFICATION_ID = 1
     const val FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE"
     const val FASTEST_LOCATION_UPDATE_INTERVAL = 10000L
     const val NORMAL_LOCATION_UPDATE_INTERVAL = 18000L
@@ -34,7 +24,7 @@ object Constants {
     const val MIN_ZOOM_LEVEL_MAPS = 3.00
     const val DEFAULT_LATITUDE = 12.8797
     const val DEFAULT_LONGITUDE = 121.7740
-    const val POLYLINE_COLOR = "#021AE9"
+
     const val ROUTE_COLOR = "#1297F0"
     const val POLYLINE_WIDTH = 5.0f
     const val MAP_MARKER_SIZE = 0.4f
@@ -43,8 +33,7 @@ object Constants {
     const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"
     @Suppress("Warnings")
     const val REQUEST_CHECK_SETTING = 1001
-    const val STOPWATCH_INTERVAL = 50L
-    const val ONE_SECOND = 1000L
+
     const val STARTING_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 350
     const val TRACKING_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 300
     const val INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 0
