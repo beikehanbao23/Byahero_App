@@ -38,7 +38,7 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
                 response.body()?.trips()?.let {
                     if(it.isNotEmpty()){
                         CoroutineScope(Dispatchers.Main).launch { drawNavigationRoute(it[0]) }
-                    }//todo if is empty then create dialog
+                    }//todo if is empty then create dialog(means the destination is unreachable so it  fails to add route )
                 }
             }
 

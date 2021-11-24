@@ -56,6 +56,9 @@ object Constants {
     const val ON_SEARCH_LAYER_ID = "symbol-layer-id"
     const val ROUTE_SOURCE_ID = "route-sourceId"
     const val ROUTE_LAYER_ID = "route-layerId"
-
-
+    const val KEY_DESTINATION_LATITUDE = "destinationLat"
+    const val KEY_DESTINATION_LONGITUDE = "destinationLng"
+    const val KEY_LAST_LOCATION_LATITUDE = "lastLocationLat"
+    const val KEY_LAST_LOCATION_LONGITUDE = "lastLocationLng"
+    const val NAVIGATION_ROUTE_LAYER_ID = "road-label"
 }

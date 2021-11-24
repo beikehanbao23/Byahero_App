@@ -14,6 +14,11 @@ import androidx.fragment.app.Fragment
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.FragmentNavigationBinding
 import com.example.commutingapp.utils.others.Constants
+import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LATITUDE
+import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LONGITUDE
+import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LATITUDE
+import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LONGITUDE
+import com.example.commutingapp.utils.others.Constants.NAVIGATION_ROUTE_LAYER_ID
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
@@ -317,7 +322,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
 
         val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(requireContext())
-            .withRouteLineBelowLayerId("road-label")
+            .withRouteLineBelowLayerId(NAVIGATION_ROUTE_LAYER_ID)
             .build()
         routeLineApi = MapboxRouteLineApi(mapboxRouteLineOptions)
         routeLineView = MapboxRouteLineView(mapboxRouteLineOptions)
@@ -331,14 +336,16 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         ) {
 
         this.arguments?.let {
-                findRoute(Point.fromLngLat(it.getDouble("lng"),it.getDouble("lat")))
-            }
+                val destination = Point.fromLngLat(it.getDouble(KEY_DESTINATION_LONGITUDE),it.getDouble(KEY_DESTINATION_LATITUDE))
+                val lastLocation = Point.fromLngLat(it.getDouble(KEY_LAST_LOCATION_LONGITUDE),it.getDouble(KEY_LAST_LOCATION_LATITUDE))
+                findRoute(destination,lastLocation)
+        }
         }
 
 
         binding.stop.setOnClickListener {
             clearRouteAndStopNavigation()
-            notifyListener.onThirdNotify(CommuterFragment(),null)
+            notifyListener.onThirdNotify(CommuterFragment(),null, null)
         }
         binding.recenter.setOnClickListener {
             navigationCamera.requestNavigationCameraToFollowing()
@@ -398,22 +405,19 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         MapboxNavigationProvider.destroy()
     }
 
-    private fun findRoute(destination: Point) {
-        val originLocation = navigationLocationProvider.lastLocation
-        val originPoint = originLocation?.let {
-            Point.fromLngLat(it.longitude, it.latitude)
-        } ?: return
+    private fun findRoute(destinationLocation: Point, lastLocation:Point) {
+
 
 
         mapboxNavigation.requestRoutes(
             RouteOptions.builder()
                 .applyDefaultNavigationOptions()
                 .applyLanguageAndVoiceUnitOptions(requireContext())
-                .coordinatesList(listOf(originPoint, destination))
+                .coordinatesList(listOf(lastLocation, destinationLocation))
                 .bearingsList(
                     listOf(
                         Bearing.builder()
-                            .angle(originLocation.bearing.toDouble())
+                            .angle(360.0)
                             .degrees(45.0)
                             .build(),
                         null
@@ -423,10 +427,11 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             object : RouterCallback {
                 override fun onRoutesReady(routes: List<DirectionsRoute>, routerOrigin: RouterOrigin) {
                     setRouteAndStartNavigation(routes)
+                    this@NavigationFragment.arguments?.clear()
                 }
 
                 override fun onFailure(reasons: List<RouterFailure>, routeOptions: RouteOptions) {
-                    Timber.e("ON FAILURE")
+                    Timber.e("LOCATION IS NOT REACHABLE")
                 }
 
                 override fun onCanceled(routeOptions: RouteOptions, routerOrigin: RouterOrigin) {

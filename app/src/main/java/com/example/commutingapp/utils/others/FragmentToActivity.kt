@@ -5,5 +5,5 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 interface FragmentToActivity<in T> {
     fun onFirstNotify()
     fun onSecondNotify()
-    fun onThirdNotify(fragment:T,latLng: LatLng?)
+    fun onThirdNotify(fragment:T,destination: LatLng?, lastKnownLocation:LatLng?)
 }

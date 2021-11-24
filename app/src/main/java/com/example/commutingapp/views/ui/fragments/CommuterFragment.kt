@@ -123,6 +123,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomNavigation = Component(BottomNavigation(notifyListener))
         locationFAB = LocationButton(commuterFragmentBinding,requireContext())
         mapTypesFAB = MapTypes(requireContext())
+
         val mapbox = object : MapBox(view,requireActivity()){
 
             override fun onMapReady(mapboxMap: MapboxMap) {
@@ -130,10 +131,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 mapboxMap.addOnMapClickListener(this@CommuterFragment)
                 mapboxMap.addOnMoveListener(this@CommuterFragment)
                 moveCameraToLastKnownLocation()
-
-
             }
-
             override fun onSearchCompleted(intent: Intent) {
             startActivityForResult(intent,REQUEST_CODE_AUTOCOMPLETE)
             }
@@ -162,21 +160,26 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideLocationButtonListener() {
         commuterFragmentBinding.floatingActionButtonLocation.setOnClickListener {
             if (requestPermissionGranted()) {
-                map.getLastKnownLocation()?.let { location ->
-                    map.moveCameraToUser(location, CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION)
-                }
-                locationFAB.changeFloatingButtonIconBlue()
-                    checkLocationSetting().apply {
-                        this.addOnCompleteListener {
-                            try {
-                                it.getResult(ApiException::class.java)
-                            } catch (e: ApiException) {
-                                handleLocationResultException(e)
-                            }
-                        }
+                checkLocationSetting().addOnCompleteListener {
+                    try {
+                        it.getResult(ApiException::class.java)
+                        displayUserLocation()
+                    } catch (e: ApiException) {
+                        handleLocationResultException(e)
                     }
+                }
             }
         }
+    }
+    private fun displayUserLocation(){
+        with(map) {
+            getLastKnownLocation()?.let { location ->
+                createLocationPuck()
+                moveCameraToUser(location, CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION)
+                locationFAB.changeFloatingButtonIconBlue()
+            }
+        }
+
     }
     private fun provideStartButtonListener(){
         startButton.setOnClickListener {
@@ -187,15 +190,21 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 checkLocationSetting().addOnCompleteListener {
                 try{
                     it.getResult(ApiException::class.java)
-                    latLng?.let {latLng->
-                        notifyListener.onThirdNotify(NavigationFragment(),latLng)
-                    }
+                    map.createLocationPuck()
+                    showNavigation()
                 }catch (e:ApiException){
                     handleLocationResultException(e)
                 }
              }
           }
        }
+    }
+    private fun showNavigation(){
+        latLng?.let { destinationLocation ->
+            map.getLastKnownLocation()?.let { lastLocation ->
+                notifyListener.onThirdNotify(NavigationFragment(), destinationLocation,lastLocation)
+            }
+        }
     }
 
     private fun provideDirectionButtonListener(){
@@ -314,7 +323,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             REQUEST_CHECK_SETTING ->
                 when (resultCode) {
                     RESULT_OK -> {
-                        //TODO
+                        displayUserLocation()
                     }
                     RESULT_CANCELED->{
 
@@ -323,11 +332,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
     }
     override fun onMapLongClick(point: LatLng): Boolean {
+        latLng = point
         lifecycleScope.launch(Dispatchers.Main){
             map.deleteAllMapMarker()
             delay(20)
             map.pointMapMarker(point)
-            latLng = point
         }
         normalBottomSheet.show()
         bottomNavigation.hide()
@@ -398,6 +407,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         locationFAB.changeFloatingButtonIconBlack()
     }
     override fun onMoveEnd(detector: MoveGestureDetector) {}
+
 
 
 }

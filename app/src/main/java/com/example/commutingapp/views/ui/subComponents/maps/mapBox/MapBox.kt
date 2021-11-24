@@ -106,15 +106,15 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
     @SuppressLint("BinaryOperationInTimber")
-    override fun getLastKnownLocation():LatLng?{
+    override fun getLastKnownLocation(): LatLng? {
+        mapBoxStyle?.let(locationPuck::buildLocationPuck)
         try {
             return mapBoxMap?.locationComponent?.lastKnownLocation?.run {
                 LatLng(this.latitude, this.longitude)
-            } }catch (e:Exception){
-            Timber.e("Last known location "+e.message.toString())
-            }finally {
-            mapBoxStyle?.let( locationPuck::buildLocationPuck)
             }
+        } catch (e: Exception) {
+            Timber.e("Getting last location failed " + e.message.toString())
+        }
         return null
     }
     override fun recoverMissingMapMarker(){

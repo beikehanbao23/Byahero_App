@@ -16,6 +16,10 @@ import com.example.commutingapp.data.firebase.usr.UserDataProcessor
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
+import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LATITUDE
+import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LONGITUDE
+import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LATITUDE
+import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LONGITUDE
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch
 import com.example.commutingapp.views.ui.fragments.CommuterFragment
@@ -72,14 +76,23 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
         }
     }
 
-    override fun onThirdNotify(fragment: Fragment,latLng: LatLng?) {
+    override fun onThirdNotify(fragment: Fragment, destination: LatLng?, lastKnownLocation: LatLng?) {
         val bundle = Bundle()
-        latLng?.let {
-            bundle.putDouble("lat", it.latitude)
-            bundle.putDouble("lng", it.longitude)
+        destination?.let { destinationLocation->
+            lastKnownLocation?.let { lastLocation->
+                with(bundle){
+                    putDouble(KEY_DESTINATION_LATITUDE, destinationLocation.latitude)
+                    putDouble(KEY_DESTINATION_LONGITUDE, destinationLocation.longitude)
+                    putDouble(KEY_LAST_LOCATION_LATITUDE,lastLocation.latitude)
+                    putDouble(KEY_LAST_LOCATION_LONGITUDE,lastLocation.longitude)
+                }
+
+                fragment.arguments = bundle
+                replaceFragment(fragment)
+            }
         }
-        fragment.arguments = bundle
-        replaceFragment(fragment)
+
+
     }
 
     private fun setupBottomNavigationListeners(){
