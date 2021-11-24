@@ -3,6 +3,7 @@ package com.example.commutingapp.views.ui.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -60,6 +61,8 @@ import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView
 import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions
 import com.mapbox.navigation.ui.maps.route.line.model.RouteLine
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLineColorResources
+import com.mapbox.navigation.ui.maps.route.line.model.RouteLineResources
 import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi
 import com.mapbox.navigation.ui.tripprogress.model.*
 import timber.log.Timber
@@ -219,7 +222,18 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             this.notifyListener = context as FragmentToActivity<Fragment>
         } catch (e: ClassCastException) { }
     }
-
+    private val routeLineResources: RouteLineResources by lazy {
+        RouteLineResources.Builder()
+            .routeLineColorResources(RouteLineColorResources.Builder()
+                .routeClosureColor(Color.parseColor("#5A5A5A"))
+                .restrictedRoadColor(Color.parseColor("#FF6A02"))
+                .routeHeavyCongestionColor(Color.parseColor("#FF0E0E"))
+                .routeSevereCongestionColor(Color.parseColor("#FCBD8C"))
+                .routeModerateCongestionColor(Color.parseColor("#FCF08C"))
+                .routeLowCongestionColor(Color.parseColor("#9AFF54"))
+                .build())
+            .build()
+    }
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -272,8 +286,11 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
 
         val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(requireContext())
+            .displayRestrictedRoadSections(true)
             .withRouteLineBelowLayerId(NAVIGATION_ROUTE_LAYER_ID)
+            .withRouteLineResources(routeLineResources)
             .build()
+
         routeLineApi = MapboxRouteLineApi(mapboxRouteLineOptions)
         routeLineView = MapboxRouteLineView(mapboxRouteLineOptions)
 
