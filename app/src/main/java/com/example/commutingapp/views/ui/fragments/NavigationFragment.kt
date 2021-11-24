@@ -44,9 +44,6 @@ import com.mapbox.navigation.core.MapboxNavigation
 import com.mapbox.navigation.core.MapboxNavigationProvider
 import com.mapbox.navigation.core.directions.session.RoutesObserver
 import com.mapbox.navigation.core.formatter.MapboxDistanceFormatter
-import com.mapbox.navigation.core.replay.MapboxReplayer
-import com.mapbox.navigation.core.replay.route.ReplayProgressObserver
-import com.mapbox.navigation.core.replay.route.ReplayRouteMapper
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult
 import com.mapbox.navigation.core.trip.session.LocationObserver
 import com.mapbox.navigation.core.trip.session.RouteProgressObserver
@@ -75,9 +72,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
 
 
-
-    private val mapboxReplayer = MapboxReplayer()
-    private val replayProgressObserver = ReplayProgressObserver(mapboxReplayer)
     private lateinit var binding: FragmentNavigationBinding
     private lateinit var mapboxMap: MapboxMap
     private lateinit var mapboxNavigation: MapboxNavigation
@@ -374,30 +368,17 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxNavigation.registerRoutesObserver(routesObserver)
         mapboxNavigation.registerRouteProgressObserver(routeProgressObserver)
         mapboxNavigation.registerLocationObserver(locationObserver)
-        mapboxNavigation.registerRouteProgressObserver(replayProgressObserver)
 
-        if (mapboxNavigation.getRoutes().isEmpty()) {
 
-            mapboxReplayer.pushEvents(
-                listOf(
-                    ReplayRouteMapper.mapToUpdateLocation(
-                        eventTimestamp = 0.0,
-                        point = Point.fromLngLat(-122.39726512303575, 37.785128345296805)
-                    )
-                )
-            )
-            mapboxReplayer.playFirstLocation()
-        }
     }
 
     override fun onStop() {
         super.onStop()
 
-
         mapboxNavigation.unregisterRoutesObserver(routesObserver)
         mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
         mapboxNavigation.unregisterLocationObserver(locationObserver)
-        mapboxNavigation.unregisterRouteProgressObserver(replayProgressObserver)
+
     }
 
     override fun onDestroy() {
@@ -444,7 +425,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private fun setRouteAndStartNavigation(routes: List<DirectionsRoute>) {
 
         mapboxNavigation.setRoutes(routes)
-        startSimulation(routes.first())
         binding.routeOverview.visibility = View.VISIBLE
         binding.tripProgressCard.visibility = View.VISIBLE
 
@@ -453,21 +433,11 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     private fun clearRouteAndStopNavigation() {
         mapboxNavigation.setRoutes(listOf())
-        mapboxReplayer.stop()
         binding.maneuverView.visibility = View.INVISIBLE
         binding.routeOverview.visibility = View.INVISIBLE
         binding.tripProgressCard.visibility = View.INVISIBLE
     }
 
-    private fun startSimulation(route: DirectionsRoute) {
-        mapboxReplayer.run {
-            stop()
-            clearEvents()
-            val replayEvents = ReplayRouteMapper().mapDirectionsRouteGeometry(route)
-            pushEvents(replayEvents)
-            seekTo(replayEvents.first())
-            play()
-        }
-    }
+
 
 }
