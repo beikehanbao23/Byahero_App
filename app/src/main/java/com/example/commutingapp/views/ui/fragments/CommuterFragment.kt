@@ -19,7 +19,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.CommuterFragmentBinding
-import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
@@ -160,19 +159,22 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 show()
             } }
     }
-    private fun provideLocationButtonListener(){
+    private fun provideLocationButtonListener() {
         commuterFragmentBinding.floatingActionButtonLocation.setOnClickListener {
-            if(requestPermissionGranted()) {
-                map.getLastKnownLocation()?.let { location -> map.moveCameraToUser(location, CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION) }
-                    locationFAB.changeFloatingButtonIconBlue()
-
-            if (Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())) {
-                checkLocationSetting().apply {
-                this.addOnCompleteListener {
-                try{ it.getResult(ApiException::class.java) }catch (e:ApiException){ }
+            if (requestPermissionGranted()) {
+                map.getLastKnownLocation()?.let { location ->
+                    map.moveCameraToUser(location, CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION)
+                }
+                locationFAB.changeFloatingButtonIconBlue()
+                    checkLocationSetting().apply {
+                        this.addOnCompleteListener {
+                            try {
+                                it.getResult(ApiException::class.java)
+                            } catch (e: ApiException) {
+                                handleLocationResultException(e)
+                            }
                         }
                     }
-                }
             }
         }
     }
@@ -281,12 +283,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
     private fun checkLocationSetting():Task<LocationSettingsResponse>{
-        val builder = LocationSettingsRequest.Builder()
-            .addLocationRequest(request)
-            .setAlwaysShow(true)
 
         return LocationServices.getSettingsClient(requireContext())
-            .checkLocationSettings(builder.build())
+            .checkLocationSettings(LocationSettingsRequest.Builder()
+                .addLocationRequest(request)
+                .setAlwaysShow(true)
+                .build())
 
     }
     private fun handleLocationResultException(e: ApiException) {
