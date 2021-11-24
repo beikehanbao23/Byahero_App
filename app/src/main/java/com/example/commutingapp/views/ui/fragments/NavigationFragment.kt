@@ -2,7 +2,6 @@ package com.example.commutingapp.views.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
 import android.content.res.Resources
 import android.location.Location
 import android.os.Bundle
@@ -87,14 +86,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             40.0 * pixelDensity
         )
     }
-    private val landscapeOverviewPadding: EdgeInsets by lazy {
-        EdgeInsets(
-            30.0 * pixelDensity,
-            380.0 * pixelDensity,
-            110.0 * pixelDensity,
-            20.0 * pixelDensity
-        )
-    }
     private val followingPadding: EdgeInsets by lazy {
         EdgeInsets(
             180.0 * pixelDensity,
@@ -103,14 +94,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             40.0 * pixelDensity
         )
     }
-    private val landscapeFollowingPadding: EdgeInsets by lazy {
-        EdgeInsets(
-            30.0 * pixelDensity,
-            380.0 * pixelDensity,
-            110.0 * pixelDensity,
-            40.0 * pixelDensity
-        )
-    }
+
     private lateinit var maneuverApi: MapboxManeuverApi
     private lateinit var tripProgressApi: MapboxTripProgressApi
     private lateinit var routeLineApi: MapboxRouteLineApi
@@ -241,13 +225,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         super.onViewCreated(view, savedInstanceState)
         mapboxMap = binding.mapView.getMapboxMap()
 
-        mapboxMap.setBounds(CameraBoundsOptions.Builder()
-            .minZoom(Constants.MIN_ZOOM_LEVEL_MAPS)
-            .build())
-
-        val distanceFormatterOptions  = DistanceFormatterOptions.Builder(requireContext().applicationContext)
-            .unitType(UnitType.METRIC)
-            .build()
+        mapboxMap.setBounds(cameraBoundsOptionsBuilder())
 
         binding.mapView.location.apply {
             setLocationProvider(navigationLocationProvider)
@@ -257,14 +235,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxNavigation = if (MapboxNavigationProvider.isCreated()) {
             MapboxNavigationProvider.retrieve()
         } else {
-            MapboxNavigationProvider.create(
-                NavigationOptions.Builder(requireActivity().applicationContext)
-                    .accessToken(getString(R.string.MapsToken))
-                    .distanceFormatterOptions(distanceFormatterOptions)
-                    .build()
-            )
+            MapboxNavigationProvider.create(navigationOptionsBuilder())
         }
-
 
 
         viewportDataSource = MapboxNavigationViewportDataSource(mapboxMap)
@@ -288,31 +260,15 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             }
         }
 
-        // todo
-        if (this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            viewportDataSource.overviewPadding = landscapeOverviewPadding
-        } else {
-            viewportDataSource.overviewPadding = overviewPadding
-        }
-        if (this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            viewportDataSource.followingPadding = landscapeFollowingPadding
-        } else {
-            viewportDataSource.followingPadding = followingPadding
-        }
+        viewportDataSource.overviewPadding = overviewPadding
+        viewportDataSource.followingPadding = followingPadding
 
 
         maneuverApi = MapboxManeuverApi(
-            MapboxDistanceFormatter(distanceFormatterOptions)
+            MapboxDistanceFormatter(distanceFormatterOptions())
         )
 
-        tripProgressApi = MapboxTripProgressApi(
-            TripProgressUpdateFormatter.Builder(requireContext())
-                .distanceRemainingFormatter(DistanceRemainingFormatter(distanceFormatterOptions))
-                .timeRemainingFormatter(TimeRemainingFormatter(requireContext()))
-                .percentRouteTraveledFormatter(PercentDistanceTraveledFormatter())
-                .estimatedTimeToArrivalFormatter(EstimatedTimeToArrivalFormatter(requireContext(), TimeFormat.NONE_SPECIFIED))
-
-                .build())
+        tripProgressApi = MapboxTripProgressApi(progressUpdateFormatter(distanceFormatterOptions()))
 
 
         val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(requireContext())
@@ -328,14 +284,41 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxMap.loadStyleUri(
             Style.MAPBOX_STREETS// TODO CHANGE STYLES
         ) {
+        createRoute()
+        }
 
+        providerClickListener()
+        mapboxNavigation.startTripSession()
+
+
+    }
+
+    private fun navigationOptionsBuilder()= NavigationOptions.Builder(requireActivity().applicationContext)
+        .accessToken(getString(R.string.MapsToken))
+        .distanceFormatterOptions(distanceFormatterOptions())
+        .build()
+    private fun cameraBoundsOptionsBuilder()=CameraBoundsOptions.Builder()
+        .minZoom(Constants.MIN_ZOOM_LEVEL_MAPS)
+        .build()
+    private fun distanceFormatterOptions()=DistanceFormatterOptions.Builder(requireContext().applicationContext)
+        .unitType(UnitType.METRIC)
+        .build()
+
+    private fun progressUpdateFormatter(distanceFormatterOptions: DistanceFormatterOptions)=TripProgressUpdateFormatter.Builder(requireContext())
+        .distanceRemainingFormatter(DistanceRemainingFormatter(distanceFormatterOptions))
+        .timeRemainingFormatter(TimeRemainingFormatter(requireContext()))
+        .percentRouteTraveledFormatter(PercentDistanceTraveledFormatter())
+        .estimatedTimeToArrivalFormatter(EstimatedTimeToArrivalFormatter(requireContext(), TimeFormat.NONE_SPECIFIED))
+
+        .build()
+    private fun createRoute(){
         this.arguments?.let {
-                val destination = Point.fromLngLat(it.getDouble(KEY_DESTINATION_LONGITUDE),it.getDouble(KEY_DESTINATION_LATITUDE))
-                val lastLocation = Point.fromLngLat(it.getDouble(KEY_LAST_LOCATION_LONGITUDE),it.getDouble(KEY_LAST_LOCATION_LATITUDE))
-                findRoute(destination,lastLocation)
+            val destination = Point.fromLngLat(it.getDouble(KEY_DESTINATION_LONGITUDE),it.getDouble(KEY_DESTINATION_LATITUDE))
+            val lastLocation = Point.fromLngLat(it.getDouble(KEY_LAST_LOCATION_LONGITUDE),it.getDouble(KEY_LAST_LOCATION_LATITUDE))
+            findRoute(destination,lastLocation)
         }
-        }
-
+    }
+    private fun providerClickListener(){
 
         binding.stop.setOnClickListener {
             clearRouteAndStopNavigation()
@@ -350,11 +333,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             binding.recenter.showTextAndExtend(BUTTON_ANIMATION_DURATION)
         }
 
-        mapboxNavigation.startTripSession()
-
-
     }
-
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -387,24 +366,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
 
     private fun findRoute(destinationLocation: Point, lastLocation:Point) {
-
-
-
         mapboxNavigation.requestRoutes(
-            RouteOptions.builder()
-                .applyDefaultNavigationOptions()
-                .applyLanguageAndVoiceUnitOptions(requireContext())
-                .coordinatesList(listOf(lastLocation, destinationLocation))
-                .bearingsList(
-                    listOf(
-                        Bearing.builder()
-                            .angle(360.0)
-                            .degrees(45.0)
-                            .build(),
-                        null
-                    )
-                )
-                .build(),
+            routeOptionsBuilder(lastLocation, destinationLocation),
             object : RouterCallback {
                 override fun onRoutesReady(routes: List<DirectionsRoute>, routerOrigin: RouterOrigin) {
                     setRouteAndStartNavigation(routes)
@@ -421,7 +384,20 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             }
         )
     }
-
+    private fun routeOptionsBuilder(lastLocation: Point,destinationLocation: Point)= RouteOptions.builder()
+        .applyDefaultNavigationOptions()
+        .applyLanguageAndVoiceUnitOptions(requireContext())
+        .coordinatesList(listOf(lastLocation, destinationLocation))
+        .bearingsList(
+            listOf(
+                Bearing.builder()
+                    .angle(360.0)
+                    .degrees(45.0)
+                    .build(),
+                null
+            )
+        )
+        .build()
     private fun setRouteAndStartNavigation(routes: List<DirectionsRoute>) {
 
         mapboxNavigation.setRoutes(routes)
