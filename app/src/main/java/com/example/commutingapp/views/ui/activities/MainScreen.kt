@@ -22,6 +22,7 @@ import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LATITUD
 import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LONGITUDE
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch
+import com.example.commutingapp.views.menubuttons.NavigationButton
 import com.example.commutingapp.views.ui.fragments.CommuterFragment
 import com.example.commutingapp.views.ui.fragments.SettingsFragment
 import com.example.commutingapp.views.ui.fragments.StatisticsFragment
@@ -115,28 +116,22 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
 
 
-    private fun replaceFragment(fragment: Fragment){
+    private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.apply {
-
-                beginTransaction().apply {
-                        if (findFragmentByTag(fragment.javaClass.name) == null) {
-                            replace(R.id.fragmentContainer, fragment, fragment.javaClass.name)
-                            addToBackStack(fragment.javaClass.name)
-                        } else {
-                            findFragmentByTag(fragment.javaClass.name)?.let {
-                                replace(R.id.fragmentContainer, it,fragment.javaClass.name)
-                            }
-                        }
-                        commit()
-                    }
-                }
+            beginTransaction().apply {
+                    replace(R.id.fragmentContainer, fragment, fragment.javaClass.name)
+                    addToBackStack(fragment.javaClass.name)
+                    commit()
+            }
+        }
     }
+
     private fun currentFragment(): Fragment? {
         return supportFragmentManager.findFragmentById(R.id.fragmentContainer)
     }
     override fun onBackPressed() {
         if(currentFragment() is CommuterFragment){
-            finish()
+            NavigationButton.applyDoubleClickToExit(this)
             return
         }
         try { super.onBackPressed() }catch (e:Exception){ }
