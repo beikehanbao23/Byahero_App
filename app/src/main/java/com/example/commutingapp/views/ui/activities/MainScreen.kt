@@ -42,9 +42,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
     private val firebaseUser = FirebaseUserWrapper()
     private val userData: UserDataProcessor<List<UserInfo>?> = UserDataProcessor(firebaseUser)
     private val userEmail: UserEmailProcessor<Task<Void>?> = UserEmailProcessor(firebaseUser)
-    private val userAuthentication: UserAuthenticationProcessor<Task<AuthResult>> =
-        UserAuthenticationProcessor(FirebaseAuthenticatorWrapper())
-
+    private val userAuthentication: UserAuthenticationProcessor<Task<AuthResult>> = UserAuthenticationProcessor(FirebaseAuthenticatorWrapper())
     private var activityMainScreenBinding: ActivityMainScreenBinding? = null
     private lateinit var navigationController: NavController
     private var isCommuterFragmentAtForeground = false
@@ -65,15 +63,11 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
     }
 
     override fun onFirstNotify() {
-     activityMainScreenBinding?.bottomNavigation?.let {
-         it.visibility = View.GONE
-     }
+     activityMainScreenBinding?.bottomNavigation?.visibility = View.GONE
     }
 
     override fun onSecondNotify() {
-        activityMainScreenBinding?.bottomNavigation?.let {
-            it.visibility = View.VISIBLE
-        }
+        activityMainScreenBinding?.bottomNavigation?.visibility = View.VISIBLE
     }
 
     override fun onThirdNotify(fragment: Fragment, destination: LatLng?, lastKnownLocation: LatLng?) {
@@ -85,20 +79,15 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
                     putDouble(KEY_DESTINATION_LONGITUDE, destinationLocation.longitude)
                     putDouble(KEY_LAST_LOCATION_LATITUDE,lastLocation.latitude)
                     putDouble(KEY_LAST_LOCATION_LONGITUDE,lastLocation.longitude)
-                }
-
-                fragment.arguments = bundle
-                replaceFragment(fragment)
-            }
-        }
-
+                } } }
+        fragment.arguments = bundle
+        replaceFragment(fragment)
 
     }
 
     private fun setupBottomNavigationListeners(){
 
         activityMainScreenBinding?.bottomNavigation?.apply {
-
             setOnItemSelectedListener {
                 when (it.itemId) {
                     R.id.commutersFragment -> replaceFragment(CommuterFragment())
@@ -107,10 +96,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
                     R.id.weatherFragment -> replaceFragment(WeatherFragment())
                 }
                 true
-
             }
-
-
         }
     }
 

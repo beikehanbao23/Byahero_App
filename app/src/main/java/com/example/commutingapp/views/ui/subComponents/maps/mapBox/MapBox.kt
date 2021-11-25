@@ -29,7 +29,7 @@ import timber.log.Timber
 
 
 abstract class MapBox(private val view: View,private val activity: Activity):
-    IMap<MapboxMap, MapView> {
+    IMap<MapView> {
 
     private var mapBoxMap:MapboxMap? = null
     private var mapBoxView: MapView = view.findViewById(R.id.googleMapView)
@@ -45,14 +45,14 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private var destinationLocation:LatLng? = null
 
 
-    override fun getMapInstance():MapboxMap? = mapBoxMap
+
     override fun deleteAllMapMarker(){
         CoroutineScope(Dispatchers.Main).launch {
             initializeStyles(mapTypes.loadMapType())
         }
     }
 
-    override fun getMapViewInstance():MapView = mapBoxView
+    override fun getMapView():MapView = mapBoxView
 
 
     override fun setupUI(mapType: String) {
@@ -155,7 +155,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
 
     @SuppressLint("BinaryOperationInTimber")
-    override fun initializeLocationPuck() {
+    override fun createLocationPuck() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 mapBoxStyle?.let( locationPuck::buildLocationPuck)

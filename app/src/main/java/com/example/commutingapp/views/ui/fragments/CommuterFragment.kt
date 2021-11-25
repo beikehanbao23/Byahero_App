@@ -81,7 +81,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var bottomNavigation:Component
     private lateinit var locationFAB:LocationButton
     private lateinit var mapTypesFAB:MapTypes
-    private lateinit var map:MapWrapper<MapboxMap,MapView>
+    private lateinit var map:MapWrapper<MapView>
     private var latLng: LatLng? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         commuterFragmentBinding = CommuterFragmentBinding.inflate(inflater,container,false)
@@ -209,7 +209,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun provideDirectionButtonListener(){
         directionButton.setOnClickListener {
-            map.createRouteDirections()
+            map.createDirections()
         }
     }
     private fun provideSaveButtonListener() {

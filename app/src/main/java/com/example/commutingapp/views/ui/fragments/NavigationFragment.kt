@@ -416,19 +416,12 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         )
         .build()
     private fun setRouteAndStartNavigation(routes: List<DirectionsRoute>) {
-
         mapboxNavigation.setRoutes(routes)
-        binding.routeOverview.visibility = View.VISIBLE
-        binding.tripProgressCard.visibility = View.VISIBLE
-
         navigationCamera.requestNavigationCameraToOverview()
     }
 
     private fun clearRouteAndStopNavigation() {
         mapboxNavigation.setRoutes(listOf())
-        binding.maneuverView.visibility = View.INVISIBLE
-        binding.routeOverview.visibility = View.INVISIBLE
-        binding.tripProgressCard.visibility = View.INVISIBLE
     }
 
 
