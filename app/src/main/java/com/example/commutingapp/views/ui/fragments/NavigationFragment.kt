@@ -19,6 +19,12 @@ import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LATITUDE
 import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.NAVIGATION_ROUTE_LAYER_ID
+import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_HEAVY_CONGESTION
+import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_LOW_CONGESTION
+import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_MODERATE_CONGESTION
+import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_ROAD_CLOSURE
+import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_ROAD_RESTRICTED
+import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_SEVERE_CONGESTION
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
@@ -225,12 +231,12 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private val routeLineResources: RouteLineResources by lazy {
         RouteLineResources.Builder()
             .routeLineColorResources(RouteLineColorResources.Builder()
-                .routeClosureColor(Color.parseColor("#5A5A5A"))
-                .restrictedRoadColor(Color.parseColor("#FF6A02"))
-                .routeHeavyCongestionColor(Color.parseColor("#FF0E0E"))
-                .routeSevereCongestionColor(Color.parseColor("#FCBD8C"))
-                .routeModerateCongestionColor(Color.parseColor("#FCF08C"))
-                .routeLowCongestionColor(Color.parseColor("#9AFF54"))
+                .routeClosureColor(Color.parseColor(ROUTE_COLOR_ROAD_CLOSURE))
+                .restrictedRoadColor(Color.parseColor(ROUTE_COLOR_ROAD_RESTRICTED))
+                .routeHeavyCongestionColor(Color.parseColor(ROUTE_COLOR_HEAVY_CONGESTION))
+                .routeSevereCongestionColor(Color.parseColor(ROUTE_COLOR_SEVERE_CONGESTION))
+                .routeModerateCongestionColor(Color.parseColor(ROUTE_COLOR_MODERATE_CONGESTION))
+                .routeLowCongestionColor(Color.parseColor(ROUTE_COLOR_LOW_CONGESTION))
                 .build())
             .build()
     }

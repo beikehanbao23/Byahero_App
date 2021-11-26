@@ -61,4 +61,10 @@ object Constants {
     const val KEY_LAST_LOCATION_LATITUDE = "lastLocationLat"
     const val KEY_LAST_LOCATION_LONGITUDE = "lastLocationLng"
     const val NAVIGATION_ROUTE_LAYER_ID = "road-label"
+    const val ROUTE_COLOR_ROAD_CLOSURE = "#5A5A5A"
+    const val ROUTE_COLOR_ROAD_RESTRICTED = "#FF6A02"
+    const val ROUTE_COLOR_HEAVY_CONGESTION = "#FF0E0E"
+    const val ROUTE_COLOR_SEVERE_CONGESTION = "#FCBD8C"
+    const val ROUTE_COLOR_MODERATE_CONGESTION = "#FCF08C"
+    const val ROUTE_COLOR_LOW_CONGESTION = "#9AFF54"
 }

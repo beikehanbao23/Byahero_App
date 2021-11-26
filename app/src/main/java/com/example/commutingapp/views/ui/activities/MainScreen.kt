@@ -86,20 +86,39 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
     }
 
-    private fun setupBottomNavigationListeners(){
+    private fun setupBottomNavigationListeners() {
 
         activityMainScreenBinding?.bottomNavigation?.apply {
             setOnItemSelectedListener {
                 when (it.itemId) {
-                    R.id.commutersFragment -> replaceFragment(CommuterFragment())
-                    R.id.settingsFragment -> replaceFragment(SettingsFragment())
-                    R.id.statisticsFragment -> replaceFragment(StatisticsFragment())
-                    R.id.weatherFragment -> replaceFragment(WeatherFragment())
+                    R.id.commutersFragment -> {
+                        if (currentFragment() !is CommuterFragment) {
+                            replaceFragment(CommuterFragment())
+                        }
+                    }
+                    R.id.settingsFragment -> {
+                        if (currentFragment() !is SettingsFragment) {
+                            replaceFragment(SettingsFragment())
+                        }
+                    }
+                    R.id.statisticsFragment -> {
+                        if (currentFragment() !is StatisticsFragment) {
+                            replaceFragment(StatisticsFragment())
+                        }
+                    }
+                    R.id.weatherFragment -> {
+
+                        if (currentFragment() !is WeatherFragment) {
+                            replaceFragment(WeatherFragment())
+                        }
+                    }
                 }
                 true
             }
         }
     }
+
+
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
