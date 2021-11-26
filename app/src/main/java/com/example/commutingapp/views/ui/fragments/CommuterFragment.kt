@@ -101,16 +101,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             isClickable = true
         }
         map.setupUI(mapTypesFAB.loadMapType())
-        map.recoverMissingMapMarker()
+        //map.recoverMissingMapMarker()// todo fix later
         locationFAB.updateLocationFloatingButtonIcon()
     }
-    @Suppress("Warnings")
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try {
-            this.notifyListener = context as FragmentToActivity<Fragment>
-        } catch (e: ClassCastException) { }
-    }
+
     private fun initializeComponents(view: View) {
         dialogDirector = DialogDirector(requireActivity())
 
@@ -137,8 +131,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             startActivityForResult(intent,REQUEST_CODE_AUTOCOMPLETE)
             }
         }
+
         map = MapWrapper(mapbox)
-        map.createLocationPuck()
+
 
     }
     private fun provideClickListeners() {
@@ -357,6 +352,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         return false
 
     }
+    @Suppress("Warnings")
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        try {
+            this.notifyListener = context as FragmentToActivity<Fragment>
+        } catch (e: ClassCastException) { }
+    }
     override fun onStart() {
         super.onStart();
         map.getMapView().onStart()
@@ -375,6 +378,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         super.onStop();
         map.getMapView().onStop()
         unregisterReceiver()
+
     }
     override fun onSaveInstanceState(outState:Bundle) {
         super.onSaveInstanceState(outState);

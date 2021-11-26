@@ -18,8 +18,6 @@ import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
-import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.plugins.annotation.LineManager
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,13 +31,12 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     private var mapBoxMap:MapboxMap? = null
     private var mapBoxView: MapView = view.findViewById(R.id.googleMapView)
-    private var mapBoxStyle: Style? = null
+
     private var searchLocationButton: AppCompatButton  = view.findViewById(R.id.buttonLocationSearch)
     private lateinit var camera:MapCamera
     private lateinit var marker:MapMarker
     private lateinit var search:MapSearch
-    private lateinit var locationPuck: MapLocationPuck
-    private lateinit var polyLine: LineManager
+    private lateinit var location: MapLocationPuck
     private lateinit var directions: MapDirections
     private var mapTypes:MapTypes = MapTypes(activity)
     private var destinationLocation:LatLng? = null
@@ -69,9 +66,10 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
     }
     private suspend fun initializeMapComponents(){
-            locationPuck = MapLocationPuck(activity, mapBoxMap)
-            delay(10)
-            mapBoxStyle?.let(locationPuck::buildLocationPuck)
+
+            location = MapLocationPuck(activity, mapBoxMap?.locationComponent)
+            delay(15)
+            mapBoxMap?.getStyle((location::buildLocationPuck))
 
     }
     private fun initializeMap() {
@@ -89,14 +87,12 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     abstract fun onMapReady(mapboxMap: MapboxMap)
 
-    private  fun initializeStyles(mapType:String) {
+    private fun initializeStyles(mapType:String) {
 
             mapBoxMap?.setStyle(mapType) { style ->
 
-                mapBoxStyle = style
                 mapBoxView.apply {
                     TrafficPlugin(this, mapBoxMap!!, style).apply { setVisibility(true) }
-                    polyLine = LineManager(this, mapBoxMap!!, style)
                 }
 
                 marker = MapMarker(style)
@@ -107,7 +103,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     @SuppressLint("BinaryOperationInTimber")
     override fun getLastKnownLocation(): LatLng? {
-        mapBoxStyle?.let(locationPuck::buildLocationPuck)
+        mapBoxMap?.getStyle(location::buildLocationPuck)
         try {
             return mapBoxMap?.locationComponent?.lastKnownLocation?.run {
                 LatLng(this.latitude, this.longitude)
@@ -126,7 +122,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
     override fun updateMapStyle(style:String){
-        mapBoxMap?.setStyle(style){ mapStyle -> mapBoxStyle = mapStyle}
+        mapBoxMap?.setStyle(style)
     }
 
 
@@ -151,14 +147,18 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     @SuppressLint("UseCompatLoadingForDrawables")
     private  fun initializeMapMarkerImage()=
         activity.getDrawable(R.drawable.red_marker)
-            ?.let { mapBoxStyle?.addImage(MAP_MARKER_IMAGE_ID, it) }
+            ?.let { mapBoxMap?.getStyle { style-> style.addImage(MAP_MARKER_IMAGE_ID, it) }}
 
 
     @SuppressLint("BinaryOperationInTimber")
     override fun createLocationPuck() {
         CoroutineScope(Dispatchers.Main).launch {
+            initializeStyles(mapTypes.loadMapType())
+            delay(15)
             try {
-                mapBoxStyle?.let( locationPuck::buildLocationPuck)
+                mapBoxMap?.getStyle {
+                    location.buildLocationPuck(it)
+                }
             } catch (e: IllegalArgumentException) {
                 Timber.e("Location puck failed! "+ e.message.toString())
             }
