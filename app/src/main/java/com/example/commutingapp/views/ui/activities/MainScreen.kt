@@ -118,13 +118,19 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
     private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.apply {
-            beginTransaction().apply {
-                    replace(R.id.fragmentContainer, fragment, fragment.javaClass.name)
+            this.beginTransaction().apply {
+                findFragmentById(R.id.fragmentContainer)?.let(::detach)
+                if (findFragmentByTag(fragment.javaClass.name) == null) {
+                    add(R.id.fragmentContainer, fragment, fragment.javaClass.name)
                     addToBackStack(fragment.javaClass.name)
-                    commit()
+                } else {
+                 attach(findFragmentByTag(fragment.javaClass.name)!!)
+                }
+                commit()
+            }
             }
         }
-    }
+
 
     private fun currentFragment(): Fragment? {
         return supportFragmentManager.findFragmentById(R.id.fragmentContainer)
@@ -134,6 +140,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
             NavigationButton.applyDoubleClickToExit(this)
             return
         }
+
         try { super.onBackPressed() }catch (e:Exception){ }
     }
 

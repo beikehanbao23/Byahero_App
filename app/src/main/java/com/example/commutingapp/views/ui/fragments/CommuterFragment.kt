@@ -83,6 +83,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var mapTypesFAB:MapTypes
     private lateinit var map:MapWrapper<MapView>
     private var latLng: LatLng? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         commuterFragmentBinding = CommuterFragmentBinding.inflate(inflater,container,false)
         return commuterFragmentBinding.root
@@ -359,6 +360,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onStart() {
         super.onStart();
         map.getMapView().onStart()
+        displayUserLocation()
     }
     override fun onResume() {
         super.onResume();
