@@ -24,7 +24,7 @@ import com.example.commutingapp.utils.input_validator.users.UserInputValidate;
 import com.example.commutingapp.utils.input_validator.users.ValidateInputModel;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch;
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension;
-import com.example.commutingapp.views.menubuttons.NavigationButton;
+import com.example.commutingapp.views.menubuttons.BackButton;
 import com.example.commutingapp.views.dialogs.DialogDirector;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -247,7 +247,7 @@ public class SignIn extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        NavigationButton.applyDoubleClickToExit(this);
+        new BackButton().applyDoubleClickToExit(this);
     }
 
     public void SignInButtonIsClicked(View view) {

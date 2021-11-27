@@ -21,8 +21,8 @@ import com.example.commutingapp.utils.others.Constants.SLIDER_ITEM_COUNTS
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch.startActivityOf
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
 import com.example.commutingapp.viewmodels.IntroSliderViewModel
-import com.example.commutingapp.views.menubuttons.NavigationButton
 import com.example.commutingapp.views.adapters.IntroSliderAdapter
+import com.example.commutingapp.views.menubuttons.BackButton
 
 
 
@@ -169,7 +169,7 @@ class IntroSlider : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        NavigationButton.applyDoubleClickToExit(this)
+        BackButton().applyDoubleClickToExit(this)
 
     }
 

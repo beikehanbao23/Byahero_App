@@ -117,7 +117,7 @@ public class EmailSent extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-         NavigationButton.applyDoubleClickToExit(this);
+        new BackButton().applyDoubleClickToExit(this);
     }
 
     private void displayUserEmailToTextView() {

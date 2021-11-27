@@ -72,17 +72,19 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
     }
 
     override fun onThirdNotify(fragment: Fragment, destination: LatLng?, lastKnownLocation: LatLng?) {
-        val bundle = Bundle()
+
+
         destination?.let { destinationLocation->
             lastKnownLocation?.let { lastLocation->
-                with(bundle){
+                with(Bundle()){
                     putDouble(KEY_DESTINATION_LATITUDE, destinationLocation.latitude)
                     putDouble(KEY_DESTINATION_LONGITUDE, destinationLocation.longitude)
                     putDouble(KEY_LAST_LOCATION_LATITUDE,lastLocation.latitude)
                     putDouble(KEY_LAST_LOCATION_LONGITUDE,lastLocation.longitude)
+                    fragment.arguments = this
                 } } }
-        fragment.arguments = bundle
-        replaceFragment(fragment)
+
+        showFragment(fragment)
 
     }
 
@@ -93,23 +95,23 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
                 when (it.itemId) {
                     R.id.commutersFragment -> {
                         if (currentFragment() !is CommuterFragment) {
-                            replaceFragment(CommuterFragment())
+                            showFragment(CommuterFragment())
                         }
                     }
                     R.id.settingsFragment -> {
                         if (currentFragment() !is SettingsFragment) {
-                            replaceFragment(SettingsFragment())
+                            showFragment(SettingsFragment())
                         }
                     }
                     R.id.statisticsFragment -> {
                         if (currentFragment() !is StatisticsFragment) {
-                            replaceFragment(StatisticsFragment())
+                            showFragment(StatisticsFragment())
                         }
                     }
                     R.id.weatherFragment -> {
 
                         if (currentFragment() !is WeatherFragment) {
-                            replaceFragment(WeatherFragment())
+                            showFragment(WeatherFragment())
                         }
                     }
                 }
@@ -135,7 +137,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
 
 
-    private fun replaceFragment(fragment: Fragment) {
+    private fun showFragment(fragment: Fragment) {
         supportFragmentManager.apply {
             this.beginTransaction().apply {
                 findFragmentById(R.id.fragmentContainer)?.let(::detach)
@@ -156,7 +158,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
     }
     override fun onBackPressed() {
         if(currentFragment() is CommuterFragment){
-            NavigationButton.applyDoubleClickToExit(this)
+            BackButton().applyDoubleClickToExit(this)
             return
         }
 
@@ -177,7 +179,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
     private fun initializeAttributes() {
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
         setContentView(activityMainScreenBinding?.root)
-        replaceFragment(CommuterFragment())
+        showFragment(CommuterFragment())
     }
 
     private fun destroyBinding() {

@@ -1,22 +1,23 @@
 package com.example.commutingapp.views.menubuttons;
 
 import android.app.Activity;
+import android.widget.Toast;
 
-import com.rejowan.cutetoast.CuteToast;
+import com.example.commutingapp.R;
 
 
-public class NavigationButton {
+public class BackButton {
 
     private static final int timeDelayInMillis = 1650;
     private static long backPressedTime = 0;
 
 
-    public static void applyDoubleClickToExit(Activity activity) {
+    public void applyDoubleClickToExit(Activity activity) {
         if (doubleClicked()) {
-            terminateActivity(activity);
+            activity.finish();
             return;
         }
-        beginToastMessage(activity);
+        showToastMessage(activity);
     }
 
 
@@ -27,11 +28,9 @@ public class NavigationButton {
     private static boolean doubleClicked() {
         return backPressedTime + timeDelayInMillis > System.currentTimeMillis();
     }
-    private static void terminateActivity(Activity activity){
-        activity.finish();
-    }
-    private static void beginToastMessage(Activity activity){
-        CuteToast.ct(activity, "Tap again to exit", 1750, CuteToast.NORMAL, true).show();
+
+    private static void showToastMessage(Activity activity){
+        Toast.makeText(activity, activity.getString(R.string.doubleTappedMessage), Toast.LENGTH_SHORT).show();
         registerFirstClick();
     }
     private static void registerFirstClick() {
