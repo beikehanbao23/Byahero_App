@@ -22,7 +22,7 @@ import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LATITUD
 import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LONGITUDE
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch
-import com.example.commutingapp.views.menubuttons.NavigationButton
+import com.example.commutingapp.views.menubuttons.BackButton
 import com.example.commutingapp.views.ui.fragments.CommuterFragment
 import com.example.commutingapp.views.ui.fragments.SettingsFragment
 import com.example.commutingapp.views.ui.fragments.StatisticsFragment

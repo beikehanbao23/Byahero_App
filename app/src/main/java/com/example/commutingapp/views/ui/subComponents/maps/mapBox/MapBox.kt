@@ -60,8 +60,8 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                 initializeMap()
                 initializeStyles(mapType)
                 initializeSearchFABLocation()
-                initializeMapMarkerImage()
                 initializeMapComponents()
+
             }
     }
     }
@@ -87,10 +87,11 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     abstract fun onMapReady(mapboxMap: MapboxMap)
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun initializeStyles(mapType:String) {
 
             mapBoxMap?.setStyle(mapType) { style ->
-
+                activity.getDrawable(R.drawable.red_marker)?.let { style.addImage(MAP_MARKER_IMAGE_ID, it) }
                 mapBoxView.apply {
                     TrafficPlugin(this, mapBoxMap!!, style).apply { setVisibility(true) }
                 }
@@ -113,13 +114,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         }
         return null
     }
-    override fun recoverMissingMapMarker(){
-            mapBoxView.addOnStyleImageMissingListener {
-                CoroutineScope(Dispatchers.Main).launch {
-                initializeMapMarkerImage()
-            }
-    }
-    }
+
 
     override fun updateMapStyle(style:String){
         mapBoxMap?.setStyle(style)
@@ -144,17 +139,11 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
-    private  fun initializeMapMarkerImage()=
-        activity.getDrawable(R.drawable.red_marker)
-            ?.let { mapBoxMap?.getStyle { style-> style.addImage(MAP_MARKER_IMAGE_ID, it) }}
 
 
     @SuppressLint("BinaryOperationInTimber")
     override fun createLocationPuck() {
         CoroutineScope(Dispatchers.Main).launch {
-            initializeStyles(mapTypes.loadMapType())
-            delay(15)
             try {
                 mapBoxMap?.getStyle {
                     location.buildLocationPuck(it)

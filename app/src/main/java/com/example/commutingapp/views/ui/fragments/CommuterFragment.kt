@@ -251,8 +251,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                    map.updateMapStyle(hashMap.key)
                }
            }
-        }.also {
-            map.recoverMissingMapMarker()
         }
     }
 

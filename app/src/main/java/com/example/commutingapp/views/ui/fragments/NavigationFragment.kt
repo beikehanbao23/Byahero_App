@@ -257,6 +257,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         } else {
             MapboxNavigationProvider.create(navigationOptionsBuilder())
         }
+        
 
 
         viewportDataSource = MapboxNavigationViewportDataSource(mapboxMap)
@@ -339,13 +340,14 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             val destination = Point.fromLngLat(it.getDouble(KEY_DESTINATION_LONGITUDE),it.getDouble(KEY_DESTINATION_LATITUDE))
             val lastLocation = Point.fromLngLat(it.getDouble(KEY_LAST_LOCATION_LONGITUDE),it.getDouble(KEY_LAST_LOCATION_LATITUDE))
             findRoute(destination,lastLocation)
+
         }
     }
     private fun providerClickListener(){
 
         binding.stop.setOnClickListener {
             clearRouteAndStopNavigation()
-            notifyListener.onThirdNotify(CommuterFragment(),null, null)
+            requireActivity().onBackPressed()
         }
         binding.recenter.setOnClickListener {
             navigationCamera.requestNavigationCameraToFollowing()
@@ -363,6 +365,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     }
 
+    @SuppressLint("MissingPermission")
     override fun onStart() {
         super.onStart()
 
@@ -380,7 +383,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxNavigation.unregisterRoutesObserver(routesObserver)
         mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
         mapboxNavigation.unregisterLocationObserver(locationObserver)
-
+        mapboxNavigation.stopTripSession()
     }
 
     override fun onDestroy() {

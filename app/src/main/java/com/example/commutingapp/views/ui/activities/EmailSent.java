@@ -1,8 +1,5 @@
 package com.example.commutingapp.views.ui.activities;
 
-import static com.example.commutingapp.R.string.resendEmailFailedMessage;
-import static com.example.commutingapp.R.string.resendEmailSuccessMessage;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -15,7 +12,7 @@ import com.example.commutingapp.databinding.CustomEmailsentDialogBinding;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch;
 import com.example.commutingapp.viewmodels.EmailSentViewModel;
 import com.example.commutingapp.views.dialogs.DialogDirector;
-import com.example.commutingapp.views.menubuttons.NavigationButton;
+import com.example.commutingapp.views.menubuttons.BackButton;
 import static com.example.commutingapp.utils.others.Constants.DELAY_INTERVAL_FOR_MAIN_SCREEN_ACTIVITY;
 import static com.example.commutingapp.utils.others.Constants.DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG;
 

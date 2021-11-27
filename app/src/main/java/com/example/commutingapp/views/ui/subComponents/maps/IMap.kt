@@ -11,7 +11,6 @@ interface IMap<V> {
     fun deleteAllMapMarker():Unit?
     fun pointMapMarker(latLng: LatLng)
     fun setupUI(mapType: String)
-    fun recoverMissingMapMarker()
     fun getLastKnownLocation():LatLng?
     fun updateMapStyle(style:String)
     fun createLocationPuck()

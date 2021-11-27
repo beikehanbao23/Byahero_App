@@ -60,7 +60,7 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
             .build()
 
 
-    private  fun drawNavigationRoute(route: DirectionsRoute) {
+    private fun drawNavigationRoute(route: DirectionsRoute) {
 
         style?.let {
              route.geometry()?.let {
