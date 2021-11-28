@@ -16,7 +16,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.CommuterFragmentBinding
 import com.example.commutingapp.utils.others.Constants
@@ -54,9 +53,6 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -303,13 +299,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         getGPSDialogSettingResult(requestCode, resultCode)
-        lifecycleScope.launch(Dispatchers.Main) {
-            map.deleteRouteAndMarkers()
-            delay(20)
-            map.getLocationSearchResult(requestCode, resultCode, data)
-        }
-
-
+        map.getLocationSearchResult(requestCode, resultCode, data)
     }
     private fun getGPSDialogSettingResult(requestCode: Int,resultCode: Int){
         when (requestCode) {
@@ -326,11 +316,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     override fun onMapLongClick(point: LatLng): Boolean {
         latLng = point
-        lifecycleScope.launch(Dispatchers.Main){
-            map.deleteRouteAndMarkers()
-            delay(20)
-            map.pointMapMarker(point)
-        }
+        map.pointMapMarker(point)
         normalBottomSheet.show()
         bottomNavigation.hide()
         return true

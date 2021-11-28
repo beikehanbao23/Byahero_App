@@ -73,7 +73,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private suspend fun initializeMapComponents(){
             camera = MapCamera(mapBoxMap)
             location = MapLocationPuck(activity, mapBoxMap?.locationComponent)
-            delay(15)
+            delay(50)
             mapBoxMap?.getStyle((location::buildLocationPuck))
 
     }
@@ -156,12 +156,15 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     @SuppressLint("BinaryOperationInTimber")
     override fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        deleteRouteAndMarkers()
         CoroutineScope(Dispatchers.Main).launch {
+            delay(50)
             try {
                 mapBoxMap?.getStyle {
                     search.getLocationSearchResult(requestCode, resultCode, data)?.let { location ->
                         camera.move(location, TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
                         destinationLocation = location
+                        hasExistingMapMarker = true
                     }
                 }
             } catch (e: IllegalStateException) {
@@ -202,7 +205,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         }
     }
     private suspend fun createRouteDirection(){
-        delay(20)
+        delay(50)
          mapBoxMap?.getStyle {
              if (hasExistingMapRoute) {
                  getLastKnownLocation()?.let { latLngLastLocation ->
@@ -230,13 +233,14 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     }
     override fun pointMapMarker(latLng: LatLng) {
+        deleteRouteAndMarkers()
         CoroutineScope(Dispatchers.Main).launch {
             hasExistingMapMarker = true
             createMapMarker(latLng)
         }
     }
     private suspend fun createMapMarker(location: LatLng){
-        delay(20)
+        delay(50)
         mapBoxMap?.getStyle {
             if (hasExistingMapMarker) {
                 mapBoxMap?.cameraPosition?.also { zoomLevel ->
