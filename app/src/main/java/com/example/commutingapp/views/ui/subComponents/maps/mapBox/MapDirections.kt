@@ -1,6 +1,7 @@
 package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import com.example.commutingapp.R
@@ -16,12 +17,10 @@ import com.mapbox.core.constants.Constants.PRECISION_6
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.maps.Style
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import timber.log.Timber
 
 class MapDirections(private val style: Style?, private val activity: Activity) {
 
@@ -33,12 +32,22 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
 
         getClient(listOfCoordinates).enqueueCall(object : Callback<OptimizationResponse> {
 
-            override fun onResponse(call: Call<OptimizationResponse>,response: Response<OptimizationResponse>) {
+            @SuppressLint("BinaryOperationInTimber")
+            override fun onResponse(
+                call: Call<OptimizationResponse>,
+                response: Response<OptimizationResponse>
+            ) {
 
                 response.body()?.trips()?.let {
-                    if(it.isNotEmpty()){
-                        CoroutineScope(Dispatchers.Main).launch { drawNavigationRoute(it[0]) }
-                    }//todo if is empty then create dialog(means the destination is unreachable so it  fails to add route )
+                    if (it.isNotEmpty()) {
+                        try {
+                            drawNavigationRoute(it[0])
+                        } catch (e: IllegalStateException) {
+                            Timber.e("Map Directions " + e.message)
+                        }
+                    }
+
+                    //todo if is empty then create dialog(means the destination is unreachable so it  fails to add route )
                 }
             }
 
@@ -49,7 +58,7 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
 
     }
 
-    private fun getClient(listOfCoordinates:MutableList<Point>) =
+    private fun getClient(listOfCoordinates: MutableList<Point>) =
         MapboxOptimization.builder()
             .source(DirectionsCriteria.SOURCE_FIRST)
             .destination(DirectionsCriteria.SOURCE_ANY)
@@ -63,8 +72,8 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
     private fun drawNavigationRoute(route: DirectionsRoute) {
 
         style?.let {
-             route.geometry()?.let {
-                mapLineLayers.create( LineString.fromPolyline(it, PRECISION_6))
+            route.geometry()?.let {
+                mapLineLayers.create(LineString.fromPolyline(it, PRECISION_6))
             }
         }
     }

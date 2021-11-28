@@ -101,7 +101,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             isClickable = true
         }
         map.setupUI(mapTypesFAB.loadMapType())
-        //map.recoverMissingMapMarker()// todo fix later
         locationFAB.updateLocationFloatingButtonIcon()
     }
 
@@ -148,7 +147,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideMapTypeDialogListener(){
         commuterFragmentBinding.floatingActionButtonChooseMap.setOnClickListener {
             dialogDirector.constructChooseMapDialog().apply {
-                mapTypesFAB.createMapTypeIndicator(this)
+                mapTypesFAB.setMapSelectedIndicator(this)
                 setMapTypeListeners(this)
                 show()
             } }
@@ -305,7 +304,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         getGPSDialogSettingResult(requestCode, resultCode)
         lifecycleScope.launch(Dispatchers.Main) {
-            map.deleteAllMapMarker()
+            map.deleteRouteAndMarkers()
             delay(20)
             map.getLocationSearchResult(requestCode, resultCode, data)
         }
@@ -328,7 +327,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onMapLongClick(point: LatLng): Boolean {
         latLng = point
         lifecycleScope.launch(Dispatchers.Main){
-            map.deleteAllMapMarker()
+            map.deleteRouteAndMarkers()
             delay(20)
             map.pointMapMarker(point)
         }
@@ -337,7 +336,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         return true
     }
     override fun onMapClick(point: LatLng): Boolean {
-        map.deleteAllMapMarker()
+        map.deleteRouteAndMarkers()
         normalBottomSheet.hide()
         bottomNavigation.show()
         return true

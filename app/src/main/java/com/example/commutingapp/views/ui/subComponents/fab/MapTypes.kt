@@ -16,7 +16,7 @@ class MapTypes(private val context: Context) {
         Context.MODE_PRIVATE)
 
 
-     fun createMapTypeIndicator(customDialogBuilder: CustomDialogBuilder){
+     fun setMapSelectedIndicator(customDialogBuilder: CustomDialogBuilder){
         customDialogBuilder.apply {
             findViewById<View>(getMapTypeButtons().getValue(loadMapType()))?.setBackgroundResource(R.drawable.map_type_visible_image_button_background)
         }
@@ -51,7 +51,7 @@ class MapTypes(private val context: Context) {
      fun changeMapType(customDialogBuilder: CustomDialogBuilder,mapType: String) {
         saveMapTypeToSharedPreference(mapType)
         removePreviousMapTypeIndicator(customDialogBuilder)
-        createMapTypeIndicator(customDialogBuilder)
+        setMapSelectedIndicator(customDialogBuilder)
     }
 
      fun loadMapType():String {return preferences.getString(FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE,Style.TRAFFIC_DAY).toString()}
