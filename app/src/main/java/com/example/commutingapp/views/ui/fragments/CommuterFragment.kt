@@ -73,7 +73,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var commuterFragmentBinding: CommuterFragmentBinding
     private lateinit var searchLocationButton: AppCompatButton
     private lateinit var notifyListener: FragmentToActivity<Fragment>
-    private lateinit var normalBottomSheet: Component
+    private lateinit var bottomSheet: Component
     private lateinit var bottomNavigation:Component
     private lateinit var locationFAB:LocationButton
     private lateinit var mapTypesFAB:MapTypes
@@ -89,7 +89,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeComponents(view)
-        normalBottomSheet.hide()
+        bottomSheet.hide()
         bottomNavigation.show()
         provideClickListeners()
         map.getMapView().apply {
@@ -108,7 +108,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         saveButton = view.findViewById(R.id.saveButton)
         shareButton = view.findViewById(R.id.shareButton)
         searchLocationButton = view.findViewById(R.id.buttonLocationSearch)
-        normalBottomSheet = Component(StartingBottomSheet(view,requireContext()))
+        bottomSheet = Component(StartingBottomSheet(view,requireContext()))
 
         bottomNavigation = Component(BottomNavigation(notifyListener))
         locationFAB = LocationButton(commuterFragmentBinding,requireContext())
@@ -175,7 +175,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideStartButtonListener(){
         startButton.setOnClickListener {
             if (requestPermissionGranted()) {
-                normalBottomSheet.hide()
+                bottomSheet.hide()
                 bottomNavigation.hide()
                 locationFAB.hideLocationFloatingButton()
                 checkLocationSetting().addOnCompleteListener {
@@ -239,11 +239,17 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
     private fun setMapTypeListeners(customDialogBuilder: CustomDialogBuilder) {
+
+        var previousType = ""
         customDialogBuilder.also { mapTypeListener->
             mapTypesFAB.getMapTypeButtons().forEach { hashMap->
                mapTypeListener.findViewById<View>(hashMap.value )?.setOnClickListener {
-                   mapTypesFAB.changeMapType(mapTypeListener,hashMap.key)
-                   map.updateMapStyle(hashMap.key)
+                   val currentType = hashMap.key
+                   if(previousType != currentType) {
+                       mapTypesFAB.changeMapType(mapTypeListener, currentType)
+                       map.updateMapStyle(currentType)
+                       previousType = currentType
+                   }
                }
            }
         }
@@ -300,6 +306,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         getGPSDialogSettingResult(requestCode, resultCode)
         map.getLocationSearchResult(requestCode, resultCode, data)
+        bottomSheet.show()
+        bottomNavigation.hide()
+
     }
     private fun getGPSDialogSettingResult(requestCode: Int,resultCode: Int){
         when (requestCode) {
@@ -317,13 +326,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onMapLongClick(point: LatLng): Boolean {
         latLng = point
         map.pointMapMarker(point)
-        normalBottomSheet.show()
+        bottomSheet.show()
         bottomNavigation.hide()
         return true
     }
     override fun onMapClick(point: LatLng): Boolean {
         map.deleteRouteAndMarkers()
-        normalBottomSheet.hide()
+        bottomSheet.hide()
         bottomNavigation.show()
         return true
     }
