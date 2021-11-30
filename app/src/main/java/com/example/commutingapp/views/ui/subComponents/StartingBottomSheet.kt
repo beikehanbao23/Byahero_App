@@ -5,13 +5,14 @@ import android.view.View
 import android.widget.Button
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.InternetConnection.Connection
-import com.example.commutingapp.utils.others.Constants
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class StartingBottomSheet(view:View, private val context: Context) :IComponent{
     private  var startingBottomSheet: BottomSheetBehavior<View> = BottomSheetBehavior.from(view.findViewById(R.id.bottomSheetNormalState)).apply {
-        state = BottomSheetBehavior.STATE_COLLAPSED
+        this.isHideable = true
     }
+
+
     private var startButton: Button = view.findViewById(R.id.startButton)
     private var directionButton: Button = view.findViewById(R.id.directionsButton)
     private var saveButton: Button = view.findViewById(R.id.saveButton)
@@ -19,11 +20,11 @@ class StartingBottomSheet(view:View, private val context: Context) :IComponent{
 
 
     override fun hide(){
-        startingBottomSheet.peekHeight = Constants.INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
+        startingBottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
     }
     override fun show() {
         renderBottomSheetButtons()
-        startingBottomSheet.peekHeight = Constants.STARTING_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
+        startingBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
 

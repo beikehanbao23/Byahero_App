@@ -83,36 +83,44 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="90dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/transparent">
+        android:background="@color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottomSheetNormalState"
             android:layout_width="match_parent"
-            android:layout_height="135dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/bottom_sheet_starting_state_background"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-            app:layout_constraintBottom_toBottomOf="@+id/googleMapView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:paddingTop="5dp"
+                android:indeterminateTint="@color/BottomSheetButtonColors"
+                app:layout_constraintBottom_toTopOf="@+id/bottomSheetButtonScrollView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
 
             <TextView
                 android:id="@+id/geocodePlaceText"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
-
                 android:textColor="@color/Black"
                 android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
@@ -124,6 +132,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="3dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toTopOf="@+id/bottomSheetButtonScrollView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/geocodePlaceText" />
 
@@ -131,12 +141,15 @@
             <include layout="@layout/bottom_sheet_line_image" />
 
             <HorizontalScrollView
+                android:id="@+id/bottomSheetButtonScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginBottom="-12dp"
                 android:scrollbars="none"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
                 <LinearLayout
                     android:id="@+id/linearLayout"
@@ -211,6 +224,7 @@
 
 
             </HorizontalScrollView>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
