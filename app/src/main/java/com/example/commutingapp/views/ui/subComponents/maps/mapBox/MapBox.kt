@@ -235,8 +235,8 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                     response.body()?.let {
                         val results = it.features()
                         if (results.size > 0) {
-                            geocodeText.value = results[0].text()
-                            geocodePlaceName.value  = results[0].placeName()!!.replace("${geocodeText.value},","")
+                            geocodeText.value = results[0].text() ?: "----"
+                            geocodePlaceName.value = results[0].placeName()?.replace("${geocodeText.value}, ", "") ?: "----"
 
                         } else {
                             Timber.e(",LOCATION IS UNREACHABLE")//Todo add dialog for this

@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.CommuterFragmentBinding
 import com.example.commutingapp.utils.others.Constants
@@ -52,6 +53,8 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -91,14 +94,21 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
         map.setupUI(mapTypesFAB.loadMapType())
         locationFAB.updateLocationFloatingButtonIcon()
+        provideObservers()
+
+
+    }
+    private fun provideObservers(){
         map.getPlaceName().observe(viewLifecycleOwner){
+            binding.progressBar.visibility = View.GONE
             binding.geocodePlaceName.text = it
         }
         map.getPlaceText().observe(viewLifecycleOwner){
+            binding.progressBar.visibility = View.GONE
             binding.geocodePlaceText.text = it
+
         }
     }
-
     private fun initializeComponents(view: View) {
         dialogDirector = DialogDirector(requireActivity())
         searchLocationButton = view.findViewById(R.id.buttonLocationSearch)
@@ -106,6 +116,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomNavigation = Component(BottomNavigation(notifyListener))
         locationFAB = LocationButton(binding,requireContext())
         mapTypesFAB = MapTypes(requireContext())
+
 
         val mapbox = object : MapBox(view,requireActivity()){
 
@@ -299,10 +310,20 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         getGPSDialogSettingResult(requestCode, resultCode)
         map.getLocationSearchResult(requestCode, resultCode, data)
-        bottomSheet.show()
-        bottomNavigation.hide()
-
+        resetBottomSheetPlace()
     }
+
+    private fun resetBottomSheetPlace(){
+        lifecycleScope.launch {
+            bottomNavigation.hide()
+            binding.progressBar.visibility = View.VISIBLE
+            binding.geocodePlaceName.text = ""
+            binding.geocodePlaceText.text = ""
+            delay(150)
+            bottomSheet.show()
+        }
+    }
+
     private fun getGPSDialogSettingResult(requestCode: Int,resultCode: Int){
         when (requestCode) {
             REQUEST_CHECK_SETTING ->
@@ -319,8 +340,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onMapLongClick(point: LatLng): Boolean {
         latLng = point
         map.pointMapMarker(point)
-        bottomSheet.show()
-        bottomNavigation.hide()
+        resetBottomSheetPlace()
         return true
     }
     override fun onMapClick(point: LatLng): Boolean {
