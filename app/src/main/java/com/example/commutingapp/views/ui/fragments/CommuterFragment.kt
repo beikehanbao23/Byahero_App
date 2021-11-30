@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
@@ -63,14 +62,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     private val mainViewModel: MainViewModel by viewModels()
-
-
-    private lateinit var startButton: Button
-    private lateinit var directionButton: Button
-    private lateinit var saveButton: Button
-    private lateinit var shareButton: Button
     private lateinit var dialogDirector: DialogDirector
-    private lateinit var commuterFragmentBinding: CommuterFragmentBinding
+    private lateinit var binding: CommuterFragmentBinding
     private lateinit var searchLocationButton: AppCompatButton
     private lateinit var notifyListener: FragmentToActivity<Fragment>
     private lateinit var bottomSheet: Component
@@ -81,8 +74,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private var latLng: LatLng? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        commuterFragmentBinding = CommuterFragmentBinding.inflate(inflater,container,false)
-        return commuterFragmentBinding.root
+        binding = CommuterFragmentBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -98,20 +91,20 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
         map.setupUI(mapTypesFAB.loadMapType())
         locationFAB.updateLocationFloatingButtonIcon()
+        map.getPlaceName().observe(viewLifecycleOwner){
+            binding.geocodePlaceName.text = it
+        }
+        map.getPlaceText().observe(viewLifecycleOwner){
+            binding.geocodePlaceText.text = it
+        }
     }
 
     private fun initializeComponents(view: View) {
         dialogDirector = DialogDirector(requireActivity())
-
-        startButton = view.findViewById(R.id.startButton)
-        directionButton = view.findViewById(R.id.directionsButton)
-        saveButton = view.findViewById(R.id.saveButton)
-        shareButton = view.findViewById(R.id.shareButton)
         searchLocationButton = view.findViewById(R.id.buttonLocationSearch)
         bottomSheet = Component(StartingBottomSheet(view,requireContext()))
-
         bottomNavigation = Component(BottomNavigation(notifyListener))
-        locationFAB = LocationButton(commuterFragmentBinding,requireContext())
+        locationFAB = LocationButton(binding,requireContext())
         mapTypesFAB = MapTypes(requireContext())
 
         val mapbox = object : MapBox(view,requireActivity()){
@@ -141,7 +134,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
     private fun provideMapTypeDialogListener(){
-        commuterFragmentBinding.floatingActionButtonChooseMap.setOnClickListener {
+        binding.floatingActionButtonChooseMap.setOnClickListener {
             dialogDirector.constructChooseMapDialog().apply {
                 mapTypesFAB.setMapSelectedIndicator(this)
                 setMapTypeListeners(this)
@@ -149,7 +142,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             } }
     }
     private fun provideLocationButtonListener() {
-        commuterFragmentBinding.floatingActionButtonLocation.setOnClickListener {
+        binding.floatingActionButtonLocation.setOnClickListener {
             if (requestPermissionGranted()) {
                 checkLocationSetting().addOnCompleteListener {
                     try {
@@ -173,7 +166,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
     private fun provideStartButtonListener(){
-        startButton.setOnClickListener {
+        binding.startButton.setOnClickListener {
             if (requestPermissionGranted()) {
                 bottomSheet.hide()
                 bottomNavigation.hide()
@@ -199,16 +192,16 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     private fun provideDirectionButtonListener(){
-        directionButton.setOnClickListener {
+        binding.directionsButton.setOnClickListener {
             map.createDirections()
         }
     }
     private fun provideSaveButtonListener() {
-        saveButton.setOnClickListener {
+        binding.saveButton.setOnClickListener {
         }
     }
     private fun provideShareButtonListener(){
-        shareButton.setOnClickListener {
+        binding.shareButton.setOnClickListener {
 
         }
     }
