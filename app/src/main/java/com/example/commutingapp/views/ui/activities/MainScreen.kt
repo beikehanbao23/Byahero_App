@@ -34,6 +34,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserInfo
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.search.MapboxSearchSdk
+import com.mapbox.search.location.DefaultLocationProvider
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -59,8 +61,11 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
         activityMainScreenBinding?.bottomNavigation?.setupWithNavController(navigationController)
         setupBottomNavigationListeners()
         Mapbox.getInstance(this, getString(R.string.MapsToken))
-
-
+        MapboxSearchSdk.initialize(
+            this.application,
+            getString(R.string.MapsToken),
+            DefaultLocationProvider(this.application)
+        )
     }
 
     override fun onFirstNotify() {

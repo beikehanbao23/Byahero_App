@@ -95,5 +95,9 @@
 
 
     <string name="alreadyHaveAnAccount">Already have an account? Log In</string>
-
+    <string name="searchPlaces">Search places</string>
+    <string name="share">Share</string>
+    <string name="save">Save</string>
+    <string name="start">Start</string>
+    <string name="directions">Directions</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.commutingapp.views.ui.subComponents.maps
 
 import android.content.Intent
+import androidx.lifecycle.LiveData
 import com.mapbox.mapboxsdk.geometry.LatLng
 
 interface IMap<V> {
@@ -15,5 +16,7 @@ interface IMap<V> {
     fun updateMapStyle(style:String)
     fun createLocationPuck()
     fun getMapView():V
+    fun getPlaceText():LiveData<String?>
+    fun getPlaceName():LiveData<String?>
     fun createDirections()
 }

@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.view.View
 import androidx.appcompat.widget.AppCompatButton
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
@@ -14,6 +16,9 @@ import com.example.commutingapp.utils.others.Constants.MIN_ZOOM_LEVEL_MAPS
 import com.example.commutingapp.utils.others.Constants.TRACKING_MAP_ZOOM
 import com.example.commutingapp.views.ui.subComponents.fab.MapTypes
 import com.example.commutingapp.views.ui.subComponents.maps.IMap
+import com.mapbox.api.geocoding.v5.MapboxGeocoding
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse
+import com.mapbox.core.exceptions.ServicesException
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
@@ -24,6 +29,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import timber.log.Timber
 
 
@@ -43,6 +51,9 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private var destinationLocation:LatLng? = null
     private var hasExistingMapMarker = false
     private var hasExistingMapRoute = false
+    private var geocodePlaceName = MutableLiveData<String?>()
+    private var geocodeText = MutableLiveData<String?>()
+
 
 
 
@@ -145,12 +156,8 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                 createRouteDirection()
                 createMapMarker(it)
             }
-
-
             }
-
         }
-
     }
 
 
@@ -162,15 +169,14 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             try {
                 mapBoxMap?.getStyle {
                     search.getLocationSearchResult(requestCode, resultCode, data)?.let { location ->
+                        launch {
                         camera.move(location, TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
                         destinationLocation = location
                         hasExistingMapMarker = true
-                    }
-                }
-            } catch (e: IllegalStateException) {
+                        reverseGeocode(Point.fromLngLat(location.longitude,location.latitude))}
+                    } } } catch (e: IllegalStateException) {
                 Timber.e("Style loading error "+ e.message.toString())
-            }
-        }
+            } }
 
     }
 
@@ -211,34 +217,59 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                  getLastKnownLocation()?.let { latLngLastLocation ->
                      destinationLocation?.let { latLngDestinationLocation ->
                          mutableListOf<Point>().apply {
-                             this.add(
-                                 Point.fromLngLat(
-                                     latLngLastLocation.longitude,
-                                     latLngLastLocation.latitude
-                                 )
-                             )
-                             this.add(
-                                 Point.fromLngLat(
-                                     latLngDestinationLocation.longitude,
-                                     latLngDestinationLocation.latitude
-                                 )
-                             )
-                             directions.getRoute(this)
-
+                            this.add(Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude))
+                            this.add(Point.fromLngLat(latLngDestinationLocation.longitude,latLngDestinationLocation.latitude))
+                            directions.getRoute(this)
                          }
                      }
                  }
              }
          }
-
     }
+
+
+    private fun reverseGeocode(point: Point) {
+        try {
+            buildGeocoding(point).enqueueCall(object : Callback<GeocodingResponse> {
+                override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
+                    response.body()?.let {
+                        val results = it.features()
+                        if (results.size > 0) {
+                            geocodeText.value = results[0].text()
+                            geocodePlaceName.value  = results[0].placeName()!!.replace("${geocodeText.value},","")
+
+                        } else {
+                            Timber.e(",LOCATION IS UNREACHABLE")//Todo add dialog for this
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
+                    Timber.e("Geocoding Failure")
+                }
+            })
+        } catch (servicesException: ServicesException) {
+            Timber.e(servicesException.toString())
+        }
+    }
+    override fun getPlaceText(): LiveData<String?> = geocodeText
+    override fun getPlaceName():LiveData<String?> = geocodePlaceName
+
     override fun pointMapMarker(latLng: LatLng) {
         deleteRouteAndMarkers()
         CoroutineScope(Dispatchers.Main).launch {
             hasExistingMapMarker = true
             createMapMarker(latLng)
+            reverseGeocode(Point.fromLngLat(latLng.longitude,latLng.latitude))
         }
     }
+
+
+    private fun buildGeocoding(point: Point)=MapboxGeocoding.builder()
+        .accessToken(activity.getString(R.string.MapsToken))
+        .query(point)
+        .build()
+
+
     private suspend fun createMapMarker(location: LatLng){
         delay(50)
         mapBoxMap?.getStyle {

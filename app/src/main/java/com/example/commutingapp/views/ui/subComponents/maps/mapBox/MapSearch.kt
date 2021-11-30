@@ -27,7 +27,7 @@ class MapSearch(private val activity:Activity,private val style: Style?) {
     init {
         initializeUserLocations()
     }
-
+    //TODO ADD VOICE SEARCH(USE GEOCODING - TEXT TO COORDINATES)
      fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?): LatLng? {
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_CODE_AUTOCOMPLETE) {
             this.resultDestination = PlaceAutocomplete.getPlace(data)//todo
