@@ -18,6 +18,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.CommuterFragmentBinding
+import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
 import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
@@ -316,14 +317,25 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun resetBottomSheetPlace(){
         lifecycleScope.launch {
             bottomNavigation.hide()
-            binding.progressBar.visibility = View.VISIBLE
-            binding.geocodePlaceName.text = ""
-            binding.geocodePlaceText.text = ""
+            displayBottomSheetResults()
             delay(150)
             bottomSheet.show()
         }
     }
+    private fun displayBottomSheetResults(){
+        with(binding){
+            if(!Connection.hasInternetConnection(requireContext())){
+                progressBar.visibility = View.GONE
+                geocodePlaceText.visibility = View.GONE
+                geocodePlaceName.visibility = View.GONE
+            }else{
+                binding.progressBar.visibility = View.VISIBLE
+                binding.geocodePlaceName.text = ""
+                binding.geocodePlaceText.text = ""
+            }
+        }
 
+    }
     private fun getGPSDialogSettingResult(requestCode: Int,resultCode: Int){
         when (requestCode) {
             REQUEST_CHECK_SETTING ->
