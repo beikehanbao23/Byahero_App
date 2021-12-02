@@ -113,14 +113,14 @@
         <entry key="app/src/main/res/layout/bottom_sheet_normal_state_buttons.xml" value="0.24444444444444444" />
         <entry key="app/src/main/res/layout/bottom_sheet_start_buttons.xml" value="0.1" />
         <entry key="app/src/main/res/layout/bottom_sheet_start_state.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/bottom_sheet_tracking_state.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/bottom_sheet_tracking_state.xml" value="0.25" />
         <entry key="app/src/main/res/layout/choose_map_dialog.xml" value="0.2" />
         <entry key="app/src/main/res/layout/circular_progressbar.xml" value="0.23177083333333334" />
         <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.33" />
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_navigation.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_navigation.xml" value="0.25" />
         <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.22" />
         <entry key="app/src/main/res/layout/map_styles_dialog.xml" value="0.33" />
         <entry key="app/src/main/res/layout/search_bar.xml" value="0.24444444444444444" />
