@@ -3,7 +3,6 @@ package com.example.commutingapp.views.ui.subComponents
 import android.view.View
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants.INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
-import com.example.commutingapp.utils.others.Constants.STARTING_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
 import com.example.commutingapp.utils.others.Constants.TRACKING_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 

@@ -18,7 +18,7 @@ import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 
 
-class MapSearch(private val activity:Activity,private val style: Style?) {
+class MapSearch(private val activity:Activity,style: Style?) {
     private lateinit var home: CarmenFeature
     private lateinit var work: CarmenFeature
     private lateinit var resultDestination :CarmenFeature

@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.FragmentNavigationBinding
 import com.example.commutingapp.utils.others.Constants
@@ -26,6 +27,8 @@ import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_ROAD_CLOSURE
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_ROAD_RESTRICTED
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_SEVERE_CONGESTION
 import com.example.commutingapp.utils.others.FragmentToActivity
+import com.example.commutingapp.views.ui.subComponents.Component
+import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
@@ -87,6 +90,11 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private lateinit var viewportDataSource: MapboxNavigationViewportDataSource
     private lateinit var notifyListener: FragmentToActivity<Fragment>
     private val pixelDensity = Resources.getSystem().displayMetrics.density
+    private lateinit var trackingBottomSheet: Component
+    private var userDestination:Point? = null
+    private var userLastLocation:Point? = null
+
+
     private val overviewPadding: EdgeInsets by lazy {
         EdgeInsets(
             140.0 * pixelDensity,
@@ -121,7 +129,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         @SuppressLint("BinaryOperationInTimber")
         override fun onNewRawLocation(rawLocation: Location) {
             val location:LatLng = LatLng(rawLocation.latitude,rawLocation.longitude)
-             Timber.d("New Raw Location"+location.toString())
+             Timber.d("New Raw Location $location")
         }
 
         override fun onNewLocationMatcherResult(locationMatcherResult: LocationMatcherResult) {
@@ -153,9 +161,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         viewportDataSource.evaluate()
 
         val style = mapboxMap.getStyle()
-        if (style != null) {
+        style?.let{
             val maneuverArrowResult = routeArrowApi.addUpcomingManeuverArrow(routeProgress)
-            routeArrowView.renderManeuverUpdate(style, maneuverArrowResult)
+            routeArrowView.renderManeuverUpdate(it, maneuverArrowResult)
         }
 
 
@@ -199,14 +207,14 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         } else {
 
             val style = mapboxMap.getStyle()
-            if (style != null) {
+            style?.let{
                 routeLineApi.clearRouteLine { value ->
                     routeLineView.renderClearRouteLineValue(
-                        style,
+                        it,
                         value
                     )
                 }
-                routeArrowView.render(style, routeArrowApi.clearArrows())
+                routeArrowView.render(it, routeArrowApi.clearArrows())
             }
 
 
@@ -244,9 +252,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mapboxMap = binding.mapView.getMapboxMap()
-
         mapboxMap.setBounds(cameraBoundsOptionsBuilder())
-
+        trackingBottomSheet = Component(TrackingBottomSheet(view))
+        trackingBottomSheet.show()
         binding.mapView.location.apply {
             setLocationProvider(navigationLocationProvider)
             enabled = true
@@ -270,6 +278,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         binding.mapView.camera.addCameraAnimationsLifecycleListener(
             NavigationBasicGesturesHandler(navigationCamera)
         )
+
         navigationCamera.registerNavigationCameraStateChangeObserver { navigationCameraState ->
 
             when (navigationCameraState) {
@@ -306,7 +315,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         routeArrowView = MapboxRouteArrowView(routeArrowOptions)
 
         mapboxMap.loadStyleUri(
-            Style.MAPBOX_STREETS// TODO CHANGE STYLES
+            Style.TRAFFIC_NIGHT
         ) {
         createRoute()
         }
@@ -340,7 +349,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             val destination = Point.fromLngLat(it.getDouble(KEY_DESTINATION_LONGITUDE),it.getDouble(KEY_DESTINATION_LATITUDE))
             val lastLocation = Point.fromLngLat(it.getDouble(KEY_LAST_LOCATION_LONGITUDE),it.getDouble(KEY_LAST_LOCATION_LATITUDE))
             findRoute(destination,lastLocation)
-
+            userDestination = destination
+            userLastLocation = lastLocation
         }
     }
     private fun providerClickListener(){
@@ -351,14 +361,68 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         }
         binding.recenter.setOnClickListener {
             navigationCamera.requestNavigationCameraToFollowing()
-            binding.routeOverview.showTextAndExtend(BUTTON_ANIMATION_DURATION)
         }
+
         binding.routeOverview.setOnClickListener {
             navigationCamera.requestNavigationCameraToOverview()
             binding.recenter.showTextAndExtend(BUTTON_ANIMATION_DURATION)
         }
 
+        binding.trafficMapSwitchButton.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                changeTrafficModeOn()
+            }else{
+                changeTrafficModeOff()
+            }
+        }
+
+        binding.satelliteMapSwitchButton.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                changeMapStyle(Style.TRAFFIC_DAY)
+            }else{
+                changeMapStyle(Style.TRAFFIC_NIGHT)
+            }
+        }
+
     }
+
+    private fun changeTrafficModeOn(){
+    mapboxMap.getStyle()?.styleURI.run {
+        if(this == BuildConfig.MAP_STYLE_DAY){
+            changeMapStyle(Style.TRAFFIC_DAY)
+            return@run
+        }
+        if(this == BuildConfig.MAP_STYLE_NIGHT){
+            changeMapStyle(Style.TRAFFIC_NIGHT)
+        }
+    }
+    }
+
+
+    private fun changeTrafficModeOff(){
+        mapboxMap.getStyle()?.styleURI.run {
+            if(this == Style.TRAFFIC_DAY){
+                changeMapStyle(BuildConfig.MAP_STYLE_DAY)
+                return
+            }
+
+            if(this == Style.TRAFFIC_NIGHT){
+                changeMapStyle(BuildConfig.MAP_STYLE_NIGHT)
+            }
+        }
+    }
+
+    private fun changeMapStyle(style:String){
+        userDestination?.let { destination ->
+            userLastLocation?.let {lastLocation->
+                findRoute(destination, lastLocation)
+                mapboxMap.loadStyleUri(style)
+            }
+        }
+    }
+
+
+
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

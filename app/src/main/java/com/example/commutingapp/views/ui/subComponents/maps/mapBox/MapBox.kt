@@ -127,7 +127,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     private fun addTrafficView(style:Style){
         mapBoxView.apply {
-            TrafficPlugin(this, mapBoxMap!!, style).apply { setVisibility(true) }
+            TrafficPlugin(this, mapBoxMap!!, style).apply { setVisibility(false)}
         }
     }
 
