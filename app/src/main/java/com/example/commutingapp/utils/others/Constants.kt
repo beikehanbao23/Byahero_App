@@ -46,9 +46,11 @@ object Constants {
     const val SLIDER_ITEM_COUNTS = 4
     const val USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS = 8
     const val SIGN_UP_LOADING_INTERVAL:Long = 100
-    const val FILE_NAME_INTRO_SLIDER_SHARED_PREFERENCE = "IntroSlider"
-    const val FILE_NAME_MAPS_TYPE_SHARED_PREFERENCE = "MapsType"
+    const val KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE = "MapsType"
     const val KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE = "IntroSlider_StateOfSlides"
+    const val KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE = "StateOfSatelliteSwitchButton"
+    const val KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE = "StateOfTrafficSwitchButton"
+    const val KEY_NAME_NAVIGATION_MAP_STYLE = "MapStyleNavigation"
     const val REQUEST_CODE_AUTOCOMPLETE = 1
     const val ON_SEARCH_SOURCE_ID = "geojsonSourceLayerId"
     const val ON_MAP_CLICK_SOURCE_ID = "icon-sourceID";
@@ -67,4 +69,5 @@ object Constants {
     const val ROUTE_COLOR_SEVERE_CONGESTION = "#FCBD8C"
     const val ROUTE_COLOR_MODERATE_CONGESTION = "#FCF08C"
     const val ROUTE_COLOR_LOW_CONGESTION = "#9AFF54"
+
 }

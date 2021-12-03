@@ -2,6 +2,7 @@ package com.example.commutingapp.views.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.Color
 import android.location.Location
@@ -19,6 +20,9 @@ import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LATITUDE
 import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LATITUDE
 import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LONGITUDE
+import com.example.commutingapp.utils.others.Constants.KEY_NAME_NAVIGATION_MAP_STYLE
+import com.example.commutingapp.utils.others.Constants.KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE
+import com.example.commutingapp.utils.others.Constants.KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE
 import com.example.commutingapp.utils.others.Constants.NAVIGATION_ROUTE_LAYER_ID
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_HEAVY_CONGESTION
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_LOW_CONGESTION
@@ -27,6 +31,7 @@ import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_ROAD_CLOSURE
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_ROAD_RESTRICTED
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_SEVERE_CONGESTION
 import com.example.commutingapp.utils.others.FragmentToActivity
+import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.views.ui.subComponents.Component
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
 import com.mapbox.api.directions.v5.models.Bearing
@@ -82,7 +87,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         private const val BUTTON_ANIMATION_DURATION = 1500L
     }
 
-
+    private lateinit var satelliteSwitchButtonPreference:SharedPreferences
+    private lateinit var trafficSwitchButtonPreference:SharedPreferences
+    private lateinit var mapStylePreference:SharedPreferences
     private lateinit var binding: FragmentNavigationBinding
     private lateinit var mapboxMap: MapboxMap
     private lateinit var mapboxNavigation: MapboxNavigation
@@ -93,6 +100,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private lateinit var trackingBottomSheet: Component
     private var userDestination:Point? = null
     private var userLastLocation:Point? = null
+
 
 
     private val overviewPadding: EdgeInsets by lazy {
@@ -153,6 +161,29 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             }
         }
     }
+
+    private fun saveSatelliteSwitchStatePreference(state:String){
+        satelliteSwitchButtonPreference.edit().putString(KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE,state).apply()
+    }
+    private fun saveTrafficSwitchStatePreference(state:String){
+        trafficSwitchButtonPreference.edit().putString(KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE,state).apply()
+    }
+    private fun saveMapStylePreference(style:String){
+        mapStylePreference.edit().putString(KEY_NAME_NAVIGATION_MAP_STYLE,style).apply()
+    }
+
+
+    private fun satelliteSwitchState()=
+        satelliteSwitchButtonPreference.getString(KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE,SwitchState.OFF.toString())
+
+    private fun trafficSwitchState()=
+        trafficSwitchButtonPreference.getString(KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE,SwitchState.ON.toString())
+
+    private fun currentMapStyle()=
+        mapStylePreference.getString(KEY_NAME_NAVIGATION_MAP_STYLE,Style.TRAFFIC_NIGHT)
+
+
+
 
 
     private val routeProgressObserver = RouteProgressObserver { routeProgress ->
@@ -232,6 +263,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     @Suppress("Warnings")
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        satelliteSwitchButtonPreference = context.getSharedPreferences(KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE,Context.MODE_PRIVATE)
+        trafficSwitchButtonPreference = context.getSharedPreferences(KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE,Context.MODE_PRIVATE)
+        mapStylePreference = context.getSharedPreferences(KEY_NAME_NAVIGATION_MAP_STYLE,Context.MODE_PRIVATE)
         try {
             this.notifyListener = context as FragmentToActivity<Fragment>
         } catch (e: ClassCastException) { }
@@ -248,6 +282,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 .build())
             .build()
     }
+
+
+
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -295,29 +332,27 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
 
         maneuverApi = MapboxManeuverApi(
-            MapboxDistanceFormatter(distanceFormatterOptions())
+            MapboxDistanceFormatter(distanceFormatterOptionsBuilder())
         )
 
-        tripProgressApi = MapboxTripProgressApi(progressUpdateFormatter(distanceFormatterOptions()))
+        tripProgressApi = MapboxTripProgressApi(progressUpdateFormatter(distanceFormatterOptionsBuilder()))
 
 
         val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(requireContext())
             .displayRestrictedRoadSections(true)
-            .withRouteLineBelowLayerId(NAVIGATION_ROUTE_LAYER_ID)
+            .withRouteLineBelowLayerId(NAVIGATION_ROUTE_LAYER_ID)//todo check this later
             .withRouteLineResources(routeLineResources)
             .build()
 
         routeLineApi = MapboxRouteLineApi(mapboxRouteLineOptions)
         routeLineView = MapboxRouteLineView(mapboxRouteLineOptions)
-
-
         val routeArrowOptions = RouteArrowOptions.Builder(requireContext()).build()
         routeArrowView = MapboxRouteArrowView(routeArrowOptions)
 
-        mapboxMap.loadStyleUri(
-            Style.TRAFFIC_NIGHT
-        ) {
-        createRoute()
+
+        setSwitchState()
+        mapboxMap.loadStyleUri(currentMapStyle()?:Style.TRAFFIC_NIGHT) {
+            createRoute()
         }
 
         providerClickListener()
@@ -326,14 +361,20 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     }
 
+
+    private fun setSwitchState(){
+        binding.satelliteMapSwitchButton.isChecked = satelliteSwitchState() == SwitchState.ON.toString()
+        binding.trafficMapSwitchButton.isChecked = trafficSwitchState() == SwitchState.ON.toString()
+
+    }
     private fun navigationOptionsBuilder()= NavigationOptions.Builder(requireActivity().applicationContext)
         .accessToken(getString(R.string.MapsToken))
-        .distanceFormatterOptions(distanceFormatterOptions())
+        .distanceFormatterOptions(distanceFormatterOptionsBuilder())
         .build()
     private fun cameraBoundsOptionsBuilder()=CameraBoundsOptions.Builder()
         .minZoom(Constants.MIN_ZOOM_LEVEL_MAPS)
         .build()
-    private fun distanceFormatterOptions()=DistanceFormatterOptions.Builder(requireContext().applicationContext)
+    private fun distanceFormatterOptionsBuilder()=DistanceFormatterOptions.Builder(requireContext().applicationContext)
         .unitType(UnitType.METRIC)
         .build()
 
@@ -371,29 +412,68 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         binding.trafficMapSwitchButton.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
                 changeTrafficModeOn()
+                saveTrafficSwitchStatePreference(SwitchState.ON.toString())
             }else{
                 changeTrafficModeOff()
+                saveTrafficSwitchStatePreference(SwitchState.OFF.toString())
             }
         }
 
         binding.satelliteMapSwitchButton.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
-                changeMapStyle(Style.TRAFFIC_DAY)
+                changeSatelliteModeOn()
+                saveSatelliteSwitchStatePreference(SwitchState.ON.toString())
             }else{
-                changeMapStyle(Style.TRAFFIC_NIGHT)
+                changeSatelliteModeOff()
+                saveSatelliteSwitchStatePreference(SwitchState.OFF.toString())
+            }
+        }
+
+    }
+    private fun changeSatelliteModeOn(){
+        mapboxMap.getStyle()?.styleURI.run {
+            if(this == Style.TRAFFIC_NIGHT){
+                changeMapStyleAndContinueExistingRoute(Style.TRAFFIC_DAY)
+                saveMapStylePreference(Style.TRAFFIC_DAY)
+                return@run
+            }
+            if(this == BuildConfig.MAP_STYLE_NIGHT){
+                changeMapStyleAndContinueExistingRoute(BuildConfig.MAP_STYLE_DAY)
+                saveMapStylePreference(BuildConfig.MAP_STYLE_DAY)
             }
         }
 
     }
 
+    private fun changeSatelliteModeOff(){
+        mapboxMap.getStyle()?.styleURI.run {
+         if(this == Style.TRAFFIC_DAY){
+             changeMapStyleAndContinueExistingRoute(Style.TRAFFIC_NIGHT)
+             saveMapStylePreference(Style.TRAFFIC_NIGHT)
+             return@run
+         }
+         if(this == BuildConfig.MAP_STYLE_DAY){
+             changeMapStyleAndContinueExistingRoute(BuildConfig.MAP_STYLE_NIGHT)
+             saveMapStylePreference(BuildConfig.MAP_STYLE_NIGHT)
+         }
+        }
+    }
+
+
+
+
+
+
     private fun changeTrafficModeOn(){
     mapboxMap.getStyle()?.styleURI.run {
         if(this == BuildConfig.MAP_STYLE_DAY){
-            changeMapStyle(Style.TRAFFIC_DAY)
+            changeMapStyleAndContinueExistingRoute(Style.TRAFFIC_DAY)
+            saveMapStylePreference(Style.TRAFFIC_DAY)
             return@run
         }
         if(this == BuildConfig.MAP_STYLE_NIGHT){
-            changeMapStyle(Style.TRAFFIC_NIGHT)
+            changeMapStyleAndContinueExistingRoute(Style.TRAFFIC_NIGHT)
+            saveMapStylePreference(Style.TRAFFIC_NIGHT)
         }
     }
     }
@@ -402,17 +482,20 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private fun changeTrafficModeOff(){
         mapboxMap.getStyle()?.styleURI.run {
             if(this == Style.TRAFFIC_DAY){
-                changeMapStyle(BuildConfig.MAP_STYLE_DAY)
-                return
+                changeMapStyleAndContinueExistingRoute(BuildConfig.MAP_STYLE_DAY)
+                saveMapStylePreference(BuildConfig.MAP_STYLE_DAY)
+                return@run
             }
 
             if(this == Style.TRAFFIC_NIGHT){
-                changeMapStyle(BuildConfig.MAP_STYLE_NIGHT)
+                changeMapStyleAndContinueExistingRoute(BuildConfig.MAP_STYLE_NIGHT)
+                saveMapStylePreference(BuildConfig.MAP_STYLE_NIGHT)
             }
         }
     }
 
-    private fun changeMapStyle(style:String){
+    private fun changeMapStyleAndContinueExistingRoute(style:String){
+
         userDestination?.let { destination ->
             userLastLocation?.let {lastLocation->
                 findRoute(destination, lastLocation)
