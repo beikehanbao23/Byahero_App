@@ -43,6 +43,14 @@ class MapLineLayers(
         source?.let { it.setGeoJson(geometry) }
     }
 
+    override fun clear() {
+        style?.apply {
+            removeLayer(layerId)
+            removeSource(sourceId)
+
+        }
+    }
+
     override  fun create(featureCollection: FeatureCollection): Unit {
 
         source = style?.getSourceAs(sourceId)

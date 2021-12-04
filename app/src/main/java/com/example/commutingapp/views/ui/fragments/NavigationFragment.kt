@@ -89,7 +89,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private lateinit var satelliteSwitchButtonPreference:SharedPreferences
     private lateinit var trafficSwitchButtonPreference:SharedPreferences
     private lateinit var mapStylePreference:SharedPreferences
-    private lateinit var binding: FragmentNavigationBinding
+    private var binding: FragmentNavigationBinding? = null
     private lateinit var mapboxMap: MapboxMap
     private lateinit var mapboxNavigation: MapboxNavigation
     private lateinit var navigationCamera: NavigationCamera
@@ -135,7 +135,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
         @SuppressLint("BinaryOperationInTimber")
         override fun onNewRawLocation(rawLocation: Location) {
-            val location:LatLng = LatLng(rawLocation.latitude,rawLocation.longitude)
+            val location = LatLng(rawLocation.latitude,rawLocation.longitude)
              Timber.d("New Raw Location $location")
         }
 
@@ -207,12 +207,13 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 ).show()
             },
             {
-                binding.maneuverView.visibility = View.VISIBLE
-                binding.maneuverView.renderManeuvers(maneuvers)
+                binding?.maneuverView?.visibility = View.VISIBLE
+                binding?.maneuverView?.renderManeuvers(maneuvers)!!
+
             }
         )
 
-        binding.tripProgressView.render(
+        binding?.tripProgressView?.render(
             tripProgressApi.getTripProgress(routeProgress)
         )
     }
@@ -256,7 +257,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentNavigationBinding.inflate(inflater, container, false)
-        return binding.root
+        return binding?.root
     }
 
     @Suppress("Warnings")
@@ -287,11 +288,11 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mapboxMap = binding.mapView.getMapboxMap()
+        mapboxMap = binding?.mapView?.getMapboxMap()!!
         mapboxMap.setBounds(cameraBoundsOptionsBuilder())
         trackingBottomSheet = Component(TrackingBottomSheet(view))
         trackingBottomSheet.show()
-        binding.mapView.location.apply {
+        binding?.mapView?.location?.apply {
             setLocationProvider(navigationLocationProvider)
             enabled = true
         }
@@ -307,11 +308,11 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         viewportDataSource = MapboxNavigationViewportDataSource(mapboxMap)
         navigationCamera = NavigationCamera(
             mapboxMap,
-            binding.mapView.camera,
+            binding!!.mapView.camera,
             viewportDataSource
         )
 
-        binding.mapView.camera.addCameraAnimationsLifecycleListener(
+        binding!!.mapView.camera.addCameraAnimationsLifecycleListener(
             NavigationBasicGesturesHandler(navigationCamera)
         )
 
@@ -319,10 +320,10 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
             when (navigationCameraState) {
                 NavigationCameraState.TRANSITION_TO_FOLLOWING,
-                NavigationCameraState.FOLLOWING -> binding.recenter.visibility = View.INVISIBLE
+                NavigationCameraState.FOLLOWING -> binding?.recenter?.visibility = View.INVISIBLE
                 NavigationCameraState.TRANSITION_TO_OVERVIEW,
                 NavigationCameraState.OVERVIEW,
-                NavigationCameraState.IDLE -> binding.recenter.visibility = View.VISIBLE
+                NavigationCameraState.IDLE -> binding?.recenter?.visibility = View.VISIBLE
             }
         }
 
@@ -361,8 +362,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
 
     private fun setSwitchState(){
-        binding.satelliteMapSwitchButton.isChecked = satelliteSwitchState() == SwitchState.ON.toString()
-        binding.trafficMapSwitchButton.isChecked = trafficSwitchState() == SwitchState.ON.toString()
+        binding?.satelliteMapSwitchButton?.isChecked = satelliteSwitchState() == SwitchState.ON.toString()
+        binding?.trafficMapSwitchButton?.isChecked = trafficSwitchState() == SwitchState.ON.toString()
 
     }
     private fun navigationOptionsBuilder()= NavigationOptions.Builder(requireActivity().applicationContext)
@@ -394,20 +395,20 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
     private fun providerClickListener(){
 
-        binding.stop.setOnClickListener {
+        binding?.stop?.setOnClickListener {
             clearRouteAndStopNavigation()
             requireActivity().onBackPressed()
         }
-        binding.recenter.setOnClickListener {
+        binding?.recenter?.setOnClickListener {
             navigationCamera.requestNavigationCameraToFollowing()
         }
 
-        binding.routeOverview.setOnClickListener {
+        binding?.routeOverview?.setOnClickListener {
             navigationCamera.requestNavigationCameraToOverview()
-            binding.recenter.showTextAndExtend(BUTTON_ANIMATION_DURATION)
+            binding?.recenter?.showTextAndExtend(BUTTON_ANIMATION_DURATION)
         }
 
-        binding.trafficMapSwitchButton.setOnCheckedChangeListener { _, isChecked ->
+        binding?.trafficMapSwitchButton?.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
                 changeTrafficModeOn()
                 saveTrafficSwitchStatePreference(SwitchState.ON.toString())
@@ -418,7 +419,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             trackingBottomSheet.hide()
         }
 
-        binding.satelliteMapSwitchButton.setOnCheckedChangeListener { _, isChecked ->
+        binding?.satelliteMapSwitchButton?.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
                 changeSatelliteModeOn()
                 saveSatelliteSwitchStatePreference(SwitchState.ON.toString())
@@ -535,6 +536,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     override fun onDestroy() {
         super.onDestroy()
+        binding = null
         MapboxNavigationProvider.destroy()
     }
 
@@ -548,7 +550,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 }
 
                 override fun onFailure(reasons: List<RouterFailure>, routeOptions: RouteOptions) {
-                    Timber.e("LOCATION IS NOT REACHABLE")
+                    //DialogDirector(requireActivity()).showWarningDialog("Destination is Unreachable", "Can't find a way there")
+                    Toast.makeText(requireContext(),"Destination is Unreachable, Can't find a way there!",Toast.LENGTH_LONG).show()
+                    requireActivity().onBackPressed()
                 }
 
                 override fun onCanceled(routeOptions: RouteOptions, routerOrigin: RouterOrigin) {

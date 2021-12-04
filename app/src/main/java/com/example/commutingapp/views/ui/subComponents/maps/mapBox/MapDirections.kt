@@ -3,7 +3,7 @@ package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.util.Log
+import android.widget.Toast
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants.ROUTE_LAYER_ID
 import com.example.commutingapp.utils.others.Constants.ROUTE_SOURCE_ID
@@ -33,30 +33,29 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
         getClient(listOfCoordinates).enqueueCall(object : Callback<OptimizationResponse> {
 
             @SuppressLint("BinaryOperationInTimber")
-            override fun onResponse(
-                call: Call<OptimizationResponse>,
-                response: Response<OptimizationResponse>
-            ) {
+            override fun onResponse(call: Call<OptimizationResponse>, response: Response<OptimizationResponse>) {
 
                 response.body()?.trips()?.let {
                     if (it.isNotEmpty()) {
                         try {
-                            drawNavigationRoute(it[0])
+                           drawNavigationRoute(it[0])
                         } catch (e: IllegalStateException) {
                             Timber.e("Map Directions " + e.message)
                         }
                     }
-
-                    //todo if is empty then create dialog(means the destination is unreachable so it  fails to add route )
+                    if(it.isEmpty()){
+                        Toast.makeText(activity,"Destination is Unreachable. Can't find a way there",Toast.LENGTH_LONG).show()
+                    }
                 }
             }
 
             override fun onFailure(call: Call<OptimizationResponse>, t: Throwable) {
-                Log.e("Routes:", "On Failure")
+                Timber.e("Routes: On Failure")
             }
         })
 
     }
+
 
     private fun getClient(listOfCoordinates: MutableList<Point>) =
         MapboxOptimization.builder()
@@ -76,6 +75,10 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
                 mapLineLayers.create(LineString.fromPolyline(it, PRECISION_6))
             }
         }
+    }
+
+    fun clear(){
+        mapLineLayers.clear()
     }
 }
 

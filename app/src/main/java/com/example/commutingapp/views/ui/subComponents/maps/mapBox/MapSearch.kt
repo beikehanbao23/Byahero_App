@@ -73,5 +73,7 @@ class MapSearch(private val activity:Activity,style: Style?) {
             .properties(JsonObject())
             .build()
     }
-
+    fun clear(){
+        mapSymbol.clear()
+    }
 }

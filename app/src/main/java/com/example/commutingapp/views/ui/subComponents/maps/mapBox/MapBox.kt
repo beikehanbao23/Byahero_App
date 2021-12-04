@@ -238,8 +238,6 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                             geocodeText.value = results[0].text() ?: "----"
                             geocodePlaceName.value = results[0].placeName()?.replace("${geocodeText.value}, ", "") ?: "----"
 
-                        } else {
-                            Timber.e(",LOCATION IS UNREACHABLE")//Todo add dialog for this
                         }
                     }
                 }
@@ -287,5 +285,12 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         CoroutineScope(Dispatchers.Main).launch {
             camera.move(latLng, zoomLevel, cameraAnimationDuration)
         }
+    }
+
+    override fun clearCache() {
+        if(this::directions.isInitialized) directions.clear()
+        if(this::marker.isInitialized) marker.clear()
+        if(this::search.isInitialized) search.clear()
+        
     }
 }

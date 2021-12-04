@@ -1,6 +1,5 @@
 package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
-import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.ON_MAP_CLICK_LAYER_ID
 import com.example.commutingapp.utils.others.Constants.ON_MAP_CLICK_SOURCE_ID
 import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.MapLayer
@@ -25,6 +24,8 @@ class MapMarker(private val style: Style?) {
     fun setLocation(latLng:LatLng){
         this.latLng = latLng
     }
-
+    fun clear(){
+        mapSymbol.clear()
+    }
 
 }

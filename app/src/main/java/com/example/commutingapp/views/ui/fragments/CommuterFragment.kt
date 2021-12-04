@@ -67,7 +67,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var dialogDirector: DialogDirector
-    private lateinit var binding: CommuterFragmentBinding
+    private var binding: CommuterFragmentBinding? = null
     private lateinit var searchLocationButton: AppCompatButton
     private lateinit var notifyListener: FragmentToActivity<Fragment>
     private lateinit var bottomSheet: Component
@@ -79,7 +79,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = CommuterFragmentBinding.inflate(inflater,container,false)
-        return binding.root
+        return binding!!.root
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -101,12 +101,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     private fun provideObservers(){
         map.getPlaceName().observe(viewLifecycleOwner){
-            binding.progressBar.visibility = View.GONE
-            binding.geocodePlaceName.text = it
+            binding?.progressBar?.visibility = View.GONE
+            binding?.geocodePlaceName?.text = it
         }
         map.getPlaceText().observe(viewLifecycleOwner){
-            binding.progressBar.visibility = View.GONE
-            binding.geocodePlaceText.text = it
+            binding?.progressBar?.visibility = View.GONE
+            binding?.geocodePlaceText?.text = it
 
         }
     }
@@ -115,7 +115,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         searchLocationButton = view.findViewById(R.id.buttonLocationSearch)
         bottomSheet = Component(StartingBottomSheet(view,requireContext()))
         bottomNavigation = Component(BottomNavigation(notifyListener))
-        locationFAB = LocationButton(binding,requireContext())
+        locationFAB = LocationButton(binding!!,requireContext())
         mapTypesFAB = MapTypes(requireContext())
 
 
@@ -146,7 +146,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
     private fun provideMapTypeDialogListener(){
-        binding.floatingActionButtonChooseMap.setOnClickListener {
+        binding?.floatingActionButtonChooseMap?.setOnClickListener {
             dialogDirector.constructChooseMapDialog().apply {
                 mapTypesFAB.setMapSelectedIndicator(this)
                 setMapTypeListeners(this)
@@ -154,7 +154,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             } }
     }
     private fun provideLocationButtonListener() {
-        binding.floatingActionButtonLocation.setOnClickListener {
+        binding?.floatingActionButtonLocation?.setOnClickListener {
             if (requestPermissionGranted()) {
                 checkLocationSetting().addOnCompleteListener {
                     try {
@@ -178,7 +178,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
     private fun provideStartButtonListener(){
-        binding.startButton.setOnClickListener {
+        binding?.startButton?.setOnClickListener {
             if (requestPermissionGranted()) {
                 bottomSheet.hide()
                 bottomNavigation.hide()
@@ -204,16 +204,16 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
     private fun provideDirectionButtonListener(){
-        binding.directionsButton.setOnClickListener {
+        binding?.directionsButton?.setOnClickListener {
             map.createDirections()
         }
     }
     private fun provideSaveButtonListener() {
-        binding.saveButton.setOnClickListener {
+        binding?.saveButton?.setOnClickListener {
         }
     }
     private fun provideShareButtonListener(){
-        binding.shareButton.setOnClickListener {
+        binding?.shareButton?.setOnClickListener {
 
         }
     }
@@ -325,13 +325,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun displayBottomSheetResults(){
         with(binding){
             if(!Connection.hasInternetConnection(requireContext())){
-                progressBar.visibility = View.GONE
-                geocodePlaceText.visibility = View.GONE
-                geocodePlaceName.visibility = View.GONE
+                this?.progressBar?.visibility = View.GONE
+                this?.geocodePlaceText?.visibility = View.GONE
+                this?.geocodePlaceName?.visibility = View.GONE
             }else{
-                binding.progressBar.visibility = View.VISIBLE
-                binding.geocodePlaceName.text = ""
-                binding.geocodePlaceText.text = ""
+                this?.progressBar?.visibility = View.VISIBLE
+                this?.geocodePlaceName?.text = ""
+                this?.geocodePlaceText?.text = ""
             }
         }
 
@@ -407,6 +407,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     override fun onDestroy() {
         super.onDestroy()
+        map.clearCache()
+        binding = null
         map.getMapView().onDestroy()
         unregisterReceiver()
 

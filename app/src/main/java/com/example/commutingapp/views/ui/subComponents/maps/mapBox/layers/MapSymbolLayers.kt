@@ -40,5 +40,12 @@ class MapSymbolLayers(private val style: Style?, private val sourceId:String, pr
     override fun create(geometry: Geometry) {
 
     }
+
+    override fun clear() {
+        style?.apply {
+            removeSource(sourceId)
+            removeLayer(layerId)
+        }
+    }
 }
 
