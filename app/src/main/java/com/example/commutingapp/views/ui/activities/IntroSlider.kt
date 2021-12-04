@@ -15,7 +15,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.ActivityIntroSliderBinding
 import com.example.commutingapp.utils.others.Constants.DEFAULT_INDICATOR_POSITION
-import com.example.commutingapp.utils.others.Constants.FILE_NAME_INTRO_SLIDER_SHARED_PREFERENCE
 import com.example.commutingapp.utils.others.Constants.KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE
 import com.example.commutingapp.utils.others.Constants.SLIDER_ITEM_COUNTS
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch.startActivityOf
@@ -82,7 +81,7 @@ class IntroSlider : AppCompatActivity() {
         binding = ActivityIntroSliderBinding.inflate(layoutInflater)
         setTheme(R.style.Theme_CommutingApp)
         setContentView(binding?.root)
-        preferences = getSharedPreferences(FILE_NAME_INTRO_SLIDER_SHARED_PREFERENCE, Context.MODE_PRIVATE)
+        preferences = getSharedPreferences(KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE, Context.MODE_PRIVATE)
     }
 
     private fun setCallbacks() {

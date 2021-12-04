@@ -37,6 +37,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.search.MapboxSearchSdk
 import com.mapbox.search.location.DefaultLocationProvider
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.util.*
 
 
@@ -61,11 +62,16 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
         activityMainScreenBinding?.bottomNavigation?.setupWithNavController(navigationController)
         setupBottomNavigationListeners()
         Mapbox.getInstance(this, getString(R.string.MapsToken))
-        MapboxSearchSdk.initialize(
-            this.application,
-            getString(R.string.MapsToken),
-            DefaultLocationProvider(this.application)
-        )
+        try {
+            MapboxSearchSdk.initialize(
+                this.application,
+                getString(R.string.MapsToken),
+                DefaultLocationProvider(this.application)
+            )
+        }catch (e:IllegalStateException){
+            Timber.e("MapboxSearchSdk: ${e.message}")
+        }
+
     }
 
     override fun onFirstNotify() {
