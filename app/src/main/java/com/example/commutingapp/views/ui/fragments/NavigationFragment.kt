@@ -23,7 +23,6 @@ import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LONGITU
 import com.example.commutingapp.utils.others.Constants.KEY_NAME_NAVIGATION_MAP_STYLE
 import com.example.commutingapp.utils.others.Constants.KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE
 import com.example.commutingapp.utils.others.Constants.KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE
-import com.example.commutingapp.utils.others.Constants.NAVIGATION_ROUTE_LAYER_ID
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_HEAVY_CONGESTION
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_LOW_CONGESTION
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_MODERATE_CONGESTION
@@ -340,7 +339,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
         val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(requireContext())
             .displayRestrictedRoadSections(true)
-            .withRouteLineBelowLayerId(NAVIGATION_ROUTE_LAYER_ID)//todo check this later
             .withRouteLineResources(routeLineResources)
             .build()
 
@@ -417,6 +415,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 changeTrafficModeOff()
                 saveTrafficSwitchStatePreference(SwitchState.OFF.toString())
             }
+            trackingBottomSheet.hide()
         }
 
         binding.satelliteMapSwitchButton.setOnCheckedChangeListener { _, isChecked ->
@@ -427,6 +426,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 changeSatelliteModeOff()
                 saveSatelliteSwitchStatePreference(SwitchState.OFF.toString())
             }
+            trackingBottomSheet.hide()
         }
 
     }
