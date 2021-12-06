@@ -31,6 +31,8 @@ import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_ROAD_RESTRICT
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_SEVERE_CONGESTION
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.SwitchState
+import com.example.commutingapp.views.dialogs.CustomDialogBuilder
+import com.example.commutingapp.views.dialogs.DialogDirector
 import com.example.commutingapp.views.ui.subComponents.Component
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
 import com.mapbox.api.directions.v5.models.Bearing
@@ -78,6 +80,7 @@ import com.mapbox.navigation.ui.maps.route.line.model.RouteLineColorResources
 import com.mapbox.navigation.ui.maps.route.line.model.RouteLineResources
 import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi
 import com.mapbox.navigation.ui.tripprogress.model.*
+import com.rejowan.cutetoast.CuteToast
 import timber.log.Timber
 
 class NavigationFragment : Fragment(R.layout.fragment_navigation) {
@@ -99,7 +102,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private lateinit var trackingBottomSheet: Component
     private var userDestination:Point? = null
     private var userLastLocation:Point? = null
-
+    private lateinit var findRouteDialog: CustomDialogBuilder
 
 
     private val overviewPadding: EdgeInsets by lazy {
@@ -288,6 +291,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        findRouteDialog = DialogDirector(requireActivity()).constructFindingRouteDialog()
+        findRouteDialog.show()
         mapboxMap = binding?.mapView?.getMapboxMap()!!
         mapboxMap.setBounds(cameraBoundsOptionsBuilder())
         trackingBottomSheet = Component(TrackingBottomSheet(view))
@@ -382,8 +387,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         .timeRemainingFormatter(TimeRemainingFormatter(requireContext()))
         .percentRouteTraveledFormatter(PercentDistanceTraveledFormatter())
         .estimatedTimeToArrivalFormatter(EstimatedTimeToArrivalFormatter(requireContext(), TimeFormat.NONE_SPECIFIED))
-
         .build()
+
     private fun createRoute(){
         this.arguments?.let {
             val destination = Point.fromLngLat(it.getDouble(KEY_DESTINATION_LONGITUDE),it.getDouble(KEY_DESTINATION_LATITUDE))
@@ -541,25 +546,23 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
 
     private fun findRoute(destinationLocation: Point, lastLocation:Point) {
-        mapboxNavigation.requestRoutes(
-            routeOptionsBuilder(lastLocation, destinationLocation),
-            object : RouterCallback {
-                override fun onRoutesReady(routes: List<DirectionsRoute>, routerOrigin: RouterOrigin) {
-                    setRouteAndStartNavigation(routes)
-                    this@NavigationFragment.arguments?.clear()
-                }
+            mapboxNavigation.requestRoutes(routeOptionsBuilder(lastLocation, destinationLocation), object : RouterCallback {
+                    override fun onRoutesReady(routes: List<DirectionsRoute>, routerOrigin: RouterOrigin) {
+                        setRouteAndStartNavigation(routes)
+                        findRouteDialog.cancel()
+                    }
+                    override fun onFailure(reasons: List<RouterFailure>, routeOptions: RouteOptions) {
+                        CuteToast.ct(requireContext(), requireActivity().getString(R.string.unreachableDestination), CuteToast.LENGTH_LONG, CuteToast.WARN, true).show()
+                        findRouteDialog.cancel()
+                        requireActivity().onBackPressed()
+                    }
 
-                override fun onFailure(reasons: List<RouterFailure>, routeOptions: RouteOptions) {
-                    //DialogDirector(requireActivity()).showWarningDialog("Destination is Unreachable", "Can't find a way there")
-                    Toast.makeText(requireContext(),"Destination is Unreachable, Can't find a way there!",Toast.LENGTH_LONG).show()
-                    requireActivity().onBackPressed()
+                    override fun onCanceled(routeOptions: RouteOptions, routerOrigin: RouterOrigin) {
+                        Timber.e("ON CANCELED")
+                        findRouteDialog.cancel()
+                    }
                 }
-
-                override fun onCanceled(routeOptions: RouteOptions, routerOrigin: RouterOrigin) {
-                    Timber.e("ON CANCELED")
-                }
-            }
-        )
+            )
     }
     private fun routeOptionsBuilder(lastLocation: Point,destinationLocation: Point)= RouteOptions.builder()
         .applyDefaultNavigationOptions()

@@ -97,7 +97,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         locationFAB.updateLocationFloatingButtonIcon()
         provideObservers()
 
-
     }
     private fun provideObservers(){
         map.getPlaceName().observe(viewLifecycleOwner){

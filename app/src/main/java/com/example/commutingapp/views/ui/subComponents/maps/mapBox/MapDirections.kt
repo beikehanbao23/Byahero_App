@@ -3,7 +3,6 @@ package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.widget.Toast
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants.ROUTE_LAYER_ID
 import com.example.commutingapp.utils.others.Constants.ROUTE_SOURCE_ID
@@ -17,6 +16,7 @@ import com.mapbox.core.constants.Constants.PRECISION_6
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.maps.Style
+import com.rejowan.cutetoast.CuteToast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,7 +44,7 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
                         }
                     }
                     if(it.isEmpty()){
-                        Toast.makeText(activity,"Destination is Unreachable. Can't find a way there",Toast.LENGTH_LONG).show()
+                        CuteToast.ct(activity,activity.getString(R.string.unreachableDestination), CuteToast.LENGTH_LONG, CuteToast.WARN, true).show();
                     }
                 }
             }
