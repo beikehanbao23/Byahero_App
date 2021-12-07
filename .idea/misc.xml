@@ -81,6 +81,7 @@
         <entry key="app/src/main/res/drawable/ic_weather.xml" value="0.67" />
         <entry key="app/src/main/res/drawable/ic_weather_updates.xml" value="0.3802083333333333" />
         <entry key="app/src/main/res/drawable/ic_weather_weather.xml" value="0.283984375" />
+        <entry key="app/src/main/res/drawable/image_button_background.xml" value="0.3828125" />
         <entry key="app/src/main/res/drawable/inactive_indicator.xml" value="0.3802083333333333" />
         <entry key="app/src/main/res/drawable/line.xml" value="0.5610687022900763" />
         <entry key="app/src/main/res/drawable/map_type_image_button_background.xml" value="0.2552083333333333" />
@@ -123,7 +124,7 @@
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_navigation.xml" value="0.33" />
         <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.22" />
-        <entry key="app/src/main/res/layout/map_styles_dialog.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/map_styles_dialog.xml" value="0.5" />
         <entry key="app/src/main/res/layout/navigation_dialog_finding_route.xml" value="0.33" />
         <entry key="app/src/main/res/layout/search_bar.xml" value="0.24444444444444444" />
         <entry key="app/src/main/res/layout/search_view_location.xml" value="0.33" />
