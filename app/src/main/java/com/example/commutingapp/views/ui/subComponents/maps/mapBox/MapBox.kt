@@ -24,6 +24,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.building.BuildingPlugin
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +34,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
-
 
 abstract class MapBox(private val view: View,private val activity: Activity):
     IMap<MapView> {
@@ -53,13 +53,13 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private var hasExistingMapRoute = false
     private var geocodePlaceName = MutableLiveData<String?>()
     private var geocodeText = MutableLiveData<String?>()
-
-
+    private lateinit var trafficPlugin: TrafficPlugin
+    private lateinit var building3DPlugin : BuildingPlugin
 
 
     override fun deleteRouteAndMarkers(){
         CoroutineScope(Dispatchers.Main).launch {
-            initializeStyles(mapTypes.loadMapType())
+            initializeStyles(mapTypes.currentMapType())
             hasExistingMapMarker = false
             hasExistingMapRoute = false
         }
@@ -111,25 +111,39 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initializeStyles(mapType:String) {
 
-        CoroutineScope(Dispatchers.Main).launch {
             mapBoxMap?.setStyle(mapType) { style ->
+                CoroutineScope(Dispatchers.Main).launch {
                 createMarkerImage(style)
-                addTrafficView(style)
+                initializePlugins(style)
                 initializeMapSymbols(style)
+                initializeMapComponents()
             }
         }
-}
-
+    }
+    private fun initializePlugins(style: Style){
+        mapBoxView.apply {
+            if(!::trafficPlugin.isInitialized){
+                trafficPlugin = TrafficPlugin(this, mapBoxMap!!, style)
+            }
+            if (!::building3DPlugin.isInitialized) {
+                building3DPlugin = BuildingPlugin(this, mapBoxMap!!, style)
+                building3DPlugin.setMinZoomLevel(15f)
+            }
+        }
+    }
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun createMarkerImage(style:Style){
         activity.getDrawable(R.drawable.red_marker)?.let { style.addImage(MAP_MARKER_IMAGE_ID, it) }
     }
 
-    private fun addTrafficView(style:Style){
-        mapBoxView.apply {
-            TrafficPlugin(this, mapBoxMap!!, style).apply { setVisibility(false)}
-        }
+
+    override fun showTrafficView() {
+        if(trafficPlugin.isVisible) trafficPlugin.setVisibility(false) else trafficPlugin.setVisibility(true)
     }
+    override fun show3DBuildingView() {
+         if(building3DPlugin.isVisible) building3DPlugin.setVisibility(false) else building3DPlugin.setVisibility(true)
+    }
+
 
     @SuppressLint("BinaryOperationInTimber")
     override fun getLastKnownLocation(): LatLng? {
@@ -150,7 +164,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         mapBoxMap?.setStyle(style){
             CoroutineScope(Dispatchers.Main).launch {
             createMarkerImage(it)
-            addTrafficView(it)
+            initializePlugins(it)
             initializeMapSymbols(it)
             destinationLocation?.let {
                 createRouteDirection()

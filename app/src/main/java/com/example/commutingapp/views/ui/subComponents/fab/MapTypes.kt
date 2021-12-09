@@ -11,21 +11,23 @@ import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.mapbox.mapboxsdk.maps.Style
 
 class MapTypes(private val context: Context) {
-    private var preferences: SharedPreferences = context.getSharedPreferences(
+    private var mapTypesPreferences: SharedPreferences = context.getSharedPreferences(
         KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE,
         Context.MODE_PRIVATE)
 
 
+
      fun setMapSelectedIndicator(customDialogBuilder: CustomDialogBuilder){
-        customDialogBuilder.apply {
-            findViewById<View>(getMapTypeButtons().getValue(loadMapType()))?.setBackgroundResource(R.drawable.map_type_visible_image_button_background)
+        customDialogBuilder.also {
+            val mapTypeButton = getMapTypeButtons().getValue(currentMapType())
+            it.findViewById<View>(mapTypeButton)?.setBackgroundResource(R.drawable.map_type_selected_state_indicator)
         }
     }
 
     private fun removePreviousMapTypeIndicator(customDialogBuilder: CustomDialogBuilder){
         customDialogBuilder.apply {
             for(i in getMapTypeButtons()){
-                if(i.key == loadMapType()){
+                if(i.key == currentMapType()){
                     continue
                 }else{
                     findViewById<View>(i.value)?.setBackgroundColor(Color.WHITE)
@@ -36,17 +38,16 @@ class MapTypes(private val context: Context) {
 
      fun getMapTypeButtons():HashMap<String,Int> =
         HashMap<String,Int>().apply {
-            this[Style.TRAFFIC_DAY] = R.id.defaultMapStyleButton
-            this[Style.TRAFFIC_NIGHT] = R.id.trafficNightMapStyleButton
+            this[Style.LIGHT] = R.id.defaultMapStyleButton
             this[Style.DARK] = R.id.darkMapStyleButton
             this[Style.MAPBOX_STREETS] = R.id.streetMapStyleButton
             this[Style.SATELLITE_STREETS] = R.id.satelliteStreetsMapStyleButton
-            this[Style.OUTDOORS] = R.id.outdoorsMapStyleButton
-            this[Style.LIGHT] = R.id.lightMapStyle
             this[BuildConfig.MAP_STYLE] = R.id.neonMapStyleButton
             this[Style.SATELLITE] = R.id.satelliteMapStyleButton
 
         }
+
+
 
      fun changeMapType(customDialogBuilder: CustomDialogBuilder,mapType: String) {
         saveMapTypeToSharedPreference(mapType)
@@ -54,10 +55,10 @@ class MapTypes(private val context: Context) {
         setMapSelectedIndicator(customDialogBuilder)
     }
 
-     fun loadMapType():String {return preferences.getString(KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE,Style.TRAFFIC_DAY).toString()}
+     fun currentMapType():String = mapTypesPreferences.getString(KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE,Style.LIGHT).toString()
 
     private fun saveMapTypeToSharedPreference(mapType: String) {
-        preferences.edit().putString(KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE, mapType).apply()
+        mapTypesPreferences.edit().putString(KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE, mapType).apply()
     }
 
 

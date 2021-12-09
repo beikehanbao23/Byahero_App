@@ -30,6 +30,8 @@ class MapLocationPuck(private val activity: Activity, private val locationCompon
             .accuracyAlpha(0.3f)
             .compassAnimationEnabled(true)
             .accuracyAnimationEnabled(true)
+            .elevation(100.0f)
+            .compassAnimationEnabled(true)
             .build()
 
     @SuppressLint("MissingPermission")

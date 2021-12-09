@@ -55,7 +55,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
-                android:id="@+id/imageButton2"
+                android:id="@+id/maps3dDetailsButton"
                 android:layout_width="65dp"
 
                 android:layout_height="67dp"
@@ -69,7 +69,7 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/maps_3d"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton"
+                app:layout_constraintEnd_toStartOf="@+id/trafficMapDetailsButton"
                 app:layout_constraintHorizontal_bias="0.033"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/line1"
@@ -115,7 +115,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/trafficMapStyleTextView" />
 
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/trafficMapDetailsButton"
                 android:layout_width="65dp"
                 android:layout_height="67dp"
                 android:layout_marginTop="48dp"
@@ -297,9 +297,9 @@
                 android:text="3D"
                 android:textColor="@color/Black"
                 android:textSize="11sp"
-                app:layout_constraintEnd_toEndOf="@+id/imageButton2"
-                app:layout_constraintStart_toStartOf="@+id/imageButton2"
-                app:layout_constraintTop_toBottomOf="@+id/imageButton2"
+                app:layout_constraintEnd_toEndOf="@+id/maps3dDetailsButton"
+                app:layout_constraintStart_toStartOf="@+id/maps3dDetailsButton"
+                app:layout_constraintTop_toBottomOf="@+id/maps3dDetailsButton"
                 tools:ignore="MissingConstraints" />
 
             <TextView
@@ -310,9 +310,9 @@
                 android:text="Traffic"
                 android:textColor="@color/Black"
                 android:textSize="11sp"
-                app:layout_constraintEnd_toEndOf="@+id/imageButton"
-                app:layout_constraintStart_toStartOf="@+id/imageButton"
-                app:layout_constraintTop_toBottomOf="@+id/imageButton"
+                app:layout_constraintEnd_toEndOf="@+id/trafficMapDetailsButton"
+                app:layout_constraintStart_toStartOf="@+id/trafficMapDetailsButton"
+                app:layout_constraintTop_toBottomOf="@+id/trafficMapDetailsButton"
                 tools:ignore="MissingConstraints" />
 
             <TextView

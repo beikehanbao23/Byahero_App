@@ -32,6 +32,7 @@ import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
 import com.example.commutingapp.utils.others.Constants.ULTRA_FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.FragmentToActivity
+import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestPermission
 import com.example.commutingapp.viewmodels.MainViewModel
@@ -42,6 +43,9 @@ import com.example.commutingapp.views.ui.subComponents.Component
 import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
 import com.example.commutingapp.views.ui.subComponents.fab.LocationButton
 import com.example.commutingapp.views.ui.subComponents.fab.MapTypes
+import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.Map3DBuilding
+import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.MapDetailsWrapper
+import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.MapTraffic
 import com.example.commutingapp.views.ui.subComponents.maps.MapWrapper
 import com.example.commutingapp.views.ui.subComponents.maps.mapBox.MapBox
 import com.google.android.gms.common.api.ApiException
@@ -58,6 +62,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import kotlin.reflect.KFunction0
 
 
 @AndroidEntryPoint
@@ -73,9 +78,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var bottomSheet: Component
     private lateinit var bottomNavigation:Component
     private lateinit var locationFAB:LocationButton
-    private lateinit var mapTypesFAB:MapTypes
+    private lateinit var mapTypes:MapTypes
     private lateinit var map:MapWrapper<MapView>
     private var latLng: LatLng? = null
+    private lateinit var mapTrafficDetails:MapDetailsWrapper
+    private lateinit var map3DBuildingDetails:MapDetailsWrapper
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = CommuterFragmentBinding.inflate(inflater,container,false)
@@ -93,11 +100,22 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             onCreate(savedInstanceState)
             isClickable = true
         }
-        map.setupUI(mapTypesFAB.loadMapType())
+        map.setupUI(mapTypes.currentMapType())
         locationFAB.updateLocationFloatingButtonIcon()
         provideObservers()
 
     }
+
+
+    @Suppress("Warnings")
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            this.notifyListener = context as FragmentToActivity<Fragment>
+        } catch (e: ClassCastException) { }
+    }
+
+
     private fun provideObservers(){
         map.getPlaceName().observe(viewLifecycleOwner){
             binding?.progressBar?.visibility = View.GONE
@@ -115,8 +133,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomSheet = Component(StartingBottomSheet(view,requireContext()))
         bottomNavigation = Component(BottomNavigation(notifyListener))
         locationFAB = LocationButton(binding!!,requireContext())
-        mapTypesFAB = MapTypes(requireContext())
-
+        mapTypes = MapTypes(requireContext())
+        mapTrafficDetails = MapDetailsWrapper(MapTraffic(requireContext()))
+        map3DBuildingDetails = MapDetailsWrapper(Map3DBuilding(requireContext()))
 
         val mapbox = object : MapBox(view,requireActivity()){
 
@@ -144,14 +163,38 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         provideShareButtonListener()
 
     }
-    private fun provideMapTypeDialogListener(){
+    private fun provideMapTypeDialogListener() {
         binding?.floatingActionButtonChooseMap?.setOnClickListener {
             dialogDirector.constructChooseMapDialog().apply {
-                mapTypesFAB.setMapSelectedIndicator(this)
+
+                mapTypes.setMapSelectedIndicator(this)
+                provideMapDetailsButtonListenerOf(this, map3DBuildingDetails, R.id.maps3dDetailsButton, map::show3DBuildingView)
+                provideMapDetailsButtonListenerOf(this, mapTrafficDetails, R.id.trafficMapDetailsButton, map::showTrafficView)
                 setMapTypeListeners(this)
                 show()
-            } }
+            }
+        }
     }
+
+
+    private fun provideMapDetailsButtonListenerOf(customDialogBuilder: CustomDialogBuilder, mapDetails: MapDetailsWrapper, id: Int, details: KFunction0<Unit>) {
+        with(mapDetails) {
+            customDialogBuilder.also { dialogBuilder ->
+                addMapSelectedIndicator(dialogBuilder)
+                dialogBuilder.findViewById<View>(id)?.setOnClickListener {
+                    if (this.isButtonSelected()) {
+                        changeMapButtonState(SwitchState.OFF)
+                    } else {
+                        changeMapButtonState(SwitchState.ON)
+                    }
+                    details()
+                    addMapSelectedIndicator(dialogBuilder)
+                }
+            }
+        }
+    }
+
+
     private fun provideLocationButtonListener() {
         binding?.floatingActionButtonLocation?.setOnClickListener {
             if (requestPermissionGranted()) {
@@ -246,11 +289,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         var previousType = ""
         customDialogBuilder.also { mapTypeListener->
-            mapTypesFAB.getMapTypeButtons().forEach { hashMap->
+            mapTypes.getMapTypeButtons().forEach { hashMap->
                mapTypeListener.findViewById<View>(hashMap.value )?.setOnClickListener {
                    val currentType = hashMap.key
                    if(previousType != currentType) {
-                       mapTypesFAB.changeMapType(mapTypeListener, currentType)
+                       mapTypes.changeMapType(mapTypeListener, currentType)
                        map.updateMapStyle(currentType)
                        previousType = currentType
                    }
@@ -368,14 +411,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         return false
 
     }
-    @Suppress("Warnings")
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
 
-        try {
-            this.notifyListener = context as FragmentToActivity<Fragment>
-        } catch (e: ClassCastException) { }
-    }
     override fun onStart() {
         super.onStart();
         map.getMapView().onStart()
