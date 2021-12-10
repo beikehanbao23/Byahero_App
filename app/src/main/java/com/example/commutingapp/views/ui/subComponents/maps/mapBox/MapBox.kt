@@ -26,10 +26,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.building.BuildingPlugin
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -58,10 +55,13 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
 
     override fun deleteRouteAndMarkers(){
-        CoroutineScope(Dispatchers.Main).launch {
-            initializeStyles(mapTypes.currentMapType())
-            hasExistingMapMarker = false
-            hasExistingMapRoute = false
+        if(hasExistingMapMarker) {
+            CoroutineScope(Dispatchers.Main).launch {
+                initializeStyles(mapTypes.currentMapType())
+                hasExistingMapMarker = false
+                hasExistingMapRoute = false
+
+            }
         }
     }
 
@@ -82,13 +82,16 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
     }
     private suspend fun initializeMapComponents(){
+        if(!::camera.isInitialized){
             camera = MapCamera(mapBoxMap)
+        }
+        if(!::location.isInitialized) {
             location = MapLocationPuck(activity, mapBoxMap?.locationComponent)
+        }
             delay(50)
             mapBoxMap?.getStyle((location::buildLocationPuck))
-
     }
-    private fun initializeMapSymbols(style: Style){
+    private  fun initializeMapSymbols(style: Style){
         marker = MapMarker(style)
         search = MapSearch(activity, style)
         directions = MapDirections(style, activity)
@@ -113,10 +116,9 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
             mapBoxMap?.setStyle(mapType) { style ->
                 CoroutineScope(Dispatchers.Main).launch {
-                createMarkerImage(style)
-                initializePlugins(style)
-                initializeMapSymbols(style)
-                initializeMapComponents()
+                    createMarkerImage(style)
+                    initializePlugins(style)
+                    runBlocking { initializeMapSymbols(style) }
             }
         }
     }
@@ -159,19 +161,26 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
 
-    override fun updateMapStyle(style:String){
+    override fun updateMapStyle(style: String) {
 
-        mapBoxMap?.setStyle(style){
+        mapBoxMap?.setStyle(style) {
             CoroutineScope(Dispatchers.Main).launch {
-            createMarkerImage(it)
-            initializePlugins(it)
-            initializeMapSymbols(it)
-            destinationLocation?.let {
-                createRouteDirection()
-                createMapMarker(it)
+                createMarkerImage(it)
+                initializePlugins(it)
+                destinationLocation?.let { userLocation ->
+                    runBlocking {
+                        initializeMapSymbols(it)
+                        createRouteDirection()
+                        createMapMarker(userLocation)
+                        delay(50)
+                        location.buildLocationPuck(it)
+                    }
+                }
+
             }
-            }
+
         }
+
     }
 
 
@@ -189,7 +198,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                         hasExistingMapMarker = true
                         reverseGeocode(Point.fromLngLat(location.longitude,location.latitude))}
                     } } } catch (e: IllegalStateException) {
-                Timber.e("Style loading error "+ e.message.toString())
+                Timber.e("Style loading error "+ e.message.toString())//TODO(FIX STYLE NOT LOADED)
             } }
 
     }
@@ -284,17 +293,18 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     private suspend fun createMapMarker(location: LatLng){
         delay(50)
-        mapBoxMap?.getStyle {
-            if (hasExistingMapMarker) {
-                mapBoxMap?.cameraPosition?.also { zoomLevel ->
-                    camera.move(location, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION)
+            mapBoxMap?.getStyle {
+                    if (hasExistingMapMarker) {
+                        mapBoxMap?.cameraPosition?.also { zoomLevel ->
+                            camera.move(location, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION)
+                        }
+                        marker.setLocation(location)
+                        marker.create()
+                        destinationLocation = location
+                    }
                 }
-                marker.setLocation(location)
-                marker.create()
-                destinationLocation = location
             }
-        }
-    }
+
     override fun moveCameraToUser(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int) {
         CoroutineScope(Dispatchers.Main).launch {
             camera.move(latLng, zoomLevel, cameraAnimationDuration)

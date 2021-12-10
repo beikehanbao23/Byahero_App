@@ -81,8 +81,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var mapTypes:MapTypes
     private lateinit var map:MapWrapper<MapView>
     private var latLng: LatLng? = null
-    private lateinit var mapTrafficDetails:MapDetailsWrapper
-    private lateinit var map3DBuildingDetails:MapDetailsWrapper
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = CommuterFragmentBinding.inflate(inflater,container,false)
@@ -134,8 +133,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomNavigation = Component(BottomNavigation(notifyListener))
         locationFAB = LocationButton(binding!!,requireContext())
         mapTypes = MapTypes(requireContext())
-        mapTrafficDetails = MapDetailsWrapper(MapTraffic(requireContext()))
-        map3DBuildingDetails = MapDetailsWrapper(Map3DBuilding(requireContext()))
 
         val mapbox = object : MapBox(view,requireActivity()){
 
@@ -168,8 +165,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             dialogDirector.constructChooseMapDialog().apply {
 
                 mapTypes.setMapSelectedIndicator(this)
-                provideMapDetailsButtonListenerOf(this, map3DBuildingDetails, R.id.maps3dDetailsButton, map::show3DBuildingView)
-                provideMapDetailsButtonListenerOf(this, mapTrafficDetails, R.id.trafficMapDetailsButton, map::showTrafficView)
+                provideMapDetailsButtonListenerOf(this, MapDetailsWrapper(Map3DBuilding(requireContext())), R.id.maps3dDetailsButton, map::show3DBuildingView)
+                provideMapDetailsButtonListenerOf(this, MapDetailsWrapper(MapTraffic(requireContext())), R.id.trafficMapDetailsButton, map::showTrafficView)
                 setMapTypeListeners(this)
                 show()
             }
@@ -177,17 +174,17 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
 
 
-    private fun provideMapDetailsButtonListenerOf(customDialogBuilder: CustomDialogBuilder, mapDetails: MapDetailsWrapper, id: Int, details: KFunction0<Unit>) {
+    private fun provideMapDetailsButtonListenerOf(customDialogBuilder: CustomDialogBuilder, mapDetails: MapDetailsWrapper, id: Int, showViews: KFunction0<Unit>) {
         with(mapDetails) {
             customDialogBuilder.also { dialogBuilder ->
-                addMapSelectedIndicator(dialogBuilder)
+                addMapSelectedIndicator(dialogBuilder)//todo
                 dialogBuilder.findViewById<View>(id)?.setOnClickListener {
                     if (this.isButtonSelected()) {
                         changeMapButtonState(SwitchState.OFF)
                     } else {
                         changeMapButtonState(SwitchState.ON)
                     }
-                    details()
+                    showViews()
                     addMapSelectedIndicator(dialogBuilder)
                 }
             }
@@ -353,7 +350,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         getGPSDialogSettingResult(requestCode, resultCode)
         map.getLocationSearchResult(requestCode, resultCode, data)
-        resetBottomSheetPlace()
+        resetBottomSheetPlace()//TODO FIX BUG HERE(SHOWING NOTHING)
     }
 
     private fun resetBottomSheetPlace(){
