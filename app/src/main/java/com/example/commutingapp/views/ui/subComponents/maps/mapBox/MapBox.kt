@@ -115,13 +115,11 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private fun initializeStyles(mapType:String) {
 
             mapBoxMap?.setStyle(mapType) { style ->
-                CoroutineScope(Dispatchers.Main).launch {
                     if (style.isFullyLoaded) {
                         createMarkerImage(style)
                         initializePlugins(style)
                         initializeMapSymbols(style)
                     }
-                }
         }
     }
     private fun initializePlugins(style: Style){
@@ -152,7 +150,8 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     @SuppressLint("BinaryOperationInTimber")
     override fun getLastKnownLocation(): LatLng? {
             try {
-                mapBoxMap?.getStyle { runBlocking {location.buildLocationPuck(it)} }
+                mapBoxMap?.getStyle {
+                runBlocking {location.buildLocationPuck(it)} }
                 return mapBoxMap?.locationComponent?.lastKnownLocation?.run {
                     LatLng(this.latitude, this.longitude)
                 }
@@ -235,13 +234,15 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private fun createRouteDirection(){
 
          mapBoxMap?.getStyle {
-             if (hasExistingMapRoute) {
-                 getLastKnownLocation()?.let { latLngLastLocation ->
-                     destinationLocation?.let { latLngDestinationLocation ->
-                         mutableListOf<Point>().apply {
-                            this.add(Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude))
-                            this.add(Point.fromLngLat(latLngDestinationLocation.longitude,latLngDestinationLocation.latitude))
-                            directions.getRoute(this)
+             CoroutineScope(Dispatchers.Main).launch {
+                 if (hasExistingMapRoute && it.isFullyLoaded) {
+                     getLastKnownLocation()?.let { latLngLastLocation ->
+                         destinationLocation?.let { latLngDestinationLocation ->
+                             mutableListOf<Point>().apply {
+                                 this.add(Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude))
+                                 this.add(Point.fromLngLat(latLngDestinationLocation.longitude,latLngDestinationLocation.latitude))
+                                 directions.getRoute(this)
+                             }
                          }
                      }
                  }
@@ -278,9 +279,12 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     override fun pointMapMarker(latLng: LatLng) {
         CoroutineScope(Dispatchers.Main).launch {
-            deleteRouteAndMarkers()
-            hasExistingMapMarker = true
-            createMapMarker(latLng)
+            val job = launch {  deleteRouteAndMarkers() }.also { it.join() }
+            delay(50)
+            if(job.isCompleted){
+                hasExistingMapMarker = true
+                createMapMarker(latLng)
+            }
             reverseGeocode(Point.fromLngLat(latLng.longitude, latLng.latitude))
         }
     }
@@ -295,7 +299,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private fun createMapMarker(location: LatLng){
 
             mapBoxMap?.getStyle {
-                    if (hasExistingMapMarker) {
+                    if (hasExistingMapMarker && it.isFullyLoaded) {
                         mapBoxMap?.cameraPosition?.also { zoomLevel ->
                             camera.move(location, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION)
                         }
@@ -314,6 +318,6 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         if(this::directions.isInitialized) directions.clear()
         if(this::marker.isInitialized) marker.clear()
         if(this::search.isInitialized) search.clear()
-        
+
     }
 }
