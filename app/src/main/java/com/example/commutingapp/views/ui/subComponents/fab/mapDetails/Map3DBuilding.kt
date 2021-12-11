@@ -8,6 +8,7 @@ import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
+import kotlin.reflect.KFunction0
 
 class Map3DBuilding(context: Context):IMapDetails {
 
@@ -30,6 +31,10 @@ class Map3DBuilding(context: Context):IMapDetails {
 
     override fun changeMapButtonState(state: SwitchState) {
         map3dDetailsPreferences.edit().putString(Constants.KEY_NAME_MAPS_3D_SHARED_PREFERENCE,state.toString()).apply()
+    }
+
+    override fun show(showViews: KFunction0<Unit>) {
+        if(isButtonSelected()) showViews()
     }
 
     override fun isButtonSelected() =

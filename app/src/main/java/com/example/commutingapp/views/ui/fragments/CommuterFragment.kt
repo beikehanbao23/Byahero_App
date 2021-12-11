@@ -81,6 +81,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var mapTypes:MapTypes
     private lateinit var map:MapWrapper<MapView>
     private var latLng: LatLng? = null
+    private lateinit var map3DBuilding: MapDetailsWrapper
+    private lateinit var mapTraffic: MapDetailsWrapper
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -133,6 +135,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         bottomNavigation = Component(BottomNavigation(notifyListener))
         locationFAB = LocationButton(binding!!,requireContext())
         mapTypes = MapTypes(requireContext())
+        map3DBuilding = MapDetailsWrapper(Map3DBuilding(requireContext()))
+        mapTraffic = MapDetailsWrapper(MapTraffic(requireContext()))
+
 
         val mapbox = object : MapBox(view,requireActivity()){
 
@@ -165,8 +170,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             dialogDirector.constructChooseMapDialog().apply {
 
                 mapTypes.setMapSelectedIndicator(this)
-                provideMapDetailsButtonListenerOf(this, MapDetailsWrapper(Map3DBuilding(requireContext())), R.id.maps3dDetailsButton, map::show3DBuildingView)
-                provideMapDetailsButtonListenerOf(this, MapDetailsWrapper(MapTraffic(requireContext())), R.id.trafficMapDetailsButton, map::showTrafficView)
+                provideMapDetailsButtonListenerOf(this, map3DBuilding, R.id.maps3dDetailsButton, map::show3DBuildingView)
+                provideMapDetailsButtonListenerOf(this, mapTraffic, R.id.trafficMapDetailsButton, map::showTrafficView)
                 setMapTypeListeners(this)
                 show()
             }
@@ -176,6 +181,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun provideMapDetailsButtonListenerOf(customDialogBuilder: CustomDialogBuilder, mapDetails: MapDetailsWrapper, id: Int, showViews: KFunction0<Unit>) {
         with(mapDetails) {
+       // if(this.isButtonSelected()) showViews()
             customDialogBuilder.also { dialogBuilder ->
                 addMapSelectedIndicator(dialogBuilder)//todo
                 dialogBuilder.findViewById<View>(id)?.setOnClickListener {
@@ -413,6 +419,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         super.onStart();
         map.getMapView().onStart()
         displayUserLocation()
+      //  mapTraffic.show(map::showTrafficView)
+      //  map3DBuilding.show(map::show3DBuildingView)
     }
     override fun onResume() {
         super.onResume();

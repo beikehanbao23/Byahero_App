@@ -8,6 +8,7 @@ import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
+import kotlin.reflect.KFunction0
 
 class MapTraffic(context: Context):IMapDetails {
 
@@ -28,6 +29,10 @@ class MapTraffic(context: Context):IMapDetails {
 
     override fun changeMapButtonState(state: SwitchState) {
         mapTrafficDetailsPreferences.edit().putString(Constants.KEY_NAME_MAPS_TRAFFIC_SHARED_PREFERENCE,state.toString()).apply()
+    }
+
+    override fun show(showViews: KFunction0<Unit>) {
+        if (isButtonSelected()) showViews()
     }
 
     override fun isButtonSelected() =
