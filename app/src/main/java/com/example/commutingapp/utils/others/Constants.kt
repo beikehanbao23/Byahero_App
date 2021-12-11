@@ -47,6 +47,8 @@ object Constants {
     const val USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS = 8
     const val SIGN_UP_LOADING_INTERVAL:Long = 100
     const val KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE = "MapsType"
+    const val KEY_NAME_MAPS_3D_SHARED_PREFERENCE = "Maps3D"
+    const val KEY_NAME_MAPS_TRAFFIC_SHARED_PREFERENCE = "MapsTraffic"
     const val KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE = "IntroSlider_StateOfSlides"
     const val KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE = "StateOfSatelliteSwitchButton"
     const val KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE = "StateOfTrafficSwitchButton"

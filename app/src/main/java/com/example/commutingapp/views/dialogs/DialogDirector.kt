@@ -35,6 +35,8 @@ class DialogDirector(val activity: Activity) {
     }
 
     fun constructChooseMapDialog():CustomDialogBuilder{
+
+
         return CustomDialogBuilder(
             activity = activity,
             layout = R.layout.map_styles_dialog,
@@ -44,6 +46,20 @@ class DialogDirector(val activity: Activity) {
             it.window?.setGravity(Gravity.END)
         }
     }
+
+    fun constructFindingRouteDialog():CustomDialogBuilder{
+        return CustomDialogBuilder(
+            activity = activity,
+            layout = R.layout.navigation_dialog_finding_route,
+            animation =  android.R.style.Animation_Dialog,
+            backgroundColorDrawable =  ColorDrawable(Color.TRANSPARENT)
+        ).also {
+            it.window?.setGravity(Gravity.CENTER)
+            it.setCancelable(true)
+            it.setCanceledOnTouchOutside(false)
+        }
+    }
+
 
 
     private fun aestheticDialog(

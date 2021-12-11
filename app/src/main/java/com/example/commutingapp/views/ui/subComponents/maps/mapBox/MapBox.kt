@@ -24,16 +24,13 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.building.BuildingPlugin
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
-
 
 abstract class MapBox(private val view: View,private val activity: Activity):
     IMap<MapView> {
@@ -53,15 +50,16 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private var hasExistingMapRoute = false
     private var geocodePlaceName = MutableLiveData<String?>()
     private var geocodeText = MutableLiveData<String?>()
-
-
+    private lateinit var trafficPlugin: TrafficPlugin
+    private lateinit var building3DPlugin : BuildingPlugin
 
 
     override fun deleteRouteAndMarkers(){
-        CoroutineScope(Dispatchers.Main).launch {
-            initializeStyles(mapTypes.loadMapType())
-            hasExistingMapMarker = false
-            hasExistingMapRoute = false
+        if(hasExistingMapMarker) {
+                initializeStyles(mapTypes.currentMapType())
+                hasExistingMapMarker = false
+                hasExistingMapRoute = false
+
         }
     }
 
@@ -82,17 +80,22 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
     }
     private suspend fun initializeMapComponents(){
+        if(!::camera.isInitialized){
             camera = MapCamera(mapBoxMap)
+        }
+        if(!::location.isInitialized) {
             location = MapLocationPuck(activity, mapBoxMap?.locationComponent)
+        }
             delay(50)
-            mapBoxMap?.getStyle((location::buildLocationPuck))
+            mapBoxMap?.getStyle{ runBlocking { location.buildLocationPuck(it) }}
+    }
+    private fun initializeMapSymbols(style: Style) {
 
-    }
-    private fun initializeMapSymbols(style: Style){
-        marker = MapMarker(style)
-        search = MapSearch(activity, style)
-        directions = MapDirections(style, activity)
-    }
+            marker = MapMarker(style)
+            search = MapSearch(activity, style)
+            directions = MapDirections(style, activity)
+        }
+
     private fun initializeMap() {
 
             with(mapBoxMap!!) {
@@ -111,51 +114,71 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initializeStyles(mapType:String) {
 
-        CoroutineScope(Dispatchers.Main).launch {
             mapBoxMap?.setStyle(mapType) { style ->
-                createMarkerImage(style)
-                addTrafficView(style)
-                initializeMapSymbols(style)
+                    if (style.isFullyLoaded) {
+                        createMarkerImage(style)
+                        initializePlugins(style)
+                        initializeMapSymbols(style)
+                    }
+        }
+    }
+    private fun initializePlugins(style: Style){
+        mapBoxView.apply {
+            if(!::trafficPlugin.isInitialized){
+                trafficPlugin = TrafficPlugin(this, mapBoxMap!!, style)
+            }
+            if (!::building3DPlugin.isInitialized) {
+                building3DPlugin = BuildingPlugin(this, mapBoxMap!!, style)
+                building3DPlugin.setMinZoomLevel(15f)
             }
         }
-}
-
+    }
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun createMarkerImage(style:Style){
         activity.getDrawable(R.drawable.red_marker)?.let { style.addImage(MAP_MARKER_IMAGE_ID, it) }
     }
 
-    private fun addTrafficView(style:Style){
-        mapBoxView.apply {
-            TrafficPlugin(this, mapBoxMap!!, style).apply { setVisibility(true)}
-        }
+
+
+    override fun showTrafficView() {
+        if(trafficPlugin.isVisible) trafficPlugin.setVisibility(false) else trafficPlugin.setVisibility(true)
+
     }
+    override fun show3DBuildingView() {
+         if(building3DPlugin.isVisible) building3DPlugin.setVisibility(false) else building3DPlugin.setVisibility(true)
+    }
+
 
     @SuppressLint("BinaryOperationInTimber")
     override fun getLastKnownLocation(): LatLng? {
-        mapBoxMap?.getStyle(location::buildLocationPuck)
-        try {
-            return mapBoxMap?.locationComponent?.lastKnownLocation?.run {
-                LatLng(this.latitude, this.longitude)
+            try {
+                mapBoxMap?.getStyle {
+                runBlocking {location.buildLocationPuck(it)} }
+                return mapBoxMap?.locationComponent?.lastKnownLocation?.run {
+                    LatLng(this.latitude, this.longitude)
+                }
+            } catch (e: Exception) {
+                Timber.e("Getting last location failed " + e.message.toString())
             }
-        } catch (e: Exception) {
-            Timber.e("Getting last location failed " + e.message.toString())
+            return null
         }
-        return null
-    }
+
+
 
 
     override fun updateMapStyle(style:String){
 
         mapBoxMap?.setStyle(style){
             CoroutineScope(Dispatchers.Main).launch {
-            createMarkerImage(it)
-            addTrafficView(it)
-            initializeMapSymbols(it)
-            destinationLocation?.let {
-                createRouteDirection()
-                createMapMarker(it)
-            }
+                if(it.isFullyLoaded) {
+                    createMarkerImage(it)
+                    initializePlugins(it)
+                    initializeMapSymbols(it)
+                    destinationLocation?.let {
+                        createRouteDirection()
+                        createMapMarker(it)
+                    }
+                }
             }
         }
     }
@@ -164,19 +187,22 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     @SuppressLint("BinaryOperationInTimber")
     override fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?) {
         deleteRouteAndMarkers()
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(50)
             try {
                 mapBoxMap?.getStyle {
+                    CoroutineScope(Dispatchers.Main).launch {
+                    if(it.isFullyLoaded){
                     search.getLocationSearchResult(requestCode, resultCode, data)?.let { location ->
-                        launch {
                         camera.move(location, TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
                         destinationLocation = location
                         hasExistingMapMarker = true
                         reverseGeocode(Point.fromLngLat(location.longitude,location.latitude))}
-                    } } } catch (e: IllegalStateException) {
+                    }
+                   }
+                }
+            } catch (e: IllegalStateException) {
                 Timber.e("Style loading error "+ e.message.toString())
-            } }
+            //TODO(FIX STYLE NOT LOADED)
+            }
 
     }
 
@@ -184,17 +210,16 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     @SuppressLint("BinaryOperationInTimber")
     override fun createLocationPuck() {
-        CoroutineScope(Dispatchers.Main).launch {
             try {
                 mapBoxMap?.getStyle {
-                    location.buildLocationPuck(it)
+                    runBlocking { location.buildLocationPuck(it) }
                 }
             } catch (e: IllegalArgumentException) {
                 Timber.e("Location puck failed! "+ e.message.toString())
             }
         }
 
-    }
+
 
     private fun initializeSearchFABLocation(){
             searchLocationButton.setOnClickListener {
@@ -205,21 +230,21 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     abstract fun onSearchCompleted(intent:Intent)
 
     override fun createDirections() {
-        CoroutineScope(Dispatchers.Main).launch {
             hasExistingMapRoute = true
             createRouteDirection()
-        }
     }
-    private suspend fun createRouteDirection(){
-        delay(50)
+    private fun createRouteDirection(){
+
          mapBoxMap?.getStyle {
-             if (hasExistingMapRoute) {
-                 getLastKnownLocation()?.let { latLngLastLocation ->
-                     destinationLocation?.let { latLngDestinationLocation ->
-                         mutableListOf<Point>().apply {
-                            this.add(Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude))
-                            this.add(Point.fromLngLat(latLngDestinationLocation.longitude,latLngDestinationLocation.latitude))
-                            directions.getRoute(this)
+             CoroutineScope(Dispatchers.Main).launch {
+                 if (hasExistingMapRoute && it.isFullyLoaded) {
+                     getLastKnownLocation()?.let { latLngLastLocation ->
+                         destinationLocation?.let { latLngDestinationLocation ->
+                             mutableListOf<Point>().apply {
+                                 this.add(Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude))
+                                 this.add(Point.fromLngLat(latLngDestinationLocation.longitude,latLngDestinationLocation.latitude))
+                                 directions.getRoute(this)
+                             }
                          }
                      }
                  }
@@ -228,36 +253,41 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
 
-    private fun reverseGeocode(point: Point) {
-        try {
-            buildGeocoding(point).enqueueCall(object : Callback<GeocodingResponse> {
-                override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
-                    response.body()?.let {
-                        val results = it.features()
-                        if (results.size > 0) {
-                            geocodeText.value = results[0].text() ?: "----"
-                            geocodePlaceName.value = results[0].placeName()?.replace("${geocodeText.value}, ", "") ?: "----"
-
+    private suspend fun reverseGeocode(point: Point) {
+        withContext(Dispatchers.Default) {
+            try {
+                buildGeocoding(point).enqueueCall(object : Callback<GeocodingResponse> {
+                    override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
+                        response.body()?.let {
+                            val results = it.features()
+                            if (results.size > 0) {
+                                geocodeText.value = results[0].text() ?: "----"
+                                geocodePlaceName.value = results[0].placeName()?.replace("${geocodeText.value}, ", "") ?: "----"
+                            }
                         }
                     }
-                }
-                override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
-                    Timber.e("Geocoding Failure")
-                }
-            })
-        } catch (servicesException: ServicesException) {
-            Timber.e(servicesException.toString())
+
+                    override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
+                        Timber.e("Geocoding Failure")
+                    }
+                })
+            } catch (servicesException: ServicesException) {
+                Timber.e(servicesException.toString())
+            }
         }
     }
     override fun getPlaceText(): LiveData<String?> = geocodeText
     override fun getPlaceName():LiveData<String?> = geocodePlaceName
 
     override fun pointMapMarker(latLng: LatLng) {
-        deleteRouteAndMarkers()
         CoroutineScope(Dispatchers.Main).launch {
-            hasExistingMapMarker = true
-            createMapMarker(latLng)
-            reverseGeocode(Point.fromLngLat(latLng.longitude,latLng.latitude))
+            val job = launch {  deleteRouteAndMarkers() }.also { it.join() }
+            delay(50)
+            if(job.isCompleted){
+                hasExistingMapMarker = true
+                createMapMarker(latLng)
+            }
+            reverseGeocode(Point.fromLngLat(latLng.longitude, latLng.latitude))
         }
     }
 
@@ -268,29 +298,28 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         .build()
 
 
-    private suspend fun createMapMarker(location: LatLng){
-        delay(50)
-        mapBoxMap?.getStyle {
-            if (hasExistingMapMarker) {
-                mapBoxMap?.cameraPosition?.also { zoomLevel ->
-                    camera.move(location, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION)
+    private fun createMapMarker(location: LatLng){
+
+            mapBoxMap?.getStyle {
+                    if (hasExistingMapMarker && it.isFullyLoaded) {
+                        mapBoxMap?.cameraPosition?.also { zoomLevel ->
+                            camera.move(location, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION)
+                        }
+                        marker.setLocation(location)
+                        marker.create()
+                        destinationLocation = location
+                    }
                 }
-                marker.setLocation(location)
-                marker.create()
-                destinationLocation = location
             }
-        }
-    }
+
     override fun moveCameraToUser(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int) {
-        CoroutineScope(Dispatchers.Main).launch {
             camera.move(latLng, zoomLevel, cameraAnimationDuration)
-        }
     }
 
     override fun clearCache() {
         if(this::directions.isInitialized) directions.clear()
         if(this::marker.isInitialized) marker.clear()
         if(this::search.isInitialized) search.clear()
-        
+
     }
 }
