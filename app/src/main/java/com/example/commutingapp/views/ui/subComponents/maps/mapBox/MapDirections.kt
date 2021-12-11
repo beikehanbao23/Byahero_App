@@ -17,6 +17,8 @@ import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.maps.Style
 import com.rejowan.cutetoast.CuteToast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,23 +30,24 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
     private var mapLineLayers: MapLayer = MapLineLayers(style, ROUTE_SOURCE_ID, ROUTE_LAYER_ID)
 
 
-    fun getRoute(listOfCoordinates: MutableList<Point>) {
+    suspend fun getRoute(listOfCoordinates: MutableList<Point>) {
 
+    withContext(Dispatchers.Default) {
         getClient(listOfCoordinates).enqueueCall(object : Callback<OptimizationResponse> {
 
             @SuppressLint("BinaryOperationInTimber")
-            override fun onResponse(call: Call<OptimizationResponse>, response: Response<OptimizationResponse>) {
+            override fun onResponse(call: Call<OptimizationResponse>,response: Response<OptimizationResponse>) {
 
                 response.body()?.trips()?.let {
                     if (it.isNotEmpty()) {
                         try {
-                           drawNavigationRoute(it[0])
+                            drawNavigationRoute(it[0])
                         } catch (e: IllegalStateException) {
                             Timber.e("Map Directions " + e.message)
                         }
                     }
-                    if(it.isEmpty()){
-                        CuteToast.ct(activity,activity.getString(R.string.unreachableDestination), CuteToast.LENGTH_LONG, CuteToast.WARN, true).show();
+                    if (it.isEmpty()) {
+                        CuteToast.ct(activity,activity.getString(R.string.unreachableDestination), CuteToast.LENGTH_LONG,CuteToast.WARN, true).show();
                     }
                 }
             }
@@ -53,6 +56,7 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
                 Timber.e("Routes: On Failure")
             }
         })
+    }
 
     }
 
