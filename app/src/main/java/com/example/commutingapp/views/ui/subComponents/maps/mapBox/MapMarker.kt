@@ -9,7 +9,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.Style
 
-class MapMarker(private val style: Style?) {
+class MapMarker( style: Style?) {
     private var latLng: LatLng? = null
     private var mapSymbol: MapLayer = MapSymbolLayers(style, ON_MAP_CLICK_SOURCE_ID, ON_MAP_CLICK_LAYER_ID)
 
