@@ -381,15 +381,22 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         getGPSDialogSettingResult(requestCode, resultCode)
-        map.getLocationSearchResult(requestCode, resultCode, data)
-        resetBottomSheetPlace()//TODO FIX BUG HERE(SHOWING NOTHING)
-    }
+        getLocationSearchResult(requestCode, resultCode, data)
 
+
+    }
+    private fun getLocationSearchResult(requestCode: Int,resultCode: Int, data: Intent?){
+        if (requestCode == REQUEST_CODE_AUTOCOMPLETE && resultCode == RESULT_OK) {
+            map.getLocationSearchResult(data)
+            resetBottomSheetPlace()
+        }
+
+    }
     private fun resetBottomSheetPlace(){
         lifecycleScope.launch {
             bottomNavigation.hide()
             displayBottomSheetResults()
-            delay(150)
+            delay(50)
             bottomSheet.show()
         }
     }
