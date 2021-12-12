@@ -124,10 +124,10 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
     private fun initializePlugins(style: Style){
         mapBoxView.apply {
-            if(!::trafficPlugin.isInitialized){
+
                 trafficPlugin = TrafficPlugin(this, mapBoxMap!!, style)
-                onMapTrafficInitialized(trafficPlugin)
-            }
+               onMapTrafficInitialized(trafficPlugin)
+
             if (!::building3DPlugin.isInitialized) {
                 building3DPlugin = BuildingPlugin(this, mapBoxMap!!, style)
                 building3DPlugin.setMinZoomLevel(15f)
@@ -163,12 +163,12 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             CoroutineScope(Dispatchers.Main).launch {
                 if(it.isFullyLoaded) {
                     createMarkerImage(it)
-                    initializePlugins(it)
                     initializeMapSymbols(it)
                     destinationLocation?.let {
                         createRouteDirection()
                         createMapMarker(it)
                     }
+                    initializePlugins(it)
                 }
             }
         }
@@ -176,23 +176,24 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
 
     @SuppressLint("BinaryOperationInTimber")
-    override fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun getLocationSearchResult( data: Intent?) {
         deleteRouteAndMarkers()
             try {
                 mapBoxMap?.getStyle {
                     CoroutineScope(Dispatchers.Main).launch {
                     if(it.isFullyLoaded){
-                    search.getLocationSearchResult(requestCode, resultCode, data)?.let { location ->
+                    search.getLocationSearchResult(data)?.let { location ->
+                        reverseGeocode(Point.fromLngLat(location.longitude,location.latitude))
                         camera.move(location, TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
                         destinationLocation = location
                         hasExistingMapMarker = true
-                        reverseGeocode(Point.fromLngLat(location.longitude,location.latitude))}
+
+                    }
                     }
                    }
                 }
             } catch (e: IllegalStateException) {
                 Timber.e("Style loading error "+ e.message.toString())
-            //TODO(FIX STYLE NOT LOADED)
             }
 
     }
@@ -245,7 +246,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
 
     private suspend fun reverseGeocode(point: Point) {
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
             try {
                 buildGeocoding(point).enqueueCall(object : Callback<GeocodingResponse> {
                     override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
@@ -272,6 +273,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     override fun pointMapMarker(latLng: LatLng) {
         CoroutineScope(Dispatchers.Main).launch {
+            reverseGeocode(Point.fromLngLat(latLng.longitude, latLng.latitude))
             launch {
                 deleteRouteAndMarkers()
             }.also {
@@ -283,7 +285,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                     createMapMarker(latLng)
                 }
             }
-            reverseGeocode(Point.fromLngLat(latLng.longitude, latLng.latitude))
+
         }
     }
 
