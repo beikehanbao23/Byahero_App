@@ -125,9 +125,10 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private fun initializePlugins(style: Style){
         mapBoxView.apply {
 
+            if(!::trafficPlugin.isInitialized) {
                 trafficPlugin = TrafficPlugin(this, mapBoxMap!!, style)
-               onMapTrafficInitialized(trafficPlugin)
-
+                onMapTrafficInitialized(trafficPlugin)
+            }
             if (!::building3DPlugin.isInitialized) {
                 building3DPlugin = BuildingPlugin(this, mapBoxMap!!, style)
                 building3DPlugin.setMinZoomLevel(15f)
@@ -246,7 +247,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
 
     private suspend fun reverseGeocode(point: Point) {
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 buildGeocoding(point).enqueueCall(object : Callback<GeocodingResponse> {
                     override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {

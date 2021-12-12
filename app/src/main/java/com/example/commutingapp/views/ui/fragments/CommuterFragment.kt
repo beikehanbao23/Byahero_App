@@ -131,6 +131,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         }
     }
+
     private fun initializeComponents(view: View) {
         dialogDirector = DialogDirector(requireActivity())
         searchLocationButton = view.findViewById(R.id.buttonLocationSearch)
@@ -145,21 +146,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         val mapbox = object : MapBox(view,requireActivity()){
 
             override fun onMapTrafficInitialized(trafficPlugin: TrafficPlugin) {
-               traffic = trafficPlugin
-                if(mapTraffic.isButtonSelected()){
-                    trafficPlugin.setVisibility(true)
-                    return
-                }
-                trafficPlugin.setVisibility(false)
+                traffic = trafficPlugin
+                showTrafficView()
             }
 
             override fun onMap3DBuildingInitialized(buildingPlugin: BuildingPlugin) {
                 building3D = buildingPlugin
-                if(map3DBuilding.isButtonSelected()){
-                    buildingPlugin.setVisibility(true)
-                    return
-                }
-                buildingPlugin.setVisibility(false)
+                show3DBuildingView()
             }
 
             override fun onMapReady(mapboxMap: MapboxMap) {
@@ -178,10 +171,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
     private fun showTrafficView(){
-            if(traffic.isVisible) traffic.setVisibility(false) else traffic.setVisibility(true)
+        traffic.setVisibility(mapTraffic.isButtonSelected())
+
     }
     private fun show3DBuildingView(){
-        if(building3D.isVisible) building3D.setVisibility(false) else building3D.setVisibility(true)
+        building3D.setVisibility(map3DBuilding.isButtonSelected())
     }
     private fun provideClickListeners() {
         provideMapTypeDialogListener()
@@ -452,6 +446,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         super.onStart();
         map.getMapView().onStart()
         displayUserLocation()
+
     }
     override fun onResume() {
         super.onResume();
