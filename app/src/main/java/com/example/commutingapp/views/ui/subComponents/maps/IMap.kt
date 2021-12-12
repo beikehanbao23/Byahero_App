@@ -19,7 +19,5 @@ interface IMap<V> {
     fun getPlaceText():LiveData<String?>
     fun getPlaceName():LiveData<String?>
     fun createDirections()
-    fun showTrafficView()
-    fun show3DBuildingView()
     fun clearCache()
 }

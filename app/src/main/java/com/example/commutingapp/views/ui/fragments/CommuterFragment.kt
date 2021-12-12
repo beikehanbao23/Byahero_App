@@ -56,6 +56,8 @@ import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.plugins.building.BuildingPlugin
+import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -83,7 +85,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private var latLng: LatLng? = null
     private lateinit var map3DBuilding: MapDetailsWrapper
     private lateinit var mapTraffic: MapDetailsWrapper
-
+    private lateinit var traffic : TrafficPlugin
+    private lateinit var building3D : BuildingPlugin
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = CommuterFragmentBinding.inflate(inflater,container,false)
@@ -141,6 +144,24 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         val mapbox = object : MapBox(view,requireActivity()){
 
+            override fun onMapTrafficInitialized(trafficPlugin: TrafficPlugin) {
+               traffic = trafficPlugin
+                if(mapTraffic.isButtonSelected()){
+                    trafficPlugin.setVisibility(true)
+                    return
+                }
+                trafficPlugin.setVisibility(false)
+            }
+
+            override fun onMap3DBuildingInitialized(buildingPlugin: BuildingPlugin) {
+                building3D = buildingPlugin
+                if(map3DBuilding.isButtonSelected()){
+                    buildingPlugin.setVisibility(true)
+                    return
+                }
+                buildingPlugin.setVisibility(false)
+            }
+
             override fun onMapReady(mapboxMap: MapboxMap) {
                 mapboxMap.addOnMapLongClickListener(this@CommuterFragment)
                 mapboxMap.addOnMapClickListener(this@CommuterFragment)
@@ -156,6 +177,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     }
+    private fun showTrafficView(){
+            if(traffic.isVisible) traffic.setVisibility(false) else traffic.setVisibility(true)
+    }
+    private fun show3DBuildingView(){
+        if(building3D.isVisible) building3D.setVisibility(false) else building3D.setVisibility(true)
+    }
     private fun provideClickListeners() {
         provideMapTypeDialogListener()
         provideLocationButtonListener()
@@ -170,8 +197,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             dialogDirector.constructChooseMapDialog().apply {
 
                 mapTypes.setMapSelectedIndicator(this)
-                provideMapDetailsButtonListenerOf(this, map3DBuilding, R.id.maps3dDetailsButton, map::show3DBuildingView)
-                provideMapDetailsButtonListenerOf(this, mapTraffic, R.id.trafficMapDetailsButton, map::showTrafficView)
+                provideMapDetailsButtonListenerOf(this, map3DBuilding, R.id.maps3dDetailsButton, ::show3DBuildingView)
+                provideMapDetailsButtonListenerOf(this, mapTraffic, R.id.trafficMapDetailsButton, ::showTrafficView)
                 setMapTypeListeners(this)
                 show()
             }
@@ -181,9 +208,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun provideMapDetailsButtonListenerOf(customDialogBuilder: CustomDialogBuilder, mapDetails: MapDetailsWrapper, id: Int, showViews: KFunction0<Unit>) {
         with(mapDetails) {
-       // if(this.isButtonSelected()) showViews()
             customDialogBuilder.also { dialogBuilder ->
-                addMapSelectedIndicator(dialogBuilder)//todo
+                addMapSelectedIndicator(dialogBuilder)
                 dialogBuilder.findViewById<View>(id)?.setOnClickListener {
                     if (this.isButtonSelected()) {
                         changeMapButtonState(SwitchState.OFF)
@@ -419,8 +445,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         super.onStart();
         map.getMapView().onStart()
         displayUserLocation()
-      //  mapTraffic.show(map::showTrafficView)
-      //  map3DBuilding.show(map::show3DBuildingView)
     }
     override fun onResume() {
         super.onResume();
