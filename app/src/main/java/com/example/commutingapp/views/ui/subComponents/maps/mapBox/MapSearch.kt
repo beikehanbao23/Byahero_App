@@ -28,14 +28,10 @@ class MapSearch(private val activity:Activity,style: Style?) {
         initializeUserLocations()
     }
     //TODO ADD VOICE SEARCH(USE GEOCODING - TEXT TO COORDINATES)
-     fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?): LatLng? {
-        if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_CODE_AUTOCOMPLETE) {
+     fun getLocationSearchResult(data: Intent?): LatLng {
             this.resultDestination = PlaceAutocomplete.getPlace(data)
             createMarker()
-            return LatLng((resultDestination.geometry() as Point).latitude(), (resultDestination.geometry() as Point).longitude()
-            )
-        }
-        return null
+            return LatLng((resultDestination.geometry() as Point).latitude(), (resultDestination.geometry() as Point).longitude())
     }
 
     private fun createMarker() {

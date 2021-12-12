@@ -56,6 +56,8 @@ import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.plugins.building.BuildingPlugin
+import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -83,7 +85,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private var latLng: LatLng? = null
     private lateinit var map3DBuilding: MapDetailsWrapper
     private lateinit var mapTraffic: MapDetailsWrapper
-
+    private lateinit var traffic : TrafficPlugin
+    private lateinit var building3D : BuildingPlugin
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = CommuterFragmentBinding.inflate(inflater,container,false)
@@ -128,6 +131,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         }
     }
+
     private fun initializeComponents(view: View) {
         dialogDirector = DialogDirector(requireActivity())
         searchLocationButton = view.findViewById(R.id.buttonLocationSearch)
@@ -140,6 +144,16 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
         val mapbox = object : MapBox(view,requireActivity()){
+
+            override fun onMapTrafficInitialized(trafficPlugin: TrafficPlugin) {
+                traffic = trafficPlugin
+                showTrafficView()
+            }
+
+            override fun onMap3DBuildingInitialized(buildingPlugin: BuildingPlugin) {
+                building3D = buildingPlugin
+                show3DBuildingView()
+            }
 
             override fun onMapReady(mapboxMap: MapboxMap) {
                 mapboxMap.addOnMapLongClickListener(this@CommuterFragment)
@@ -156,6 +170,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     }
+    private fun showTrafficView(){
+        traffic.setVisibility(mapTraffic.isButtonSelected())
+
+    }
+    private fun show3DBuildingView(){
+        building3D.setVisibility(map3DBuilding.isButtonSelected())
+    }
     private fun provideClickListeners() {
         provideMapTypeDialogListener()
         provideLocationButtonListener()
@@ -170,8 +191,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             dialogDirector.constructChooseMapDialog().apply {
 
                 mapTypes.setMapSelectedIndicator(this)
-                provideMapDetailsButtonListenerOf(this, map3DBuilding, R.id.maps3dDetailsButton, map::show3DBuildingView)
-                provideMapDetailsButtonListenerOf(this, mapTraffic, R.id.trafficMapDetailsButton, map::showTrafficView)
+                provideMapDetailsButtonListenerOf(this, map3DBuilding, R.id.maps3dDetailsButton, ::show3DBuildingView)
+                provideMapDetailsButtonListenerOf(this, mapTraffic, R.id.trafficMapDetailsButton, ::showTrafficView)
                 setMapTypeListeners(this)
                 show()
             }
@@ -181,9 +202,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun provideMapDetailsButtonListenerOf(customDialogBuilder: CustomDialogBuilder, mapDetails: MapDetailsWrapper, id: Int, showViews: KFunction0<Unit>) {
         with(mapDetails) {
-       // if(this.isButtonSelected()) showViews()
             customDialogBuilder.also { dialogBuilder ->
-                addMapSelectedIndicator(dialogBuilder)//todo
+                addMapSelectedIndicator(dialogBuilder)
                 dialogBuilder.findViewById<View>(id)?.setOnClickListener {
                     if (this.isButtonSelected()) {
                         changeMapButtonState(SwitchState.OFF)
@@ -355,15 +375,22 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         getGPSDialogSettingResult(requestCode, resultCode)
-        map.getLocationSearchResult(requestCode, resultCode, data)
-        resetBottomSheetPlace()//TODO FIX BUG HERE(SHOWING NOTHING)
-    }
+        getLocationSearchResult(requestCode, resultCode, data)
 
+
+    }
+    private fun getLocationSearchResult(requestCode: Int,resultCode: Int, data: Intent?){
+        if (requestCode == REQUEST_CODE_AUTOCOMPLETE && resultCode == RESULT_OK) {
+            map.getLocationSearchResult(data)
+            resetBottomSheetPlace()
+        }
+
+    }
     private fun resetBottomSheetPlace(){
         lifecycleScope.launch {
             bottomNavigation.hide()
             displayBottomSheetResults()
-            delay(150)
+            delay(50)
             bottomSheet.show()
         }
     }
@@ -419,8 +446,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         super.onStart();
         map.getMapView().onStart()
         displayUserLocation()
-      //  mapTraffic.show(map::showTrafficView)
-      //  map3DBuilding.show(map::show3DBuildingView)
+
     }
     override fun onResume() {
         super.onResume();

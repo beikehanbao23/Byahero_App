@@ -75,19 +75,18 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                 initializeStyles(mapType)
                 initializeSearchFABLocation()
                 initializeMapComponents()
-
             }
     }
     }
-    private suspend fun initializeMapComponents(){
+    private fun initializeMapComponents(){
         if(!::camera.isInitialized){
             camera = MapCamera(mapBoxMap)
         }
         if(!::location.isInitialized) {
             location = MapLocationPuck(activity, mapBoxMap?.locationComponent)
         }
-            delay(50)
-            mapBoxMap?.getStyle{ runBlocking { location.buildLocationPuck(it) }}
+
+         mapBoxMap?.getStyle{ runBlocking { location.buildLocationPuck(it) }}
     }
     private fun initializeMapSymbols(style: Style) {
 
@@ -108,44 +107,38 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             }
 
     }
-
+    abstract fun onMapTrafficInitialized(trafficPlugin: TrafficPlugin)
+    abstract fun onMap3DBuildingInitialized(buildingPlugin: BuildingPlugin)
     abstract fun onMapReady(mapboxMap: MapboxMap)
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun initializeStyles(mapType:String) {
+    private fun initializeStyles(mapType: String) {
 
-            mapBoxMap?.setStyle(mapType) { style ->
-                    if (style.isFullyLoaded) {
-                        createMarkerImage(style)
-                        initializePlugins(style)
-                        initializeMapSymbols(style)
-                    }
+        mapBoxMap?.setStyle(mapType) { style ->
+            if (style.isFullyLoaded) {
+                createMarkerImage(style)
+                initializePlugins(style)
+                initializeMapSymbols(style)
+            }
         }
     }
     private fun initializePlugins(style: Style){
         mapBoxView.apply {
-            if(!::trafficPlugin.isInitialized){
+
+            if(!::trafficPlugin.isInitialized) {
                 trafficPlugin = TrafficPlugin(this, mapBoxMap!!, style)
+                onMapTrafficInitialized(trafficPlugin)
             }
             if (!::building3DPlugin.isInitialized) {
                 building3DPlugin = BuildingPlugin(this, mapBoxMap!!, style)
                 building3DPlugin.setMinZoomLevel(15f)
+                onMap3DBuildingInitialized(building3DPlugin)
             }
         }
     }
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun createMarkerImage(style:Style){
         activity.getDrawable(R.drawable.red_marker)?.let { style.addImage(MAP_MARKER_IMAGE_ID, it) }
-    }
-
-
-
-    override fun showTrafficView() {
-        if(trafficPlugin.isVisible) trafficPlugin.setVisibility(false) else trafficPlugin.setVisibility(true)
-
-    }
-    override fun show3DBuildingView() {
-         if(building3DPlugin.isVisible) building3DPlugin.setVisibility(false) else building3DPlugin.setVisibility(true)
     }
 
 
@@ -172,12 +165,12 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             CoroutineScope(Dispatchers.Main).launch {
                 if(it.isFullyLoaded) {
                     createMarkerImage(it)
-                    initializePlugins(it)
                     initializeMapSymbols(it)
                     destinationLocation?.let {
                         createRouteDirection()
                         createMapMarker(it)
                     }
+                    initializePlugins(it)
                 }
             }
         }
@@ -185,23 +178,24 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
 
     @SuppressLint("BinaryOperationInTimber")
-    override fun getLocationSearchResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun getLocationSearchResult( data: Intent?) {
         deleteRouteAndMarkers()
             try {
                 mapBoxMap?.getStyle {
                     CoroutineScope(Dispatchers.Main).launch {
                     if(it.isFullyLoaded){
-                    search.getLocationSearchResult(requestCode, resultCode, data)?.let { location ->
+                    search.getLocationSearchResult(data)?.let { location ->
+                        reverseGeocode(Point.fromLngLat(location.longitude,location.latitude))
                         camera.move(location, TRACKING_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
                         destinationLocation = location
                         hasExistingMapMarker = true
-                        reverseGeocode(Point.fromLngLat(location.longitude,location.latitude))}
+
+                    }
                     }
                    }
                 }
             } catch (e: IllegalStateException) {
                 Timber.e("Style loading error "+ e.message.toString())
-            //TODO(FIX STYLE NOT LOADED)
             }
 
     }
@@ -281,13 +275,19 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     override fun pointMapMarker(latLng: LatLng) {
         CoroutineScope(Dispatchers.Main).launch {
-            val job = launch {  deleteRouteAndMarkers() }.also { it.join() }
-            delay(50)
-            if(job.isCompleted){
-                hasExistingMapMarker = true
-                createMapMarker(latLng)
-            }
             reverseGeocode(Point.fromLngLat(latLng.longitude, latLng.latitude))
+            launch {
+                deleteRouteAndMarkers()
+            }.also {
+                it.join()
+            }.run {
+                delay(50)
+                if(isCompleted){
+                    hasExistingMapMarker = true
+                    createMapMarker(latLng)
+                }
+            }
+
         }
     }
 
