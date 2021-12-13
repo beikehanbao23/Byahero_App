@@ -6,6 +6,8 @@ import android.app.Activity
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants.ROUTE_LAYER_ID
 import com.example.commutingapp.utils.others.Constants.ROUTE_SOURCE_ID
+import com.example.commutingapp.views.dialogs.CustomDialogBuilder
+import com.example.commutingapp.views.dialogs.DialogDirector
 import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.MapLayer
 import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.MapLineLayers
 import com.mapbox.api.directions.v5.DirectionsCriteria
@@ -28,11 +30,12 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
 
 
     private var mapLineLayers: MapLayer = MapLineLayers(style, ROUTE_SOURCE_ID, ROUTE_LAYER_ID)
-
+    private var findRouteDialog: CustomDialogBuilder = DialogDirector(activity).showFindRouteDialog()
 
     suspend fun getRoute(listOfCoordinates: MutableList<Point>) {
-
+    findRouteDialog.show()
     withContext(Dispatchers.Default) {
+
         getClient(listOfCoordinates).enqueueCall(object : Callback<OptimizationResponse> {
 
             @SuppressLint("BinaryOperationInTimber")
@@ -49,12 +52,16 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
                     if (it.isEmpty()) {
                         CuteToast.ct(activity,activity.getString(R.string.unreachableDestination), CuteToast.LENGTH_LONG,CuteToast.WARN, true).show();
                     }
+                    findRouteDialog.hide()
                 }
+
             }
 
             override fun onFailure(call: Call<OptimizationResponse>, t: Throwable) {
                 Timber.e("Routes: On Failure")
+                findRouteDialog.hide()
             }
+
         })
     }
 

@@ -1,10 +1,8 @@
 package com.example.commutingapp.views.ui.activities;
 
 import static com.example.commutingapp.R.string.sendingEmailErrorMessage;
-import static com.example.commutingapp.utils.others.Constants.SIGN_UP_LOADING_INTERVAL;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Html;
 import android.view.View;
 
@@ -68,7 +66,7 @@ public class Signup extends AppCompatActivity {
         viewModel.sendEmailOnFailed().observe(this, task-> dialogDirector.showErrorDialog("Error", getString(sendingEmailErrorMessage)));
     }
     private void observeInternet(){
-        viewModel.noInternetStatus().observe(this, task-> dialogDirector.constructNoInternetDialog());
+        viewModel.noInternetStatus().observe(this, task-> dialogDirector.showNoInternetDialog());
     }
     private void observeExceptionMessage(){
         viewModel.getExceptionMessage().observe(this,errorMessage->dialogDirector.showErrorDialog("Error", Objects.requireNonNull(errorMessage)));
@@ -110,7 +108,7 @@ public class Signup extends AppCompatActivity {
             return;
         }
         if (!Connection.INSTANCE.hasInternetConnection(this)) {
-            dialogDirector.constructNoInternetDialog();
+            dialogDirector.showNoInternetDialog();
             return;
         }
 

@@ -188,7 +188,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     private fun provideMapTypeDialogListener() {
         binding?.floatingActionButtonChooseMap?.setOnClickListener {
-            dialogDirector.constructChooseMapDialog().apply {
+            dialogDirector.showChooseMapTypeDialog().apply {
 
                 mapTypes.setMapSelectedIndicator(this)
                 provideMapDetailsButtonListenerOf(this, map3DBuilding, R.id.maps3dDetailsButton, ::show3DBuildingView)
