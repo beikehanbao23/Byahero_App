@@ -291,7 +291,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findRouteDialog = DialogDirector(requireActivity()).constructFindingRouteDialog()
+        findRouteDialog = DialogDirector(requireActivity()).showFindRouteDialog()
         findRouteDialog.show()
         mapboxMap = binding?.mapView?.getMapboxMap()!!
         mapboxMap.setBounds(cameraBoundsOptionsBuilder())

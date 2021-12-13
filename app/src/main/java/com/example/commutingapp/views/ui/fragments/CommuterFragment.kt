@@ -64,6 +64,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import timber.log.Timber
 import kotlin.reflect.KFunction0
 
 
@@ -188,7 +189,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     private fun provideMapTypeDialogListener() {
         binding?.floatingActionButtonChooseMap?.setOnClickListener {
-            dialogDirector.constructChooseMapDialog().apply {
+            dialogDirector.showChooseMapTypeDialog().apply {
 
                 mapTypes.setMapSelectedIndicator(this)
                 provideMapDetailsButtonListenerOf(this, map3DBuilding, R.id.maps3dDetailsButton, ::show3DBuildingView)
@@ -221,12 +222,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideLocationButtonListener() {
         binding?.floatingActionButtonLocation?.setOnClickListener {
             if (requestPermissionGranted()) {
-                checkLocationSetting().addOnCompleteListener {
-                    try {
-                        it.getResult(ApiException::class.java)
+                checkLocationSetting().addOnCompleteListener {task->
+                    if(!Connection.hasGPSConnection(requireContext())) {
+                        askGPS(task)
+                    }else{
                         displayUserLocation()
-                    } catch (e: ApiException) {
-                        handleLocationResultException(e)
                     }
                 }
             }
@@ -248,17 +248,25 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 bottomSheet.hide()
                 bottomNavigation.hide()
                 locationFAB.hideLocationFloatingButton()
-                checkLocationSetting().addOnCompleteListener {
-                try{
-                    it.getResult(ApiException::class.java)
+                checkLocationSetting().addOnCompleteListener {task->
+                if(!Connection.hasGPSConnection(requireContext())) {
+                    askGPS(task)
+                }else{
                     map.createLocationPuck()
                     showNavigation()
-                }catch (e:ApiException){
-                    handleLocationResultException(e)
                 }
              }
           }
        }
+    }
+    private fun askGPS(task:Task<LocationSettingsResponse>){
+
+        try {
+            task.getResult(ApiException::class.java)
+        } catch (e: ApiException) {
+            handleLocationResultException(e)
+        }
+
     }
     private fun showNavigation(){
         latLng?.let { destinationLocation ->
@@ -292,12 +300,16 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 addAction(Intent.ACTION_PROVIDER_CHANGED)
                 requireActivity().registerReceiver(locationSwitchStateReceiver(), this)
             }
-        }catch (e:IllegalArgumentException){}
+        }catch (e:IllegalArgumentException){
+            Timber.e("Register Receiver: ${e.message}")
+        }
     }
     private fun unregisterReceiver(){
         try {
         requireActivity().unregisterReceiver(locationSwitchStateReceiver())
-        }catch (e:IllegalArgumentException){}
+        }catch (e:IllegalArgumentException){
+            Timber.e("Unregister Receiver: ${e.message}")
+        }
     }
     private fun locationSwitchStateReceiver()= object: BroadcastReceiver(){
             @RequiresApi(Build.VERSION_CODES.M)
