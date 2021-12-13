@@ -85,8 +85,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         if(!::location.isInitialized) {
             location = MapLocationPuck(activity, mapBoxMap?.locationComponent)
         }
-
-         mapBoxMap?.getStyle{ runBlocking { location.buildLocationPuck(it) }}
+        createLocationPuck()
     }
     private fun initializeMapSymbols(style: Style) {
 
@@ -125,10 +124,10 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private fun initializePlugins(style: Style){
         mapBoxView.apply {
 
-            if(!::trafficPlugin.isInitialized) {
+
                 trafficPlugin = TrafficPlugin(this, mapBoxMap!!, style)
                 onMapTrafficInitialized(trafficPlugin)
-            }
+
             if (!::building3DPlugin.isInitialized) {
                 building3DPlugin = BuildingPlugin(this, mapBoxMap!!, style)
                 building3DPlugin.setMinZoomLevel(15f)
@@ -144,8 +143,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     @SuppressLint("BinaryOperationInTimber")
     override fun getLastKnownLocation(): LatLng? {
             try {
-                mapBoxMap?.getStyle {
-                runBlocking {location.buildLocationPuck(it)} }
+                createLocationPuck()
                 return mapBoxMap?.locationComponent?.lastKnownLocation?.run {
                     LatLng(this.latitude, this.longitude)
                 }
@@ -156,20 +154,16 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         }
 
 
+    override fun updateMapStyle(style: String) {
 
-
-    override fun updateMapStyle(style:String){
-
-        mapBoxMap?.setStyle(style){
-            CoroutineScope(Dispatchers.Main).launch {
-                if(it.isFullyLoaded) {
-                    createMarkerImage(it)
-                    initializeMapSymbols(it)
-                    destinationLocation?.let {
-                        createRouteDirection()
-                        createMapMarker(it)
-                    }
-                    initializePlugins(it)
+        mapBoxMap?.setStyle(style) {style->
+            if (style.isFullyLoaded) {
+                createMarkerImage(style)
+                initializePlugins(style)
+                initializeMapSymbols(style)
+                destinationLocation?.let { location->
+                    createRouteDirection()
+                    createMapMarker(location)
                 }
             }
         }
