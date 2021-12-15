@@ -118,7 +118,7 @@
         <entry key="app/src/main/res/layout/bottom_sheet_tracking_state.xml" value="0.25" />
         <entry key="app/src/main/res/layout/choose_map_dialog.xml" value="0.2" />
         <entry key="app/src/main/res/layout/circular_progressbar.xml" value="1.0" />
-        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />

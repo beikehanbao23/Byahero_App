@@ -122,14 +122,29 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     private fun provideObservers(){
-        map.getPlaceName().observe(viewLifecycleOwner){
-            binding?.progressBar?.visibility = View.GONE
-            binding?.geocodePlaceName?.text = it
-        }
-        map.getPlaceText().observe(viewLifecycleOwner){
-            binding?.progressBar?.visibility = View.GONE
-            binding?.geocodePlaceText?.text = it
 
+        with(binding) {
+            map.getPlaceName().observe(viewLifecycleOwner) {
+                this?.progressBar?.visibility = View.GONE
+                if (it == null) {
+                    this?.geocodePlaceName?.visibility = View.GONE
+                    return@observe
+                }
+                this?.geocodePlaceName?.visibility = View.VISIBLE
+                this?.geocodePlaceName?.text = it
+
+            }
+
+
+            map.getPlaceText().observe(viewLifecycleOwner) {
+                this?.progressBar?.visibility = View.GONE
+                if (it == null) {
+                    this?.geocodePlaceText?.visibility = View.GONE
+                    return@observe
+                }
+                this?.geocodePlaceText?.visibility = View.VISIBLE
+                this?.geocodePlaceText?.text = it
+            }
         }
     }
 
@@ -401,24 +416,32 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun resetBottomSheetPlace(){
         lifecycleScope.launch {
             bottomNavigation.hide()
-            displayBottomSheetResults()
+            showBottomSheetResults()
             delay(50)
             bottomSheet.show()
         }
     }
-    private fun displayBottomSheetResults(){
-        with(binding){
-            if(!Connection.hasInternetConnection(requireContext())){
-                this?.progressBar?.visibility = View.GONE
-                this?.geocodePlaceText?.visibility = View.GONE
-                this?.geocodePlaceName?.visibility = View.GONE
-            }else{
-                this?.progressBar?.visibility = View.VISIBLE
-                this?.geocodePlaceName?.text = ""
-                this?.geocodePlaceText?.text = ""
-            }
-        }
+    private fun showBottomSheetResults(){
 
+            if(!Connection.hasInternetConnection(requireContext())){
+                hidePlace()
+                return
+            }
+            showPlace()
+    }
+    private fun showPlace(){
+        with(binding){
+            this?.progressBar?.visibility = View.VISIBLE
+            this?.geocodePlaceName?.text = ""
+            this?.geocodePlaceText?.text = ""
+        }
+    }
+    private fun hidePlace() {
+        with(binding) {
+            this?.progressBar?.visibility = View.GONE
+            this?.geocodePlaceText?.visibility = View.GONE
+            this?.geocodePlaceName?.visibility = View.GONE
+        }
     }
     private fun getGPSDialogSettingResult(requestCode: Int,resultCode: Int){
         when (requestCode) {
