@@ -26,8 +26,9 @@ import com.example.commutingapp.utils.others.Constants.DEFAULT_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_MAP_ZOOM
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
-import com.example.commutingapp.utils.others.Constants.REQUEST_CHECK_SETTING
 import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
+import com.example.commutingapp.utils.others.Constants.REQUEST_CONTINUE_NAVIGATION
+import com.example.commutingapp.utils.others.Constants.REQUEST_USER_LOCATION
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
 import com.example.commutingapp.utils.others.Constants.ULTRA_FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.FragmentToActivity
@@ -238,7 +239,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             if (requestPermissionGranted()) {
                 checkLocationSetting().addOnCompleteListener {task->
                     if(!Connection.hasGPSConnection(requireContext())) {
-                        askGPS(task)
+                        askGPS(task, REQUEST_USER_LOCATION)
                     }else{
                         displayUserLocation()
                     }
@@ -264,7 +265,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 locationFAB.hideLocationFloatingButton()
                 checkLocationSetting().addOnCompleteListener {task->
                 if(!Connection.hasGPSConnection(requireContext())) {
-                    askGPS(task)
+                    askGPS(task,REQUEST_CONTINUE_NAVIGATION)
+
                 }else{
                     map.createLocationPuck()
                     showNavigation()
@@ -273,12 +275,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
           }
        }
     }
-    private fun askGPS(task:Task<LocationSettingsResponse>){
+    private fun askGPS(task:Task<LocationSettingsResponse>,requestCode: Int){
 
         try {
             task.getResult(ApiException::class.java)
         } catch (e: ApiException) {
-            handleLocationResultException(e)
+            handleLocationResultException(e, requestCode)
         }
 
     }
@@ -392,23 +394,22 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 .build())
 
     }
-    private fun handleLocationResultException(e: ApiException) {
+    private fun handleLocationResultException(e: ApiException, requestCode: Int) {
         when (e.statusCode) {
             LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                 (e as ResolvableApiException).apply {
-                startIntentSenderForResult(this.resolution.intentSender, REQUEST_CHECK_SETTING, null, 0, 0, 0, null)
+                startIntentSenderForResult(this.resolution.intentSender, requestCode, null, 0, 0, 0, null)
                 } }
         }
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(resultCode == RESULT_OK){
-            getGPSDialogSettingResult(requestCode)
-            getLocationSearchResult(requestCode, data)
-        }
+        getGPSDialogSettingResult(requestCode, resultCode)
+        getLocationSearchResult(requestCode, resultCode, data)
+
 
     }
-    private fun getLocationSearchResult(requestCode: Int, data: Intent?){
-        if (requestCode == REQUEST_CODE_AUTOCOMPLETE ) {
+    private fun getLocationSearchResult(requestCode: Int,resultCode: Int, data: Intent?){
+        if (requestCode == REQUEST_CODE_AUTOCOMPLETE && resultCode == RESULT_OK) {
             map.getLocationSearchResult(data)
             resetBottomSheetPlace()
         }
@@ -445,9 +446,20 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             this?.geocodePlaceName?.visibility = View.GONE
         }
     }
-    private fun getGPSDialogSettingResult(requestCode: Int){
-        if(requestCode == REQUEST_CHECK_SETTING){
+    private fun getGPSDialogSettingResult(requestCode: Int,resultCode: Int){
+        when (requestCode) {
+            REQUEST_USER_LOCATION  -> continueRequestUserLocation(resultCode)
+            REQUEST_CONTINUE_NAVIGATION -> continueUserNavigation(resultCode)
+        }
+    }
+    private fun continueRequestUserLocation(resultCode: Int){
+        if(resultCode == RESULT_OK){
             displayUserLocation()
+        }
+    }
+    private fun continueUserNavigation(resultCode: Int){
+        if(resultCode == RESULT_OK){
+            showNavigation()
         }
     }
     override fun onMapLongClick(point: LatLng): Boolean {

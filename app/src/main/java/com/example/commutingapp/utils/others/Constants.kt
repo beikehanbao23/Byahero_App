@@ -32,11 +32,9 @@ object Constants {
     const val REGEX_NUMBER_VALUE="[0-9]"
     const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"
     @Suppress("Warnings")
-    const val REQUEST_CHECK_SETTING = 1001
-
-    const val STARTING_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 350
+    const val REQUEST_USER_LOCATION = 1001
+    const val REQUEST_CONTINUE_NAVIGATION = 1002
     const val TRACKING_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 300
-    const val INVISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 0
     const val TIMER_COUNTS: Long = 120000
     const val ONE_SECOND_TO_MILLIS: Long = 1000
     const val REFRESH_EMAIL_SYNCHRONOUSLY_INTERVAL:Long = 800
@@ -64,7 +62,6 @@ object Constants {
     const val KEY_DESTINATION_LONGITUDE = "destinationLng"
     const val KEY_LAST_LOCATION_LATITUDE = "lastLocationLat"
     const val KEY_LAST_LOCATION_LONGITUDE = "lastLocationLng"
-    const val NAVIGATION_ROUTE_LAYER_ID = "road-label"
     const val ROUTE_COLOR_ROAD_CLOSURE = "#5A5A5A"
     const val ROUTE_COLOR_ROAD_RESTRICTED = "#FF6A02"
     const val ROUTE_COLOR_HEAVY_CONGESTION = "#FF0E0E"
