@@ -351,7 +351,7 @@ public class SignIn extends AppCompatActivity {
 
     private void showNoInternetActivity() {
 
-        director.showNoInternetDialog();
+        director.buildNoInternetDialog();
     }
 
     private void showEmailSentActivity() {

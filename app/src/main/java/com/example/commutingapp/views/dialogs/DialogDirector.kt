@@ -14,7 +14,7 @@ import com.thecode.aestheticdialogs.*
 
 class DialogDirector(val activity: Activity) {
 
-    fun showNoInternetDialog(): CustomDialogBuilder {
+    fun buildNoInternetDialog(): CustomDialogBuilder {
         return CustomDialogBuilder(
             activity = activity,
             layout = R.layout.custom_dialog_no_internet,
@@ -34,7 +34,7 @@ class DialogDirector(val activity: Activity) {
         }
     }
 
-    fun showChooseMapTypeDialog():CustomDialogBuilder{
+    fun buildChooseMapTypeDialog():CustomDialogBuilder{
 
 
         return CustomDialogBuilder(
@@ -47,7 +47,7 @@ class DialogDirector(val activity: Activity) {
         }
     }
 
-    fun showFindRouteDialog():CustomDialogBuilder{
+    fun buildFindRouteDialog():CustomDialogBuilder{
         return CustomDialogBuilder(
             activity = activity,
             layout = R.layout.navigation_dialog_finding_route,

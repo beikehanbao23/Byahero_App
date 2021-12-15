@@ -66,7 +66,7 @@ public class Signup extends AppCompatActivity {
         viewModel.sendEmailOnFailed().observe(this, task-> dialogDirector.showErrorDialog("Error", getString(sendingEmailErrorMessage)));
     }
     private void observeInternet(){
-        viewModel.noInternetStatus().observe(this, task-> dialogDirector.showNoInternetDialog());
+        viewModel.noInternetStatus().observe(this, task-> dialogDirector.buildNoInternetDialog());
     }
     private void observeExceptionMessage(){
         viewModel.getExceptionMessage().observe(this,errorMessage->dialogDirector.showErrorDialog("Error", Objects.requireNonNull(errorMessage)));
@@ -108,7 +108,7 @@ public class Signup extends AppCompatActivity {
             return;
         }
         if (!Connection.INSTANCE.hasInternetConnection(this)) {
-            dialogDirector.showNoInternetDialog();
+            dialogDirector.buildNoInternetDialog();
             return;
         }
 

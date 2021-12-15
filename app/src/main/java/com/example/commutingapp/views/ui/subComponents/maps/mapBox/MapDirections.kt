@@ -30,7 +30,7 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
 
 
     private var mapLineLayers: MapLayer = MapLineLayers(style, ROUTE_SOURCE_ID, ROUTE_LAYER_ID)
-    private var findRouteDialog: CustomDialogBuilder = DialogDirector(activity).showFindRouteDialog()
+    private var findRouteDialog: CustomDialogBuilder = DialogDirector(activity).buildFindRouteDialog()
 
     suspend fun getRoute(listOfCoordinates: MutableList<Point>) {
     findRouteDialog.show()

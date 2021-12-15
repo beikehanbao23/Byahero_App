@@ -2,7 +2,6 @@ package com.example.commutingapp.views.ui.fragments
 
 
 import android.annotation.SuppressLint
-import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.*
 import android.location.LocationManager
@@ -204,7 +203,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     private fun provideMapTypeDialogListener() {
         binding?.floatingActionButtonChooseMap?.setOnClickListener {
-            dialogDirector.showChooseMapTypeDialog().apply {
+            dialogDirector.buildChooseMapTypeDialog().apply {
 
                 mapTypes.setMapSelectedIndicator(this)
                 provideMapDetailsButtonListenerOf(this, map3DBuilding, R.id.maps3dDetailsButton, ::show3DBuildingView)
@@ -294,6 +293,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideDirectionButtonListener(){
         binding?.directionsButton?.setOnClickListener {
             map.createDirections()
+            binding?.directionsButton?.visibility = View.GONE
         }
     }
     private fun provideSaveButtonListener() {
@@ -401,18 +401,20 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        getGPSDialogSettingResult(requestCode, resultCode)
-        getLocationSearchResult(requestCode, resultCode, data)
-
+        if(resultCode == RESULT_OK){
+            getGPSDialogSettingResult(requestCode)
+            getLocationSearchResult(requestCode, data)
+        }
 
     }
-    private fun getLocationSearchResult(requestCode: Int,resultCode: Int, data: Intent?){
-        if (requestCode == REQUEST_CODE_AUTOCOMPLETE && resultCode == RESULT_OK) {
+    private fun getLocationSearchResult(requestCode: Int, data: Intent?){
+        if (requestCode == REQUEST_CODE_AUTOCOMPLETE ) {
             map.getLocationSearchResult(data)
             resetBottomSheetPlace()
         }
 
     }
+
     private fun resetBottomSheetPlace(){
         lifecycleScope.launch {
             bottomNavigation.hide()
@@ -443,17 +445,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             this?.geocodePlaceName?.visibility = View.GONE
         }
     }
-    private fun getGPSDialogSettingResult(requestCode: Int,resultCode: Int){
-        when (requestCode) {
-            REQUEST_CHECK_SETTING ->
-                when (resultCode) {
-                    RESULT_OK -> {
-                        displayUserLocation()
-                    }
-                    RESULT_CANCELED->{
-
-                    }
-                }
+    private fun getGPSDialogSettingResult(requestCode: Int){
+        if(requestCode == REQUEST_CHECK_SETTING){
+            displayUserLocation()
         }
     }
     override fun onMapLongClick(point: LatLng): Boolean {
@@ -466,6 +460,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         map.deleteRouteAndMarkers()
         bottomSheet.hide()
         bottomNavigation.show()
+        binding?.directionsButton?.visibility = View.VISIBLE
         return true
     }
     private fun requestPermissionGranted(): Boolean {
