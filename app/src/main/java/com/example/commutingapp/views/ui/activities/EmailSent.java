@@ -99,6 +99,7 @@ public class EmailSent extends AppCompatActivity {
     private void showNoInternetActivity() {
         progressbarBinding.circularProgressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(() -> {
+
             dialogDirector.buildNoInternetDialog().setOnDismissListener(T->viewModel.refreshEmailSynchronously());
             progressbarBinding.circularProgressBar.setVisibility(View.INVISIBLE);
         }, DELAY_INTERVAL_FOR_NO_INTERNET_DIALOG);

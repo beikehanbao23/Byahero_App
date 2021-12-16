@@ -260,20 +260,30 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideStartButtonListener(){
         binding?.startButton?.setOnClickListener {
             if (requestPermissionGranted()) {
+                if(!Connection.hasInternetConnection(requireContext())){
+                    DialogDirector(requireActivity()).buildNoInternetDialog()
+                    bottomSheet.hide()
+                    return@setOnClickListener
+                }
                 bottomSheet.hide()
                 bottomNavigation.hide()
                 locationFAB.hideLocationFloatingButton()
-                checkLocationSetting().addOnCompleteListener {task->
-                if(!Connection.hasGPSConnection(requireContext())) {
-                    askGPS(task,REQUEST_CONTINUE_NAVIGATION)
 
-                }else{
-                    map.createLocationPuck()
-                    showNavigation()
-                }
+                checkLocationSetting().addOnCompleteListener {task->
+                    onStartButtonClickAskGPS(task)
              }
           }
        }
+    }
+
+    private fun onStartButtonClickAskGPS(task:Task<LocationSettingsResponse>){
+        if(!Connection.hasGPSConnection(requireContext())) {
+            askGPS(task,REQUEST_CONTINUE_NAVIGATION)
+
+        }else{
+            map.createLocationPuck()
+            showNavigation()
+        }
     }
     private fun askGPS(task:Task<LocationSettingsResponse>,requestCode: Int){
 
@@ -294,10 +304,17 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun provideDirectionButtonListener(){
         binding?.directionsButton?.setOnClickListener {
-            map.createDirections()
-            binding?.directionsButton?.visibility = View.GONE
+
+            if(!Connection.hasInternetConnection(requireContext())){
+                DialogDirector(requireActivity()).buildNoInternetDialog()
+                bottomSheet.hide()
+                return@setOnClickListener
+            }
+                map.createDirections()
+                binding?.directionsButton?.visibility = View.GONE
+            }
         }
-    }
+
     private fun provideSaveButtonListener() {
         binding?.saveButton?.setOnClickListener {
         }
