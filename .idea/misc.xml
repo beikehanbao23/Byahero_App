@@ -49,6 +49,7 @@
         <entry key="app/src/main/res/drawable/ic_baseline_remove.xml" value="0.57421875" />
         <entry key="app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.2552083333333333" />
+        <entry key="app/src/main/res/drawable/ic_baseline_settings_voice_24.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_baseline_share.xml" value="0.5734375" />
         <entry key="app/src/main/res/drawable/ic_baseline_traffic_24.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_bn_weather.xml" value="0.283984375" />
@@ -118,7 +119,7 @@
         <entry key="app/src/main/res/layout/bottom_sheet_tracking_state.xml" value="0.25" />
         <entry key="app/src/main/res/layout/choose_map_dialog.xml" value="0.2" />
         <entry key="app/src/main/res/layout/circular_progressbar.xml" value="1.0" />
-        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.33" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
@@ -158,7 +159,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.2" />
+        <option name="scale" value="0.5" />
       </ProjectState>
     </option>
   </component>
