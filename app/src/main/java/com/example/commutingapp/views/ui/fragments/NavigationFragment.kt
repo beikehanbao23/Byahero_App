@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
@@ -44,7 +45,9 @@ import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
+import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.locationcomponent.LocationComponentConstants
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.navigation.base.TimeFormat
 import com.mapbox.navigation.base.extensions.applyDefaultNavigationOptions
@@ -55,8 +58,11 @@ import com.mapbox.navigation.base.options.NavigationOptions
 import com.mapbox.navigation.base.route.RouterCallback
 import com.mapbox.navigation.base.route.RouterFailure
 import com.mapbox.navigation.base.route.RouterOrigin
+import com.mapbox.navigation.base.trip.model.RouteLegProgress
+import com.mapbox.navigation.base.trip.model.RouteProgress
 import com.mapbox.navigation.core.MapboxNavigation
 import com.mapbox.navigation.core.MapboxNavigationProvider
+import com.mapbox.navigation.core.arrival.ArrivalObserver
 import com.mapbox.navigation.core.directions.session.RoutesObserver
 import com.mapbox.navigation.core.formatter.MapboxDistanceFormatter
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult
@@ -221,7 +227,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         )
     }
 
-
     private val routesObserver = RoutesObserver { routeUpdateResult ->
         if (routeUpdateResult.routes.isNotEmpty()) {
 
@@ -257,7 +262,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         }
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentNavigationBinding.inflate(inflater, container, false)
         return binding?.root
@@ -287,6 +291,21 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
 
 
+    private val arrivalObserver = object : ArrivalObserver {
+
+        override fun onWaypointArrival(routeProgress: RouteProgress) {
+            Timber.e("ON WAY POINT ARRIVAL")
+        }
+
+        override fun onNextRouteLegStart(routeLegProgress: RouteLegProgress) {
+            Timber.e("ON NEXT ROUTE LEG START")
+        }
+
+        override fun onFinalDestinationArrival(routeProgress: RouteProgress) {
+            Timber.e("FINAL DESTINATION ARRIVED")
+        }
+      }
+
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -296,9 +315,16 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxMap.setBounds(cameraBoundsOptionsBuilder())
         trackingBottomSheet = Component(TrackingBottomSheet(view)).apply {show() }
         binding?.mapView?.location?.apply {
+            this.locationPuck = LocationPuck2D(
+                bearingImage = ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.mapbox_navigation_puck_icon
+                )
+            )
             setLocationProvider(navigationLocationProvider)
             enabled = true
         }
+
 
         mapboxNavigation = if (MapboxNavigationProvider.isCreated()) {
             MapboxNavigationProvider.retrieve()
@@ -343,11 +369,13 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
         val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(requireContext())
             .displayRestrictedRoadSections(true)
+            .withRouteLineBelowLayerId(LocationComponentConstants.LOCATION_INDICATOR_LAYER)
             .withRouteLineResources(routeLineResources)
             .build()
 
         routeLineApi = MapboxRouteLineApi(mapboxRouteLineOptions)
         routeLineView = MapboxRouteLineView(mapboxRouteLineOptions)
+
         val routeArrowOptions = RouteArrowOptions.Builder(requireContext()).build()
         routeArrowView = MapboxRouteArrowView(routeArrowOptions)
 
@@ -355,7 +383,10 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         setSwitchState()
         mapboxMap.loadStyleUri(currentMapStyle()?:Style.TRAFFIC_NIGHT) {
             createRoute()
+
         }
+
+
 
         providerClickListener()
         mapboxNavigation.startTripSession()
@@ -520,7 +551,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     override fun onStart() {
         super.onStart()
 
-
+        mapboxNavigation.registerArrivalObserver(arrivalObserver)
         mapboxNavigation.registerRoutesObserver(routesObserver)
         mapboxNavigation.registerRouteProgressObserver(routeProgressObserver)
         mapboxNavigation.registerLocationObserver(locationObserver)
@@ -530,7 +561,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     override fun onStop() {
         super.onStop()
-
+        mapboxNavigation.unregisterArrivalObserver(arrivalObserver)
         mapboxNavigation.unregisterRoutesObserver(routesObserver)
         mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
         mapboxNavigation.unregisterLocationObserver(locationObserver)
