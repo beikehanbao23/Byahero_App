@@ -172,15 +172,8 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
     override fun setVoiceSearchResult(place: String) {
-/*
-        runBlocking{ startGeocode(null,place) }
-        destinationLocation?.let {
-            hasExistingMapMarker = true
-            showUserLocation(it)
 
-        }
-
- */
+        runBlocking{ displayUserLocation(null,place) }
     }
 
     @SuppressLint("BinaryOperationInTimber")
@@ -191,11 +184,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                     CoroutineScope(Dispatchers.Main).launch {
                     if(it.isFullyLoaded){
                         search.getLocationSearchResult(data).also { location ->
-                            startGeocode(Point.fromLngLat(location.longitude,location.latitude),null)
-                            destinationLocation = location
-                            hasExistingMapMarker = true
-                            showUserLocation(location)
-
+                            displayUserLocation(Point.fromLngLat(location.longitude,location.latitude),null)
                         }
                     }
                    }
@@ -251,7 +240,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
 
-    private suspend fun startGeocode(point: Point?, place: String?) {
+    private suspend fun displayUserLocation(point: Point?, place: String?) {
         withContext(Dispatchers.Default) {
             try {
                 buildGeocoding(point, place).enqueueCall(object : Callback<GeocodingResponse> {
@@ -259,8 +248,10 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                         response.body()?.let {
                             val results = it.features()
                             if (results.size > 0) {
-                                geocodeText.value = results[0].text()
-                                geocodePlaceName.value = results[0].placeName()?.replace("${geocodeText.value}, ", "")
+                                val data = results[0]
+                                geocodeText.value = data.text()
+                                geocodePlaceName.value = data.placeName()?.replace("${geocodeText.value}, ", "")
+                                moveToUserLocation(LatLng(data.center()!!.latitude(),data.center()!!.longitude()))
                             } else {
                                 geocodeText.value = null
                                 geocodePlaceName.value = null
@@ -277,23 +268,22 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             }
         }
     }
+
+    private fun moveToUserLocation(location: LatLng){
+        destinationLocation = location
+        hasExistingMapMarker = true
+        showUserLocation(location)
+    }
     override fun getPlaceText(): LiveData<String?> = geocodeText
     override fun getPlaceName():LiveData<String?> = geocodePlaceName
 
     override fun pointMapMarker(location: LatLng) {
         CoroutineScope(Dispatchers.Main).launch {
-            startGeocode(Point.fromLngLat(location.longitude, location.latitude),null)
+            displayUserLocation(Point.fromLngLat(location.longitude, location.latitude),null)
             launch {
                 deleteRouteAndMarkers()
             }.also {
                 it.join()
-            }.run {
-                delay(50)
-                if(isCompleted){
-                    destinationLocation = location
-                    hasExistingMapMarker = true
-                    showUserLocation(location)
-                }
             }
 
         }
