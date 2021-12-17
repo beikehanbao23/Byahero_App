@@ -4,13 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import com.example.commutingapp.R
-import com.example.commutingapp.utils.others.Constants
-import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.MapLayer
-import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.MapSymbolLayers
 import com.google.gson.JsonObject
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
-import com.mapbox.geojson.Feature
-import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.Style
@@ -21,34 +16,31 @@ import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 class MapSearch(private val activity:Activity,style: Style?) {
     private lateinit var home: CarmenFeature
     private lateinit var work: CarmenFeature
-    private lateinit var resultDestination :CarmenFeature
-    private var mapSymbol: MapLayer = MapSymbolLayers(style,Constants.ON_SEARCH_SOURCE_ID,Constants.ON_SEARCH_LAYER_ID)
+
+
 
     init {
         initializeUserLocations()
     }
-    //TODO ADD VOICE SEARCH(USE GEOCODING - TEXT TO COORDINATES)
-     fun getLocationSearchResult(data: Intent?): LatLng {
-            this.resultDestination = PlaceAutocomplete.getPlace(data)
-            createMarker()
-            return LatLng((resultDestination.geometry() as Point).latitude(), (resultDestination.geometry() as Point).longitude())
-    }
-
-    private fun createMarker() {
-            val feature = FeatureCollection.fromFeatures(arrayOf( Feature.fromJson(resultDestination.toJson())))
-            mapSymbol.create(feature)
+    fun getLocationSearchResult(data: Intent?): LatLng {
+         val resultDestination = PlaceAutocomplete.getPlace(data)
+        return LatLng(
+            (resultDestination.geometry() as Point).latitude(),
+            (resultDestination.geometry() as Point).longitude()
+        )
     }
 
 
 
     fun getLocationSearchIntent(): Intent {
         return PlaceAutocomplete.IntentBuilder()
+
             .accessToken(activity.getString(R.string.MapsToken))
             .placeOptions(buildPlaceOptions())
             .build(activity)
     }
     private fun buildPlaceOptions() =  PlaceOptions.builder()
-        .backgroundColor(Color.parseColor("#EEEEEE"))
+        .backgroundColor(Color.parseColor("#EEEEEE"))//todo
         .limit(10)
         .addInjectedFeature(home)
         .addInjectedFeature(work)
@@ -69,7 +61,5 @@ class MapSearch(private val activity:Activity,style: Style?) {
             .properties(JsonObject())
             .build()
     }
-    fun clear(){
-        mapSymbol.clear()
-    }
+
 }
