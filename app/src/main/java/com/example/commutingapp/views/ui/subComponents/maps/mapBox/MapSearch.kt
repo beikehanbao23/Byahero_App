@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import com.example.commutingapp.R
+import com.example.commutingapp.utils.others.Constants.SEARCH_DIALOG_LAYOUT_COLOR
 import com.google.gson.JsonObject
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.geojson.Point
@@ -40,7 +41,7 @@ class MapSearch(private val activity:Activity,style: Style?) {
             .build(activity)
     }
     private fun buildPlaceOptions() =  PlaceOptions.builder()
-        .backgroundColor(Color.parseColor("#EEEEEE"))//todo
+        .backgroundColor(Color.parseColor(SEARCH_DIALOG_LAYOUT_COLOR))
         .limit(10)
         .addInjectedFeature(home)
         .addInjectedFeature(work)

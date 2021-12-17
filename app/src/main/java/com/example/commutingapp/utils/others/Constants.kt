@@ -71,5 +71,6 @@ object Constants {
     const val ROUTE_COLOR_SEVERE_CONGESTION = "#FCBD8C"
     const val ROUTE_COLOR_MODERATE_CONGESTION = "#FCF08C"
     const val ROUTE_COLOR_LOW_CONGESTION = "#9AFF54"
+    const val SEARCH_DIALOG_LAYOUT_COLOR = "#EEEEEE"
 
 }
