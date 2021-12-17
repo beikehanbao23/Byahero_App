@@ -7,6 +7,7 @@ import android.content.*
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.speech.RecognizerIntent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,9 +27,10 @@ import com.example.commutingapp.utils.others.Constants.DEFAULT_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_MAP_ZOOM
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
-import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUTOCOMPLETE
 import com.example.commutingapp.utils.others.Constants.REQUEST_CONTINUE_NAVIGATION
+import com.example.commutingapp.utils.others.Constants.REQUEST_SEARCH_RESULT
 import com.example.commutingapp.utils.others.Constants.REQUEST_USER_LOCATION
+import com.example.commutingapp.utils.others.Constants.REQUEST_VOICE_COMMAND
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
 import com.example.commutingapp.utils.others.Constants.ULTRA_FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.FragmentToActivity
@@ -120,6 +122,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         } catch (e: ClassCastException) { }
     }
 
+    private fun openVoiceSearchCommand(){
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        startActivityForResult(intent,REQUEST_VOICE_COMMAND)
+    }
 
     private fun provideObservers(){
 
@@ -178,7 +185,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 moveCameraToLastKnownLocation()
             }
             override fun onSearchCompleted(intent: Intent) {
-            startActivityForResult(intent,REQUEST_CODE_AUTOCOMPLETE)
+            startActivityForResult(intent,REQUEST_SEARCH_RESULT)
             }
         }
 
@@ -200,7 +207,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         provideDirectionButtonListener()
         provideSaveButtonListener()
         provideShareButtonListener()
-
+        provideVoiceSpeechButtonListener()
     }
     private fun provideMapTypeDialogListener() {
         binding?.floatingActionButtonChooseMap?.setOnClickListener {
@@ -317,11 +324,18 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun provideSaveButtonListener() {
         binding?.saveButton?.setOnClickListener {
+
         }
     }
     private fun provideShareButtonListener(){
         binding?.shareButton?.setOnClickListener {
 
+        }
+
+    }
+    private fun provideVoiceSpeechButtonListener(){
+        binding?.voiceSpeechButton?.setOnClickListener {
+            openVoiceSearchCommand()
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -420,28 +434,19 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        getGPSDialogSettingResult(requestCode, resultCode)
-        getLocationSearchResult(requestCode, resultCode, data)
-
-
+        getOnActivityResult(requestCode, resultCode, data)
     }
-    private fun getLocationSearchResult(requestCode: Int,resultCode: Int, data: Intent?){
-        if (requestCode == REQUEST_CODE_AUTOCOMPLETE && resultCode == RESULT_OK) {
-            map.getLocationSearchResult(data)
-            resetBottomSheetPlace()
-        }
 
-    }
 
     private fun resetBottomSheetPlace(){
         lifecycleScope.launch {
             bottomNavigation.hide()
-            showBottomSheetResults()
+            showPlaceResult()
             delay(50)
             bottomSheet.show()
         }
     }
-    private fun showBottomSheetResults(){
+    private fun showPlaceResult(){
 
             if(!Connection.hasInternetConnection(requireContext())){
                 hidePlace()
@@ -463,12 +468,33 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             this?.geocodePlaceName?.visibility = View.GONE
         }
     }
-    private fun getGPSDialogSettingResult(requestCode: Int,resultCode: Int){
+    private fun getOnActivityResult(requestCode: Int, resultCode: Int, data:Intent?){
         when (requestCode) {
             REQUEST_USER_LOCATION  -> continueRequestUserLocation(resultCode)
             REQUEST_CONTINUE_NAVIGATION -> continueUserNavigation(resultCode)
+            REQUEST_SEARCH_RESULT -> showSearchLocationResult(resultCode,data)
+            REQUEST_VOICE_COMMAND -> showVoiceCommandSearchResult(resultCode, data)
         }
     }
+
+
+    private fun showVoiceCommandSearchResult(resultCode: Int, data: Intent?){
+        if(resultCode == RESULT_OK){
+            data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.run {
+               val voice = get(0)
+               map.setVoiceSearchResult(voice)
+               resetBottomSheetPlace()
+            }
+        }
+    }
+
+    private fun showSearchLocationResult(resultCode: Int, data: Intent?){
+        if (resultCode == RESULT_OK) {
+            map.getLocationSearchResult(data)
+            resetBottomSheetPlace()
+        }
+    }
+
     private fun continueRequestUserLocation(resultCode: Int){
         if(resultCode == RESULT_OK){
             displayUserLocation()
