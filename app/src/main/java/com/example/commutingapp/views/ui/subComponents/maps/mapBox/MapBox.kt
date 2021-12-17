@@ -29,6 +29,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
+import kotlin.reflect.KFunction1
 
 abstract class MapBox(private val view: View,private val activity: Activity):
     IMap<MapView> {
@@ -43,11 +44,9 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private lateinit var location: MapLocationPuck
     private lateinit var directions: MapDirections
     private var mapTypes:MapTypes = MapTypes(activity)
-
     private var destinationLocation:LatLng? = null
     private var hasExistingMapMarker = false
     private var hasExistingMapRoute = false
-
     private var geocodePlaceName = MutableLiveData<String?>()
     private var geocodeText = MutableLiveData<String?>()
     private lateinit var trafficPlugin: TrafficPlugin
@@ -56,9 +55,9 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     override fun deleteRouteAndMarkers(){
         if(hasExistingMapMarker) {
-                refreshStyles()
-                hasExistingMapMarker = false
-                hasExistingMapRoute = false
+            refreshStyles()
+            hasExistingMapMarker = false
+            hasExistingMapRoute = false
 
         }
     }
@@ -78,7 +77,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                 initializeSearchFABLocation()
                 initializeMapComponents()
             }
-    }
+        }
     }
     private fun initializeMapComponents(){
         if(!::camera.isInitialized){
@@ -91,21 +90,21 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
     private fun initializeMapSymbols(style: Style) {
 
-            marker = MapMarker(style)
-            search = MapSearch(activity, style)
-            directions = MapDirections(style, activity)
-        }
+        marker = MapMarker(style)
+        search = MapSearch(activity, style)
+        directions = MapDirections(style, activity)
+    }
 
     private fun initializeMap() {
 
-            with(mapBoxMap!!) {
-                uiSettings.isAttributionEnabled = false
-                uiSettings.isLogoEnabled = false
-                uiSettings.setCompassMargins(0, 480, 50, 0)
-                setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
-                setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
-                onMapReady(this)
-            }
+        with(mapBoxMap!!) {
+            uiSettings.isAttributionEnabled = false
+            uiSettings.isLogoEnabled = false
+            uiSettings.setCompassMargins(0, 480, 50, 0)
+            setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
+            setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
+            onMapReady(this)
+        }
 
     }
     abstract fun onMapTrafficInitialized(trafficPlugin: TrafficPlugin)
@@ -126,8 +125,8 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private fun initializePlugins(style: Style){
         mapBoxView.apply {
 
-                trafficPlugin = TrafficPlugin(this, mapBoxMap!!, style)
-                onMapTrafficInitialized(trafficPlugin)
+            trafficPlugin = TrafficPlugin(this, mapBoxMap!!, style)
+            onMapTrafficInitialized(trafficPlugin)
 
             if (!::building3DPlugin.isInitialized) {
                 building3DPlugin = BuildingPlugin(this, mapBoxMap!!, style)
@@ -144,16 +143,16 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     @SuppressLint("BinaryOperationInTimber")
     override fun getLastKnownLocation(): LatLng? {
-            try {
-                createLocationPuck()
-                return mapBoxMap?.locationComponent?.lastKnownLocation?.run {
-                    LatLng(this.latitude, this.longitude)
-                }
-            } catch (e: Exception) {
-                Timber.e("Getting last location failed " + e.message.toString())
+        try {
+            createLocationPuck()
+            return mapBoxMap?.locationComponent?.lastKnownLocation?.run {
+                LatLng(this.latitude, this.longitude)
             }
-            return null
+        } catch (e: Exception) {
+            Timber.e("Getting last location failed " + e.message.toString())
         }
+        return null
+    }
 
 
     override fun updateMapStyle(style: String) {
@@ -172,26 +171,31 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
     override fun setVoiceSearchResult(place: String) {
+        hasExistingMapMarker = true
+        runBlocking{ startGeocode(null,place,::showUserLocation) }
 
-        runBlocking{ displayUserLocation(null,place) }
     }
 
     @SuppressLint("BinaryOperationInTimber")
     override fun getLocationSearchResult(data: Intent?) {
         deleteRouteAndMarkers()
-            try {
-                mapBoxMap?.getStyle {
-                    CoroutineScope(Dispatchers.Main).launch {
+        try {
+            mapBoxMap?.getStyle {
+                CoroutineScope(Dispatchers.Main).launch {
                     if(it.isFullyLoaded){
                         search.getLocationSearchResult(data).also { location ->
-                            displayUserLocation(Point.fromLngLat(location.longitude,location.latitude),null)
+                            startGeocode(Point.fromLngLat(location.longitude,location.latitude),null,null)
+                            destinationLocation = location
+                            hasExistingMapMarker = true
+                            showUserLocation(location)
+
                         }
                     }
-                   }
                 }
-            } catch (e: IllegalStateException) {
-                Timber.e("Style loading error "+ e.message.toString())
             }
+        } catch (e: IllegalStateException) {
+            Timber.e("Style loading error "+ e.message.toString())
+        }
 
     }
 
@@ -199,48 +203,48 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     @SuppressLint("BinaryOperationInTimber")
     override fun createLocationPuck() {
-            try {
-                mapBoxMap?.getStyle {
-                    runBlocking { location.buildLocationPuck(it) }
-                }
-            } catch (e: IllegalArgumentException) {
-                Timber.e("Location puck failed! "+ e.message.toString())
+        try {
+            mapBoxMap?.getStyle {
+                runBlocking { location.buildLocationPuck(it) }
             }
+        } catch (e: IllegalArgumentException) {
+            Timber.e("Location puck failed! "+ e.message.toString())
         }
+    }
 
 
 
     private fun initializeSearchFABLocation(){
-            searchLocationButton.setOnClickListener {
-                onSearchCompleted(search.getLocationSearchIntent())
+        searchLocationButton.setOnClickListener {
+            onSearchCompleted(search.getLocationSearchIntent())
         }
 
     }
     abstract fun onSearchCompleted(intent:Intent)
 
     override fun createDirections() {
-            hasExistingMapRoute = true
-            destinationLocation?.let(::createRouteDirection)
+        hasExistingMapRoute = true
+        destinationLocation?.let(::createRouteDirection)
     }
     private fun createRouteDirection(latLngDestinationLocation:LatLng){
 
-         mapBoxMap?.getStyle {
-             CoroutineScope(Dispatchers.Main).launch {
-                 if (hasExistingMapRoute && it.isFullyLoaded) {
-                     getLastKnownLocation()?.let { latLngLastLocation ->
-                             mutableListOf<Point>().apply {
-                                 this.add(Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude))
-                                 this.add(Point.fromLngLat(latLngDestinationLocation.longitude,latLngDestinationLocation.latitude))
-                                 directions.getRoute(this)
-                         }
-                     }
-                 }
-             }
-         }
+        mapBoxMap?.getStyle {
+            CoroutineScope(Dispatchers.Main).launch {
+                if (hasExistingMapRoute && it.isFullyLoaded) {
+                    getLastKnownLocation()?.let { latLngLastLocation ->
+                        mutableListOf<Point>().apply {
+                            this.add(Point.fromLngLat(latLngLastLocation.longitude, latLngLastLocation.latitude))
+                            this.add(Point.fromLngLat(latLngDestinationLocation.longitude,latLngDestinationLocation.latitude))
+                            directions.getRoute(this)
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
-    private suspend fun displayUserLocation(point: Point?, place: String?) {
+    private suspend fun startGeocode(point: Point?, place: String?, test: KFunction1<LatLng, Unit>?) {
         withContext(Dispatchers.Default) {
             try {
                 buildGeocoding(point, place).enqueueCall(object : Callback<GeocodingResponse> {
@@ -251,7 +255,10 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                                 val data = results[0]
                                 geocodeText.value = data.text()
                                 geocodePlaceName.value = data.placeName()?.replace("${geocodeText.value}, ", "")
-                                moveToUserLocation(LatLng(data.center()!!.latitude(),data.center()!!.longitude()))
+                                if (test != null && place != null) {
+                                    destinationLocation = LatLng(data.center()!!.latitude() , data.center()!!.longitude())
+                                    test(destinationLocation!!)
+                                }
                             } else {
                                 geocodeText.value = null
                                 geocodePlaceName.value = null
@@ -268,22 +275,23 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             }
         }
     }
-
-    private fun moveToUserLocation(location: LatLng){
-        destinationLocation = location
-        hasExistingMapMarker = true
-        showUserLocation(location)
-    }
     override fun getPlaceText(): LiveData<String?> = geocodeText
     override fun getPlaceName():LiveData<String?> = geocodePlaceName
 
     override fun pointMapMarker(location: LatLng) {
         CoroutineScope(Dispatchers.Main).launch {
-            displayUserLocation(Point.fromLngLat(location.longitude, location.latitude),null)
+            startGeocode(Point.fromLngLat(location.longitude, location.latitude),null,null)
             launch {
                 deleteRouteAndMarkers()
             }.also {
                 it.join()
+            }.run {
+                delay(50)
+                if(isCompleted){
+                    destinationLocation = location
+                    hasExistingMapMarker = true
+                    showUserLocation(location)
+                }
             }
 
         }
@@ -302,18 +310,18 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     private fun showUserLocation(location: LatLng){
 
-            mapBoxMap?.getStyle {
-                    if (hasExistingMapMarker && it.isFullyLoaded) {
-                        mapBoxMap?.cameraPosition?.also { zoomLevel ->
-                            camera.move(location, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION) }
-                        marker.setLocation(location)
-                        marker.create()
-                    }
-                }
+        mapBoxMap?.getStyle {
+            if (hasExistingMapMarker && it.isFullyLoaded) {
+                mapBoxMap?.cameraPosition?.also { zoomLevel ->
+                    camera.move(location, zoomLevel.zoom, FAST_CAMERA_ANIMATION_DURATION) }
+                marker.setLocation(location)
+                marker.create()
             }
+        }
+    }
 
     override fun moveCameraToUser(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int) {
-            camera.move(latLng, zoomLevel, cameraAnimationDuration)
+        camera.move(latLng, zoomLevel, cameraAnimationDuration)
     }
 
     override fun clearCache() {
