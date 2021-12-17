@@ -34,6 +34,9 @@ object Constants {
     @Suppress("Warnings")
     const val REQUEST_USER_LOCATION = 1001
     const val REQUEST_CONTINUE_NAVIGATION = 1002
+    const val REQUEST_VOICE_COMMAND = 1003
+    const val REQUEST_SEARCH_RESULT = 1004
+
     const val TRACKING_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 300
     const val TIMER_COUNTS: Long = 120000
     const val ONE_SECOND_TO_MILLIS: Long = 1000
@@ -51,7 +54,7 @@ object Constants {
     const val KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE = "StateOfSatelliteSwitchButton"
     const val KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE = "StateOfTrafficSwitchButton"
     const val KEY_NAME_NAVIGATION_MAP_STYLE = "MapStyleNavigation"
-    const val REQUEST_CODE_AUTOCOMPLETE = 1
+
     const val ON_SEARCH_SOURCE_ID = "geojsonSourceLayerId"
     const val ON_MAP_CLICK_SOURCE_ID = "icon-sourceID";
     const val ON_MAP_CLICK_LAYER_ID = "icon-layerID";

@@ -172,7 +172,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     override fun setVoiceSearchResult(place: String) {
         hasExistingMapMarker = true
-        runBlocking{ startGeocode(null,place,::showUserLocation) }
+        runBlocking{ startGeocoding(null,place,::showUserLocation) }
 
     }
 
@@ -184,7 +184,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
                 CoroutineScope(Dispatchers.Main).launch {
                     if(it.isFullyLoaded){
                         search.getLocationSearchResult(data).also { location ->
-                            startGeocode(Point.fromLngLat(location.longitude,location.latitude),null,null)
+                            startGeocoding(Point.fromLngLat(location.longitude,location.latitude),null,null)
                             destinationLocation = location
                             hasExistingMapMarker = true
                             showUserLocation(location)
@@ -244,26 +244,12 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
 
-    private suspend fun startGeocode(point: Point?, place: String?, test: KFunction1<LatLng, Unit>?) {
+    private suspend fun startGeocoding(point: Point?, place: String?, showUserLocationUsingSearch: KFunction1<LatLng, Unit>?) {
         withContext(Dispatchers.Default) {
             try {
                 buildGeocoding(point, place).enqueueCall(object : Callback<GeocodingResponse> {
                     override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
-                        response.body()?.let {
-                            val results = it.features()
-                            if (results.size > 0) {
-                                val data = results[0]
-                                geocodeText.value = data.text()
-                                geocodePlaceName.value = data.placeName()?.replace("${geocodeText.value}, ", "")
-                                if (test != null && place != null) {
-                                    destinationLocation = LatLng(data.center()!!.latitude() , data.center()!!.longitude())
-                                    test(destinationLocation!!)
-                                }
-                            } else {
-                                geocodeText.value = null
-                                geocodePlaceName.value = null
-                            }
-                        }
+                        setGeocodingResponse(response, place, showUserLocationUsingSearch)
                     }
 
                     override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
@@ -275,12 +261,29 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             }
         }
     }
+    private fun setGeocodingResponse(response: Response<GeocodingResponse>, place:String?, showUserLocationUsingSearch: KFunction1<LatLng, Unit>?){
+        response.body()?.let {
+            val results = it.features()
+            if (results.size > 0) {
+                val data = results[0]
+                geocodeText.value = data.text()
+                geocodePlaceName.value = data.placeName()?.replace("${geocodeText.value}, ", "")
+                if (showUserLocationUsingSearch != null && place != null) {
+                    destinationLocation = LatLng(data.center()!!.latitude() , data.center()!!.longitude())
+                    showUserLocationUsingSearch(destinationLocation!!)
+                }
+            } else {
+                geocodeText.value = null
+                geocodePlaceName.value = null
+            }
+        }
+    }
     override fun getPlaceText(): LiveData<String?> = geocodeText
     override fun getPlaceName():LiveData<String?> = geocodePlaceName
 
     override fun pointMapMarker(location: LatLng) {
         CoroutineScope(Dispatchers.Main).launch {
-            startGeocode(Point.fromLngLat(location.longitude, location.latitude),null,null)
+            startGeocoding(Point.fromLngLat(location.longitude, location.latitude),null,null)
             launch {
                 deleteRouteAndMarkers()
             }.also {
