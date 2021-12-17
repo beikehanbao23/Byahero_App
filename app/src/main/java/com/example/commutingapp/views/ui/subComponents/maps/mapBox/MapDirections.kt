@@ -3,23 +3,28 @@ package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.graphics.Color
 import com.example.commutingapp.R
+import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.ROUTE_LAYER_ID
 import com.example.commutingapp.utils.others.Constants.ROUTE_SOURCE_ID
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
-import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.MapLayer
-import com.example.commutingapp.views.ui.subComponents.maps.mapBox.layers.MapLineLayers
 import com.mapbox.api.directions.v5.DirectionsCriteria
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.optimization.v1.MapboxOptimization
 import com.mapbox.api.optimization.v1.models.OptimizationResponse
 import com.mapbox.core.constants.Constants.PRECISION_6
+import com.mapbox.geojson.Geometry
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.style.layers.LineLayer
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.rejowan.cutetoast.CuteToast
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
@@ -29,7 +34,7 @@ import timber.log.Timber
 class MapDirections(private val style: Style?, private val activity: Activity) {
 
 
-    private var mapLineLayers: MapLayer = MapLineLayers(style, ROUTE_SOURCE_ID, ROUTE_LAYER_ID)
+
     private var findRouteDialog: CustomDialogBuilder = DialogDirector(activity).buildFindRouteDialog()
 
     suspend fun getRoute(listOfCoordinates: MutableList<Point>) {
@@ -68,6 +73,31 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
     }
 
 
+    init {
+        style?.apply {
+            runBlocking {
+                addSource(GeoJsonSource(ROUTE_SOURCE_ID))
+                addLayerBelow(
+                    LineLayer(ROUTE_LAYER_ID, ROUTE_SOURCE_ID).withProperties(
+                        PropertyFactory.lineColor(Color.parseColor(Constants.ROUTE_COLOR)),
+                        PropertyFactory.lineWidth(Constants.ROUTE_WIDTH)
+                    ), Constants.ON_MAP_CLICK_LAYER_ID
+                )
+            }
+        }
+    }
+
+
+    fun clear() {
+        style?.apply {
+            removeLayer(ROUTE_LAYER_ID)
+            removeSource(ROUTE_SOURCE_ID)
+
+        }
+    }
+
+
+
     private fun getClient(listOfCoordinates: MutableList<Point>) =
         MapboxOptimization.builder()
             .source(DirectionsCriteria.SOURCE_FIRST)
@@ -79,17 +109,20 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
             .build()
 
 
+    private fun createRoute(geometry: Geometry) {
+        val source:GeoJsonSource? = style?.getSourceAs(ROUTE_SOURCE_ID)
+        source?.let { it.setGeoJson(geometry) }
+    }
+
     private fun drawNavigationRoute(route: DirectionsRoute) {
 
         style?.let {
             route.geometry()?.let {
-                mapLineLayers.create(LineString.fromPolyline(it, PRECISION_6))
+                createRoute(LineString.fromPolyline(it, PRECISION_6))
             }
         }
     }
 
-    fun clear(){
-        mapLineLayers.clear()
-    }
+
 }
 
