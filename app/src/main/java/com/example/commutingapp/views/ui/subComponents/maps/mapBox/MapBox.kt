@@ -82,6 +82,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private fun initializeMapComponents(){
         if(!::camera.isInitialized){
             camera = MapCamera(mapBoxMap)
+            
         }
         if(!::location.isInitialized) {
             location = MapLocationPuck(activity, mapBoxMap?.locationComponent)
@@ -177,7 +178,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
     @SuppressLint("BinaryOperationInTimber")
-    override fun getLocationSearchResult(data: Intent?) {
+    override fun locationSearchResult(data: Intent?) {
         deleteRouteAndMarkers()
         try {
             mapBoxMap?.getStyle {
@@ -249,7 +250,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             try {
                 buildGeocoding(point, place).enqueueCall(object : Callback<GeocodingResponse> {
                     override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
-                        setGeocodingResponse(response, place, showUserLocationUsingSearch)
+                        geocodingResponse(response, place, showUserLocationUsingSearch)
                     }
 
                     override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
@@ -261,7 +262,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             }
         }
     }
-    private fun setGeocodingResponse(response: Response<GeocodingResponse>, place:String?, showUserLocationUsingSearch: KFunction1<LatLng, Unit>?){
+    private fun geocodingResponse(response: Response<GeocodingResponse>, place:String?, showUserLocationUsingSearch: KFunction1<LatLng, Unit>?){
         response.body()?.let {
             val results = it.features()
             if (results.size > 0) {
@@ -281,9 +282,9 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     override fun getPlaceText(): LiveData<String?> = geocodeText
     override fun getPlaceName():LiveData<String?> = geocodePlaceName
 
-    override fun pointMapMarker(location: LatLng) {
+    override fun pointMapMarker(latLng: LatLng) {
         CoroutineScope(Dispatchers.Main).launch {
-            startGeocoding(Point.fromLngLat(location.longitude, location.latitude),null,null)
+            startGeocoding(Point.fromLngLat(latLng.longitude, latLng.latitude),null,null)
             launch {
                 deleteRouteAndMarkers()
             }.also {
@@ -291,9 +292,9 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             }.run {
                 delay(50)
                 if(isCompleted){
-                    destinationLocation = location
+                    destinationLocation = latLng
                     hasExistingMapMarker = true
-                    showUserLocation(location)
+                    showUserLocation(latLng)
                 }
             }
 

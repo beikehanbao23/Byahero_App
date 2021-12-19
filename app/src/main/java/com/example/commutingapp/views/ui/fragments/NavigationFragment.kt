@@ -6,11 +6,13 @@ import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.Color
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.commutingapp.BuildConfig
@@ -88,6 +90,10 @@ import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi
 import com.mapbox.navigation.ui.tripprogress.model.*
 import com.rejowan.cutetoast.CuteToast
 import timber.log.Timber
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit
+import java.util.*
+import java.util.Calendar.*
 
 class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
@@ -109,8 +115,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private var userDestination:Point? = null
     private var userLastLocation:Point? = null
     private lateinit var findRouteDialog: CustomDialogBuilder
-
-
+    private lateinit var timeStarted: LocalTime
+    private lateinit var timeFinished: LocalTime
+    private var calendar:Calendar = Calendar.getInstance()
     private val overviewPadding: EdgeInsets by lazy {
         EdgeInsets(
             140.0 * pixelDensity,
@@ -155,6 +162,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 keyPoints = locationMatcherResult.keyPoints,
             )
 
+            Timber.e("Time is:  ${enhancedLocation.time}")
+
 
             viewportDataSource.onLocationChanged(enhancedLocation)
             viewportDataSource.evaluate()
@@ -195,7 +204,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
 
     private val routeProgressObserver = RouteProgressObserver { routeProgress ->
-
         viewportDataSource.onRouteProgressChanged(routeProgress)
         viewportDataSource.evaluate()
 
@@ -204,16 +212,13 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             val maneuverArrowResult = routeArrowApi.addUpcomingManeuverArrow(routeProgress)
             routeArrowView.renderManeuverUpdate(it, maneuverArrowResult)
         }
+//todo
 
 
         val maneuvers = maneuverApi.getManeuvers(routeProgress)
         maneuvers.fold(
             { error ->
-                Toast.makeText(
-                    requireContext(),
-                    error.errorMessage,
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), error.errorMessage, Toast.LENGTH_SHORT).show()
             },
             {
                 binding?.maneuverView?.visibility = View.VISIBLE
@@ -232,6 +237,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
             val routeLines = routeUpdateResult.routes.map { RouteLine(it, null) }
 
+//todo
             routeLineApi.setRoutes(
                 routeLines
             ) { value ->
@@ -239,7 +245,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                     routeLineView.renderRouteDrawData(this, value)
                 }
             }
-
 
             viewportDataSource.onRouteChanged(routeUpdateResult.routes.first())
             viewportDataSource.evaluate()
@@ -301,12 +306,17 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             Timber.e("ON NEXT ROUTE LEG START")
         }
 
+
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onFinalDestinationArrival(routeProgress: RouteProgress) {
             Timber.e("FINAL DESTINATION ARRIVED")
+            Timber.e("Distance travelled: ${routeProgress.distanceTraveled}")
+            timeFinished = getCurrentTimeStamp()
         }
       }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -314,6 +324,11 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxMap = binding?.mapView?.getMapboxMap()!!
         mapboxMap.setBounds(cameraBoundsOptionsBuilder())
         trackingBottomSheet = Component(TrackingBottomSheet(view)).apply {show() }
+
+
+
+
+
         binding?.mapView?.location?.apply {
             this.locationPuck = LocationPuck2D(
                 bearingImage = ContextCompat.getDrawable(
@@ -366,7 +381,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
         tripProgressApi = MapboxTripProgressApi(progressUpdateFormatter(distanceFormatterOptionsBuilder()))
 
-
         val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(requireContext())
             .displayRestrictedRoadSections(true)
             .withRouteLineBelowLayerId(LocationComponentConstants.LOCATION_INDICATOR_LAYER)
@@ -391,19 +405,23 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         providerClickListener()
         mapboxNavigation.startTripSession()
 
+        timeStarted = getCurrentTimeStamp()
+
 
     }
 
-
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getCurrentTimeStamp() = LocalTime.of(calendar[HOUR], calendar[MINUTE], calendar[SECOND])
     private fun setSwitchState(){
         binding?.satelliteMapSwitchButton?.isChecked = satelliteSwitchState() == SwitchState.ON.toString()
         binding?.trafficMapSwitchButton?.isChecked = trafficSwitchState() == SwitchState.ON.toString()
 
     }
+
     private fun navigationOptionsBuilder()= NavigationOptions.Builder(requireActivity().applicationContext)
         .accessToken(getString(R.string.MapsToken))
         .distanceFormatterOptions(distanceFormatterOptionsBuilder())
-        .build()
+        .build()// todo add incident options
     private fun cameraBoundsOptionsBuilder()=CameraBoundsOptions.Builder()
         .minZoom(Constants.MIN_ZOOM_LEVEL_MAPS)
         .build()
@@ -494,11 +512,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         }
     }
 
-
-
-
-
-
     private fun changeTrafficModeOn(){
     mapboxMap.getStyle()?.styleURI.run {
         if(this == BuildConfig.MAP_STYLE_DAY){
@@ -512,7 +525,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         }
     }
     }
-
 
     private fun changeTrafficModeOff(){
         mapboxMap.getStyle()?.styleURI.run {
@@ -559,6 +571,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStop() {
         super.onStop()
         mapboxNavigation.unregisterArrivalObserver(arrivalObserver)
@@ -566,6 +579,13 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
         mapboxNavigation.unregisterLocationObserver(locationObserver)
         mapboxNavigation.stopTripSession()
+
+
+        val hours: Long = ChronoUnit.HOURS.between(timeStarted, timeFinished)
+        val minutes: Long = ChronoUnit.MINUTES.between(timeStarted, timeStarted) % 6
+        val seconds: Long = ChronoUnit.SECONDS.between(timeStarted, timeStarted) % 60
+
+        Timber.e("Different is ")
     }
 
     override fun onDestroy() {

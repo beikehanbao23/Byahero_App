@@ -490,7 +490,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun showSearchLocationResult(resultCode: Int, data: Intent?){
         if (resultCode == RESULT_OK) {
-            map.getLocationSearchResult(data)
+            map.locationSearchResult(data)
             resetBottomSheetPlace()
         }
     }

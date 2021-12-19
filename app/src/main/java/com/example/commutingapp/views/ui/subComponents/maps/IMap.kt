@@ -8,7 +8,7 @@ interface IMap<V> {
 
 
     fun moveCameraToUser(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int)
-    fun getLocationSearchResult(data: Intent?)
+    fun locationSearchResult(data: Intent?)
     fun deleteRouteAndMarkers():Unit?
     fun pointMapMarker(latLng: LatLng)
     fun setupUI(mapType: String)
