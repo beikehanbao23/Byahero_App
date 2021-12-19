@@ -14,7 +14,6 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.CommuterFragmentBinding
@@ -37,7 +36,6 @@ import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestPermission
-import com.example.commutingapp.viewmodels.MainViewModel
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
 import com.example.commutingapp.views.ui.subComponents.BottomNavigation
@@ -70,12 +68,12 @@ import timber.log.Timber
 import kotlin.reflect.KFunction0
 
 
-@AndroidEntryPoint
+
 class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
      MapboxMap.OnMapLongClickListener, MapboxMap.OnMapClickListener,MapboxMap.OnMoveListener {
 
 
-    private val mainViewModel: MainViewModel by viewModels()
+
     private lateinit var dialogDirector: DialogDirector
     private var binding: CommuterFragmentBinding? = null
     private lateinit var searchLocationButton: AppCompatButton
