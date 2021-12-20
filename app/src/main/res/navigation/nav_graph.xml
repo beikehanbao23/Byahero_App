@@ -1,39 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/commutersFragment">
+    app:startDestination="@id/commuter_fragment">
 
-    <action
-        android:id="@+id/action_global_commuterFragment"
-        app:destination="@+id/commutersFragment"
-        app:launchSingleTop="true"
-        />
+
 
     <fragment
-        android:id="@+id/commutersFragment"
+        android:id="@+id/commuter_fragment"
         android:name="com.example.commutingapp.views.ui.fragments.CommuterFragment"
-        android:label="@string/title_Commutes"/>
+        android:label="@string/title_Commutes"
+        tools:layout="@layout/commuter_fragment">
+        <action
+            android:id="@+id/action_commutersFragment_to_navigationFragment"
+            app:destination="@id/navigation_fragment" />
+    </fragment>
 
     <fragment
-        android:id="@+id/settingsFragment"
+        android:id="@+id/settings_fragment"
         android:name="com.example.commutingapp.views.ui.fragments.SettingsFragment"
-        android:label="@string/title_Settings" />
+        android:label="@string/title_Settings"
+        tools:layout="@layout/settings_fragment"/>
 
 
     <fragment
-        android:id="@+id/statisticsFragment"
+        android:id="@+id/statistics_fragment"
         android:name="com.example.commutingapp.views.ui.fragments.StatisticsFragment"
-        android:label="@string/title_Statistics" />
+        android:label="@string/title_Statistics"
+        tools:layout="@layout/statistics_fragment"/>
 
 
     <fragment
-        android:id="@+id/weatherFragment"
+        android:id="@+id/weather_fragment"
         android:name="com.example.commutingapp.views.ui.fragments.WeatherFragment"
-        android:label="@string/title_Weather" />
+        android:label="@string/title_Weather"
+        tools:layout="@layout/weather_fragment"/>
 
 
     <fragment
-        android:id="@+id/navigationFragment"
-        android:name="com.example.commutingapp.views.ui.fragments.NavigationFragment"/>
+        android:id="@+id/navigation_fragment"
+        android:name="com.example.commutingapp.views.ui.fragments.NavigationFragment"
+        android:label="Navigation"
+        tools:layout="@layout/fragment_navigation"
+        >
+        <action
+            android:id="@+id/navigation_fragment_to_commuter_fragment"
+            app:destination="@id/commuter_fragment" />
+    </fragment>
+
+
+        <action
+            android:id="@+id/main_screen_To_commuter_fragment"
+            app:destination="@id/commuter_fragment"
+            />
+
+        <action
+            android:id="@+id/main_screen_To_weather_fragment"
+            app:destination="@id/weather_fragment"
+            />
+
+        <action
+            android:id="@+id/main_screen_To_statistics_fragment"
+            app:destination="@+id/statistics_fragment"
+            />
+        <action
+            android:id="@+id/main_screen_To_settings_fragment"
+            app:destination="@+id/settings_fragment"
+            />
+
+
 </navigation>

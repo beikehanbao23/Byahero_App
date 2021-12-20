@@ -15,18 +15,9 @@ import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper
 import com.example.commutingapp.data.firebase.usr.UserDataProcessor
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
-import com.example.commutingapp.utils.others.Constants.ACTION_SHOW_COMMUTER_FRAGMENT
-import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LATITUDE
-import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LONGITUDE
-import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LATITUDE
-import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LONGITUDE
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch
 import com.example.commutingapp.views.menubuttons.BackButton
-import com.example.commutingapp.views.ui.fragments.CommuterFragment
-import com.example.commutingapp.views.ui.fragments.SettingsFragment
-import com.example.commutingapp.views.ui.fragments.StatisticsFragment
-import com.example.commutingapp.views.ui.fragments.WeatherFragment
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
@@ -56,11 +47,16 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
         super.onCreate(savedInstanceState)
 
         initializeAttributes()
-        navigateToCommuterFragment(intent)
+
         val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navigationController = navigationHostFragment.navController
         activityMainScreenBinding?.bottomNavigation?.setupWithNavController(navigationController)
+
         setupBottomNavigationListeners()
+        initializeMapBoxSearch()
+
+    }
+    private fun initializeMapBoxSearch(){
         Mapbox.getInstance(this, getString(R.string.MapsToken))
         try {
             MapboxSearchSdk.initialize(
@@ -71,11 +67,9 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
         }catch (e:IllegalStateException){
             Timber.e("MapboxSearchSdk: ${e.message}")
         }
-
     }
-
     override fun onFirstNotify() {
-     activityMainScreenBinding?.bottomNavigation?.visibility = View.GONE
+     activityMainScreenBinding?.bottomNavigation?.visibility = View.GONE // todo refactor later(check if visible)
     }
 
     override fun onSecondNotify() {
@@ -83,6 +77,8 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
     }
 
     override fun onThirdNotify(fragment: Fragment, destination: LatLng?, lastKnownLocation: LatLng?) {
+//TODO REPLACE THIS LATER
+/*
 
 
         destination?.let { destinationLocation->
@@ -97,6 +93,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
         showFragment(fragment)
 
+ */
     }
 
     private fun setupBottomNavigationListeners() {
@@ -104,25 +101,24 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
         activityMainScreenBinding?.bottomNavigation?.apply {
             setOnItemSelectedListener {
                 when (it.itemId) {
-                    R.id.commutersFragment -> {
-                        if (currentFragment() !is CommuterFragment) {
-                            showFragment(CommuterFragment())
+                    R.id.commuter_fragment -> {
+                        if (currentFragment() != R.id.commuter_fragment) {
+                            navigationController.navigate(R.id.main_screen_To_commuter_fragment)
                         }
                     }
-                    R.id.settingsFragment -> {
-                        if (currentFragment() !is SettingsFragment) {
-                            showFragment(SettingsFragment())
+                    R.id.settings_fragment -> {
+                        if (currentFragment() != R.id.settings_fragment) {
+                            navigationController.navigate(R.id.main_screen_To_settings_fragment)
                         }
                     }
-                    R.id.statisticsFragment -> {
-                        if (currentFragment() !is StatisticsFragment) {
-                            showFragment(StatisticsFragment())
+                    R.id.statistics_fragment -> {
+                        if (currentFragment() != R.id.statistics_fragment) {
+                            navigationController.navigate(R.id.main_screen_To_statistics_fragment)
                         }
                     }
-                    R.id.weatherFragment -> {
-
-                        if (currentFragment() !is WeatherFragment) {
-                            showFragment(WeatherFragment())
+                    R.id.weather_fragment -> {
+                        if (currentFragment() != R.id.weather_fragment) {
+                           navigationController.navigate(R.id.main_screen_To_weather_fragment)
                         }
                     }
                 }
@@ -135,40 +131,20 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        navigateToCommuterFragment(intent)
 
-    }
 
-    private fun navigateToCommuterFragment(intent: Intent?){
-        if(intent?.action == ACTION_SHOW_COMMUTER_FRAGMENT && !isCommuterFragmentAtForeground){
-            isCommuterFragmentAtForeground = true
-            navigationController.navigate(R.id.action_global_commuterFragment)
-        }
     }
 
 
 
-    private fun showFragment(fragment: Fragment) {
-        supportFragmentManager.apply {
-            this.beginTransaction().apply {
-                findFragmentById(R.id.fragmentContainer)?.let(::detach)
-                if (findFragmentByTag(fragment.javaClass.name) == null) {
-                    add(R.id.fragmentContainer, fragment, fragment.javaClass.name)
-                    addToBackStack(fragment.javaClass.name)
-                } else {
-                 attach(findFragmentByTag(fragment.javaClass.name)!!)
-                }
-                commit()
-            }
-            }
-        }
 
-
-    private fun currentFragment(): Fragment? {
-        return supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+    private fun currentFragment(): Int? {
+        return navigationController.currentDestination?.id
     }
     override fun onBackPressed() {
-        if(currentFragment() is CommuterFragment){
+
+
+        if(currentFragment() == R.id.commuter_fragment){
             BackButton().applyDoubleClickToExit(this)
             return
         }
@@ -190,7 +166,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
     private fun initializeAttributes() {
         activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
         setContentView(activityMainScreenBinding?.root)
-        showFragment(CommuterFragment())
+
     }
 
     private fun destroyBinding() {
