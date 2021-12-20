@@ -1,5 +1,6 @@
 package com.example.commutingapp.views.ui.fragments
 
+import StopWatch
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
@@ -15,8 +16,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
+import com.example.commutingapp.data.local_db.Commuter
 import com.example.commutingapp.databinding.FragmentNavigationBinding
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LATITUDE
@@ -34,19 +37,21 @@ import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_ROAD_RESTRICT
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_SEVERE_CONGESTION
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.SwitchState
+import com.example.commutingapp.utils.others.WatchFormat
+import com.example.commutingapp.viewmodels.MainViewModel
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
 import com.example.commutingapp.views.ui.subComponents.Component
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
+import com.google.android.material.snackbar.Snackbar
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.geojson.Point
+import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.maps.CameraBoundsOptions
-import com.mapbox.maps.EdgeInsets
-import com.mapbox.maps.MapboxMap
-import com.mapbox.maps.Style
+import com.mapbox.mapboxsdk.snapshotter.MapSnapshotter
+import com.mapbox.maps.*
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentConstants
@@ -89,14 +94,16 @@ import com.mapbox.navigation.ui.maps.route.line.model.RouteLineResources
 import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi
 import com.mapbox.navigation.ui.tripprogress.model.*
 import com.rejowan.cutetoast.CuteToast
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.time.LocalTime
-import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.Calendar.*
+import kotlin.math.round
 
+@AndroidEntryPoint
 class NavigationFragment : Fragment(R.layout.fragment_navigation) {
-
+    private val mainViewModel: MainViewModel by viewModels()
     private companion object {
         private const val BUTTON_ANIMATION_DURATION = 1500L
     }
@@ -117,7 +124,13 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private lateinit var findRouteDialog: CustomDialogBuilder
     private lateinit var timeStarted: LocalTime
     private lateinit var timeFinished: LocalTime
-    private var calendar:Calendar = Calendar.getInstance()
+    private var userLocation: LatLng? = null
+    private var distanceTravelledInMeters :Int? = null
+    private var commuteTimeInMillis:Long? = null
+
+
+
+
     private val overviewPadding: EdgeInsets by lazy {
         EdgeInsets(
             140.0 * pixelDensity,
@@ -141,7 +154,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private lateinit var routeLineView: MapboxRouteLineView
     private val routeArrowApi: MapboxRouteArrowApi = MapboxRouteArrowApi()
     private lateinit var routeArrowView: MapboxRouteArrowView
-
+    private val stopWatch = StopWatch()
 
     private val navigationLocationProvider = NavigationLocationProvider()
 
@@ -162,7 +175,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 keyPoints = locationMatcherResult.keyPoints,
             )
 
-            Timber.e("Time is:  ${enhancedLocation.time}")
+            userLocation = LatLng(enhancedLocation.latitude, enhancedLocation.longitude)
 
 
             viewportDataSource.onLocationChanged(enhancedLocation)
@@ -172,7 +185,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 firstLocationUpdateReceived = true
                 navigationCamera.requestNavigationCameraToOverview(
                     stateTransitionOptions = NavigationCameraTransitionOptions.Builder()
-                        .maxDuration(0) // instant transition
+                        .maxDuration(0)
                         .build()
                 )
             }
@@ -206,13 +219,12 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private val routeProgressObserver = RouteProgressObserver { routeProgress ->
         viewportDataSource.onRouteProgressChanged(routeProgress)
         viewportDataSource.evaluate()
-
+        distanceTravelledInMeters = routeProgress.distanceTraveled.toInt()
         val style = mapboxMap.getStyle()
         style?.let{
             val maneuverArrowResult = routeArrowApi.addUpcomingManeuverArrow(routeProgress)
             routeArrowView.renderManeuverUpdate(it, maneuverArrowResult)
         }
-//todo
 
 
         val maneuvers = maneuverApi.getManeuvers(routeProgress)
@@ -237,7 +249,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
             val routeLines = routeUpdateResult.routes.map { RouteLine(it, null) }
 
-//todo
             routeLineApi.setRoutes(
                 routeLines
             ) { value ->
@@ -268,8 +279,12 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+
         binding = FragmentNavigationBinding.inflate(inflater, container, false)
+
         return binding?.root
+
     }
 
     @Suppress("Warnings")
@@ -310,8 +325,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onFinalDestinationArrival(routeProgress: RouteProgress) {
             Timber.e("FINAL DESTINATION ARRIVED")
-            Timber.e("Distance travelled: ${routeProgress.distanceTraveled}")
-            timeFinished = getCurrentTimeStamp()
+            distanceTravelledInMeters = routeProgress.distanceTraveled.toInt()
+            Timber.e("Distance travelled: $distanceTravelledInMeters")
+            stopWatch.stop()
         }
       }
 
@@ -322,6 +338,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         super.onViewCreated(view, savedInstanceState)
         findRouteDialog = DialogDirector(requireActivity()).buildFindRouteDialog().apply { show() }
         mapboxMap = binding?.mapView?.getMapboxMap()!!
+
+        stopWatch.postInitialValues()
         mapboxMap.setBounds(cameraBoundsOptionsBuilder())
         trackingBottomSheet = Component(TrackingBottomSheet(view)).apply {show() }
 
@@ -400,18 +418,22 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
         }
 
-
-
         providerClickListener()
         mapboxNavigation.startTripSession()
 
-        timeStarted = getCurrentTimeStamp()
 
+        stopWatch.start()
 
+        stopWatch.getTimeCommuteInSeconds().observe(viewLifecycleOwner) {
+          val time  = WatchFormat.getFormattedStopWatchTime(it * 1000L)
+            Timber.e("Time is: ${time}")
+        }
+        stopWatch.getTimeCommuteMillis().observe(viewLifecycleOwner){
+            commuteTimeInMillis = it
+        }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun getCurrentTimeStamp() = LocalTime.of(calendar[HOUR], calendar[MINUTE], calendar[SECOND])
+
     private fun setSwitchState(){
         binding?.satelliteMapSwitchButton?.isChecked = satelliteSwitchState() == SwitchState.ON.toString()
         binding?.trafficMapSwitchButton?.isChecked = trafficSwitchState() == SwitchState.ON.toString()
@@ -445,12 +467,46 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             userLastLocation = lastLocation
         }
     }
+
+    private fun endCommuteAndSaveToDB(){
+        val width = binding?.mapView?.width
+        val height = binding?.mapView?.height
+
+        val location = CameraPosition.Builder()
+            .target(userLocation)
+            .zoom(16.0)
+            .build()
+        val options = MapSnapshotter.Options(width!!,height!!).withCameraPosition(location)
+        val averageSpeed:Float = round((distanceTravelledInMeters!! / 1000f) / (commuteTimeInMillis!! / 1000f / 60 / 60)) * 10 / 10f
+        val dateTimeStamp:Long = getInstance().timeInMillis
+        val wentPlaces = "Laguna"// todo
+
+
+        MapSnapshotter(requireContext(),options).start {snapshot->
+            val commute = Commuter(snapshot.bitmap,dateTimeStamp,averageSpeed, distanceTravelledInMeters!!, commuteTimeInMillis!!, wentPlaces)
+            mainViewModel.insertCommuter(commute)
+        }
+
+
+        Snackbar.make(
+            requireActivity().findViewById(R.id.rootView),
+            "Commute Save successfully",
+            Snackbar.LENGTH_LONG
+        ).show()
+    }
+
     private fun providerClickListener(){
 
         binding?.stop?.setOnClickListener {
-            clearRouteAndStopNavigation()
+
+            navigationCamera.requestNavigationCameraToOverview() //todo test this
+            endCommuteAndSaveToDB()
             requireActivity().onBackPressed()
+            stopWatch.stop()
+            clearRouteAndStopNavigation()
         }
+
+
         binding?.recenter?.setOnClickListener {
             navigationCamera.requestNavigationCameraToFollowing()
         }
@@ -497,7 +553,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         }
 
     }
-
     private fun changeSatelliteModeOff(){
         mapboxMap.getStyle()?.styleURI.run {
          if(this == Style.TRAFFIC_DAY){
@@ -511,7 +566,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
          }
         }
     }
-
     private fun changeTrafficModeOn(){
     mapboxMap.getStyle()?.styleURI.run {
         if(this == BuildConfig.MAP_STYLE_DAY){
@@ -525,7 +579,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         }
     }
     }
-
     private fun changeTrafficModeOff(){
         mapboxMap.getStyle()?.styleURI.run {
             if(this == Style.TRAFFIC_DAY){
@@ -540,7 +593,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             }
         }
     }
-
     private fun changeMapStyleAndContinueExistingRoute(style:String){
 
         userDestination?.let { destination ->
@@ -580,12 +632,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxNavigation.unregisterLocationObserver(locationObserver)
         mapboxNavigation.stopTripSession()
 
+        stopWatch.stop()
 
-        val hours: Long = ChronoUnit.HOURS.between(timeStarted, timeFinished)
-        val minutes: Long = ChronoUnit.MINUTES.between(timeStarted, timeStarted) % 6
-        val seconds: Long = ChronoUnit.SECONDS.between(timeStarted, timeStarted) % 60
 
-        Timber.e("Different is ")
     }
 
     override fun onDestroy() {
@@ -604,6 +653,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                         CuteToast.ct(requireContext(), requireActivity().getString(R.string.unreachableDestination), CuteToast.LENGTH_LONG, CuteToast.WARN, true).show()
                         findRouteDialog.cancel()
                         requireActivity().onBackPressed()
+                        stopWatch.stop()
                     }
 
                     override fun onCanceled(routeOptions: RouteOptions, routerOrigin: RouterOrigin) {
