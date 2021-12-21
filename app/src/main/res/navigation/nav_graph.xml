@@ -5,6 +5,27 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/commuter_fragment">
 
+    <action
+        android:id="@+id/main_screen_To_commuter_fragment"
+        app:destination="@id/commuter_fragment"
+        />
+
+    <action
+        android:id="@+id/main_screen_To_weather_fragment"
+        app:destination="@id/weather_fragment"
+        />
+
+    <action
+        android:id="@+id/main_screen_To_statistics_fragment"
+        app:destination="@+id/statistics_fragment"
+        />
+    <action
+        android:id="@+id/main_screen_To_settings_fragment"
+        app:destination="@+id/settings_fragment"
+        />
+
+
+
 
 
     <fragment
@@ -13,9 +34,13 @@
         android:label="@string/title_Commutes"
         tools:layout="@layout/commuter_fragment">
         <action
-            android:id="@+id/action_commutersFragment_to_navigationFragment"
-            app:destination="@id/navigation_fragment" />
+            android:id="@+id/commuter_fragment_To_navigation_fragment"
+            app:destination="@+id/navigation_fragment">
+        </action>
+
     </fragment>
+
+
 
     <fragment
         android:id="@+id/settings_fragment"
@@ -42,32 +67,26 @@
         android:id="@+id/navigation_fragment"
         android:name="com.example.commutingapp.views.ui.fragments.NavigationFragment"
         android:label="Navigation"
-        tools:layout="@layout/fragment_navigation"
-        >
+        tools:layout="@layout/fragment_navigation">
         <action
             android:id="@+id/navigation_fragment_to_commuter_fragment"
             app:destination="@id/commuter_fragment" />
+        <argument
+            android:name="destinationLocation"
+            app:argType="com.mapbox.mapboxsdk.geometry.LatLng"
+            app:nullable="true"
+
+            android:defaultValue="@null" />
+        <argument
+            android:name="lastKnownLocation"
+            app:argType="com.mapbox.mapboxsdk.geometry.LatLng"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 
 
-        <action
-            android:id="@+id/main_screen_To_commuter_fragment"
-            app:destination="@id/commuter_fragment"
-            />
 
-        <action
-            android:id="@+id/main_screen_To_weather_fragment"
-            app:destination="@id/weather_fragment"
-            />
 
-        <action
-            android:id="@+id/main_screen_To_statistics_fragment"
-            app:destination="@+id/statistics_fragment"
-            />
-        <action
-            android:id="@+id/main_screen_To_settings_fragment"
-            app:destination="@+id/settings_fragment"
-            />
 
 
 </navigation>

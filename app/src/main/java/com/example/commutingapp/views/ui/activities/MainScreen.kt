@@ -24,7 +24,6 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserInfo
 import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.search.MapboxSearchSdk
 import com.mapbox.search.location.DefaultLocationProvider
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,32 +68,14 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
         }
     }
     override fun onFirstNotify() {
-     activityMainScreenBinding?.bottomNavigation?.visibility = View.GONE // todo refactor later(check if visible)
+     activityMainScreenBinding?.bottomNavigation?.visibility = View.GONE 
     }
 
     override fun onSecondNotify() {
         activityMainScreenBinding?.bottomNavigation?.visibility = View.VISIBLE
     }
 
-    override fun onThirdNotify(fragment: Fragment, destination: LatLng?, lastKnownLocation: LatLng?) {
-//TODO REPLACE THIS LATER
-/*
 
-
-        destination?.let { destinationLocation->
-            lastKnownLocation?.let { lastLocation->
-                with(Bundle()){
-                    putDouble(KEY_DESTINATION_LATITUDE, destinationLocation.latitude)
-                    putDouble(KEY_DESTINATION_LONGITUDE, destinationLocation.longitude)
-                    putDouble(KEY_LAST_LOCATION_LATITUDE,lastLocation.latitude)
-                    putDouble(KEY_LAST_LOCATION_LONGITUDE,lastLocation.longitude)
-                    fragment.arguments = this
-                } } }
-
-        showFragment(fragment)
-
- */
-    }
 
     private fun setupBottomNavigationListeners() {
 

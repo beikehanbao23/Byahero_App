@@ -17,15 +17,12 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
 import com.example.commutingapp.data.local_db.Commuter
 import com.example.commutingapp.databinding.FragmentNavigationBinding
 import com.example.commutingapp.utils.others.Constants
-import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LATITUDE
-import com.example.commutingapp.utils.others.Constants.KEY_DESTINATION_LONGITUDE
-import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LATITUDE
-import com.example.commutingapp.utils.others.Constants.KEY_LAST_LOCATION_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.KEY_NAME_NAVIGATION_MAP_STYLE
 import com.example.commutingapp.utils.others.Constants.KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE
 import com.example.commutingapp.utils.others.Constants.KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE
@@ -96,7 +93,6 @@ import com.mapbox.navigation.ui.tripprogress.model.*
 import com.rejowan.cutetoast.CuteToast
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
-import java.time.LocalTime
 import java.util.*
 import java.util.Calendar.*
 import kotlin.math.round
@@ -104,6 +100,7 @@ import kotlin.math.round
 @AndroidEntryPoint
 class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private val mainViewModel: MainViewModel by viewModels()
+    private val locationArgs:NavigationFragmentArgs by navArgs()
     private companion object {
         private const val BUTTON_ANIMATION_DURATION = 1500L
     }
@@ -122,8 +119,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private var userDestination:Point? = null
     private var userLastLocation:Point? = null
     private lateinit var findRouteDialog: CustomDialogBuilder
-    private lateinit var timeStarted: LocalTime
-    private lateinit var timeFinished: LocalTime
     private var userLocation: LatLng? = null
     private var distanceTravelledInMeters :Int? = null
     private var commuteTimeInMillis:Long? = null
@@ -279,12 +274,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-
         binding = FragmentNavigationBinding.inflate(inflater, container, false)
-
         return binding?.root
-
     }
 
     @Suppress("Warnings")
@@ -415,7 +406,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         setSwitchState()
         mapboxMap.loadStyleUri(currentMapStyle()?:Style.TRAFFIC_NIGHT) {
             createRoute()
-
         }
 
         providerClickListener()
@@ -459,13 +449,16 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         .build()
 
     private fun createRoute(){
-        this.arguments?.let {
-            val destination = Point.fromLngLat(it.getDouble(KEY_DESTINATION_LONGITUDE),it.getDouble(KEY_DESTINATION_LATITUDE))
-            val lastLocation = Point.fromLngLat(it.getDouble(KEY_LAST_LOCATION_LONGITUDE),it.getDouble(KEY_LAST_LOCATION_LATITUDE))
+    locationArgs.destinationLocation?.let { target ->
+        locationArgs.lastKnownLocation?.let { origin->
+            val destination = Point.fromLngLat(target.longitude,target.latitude)
+            val lastLocation = Point.fromLngLat(origin.longitude,origin.latitude)
             findRoute(destination,lastLocation)
             userDestination = destination
             userLastLocation = lastLocation
         }
+    }
+
     }
 
     private fun endCommuteAndSaveToDB(){
