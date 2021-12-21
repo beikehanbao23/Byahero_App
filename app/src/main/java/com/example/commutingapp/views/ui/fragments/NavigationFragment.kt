@@ -492,7 +492,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
         binding?.stop?.setOnClickListener {
 
-            navigationCamera.requestNavigationCameraToOverview() //todo test this
+            NavigationCameraTransitionOptions.Builder().maxDuration(5).build()
+                .apply(navigationCamera::requestNavigationCameraToOverview)
             endCommuteAndSaveToDB()
             requireActivity().onBackPressed()
             stopWatch.stop()
