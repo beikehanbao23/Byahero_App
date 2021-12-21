@@ -3,22 +3,22 @@
 
 
     <item
-        android:id="@+id/commutersFragment"
+        android:id="@+id/commuter_fragment"
         android:icon="@drawable/ic_jeep"
         android:title="@string/title_Commutes" />
 
     <item
-        android:id="@+id/statisticsFragment"
+        android:id="@+id/statistics_fragment"
         android:icon="@drawable/ic_statistics"
         android:title="@string/title_Statistics" />
 
     <item
-        android:id="@+id/weatherFragment"
+        android:id="@+id/weather_fragment"
         android:icon="@drawable/ic_weather_weather"
         android:title="@string/title_Weather" />
 
     <item
-        android:id="@+id/settingsFragment"
+        android:id="@+id/settings_fragment"
         android:icon="@drawable/ic_settings"
         android:title="@string/title_Settings" />
 

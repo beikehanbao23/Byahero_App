@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.CommuterFragmentBinding
 import com.example.commutingapp.utils.InternetConnection.Connection
@@ -59,7 +60,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.plugins.building.BuildingPlugin
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -83,7 +83,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var locationFAB:LocationButton
     private lateinit var mapTypes:MapTypes
     private lateinit var map:MapWrapper<MapView>
-    private var latLng: LatLng? = null
+    private var userDestinationLocation: LatLng? = null
     private lateinit var map3DBuilding: MapDetailsWrapper
     private lateinit var mapTraffic: MapDetailsWrapper
     private lateinit var traffic : TrafficPlugin
@@ -284,7 +284,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun onStartButtonClickAskGPS(task:Task<LocationSettingsResponse>){
         if(!Connection.hasGPSConnection(requireContext())) {
             askGPS(task,REQUEST_CONTINUE_NAVIGATION)
-
         }else{
             map.createLocationPuck()
             showNavigation()
@@ -300,11 +299,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
     private fun showNavigation(){
-        latLng?.let { destinationLocation ->
+        userDestinationLocation?.let { destinationLocation ->
             map.getLastKnownLocation()?.let { lastLocation ->
-                notifyListener.onThirdNotify(NavigationFragment(), destinationLocation,lastLocation)
+            val action = CommuterFragmentDirections.commuterFragmentToNavigationFragment(destinationLocation,lastLocation)
+                Navigation.findNavController(binding!!.root).navigate(action)
             }
         }
+
+
     }
 
     private fun provideDirectionButtonListener(){
@@ -504,7 +506,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
     }
     override fun onMapLongClick(point: LatLng): Boolean {
-        latLng = point
+        userDestinationLocation = point
         map.pointMapMarker(point)
         resetBottomSheetPlace()
         return true

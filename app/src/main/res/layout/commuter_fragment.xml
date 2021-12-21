@@ -220,25 +220,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/tripProgressCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        app:cardElevation="8dp"
-        app:cardUseCompatPadding="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
 
-        <ImageView
-            android:id="@+id/stop"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="12dp"
-            app:srcCompat="@android:drawable/ic_delete" />
-    </androidx.cardview.widget.CardView>
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
