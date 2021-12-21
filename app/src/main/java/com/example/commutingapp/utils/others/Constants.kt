@@ -6,7 +6,7 @@ object Constants {
     const val COMMUTER_DATABASE_FILE_NAME = "Commute_DB"
 
     const val REQUEST_CODE_LOCATION_PERMISSION = 1
-    const val NOTIFICATION_CHANNEL_ID = "tracking_channel"
+    const val REQUEST_CODE_AUDIO_RECORD_PERMISSION = 2
     const val FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE"
     const val FASTEST_LOCATION_UPDATE_INTERVAL = 10000L
     const val NORMAL_LOCATION_UPDATE_INTERVAL = 18000L
@@ -45,7 +45,7 @@ object Constants {
     const val DEFAULT_INDICATOR_POSITION = 0
     const val SLIDER_ITEM_COUNTS = 4
     const val USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS = 8
-    const val SIGN_UP_LOADING_INTERVAL:Long = 100
+
     const val KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE = "MapsType"
     const val KEY_NAME_MAPS_3D_SHARED_PREFERENCE = "Maps3D"
     const val KEY_NAME_MAPS_TRAFFIC_SHARED_PREFERENCE = "MapsTraffic"
@@ -54,16 +54,13 @@ object Constants {
     const val KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE = "StateOfTrafficSwitchButton"
     const val KEY_NAME_NAVIGATION_MAP_STYLE = "MapStyleNavigation"
 
-    const val ON_SEARCH_SOURCE_ID = "geojsonSourceLayerId"
+
     const val ON_MAP_CLICK_SOURCE_ID = "icon-sourceID";
     const val ON_MAP_CLICK_LAYER_ID = "icon-layerID";
-    const val ON_SEARCH_LAYER_ID = "symbol-layer-id"
+
     const val ROUTE_SOURCE_ID = "route-sourceId"
     const val ROUTE_LAYER_ID = "route-layerId"
-    const val KEY_DESTINATION_LATITUDE = "destinationLat"
-    const val KEY_DESTINATION_LONGITUDE = "destinationLng"
-    const val KEY_LAST_LOCATION_LATITUDE = "lastLocationLat"
-    const val KEY_LAST_LOCATION_LONGITUDE = "lastLocationLng"
+
     const val ROUTE_COLOR_ROAD_CLOSURE = "#5A5A5A"
     const val ROUTE_COLOR_ROAD_RESTRICTED = "#FF6A02"
     const val ROUTE_COLOR_HEAVY_CONGESTION = "#FF0E0E"

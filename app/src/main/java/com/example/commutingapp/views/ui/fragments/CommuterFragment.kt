@@ -27,6 +27,8 @@ import com.example.commutingapp.utils.others.Constants.DEFAULT_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_MAP_ZOOM
 import com.example.commutingapp.utils.others.Constants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.LAST_KNOWN_LOCATION_MAP_ZOOM
+import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_AUDIO_RECORD_PERMISSION
+import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.commutingapp.utils.others.Constants.REQUEST_CONTINUE_NAVIGATION
 import com.example.commutingapp.utils.others.Constants.REQUEST_SEARCH_RESULT
 import com.example.commutingapp.utils.others.Constants.REQUEST_USER_LOCATION
@@ -36,7 +38,9 @@ import com.example.commutingapp.utils.others.Constants.ULTRA_FAST_CAMERA_ANIMATI
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
+import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasRecordAudioPermission
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestPermission
+import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestRecordAudioPermission
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
 import com.example.commutingapp.views.ui.subComponents.BottomNavigation
@@ -62,7 +66,6 @@ import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
 import kotlin.reflect.KFunction0
@@ -241,14 +244,19 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun provideLocationButtonListener() {
         binding?.floatingActionButtonLocation?.setOnClickListener {
-            if (requestPermissionGranted()) {
-                checkLocationSetting().addOnCompleteListener {task->
-                    if(!Connection.hasGPSConnection(requireContext())) {
-                        askGPS(task, REQUEST_USER_LOCATION)
-                    }else{
-                        displayUserLocation()
-                    }
-                }
+            if (hasLocationPermission(requireContext())) {
+                renderUserLocation()
+            }else{
+                requestPermission(this)
+            }
+        }
+    }
+    private fun renderUserLocation(){
+        checkLocationSetting().addOnCompleteListener {task->
+            if(!Connection.hasGPSConnection(requireContext())) {
+                askGPS(task, REQUEST_USER_LOCATION)
+            }else{
+                displayUserLocation()
             }
         }
     }
@@ -264,7 +272,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     private fun provideStartButtonListener(){
         binding?.startButton?.setOnClickListener {
-            if (requestPermissionGranted()) {
+            if (hasLocationPermission(requireContext())) {
                 if(!Connection.hasInternetConnection(requireContext())){
                     DialogDirector(requireActivity()).buildNoInternetDialog()
                     bottomSheet.hide()
@@ -277,6 +285,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 checkLocationSetting().addOnCompleteListener {task->
                     onStartButtonClickAskGPS(task)
              }
+          }else{
+                requestPermission(this)
           }
        }
     }
@@ -335,7 +345,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     private fun provideVoiceSpeechButtonListener(){
         binding?.voiceSpeechButton?.setOnClickListener {
-            openVoiceSearchCommand()
+            if(hasRecordAudioPermission(requireContext())){
+                openVoiceSearchCommand()
+            }else{
+                requestRecordAudioPermission(this)
+            }
+
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -518,42 +533,34 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         binding?.directionsButton?.visibility = View.VISIBLE
         return true
     }
-    private fun requestPermissionGranted(): Boolean {
-        if (hasLocationPermission(requireContext())) {
-            return true
-        }
-        requestPermission(this)
-        return false
-
-    }
 
     override fun onStart() {
-        super.onStart();
+        super.onStart()
         map.getMapView().onStart()
         displayUserLocation()
 
     }
     override fun onResume() {
-        super.onResume();
+        super.onResume()
         map.getMapView().onResume()
         registerReceiver()
     }
     override fun onPause() {
-        super.onPause();
+        super.onPause()
         map.getMapView().onPause()
     }
     override fun onStop() {
-        super.onStop();
+        super.onStop()
         map.getMapView().onStop()
         unregisterReceiver()
 
     }
     override fun onSaveInstanceState(outState:Bundle) {
-        super.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState)
         map.getMapView().onSaveInstanceState(outState)
     }
     override fun onLowMemory() {
-        super.onLowMemory();
+        super.onLowMemory()
         map.getMapView().onLowMemory()
     }
     override fun onDestroy() {
@@ -565,11 +572,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            AppSettingsDialog.Builder(this).build().show()
-        } else {
-            requestPermission(this)
-        }
+    Timber.e("onPermissionsDenied requestCode is $requestCode")
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         @Suppress("DEPRECATION")
@@ -577,7 +580,16 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
 
     }
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        if(requestCode == REQUEST_CODE_LOCATION_PERMISSION){
+            renderUserLocation()
+            return
+        }
+        if(requestCode == REQUEST_CODE_AUDIO_RECORD_PERMISSION){
+            openVoiceSearchCommand()
+        }
+
+    }
     override fun onMoveBegin(detector: MoveGestureDetector){}
     override fun onMove(detector: MoveGestureDetector) {
         locationFAB.changeFloatingButtonIconBlack()
