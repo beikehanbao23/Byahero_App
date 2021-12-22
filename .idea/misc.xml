@@ -13,7 +13,9 @@
         <entry key="../Android/Sdk/platforms/android-30/data/res/drawable/btn_star.xml" value="0.3828125" />
         <entry key="app/src/main/res/drawable-v23/bottom_sheet_close_button.xml" value="0.3828125" />
         <entry key="app/src/main/res/drawable-v24/customdialog_background.xml" value="0.25" />
+        <entry key="app/src/main/res/drawable-v24/ic_create_account.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable-v24/ic_google.xml" value="0.57421875" />
+        <entry key="app/src/main/res/drawable-v24/ic_map.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable-v24/ic_traveller.xml" value="0.37222222222222223" />
         <entry key="app/src/main/res/drawable-v24/ic_weather.xml" value="0.37222222222222223" />
         <entry key="app/src/main/res/drawable-v24/inactive_indicator.xml" value="0.37222222222222223" />
@@ -42,11 +44,14 @@
         <entry key="app/src/main/res/drawable/ic_baseline_choose_map.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_baseline_directions.xml" value="0.57421875" />
+        <entry key="app/src/main/res/drawable/ic_baseline_layers.xml" value="0.384375" />
+        <entry key="app/src/main/res/drawable/ic_baseline_my_location.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_baseline_my_location_24.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/ic_baseline_my_location_blue.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_baseline_navigation.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/ic_baseline_pause_24.xml" value="0.56796875" />
         <entry key="app/src/main/res/drawable/ic_baseline_remove.xml" value="0.57421875" />
+        <entry key="app/src/main/res/drawable/ic_baseline_satellite_24.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_baseline_settings_voice_24.xml" value="0.384375" />
@@ -78,6 +83,7 @@
         <entry key="app/src/main/res/drawable/ic_statistics.xml" value="0.283984375" />
         <entry key="app/src/main/res/drawable/ic_traveller.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_wave_3.xml" value="0.25" />
+        <entry key="app/src/main/res/drawable/ic_wave_6.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_wave__6.xml" value="0.24177631578947367" />
         <entry key="app/src/main/res/drawable/ic_weather.xml" value="0.67" />
         <entry key="app/src/main/res/drawable/ic_weather_updates.xml" value="0.3802083333333333" />
@@ -87,6 +93,7 @@
         <entry key="app/src/main/res/drawable/line.xml" value="0.5610687022900763" />
         <entry key="app/src/main/res/drawable/map_type_image_button_background.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/map_type_invisible_image_button_background.xml" value="0.2552083333333333" />
+        <entry key="app/src/main/res/drawable/map_type_selected_state_indicator.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/map_type_visible_image_button_background.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/no_internet_background.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/drawable/search_view_location_background.xml" value="0.2552083333333333" />
@@ -118,14 +125,14 @@
         <entry key="app/src/main/res/layout/bottom_sheet_start_state.xml" value="0.33" />
         <entry key="app/src/main/res/layout/bottom_sheet_tracking_state.xml" value="0.25" />
         <entry key="app/src/main/res/layout/choose_map_dialog.xml" value="0.2" />
-        <entry key="app/src/main/res/layout/circular_progressbar.xml" value="1.0" />
+        <entry key="app/src/main/res/layout/circular_progressbar.xml" value="0.5" />
         <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.33" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_navigation.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_navigation.xml" value="0.33" />
         <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.22" />
-        <entry key="app/src/main/res/layout/map_styles_dialog.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/map_styles_dialog.xml" value="0.33" />
         <entry key="app/src/main/res/layout/navigation_dialog_finding_route.xml" value="0.33" />
         <entry key="app/src/main/res/layout/search_bar.xml" value="0.24444444444444444" />
         <entry key="app/src/main/res/layout/search_view_location.xml" value="0.33" />
