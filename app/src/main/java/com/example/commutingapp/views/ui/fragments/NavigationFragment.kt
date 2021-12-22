@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
@@ -164,6 +165,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         }
 
         override fun onNewLocationMatcherResult(locationMatcherResult: LocationMatcherResult) {
+
+
             val enhancedLocation = locationMatcherResult.enhancedLocation
             navigationLocationProvider.changePosition(
                 location = enhancedLocation,
@@ -474,30 +477,39 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         val dateTimeStamp:Long = getInstance().timeInMillis
         val wentPlaces = "Laguna"// todo
 
+        try {
+            MapSnapshotter(requireContext(),options).start {snapshot->
+                val commute = Commuter(snapshot.bitmap,dateTimeStamp,averageSpeed, distanceTravelledInMeters!!, commuteTimeInMillis!!, wentPlaces)
+                mainViewModel.insertCommuter(commute)
+            }
 
-        MapSnapshotter(requireContext(),options).start {snapshot->
-            val commute = Commuter(snapshot.bitmap,dateTimeStamp,averageSpeed, distanceTravelledInMeters!!, commuteTimeInMillis!!, wentPlaces)
-            mainViewModel.insertCommuter(commute)
+        }catch(e:IllegalStateException){
+            Timber.e("Inserting Records: ${e.message}")
         }
 
 
-        Snackbar.make(
-            requireActivity().findViewById(R.id.rootView),
-            "Commute Save successfully",
-            Snackbar.LENGTH_LONG
-        ).show()
+        Snackbar.make( requireActivity().findViewById(R.id.rootView), "Commute Save successfully", Snackbar.LENGTH_LONG).show()
     }
 
     private fun providerClickListener(){
 
         binding?.stop?.setOnClickListener {
+        DialogDirector(requireActivity())
+            .buildYesOrNoDialog()
+            .setPositiveButton("YES") { _, _ ->
+                // TODO refactor this code, fix null pointers
+                NavigationCameraTransitionOptions.Builder().maxDuration(5).build()
+                    .apply(navigationCamera::requestNavigationCameraToOverview)
+                endCommuteAndSaveToDB()
+                Navigation.findNavController(binding!!.root).navigate(R.id.navigation_fragment_to_commuter_fragment)
+                stopWatch.stop()
+                clearRouteAndStopNavigation()
 
-            NavigationCameraTransitionOptions.Builder().maxDuration(5).build()
-                .apply(navigationCamera::requestNavigationCameraToOverview)
-            endCommuteAndSaveToDB()
-            requireActivity().onBackPressed()
-            stopWatch.stop()
-            clearRouteAndStopNavigation()
+            }.setNegativeButton("NO") { dialog, _ ->
+                dialog.dismiss()
+            }.also { dialog-> dialog.show()
+        }
+
         }
 
 
@@ -646,7 +658,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                     override fun onFailure(reasons: List<RouterFailure>, routeOptions: RouteOptions) {
                         CuteToast.ct(requireContext(), requireActivity().getString(R.string.unreachableDestination), CuteToast.LENGTH_LONG, CuteToast.WARN, true).show()
                         findRouteDialog.cancel()
-                        requireActivity().onBackPressed()
+                        Navigation.findNavController(binding!!.root).navigate(R.id.navigation_fragment_to_commuter_fragment)
                         stopWatch.stop()
                     }
 
