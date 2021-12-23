@@ -37,7 +37,7 @@ class IntroSlider : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initializeAttributes()
 
-        viewModel = ViewModelProvider(this).get(IntroSliderViewModel::class.java)
+        viewModel = ViewModelProvider(this)[IntroSliderViewModel::class.java]
         if (userHasAlreadySeenTheIntroSliders()) {
             startTransitionToNextActivity()
             return
