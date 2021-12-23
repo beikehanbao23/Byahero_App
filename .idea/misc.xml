@@ -66,6 +66,7 @@
         <entry key="app/src/main/res/drawable/ic_finding_route.xml" value="0.3828125" />
         <entry key="app/src/main/res/drawable/ic_google.xml" value="0.56796875" />
         <entry key="app/src/main/res/drawable/ic_googlee.xml" value="0.37435897435897436" />
+        <entry key="app/src/main/res/drawable/ic_image.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_jeep.xml" value="0.37864583333333335" />
         <entry key="app/src/main/res/drawable/ic_jeepney1.xml" value="0.283984375" />
         <entry key="app/src/main/res/drawable/ic_jjep.xml" value="0.283984375" />
@@ -103,6 +104,8 @@
         <entry key="app/src/main/res/drawable/splashsceen_background.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/splashscreen_background.xml" value="0.9" />
         <entry key="app/src/main/res/drawable/title_background.xml" value="0.14814814814814814" />
+        <entry key="app/src/main/res/drawable/weather_fragment_background.xml" value="0.384375" />
+        <entry key="app/src/main/res/drawable/weather_fragment_background_1.xml" value="0.384375" />
         <entry key="app/src/main/res/font/.xml" value="0.1" />
         <entry key="app/src/main/res/font/audiowide.xml" value="0.37407407407407406" />
         <entry key="app/src/main/res/font/berkshire_swash.xml" value="0.18333333333333332" />
@@ -142,7 +145,7 @@
         <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/tracking_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/turn_by_turn_experience.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.271875" />
+        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.67" />
         <entry key="app/src/main/res/menu/toolbar_tracking_menu.xml" value="0.54921875" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_app_icon.xml" value="0.10462962962962963" />
@@ -166,7 +169,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.5" />
+        <option name="scale" value="0.14" />
       </ProjectState>
     </option>
   </component>

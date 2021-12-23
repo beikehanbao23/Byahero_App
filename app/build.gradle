@@ -127,6 +127,8 @@ dependencies {
     implementation 'com.github.ahmmedrejowan.CuteToast:CuteToast:1.2'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-building-v9:0.7.0'
     implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0"
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.android.volley:volley:1.2.1'
 }
 kapt {
     correctErrorTypes true

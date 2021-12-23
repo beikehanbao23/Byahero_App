@@ -94,15 +94,24 @@
     <string name="mapTypeTitle">Map Type</string>
 
 
+    <!--CommuterFragment -->
     <string name="alreadyHaveAnAccount">Already have an account? Log In</string>
     <string name="searchPlaces">Search places</string>
     <string name="share">Share</string>
     <string name="save">Save</string>
     <string name="start">Start</string>
     <string name="directions">Directions</string>
-
-
     <string name="unreachableDestination">Destination is Unreachable. Can\'t find a way there</string>
     <string name="please_wait">Please wait..</string>
     <string name="finding_best_route">Finding best route...</string>
+
+
+
+
+
+
+
+    <!--WeatherFragment-->
+    <string name="city_place_holder">Batangas City</string>
+    <string name="rainy">Rainy</string>
 </resources>
