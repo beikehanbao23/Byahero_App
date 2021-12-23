@@ -5,7 +5,7 @@ import com.example.commutingapp.data.local_db.Commuter
 import com.example.commutingapp.data.local_db.CommuterDao
 import javax.inject.Inject
 
-class MainRepository @Inject constructor(
+class CommuteRepository @Inject constructor(
     private val commuterDao: CommuterDao,
 ) {
 
