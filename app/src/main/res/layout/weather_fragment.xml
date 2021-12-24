@@ -28,7 +28,8 @@
             android:src="@drawable/weather_background_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
 
         <ImageView
             android:id="@+id/imageView3"
@@ -66,8 +67,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="TODO" />
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <TextView
@@ -109,7 +109,8 @@
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewCityName"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutSearchCity"
@@ -128,7 +129,7 @@
 
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="textInputEditTextSearchCity"
+                    android:id="@+id/textInputEditTextSearchCity"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/transparent"
@@ -147,14 +148,13 @@
         <TextView
             android:id="@+id/textViewTemperature"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-200dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="200dp"
             android:elevation="8dp"
             android:gravity="center"
             android:text="@string/temperature_place_holder"
             android:textColor="@color/white"
             android:textSize="60sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
