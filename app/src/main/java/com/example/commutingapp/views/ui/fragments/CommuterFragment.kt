@@ -39,7 +39,7 @@ import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasRecordAudioPermission
-import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestPermission
+import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestLocationPermission
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestRecordAudioPermission
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
@@ -247,7 +247,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             if (hasLocationPermission(requireContext())) {
                 renderUserLocation()
             }else{
-                requestPermission(this)
+                requestLocationPermission(this)
             }
         }
     }
@@ -286,7 +286,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                     onStartButtonClickAskGPS(task)
              }
           }else{
-                requestPermission(this)
+                requestLocationPermission(this)
           }
        }
     }
@@ -296,7 +296,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             askGPS(task,REQUEST_CONTINUE_NAVIGATION)
         }else{
             map.createLocationPuck()
-            showNavigation()
+            showNavigationFragment()
         }
     }
     private fun askGPS(task:Task<LocationSettingsResponse>,requestCode: Int){
@@ -308,7 +308,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
 
     }
-    private fun showNavigation(){
+    private fun showNavigationFragment(){
         userDestinationLocation?.let { destinationLocation ->
             map.getLastKnownLocation()?.let { lastLocation ->
             val action = CommuterFragmentDirections.commuterFragmentToNavigationFragment(destinationLocation,lastLocation)
@@ -403,9 +403,11 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     @SuppressLint("MissingPermission")
     private fun moveCameraToLastKnownLocation() {
+        if(hasLocationPermission(requireContext())){
+
         LocationServices.getFusedLocationProviderClient(requireActivity()).apply {
             lastLocation.addOnSuccessListener {
-                it?.let { latLng ->
+                it.let { latLng ->
                     map.moveCameraToUser(
                         LatLng(latLng.latitude, latLng.longitude),
                         LAST_KNOWN_LOCATION_MAP_ZOOM,
@@ -419,6 +421,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                     DEFAULT_CAMERA_ANIMATION_DURATION
                 )
             }
+        }
+
+        }else{
+            requestLocationPermission(this)
         }
     }
 
@@ -517,7 +523,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     private fun continueUserNavigation(resultCode: Int){
         if(resultCode == RESULT_OK){
-            showNavigation()
+            showNavigationFragment()
         }
     }
     override fun onMapLongClick(point: LatLng): Boolean {

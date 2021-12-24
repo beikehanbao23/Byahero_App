@@ -29,7 +29,7 @@ object TrackingPermissionUtility {
         }
 
 
-    fun requestPermission(fragment: Fragment) {
+    fun requestLocationPermission(fragment: Fragment) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             EasyPermissions.requestPermissions(
                 fragment,
