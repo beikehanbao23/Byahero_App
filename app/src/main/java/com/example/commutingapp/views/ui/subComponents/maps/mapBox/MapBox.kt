@@ -251,18 +251,19 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private suspend fun startGeocoding(point: Point?, place: String?, showUserLocationUsingSearch: KFunction2<LatLng, Double?, Unit>?) {
         withContext(Dispatchers.Default) {
             try {
-                buildGeocoding(point, place).enqueueCall(object : Callback<GeocodingResponse> {
-                    override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
-                        geocodingResponse(response, place, showUserLocationUsingSearch)
-                    }
-
-                    override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
-                        Timber.e("Geocoding Failure")
-                    }
-                })
+                buildGeocoding(point, place).enqueueCall(geocodingCallback(place,showUserLocationUsingSearch))
             } catch (servicesException: ServicesException) {
                 Timber.e(servicesException.toString())
             }
+        }
+    }
+    private fun geocodingCallback( place: String?, showUserLocationUsingSearch: KFunction2<LatLng, Double?, Unit>?) = object: Callback<GeocodingResponse>{
+        override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
+            geocodingResponse(response, place, showUserLocationUsingSearch)
+        }
+
+        override fun onFailure(call: Call<GeocodingResponse>, throwable: Throwable) {
+            Timber.e("Geocoding Failure")
         }
     }
     private fun geocodingResponse(response: Response<GeocodingResponse>, place:String?, showUserLocationUsingSearch: KFunction2<LatLng, Double?, Unit>?){
