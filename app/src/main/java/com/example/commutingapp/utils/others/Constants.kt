@@ -47,10 +47,8 @@ object Constants {
     const val USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS = 8
 
 
-    const val KEY_USER_CITY_LOCATION_SHARED_PREFERENCE = "LocationCity"
-    const val KEY_USER_CITY_LOCATION_TEMPERATURE = "Temperature"
-    const val KEY_USER_CITY_WEATHER_CONDITION_TEXT = "WeatherConditionText"
-    const val KEY_USER_CITY_WEATHER_CONDITION_ICON = "WeatherConditionIcon"
+    const val KEY_USER_CITY_JSON_WEATHER = "JsonWeather"
+
 
 
 

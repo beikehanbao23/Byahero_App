@@ -11,6 +11,7 @@ import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.data.api.Weather
 import com.example.commutingapp.data.api.WeatherService
 import com.example.commutingapp.data.api.WeatherServiceAPI
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,6 +26,9 @@ class WeatherViewModel : ViewModel() {
     private var request: WeatherServiceAPI
     private val userLocation = MutableLiveData<String>()
     private val searchedLocation = MutableLiveData<Weather>()
+    private val jsonApi = MutableLiveData<String>()
+
+    fun getWeatherJson(): LiveData<String> = jsonApi
     fun getSearchedLocation(): LiveData<Weather> = searchedLocation
     fun getCurrentLocation(): LiveData<String> = userLocation
 
@@ -38,7 +42,7 @@ class WeatherViewModel : ViewModel() {
         request = WeatherService.buildService(WeatherServiceAPI::class.java)
     }
 
-    fun requestWeather(cityName: String) {
+     fun requestWeather(cityName: String) {
         map["q"] = cityName
         val call = request.getWeatherData(map)
         call.enqueue(weatherCallback())
@@ -51,8 +55,7 @@ class WeatherViewModel : ViewModel() {
         val geocoder = Geocoder(context, Locale.getDefault())
         try {
             location?.let {
-                val addresses = geocoder.getFromLocation(it.latitude, it.longitude, 1)
-                addresses.forEach { address ->
+                 geocoder.getFromLocation(it.latitude, it.longitude, 1).forEach { address ->
                     val city = "${address.locality} ${address.thoroughfare}"
                     userLocation.value = city
                 }
@@ -69,7 +72,9 @@ class WeatherViewModel : ViewModel() {
                 Timber.e("Response no success: ${response.code()}")
                 return
             }
-             searchedLocation.value = response.body()
+            jsonApi.value = Gson().toJson(response.body())
+            searchedLocation.value = response.body()
+
         }
 
         override fun onFailure(call: Call<Weather>, t: Throwable) {
