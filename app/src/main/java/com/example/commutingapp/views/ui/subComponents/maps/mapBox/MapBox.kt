@@ -8,6 +8,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.commutingapp.R
+import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.MAP_MARKER_IMAGE_ID
 import com.example.commutingapp.utils.others.Constants.MAX_ZOOM_LEVEL_MAPS
@@ -19,6 +20,8 @@ import com.mapbox.api.geocoding.v5.MapboxGeocoding
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse
 import com.mapbox.core.exceptions.ServicesException
 import com.mapbox.geojson.Point
+import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -39,7 +42,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private var mapBoxView: MapView = view.findViewById(R.id.googleMapView)
 
     private var searchLocationButton: AppCompatButton  = view.findViewById(R.id.buttonLocationSearch)
-    private lateinit var camera:MapCamera
+
     private lateinit var marker:MapMarker
     private lateinit var search:MapSearch
     private lateinit var location: MapLocationPuck
@@ -71,8 +74,8 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     override fun setupUI(mapType: String) {
 
         mapBoxView.getMapAsync { map ->
-            CoroutineScope(Dispatchers.Main).launch {
                 mapBoxMap = map
+            CoroutineScope(Dispatchers.Main).launch {
                 initializeMap()
                 initializeStyles(mapType)
                 initializeSearchFABLocation()
@@ -81,10 +84,6 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         }
     }
     private fun initializeMapComponents(){
-        if(!::camera.isInitialized){
-            camera = MapCamera(mapBoxMap)
-            
-        }
         if(!::location.isInitialized) {
             location = MapLocationPuck(activity, mapBoxMap?.locationComponent)
         }
@@ -98,14 +97,15 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
     private fun initializeMap() {
-
-        with(mapBoxMap!!) {
-            uiSettings.isAttributionEnabled = false
-            uiSettings.isLogoEnabled = false
-            uiSettings.setCompassMargins(0, 480, 50, 0)
-            setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
-            setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
-            onMapReady(this)
+        mapBoxMap?.let {
+            with(it) {
+                uiSettings.isAttributionEnabled = false
+                uiSettings.isLogoEnabled = false
+                uiSettings.setCompassMargins(0, 480, 50, 0)
+                setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
+                setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
+                onMapReady(this)
+            }
         }
 
     }
@@ -321,10 +321,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         mapBoxMap?.getStyle { style->
             if (hasExistingMapMarker && style.isFullyLoaded) {
                 mapBoxMap?.cameraPosition?.also {
-                    camera.move(
-                        location,
-                        zoom ?: it.zoom,
-                        DEFAULT_CAMERA_ANIMATION_DURATION) }
+                    moveCamera(location, zoom ?: it.zoom, DEFAULT_CAMERA_ANIMATION_DURATION) }
                 marker.setLocation(location)
                 marker.create()
             }
@@ -332,8 +329,18 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
     override fun moveCameraToUser(latLng: LatLng,zoomLevel:Double,cameraAnimationDuration:Int) {
-        camera.move(latLng, zoomLevel, cameraAnimationDuration)
+      moveCamera(latLng, zoomLevel, cameraAnimationDuration)
+
     }
+    private fun moveCamera(latLng: LatLng, zoomLevel:Double, animationDuration:Int){
+        mapBoxMap?.animateCamera(CameraUpdateFactory.newCameraPosition(buildCameraPosition(latLng,zoomLevel)), animationDuration)
+    }
+    private fun buildCameraPosition(latLng: LatLng, zoomLevel: Double): CameraPosition =
+        CameraPosition.Builder()
+            .target(latLng)
+            .zoom(zoomLevel)
+            .tilt(Constants.CAMERA_TILT_DEGREES)
+            .build()
 
     override fun clearCache() {
         if(this::directions.isInitialized) directions.clear()

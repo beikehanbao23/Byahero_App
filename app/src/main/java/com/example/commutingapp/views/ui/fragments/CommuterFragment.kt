@@ -405,23 +405,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun moveCameraToLastKnownLocation() {
         if(hasLocationPermission(requireContext())){
 
-        LocationServices.getFusedLocationProviderClient(requireActivity()).apply {
-            lastLocation.addOnSuccessListener {
-                it.let { latLng ->
-                    map.moveCameraToUser(
-                        LatLng(latLng.latitude, latLng.longitude),
-                        LAST_KNOWN_LOCATION_MAP_ZOOM,
-                        ULTRA_FAST_CAMERA_ANIMATION_DURATION
-                    )
-                }
+            val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+            locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)?.let { latLng->
+                map.moveCameraToUser(LatLng(latLng.latitude, latLng.longitude), LAST_KNOWN_LOCATION_MAP_ZOOM, ULTRA_FAST_CAMERA_ANIMATION_DURATION)
+               return
             }
-            lastLocation.addOnFailureListener {
-                map.moveCameraToUser(
-                    LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), DEFAULT_MAP_ZOOM,
-                    DEFAULT_CAMERA_ANIMATION_DURATION
-                )
-            }
-        }
+             map.moveCameraToUser(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), DEFAULT_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
 
         }else{
             requestLocationPermission(this)
