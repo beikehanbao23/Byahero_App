@@ -12,7 +12,7 @@ import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 class Map3DBuilding(context: Context):IMapDetails {
 
     private var map3dDetailsPreferences: SharedPreferences = context.getSharedPreferences(
-        Constants.KEY_NAME_MAPS_3D_SHARED_PREFERENCE,
+        Constants.KEY_MAPS_3D,
         Context.MODE_PRIVATE)
 
 
@@ -29,12 +29,12 @@ class Map3DBuilding(context: Context):IMapDetails {
     }
 
     override fun changeMapButtonState(state: SwitchState) {
-        map3dDetailsPreferences.edit().putString(Constants.KEY_NAME_MAPS_3D_SHARED_PREFERENCE,state.toString()).apply()
+        map3dDetailsPreferences.edit().putString(Constants.KEY_MAPS_3D,state.toString()).apply()
     }
 
 
 
     override fun isButtonSelected() =
-        map3dDetailsPreferences.getString(Constants.KEY_NAME_MAPS_3D_SHARED_PREFERENCE,SwitchState.OFF.toString()) == SwitchState.ON.toString()
+        map3dDetailsPreferences.getString(Constants.KEY_MAPS_3D,SwitchState.OFF.toString()) == SwitchState.ON.toString()
 
 }

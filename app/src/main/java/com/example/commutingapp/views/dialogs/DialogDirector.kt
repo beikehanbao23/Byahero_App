@@ -39,9 +39,8 @@ class DialogDirector(val activity: Activity) {
     }
 
 
-    fun buildYesOrNoDialog()=
+    fun buildYesOrNoDialog(): AlertDialog.Builder =
          AlertDialog.Builder(activity)
-
              .setTitle("Cancel the Commute?")
              .setMessage("Are you sure to cancel the current Commute and delete all its data?")
 

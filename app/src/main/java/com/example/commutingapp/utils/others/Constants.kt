@@ -46,13 +46,21 @@ object Constants {
     const val SLIDER_ITEM_COUNTS = 4
     const val USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS = 8
 
-    const val KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE = "MapsType"
-    const val KEY_NAME_MAPS_3D_SHARED_PREFERENCE = "Maps3D"
-    const val KEY_NAME_MAPS_TRAFFIC_SHARED_PREFERENCE = "MapsTraffic"
-    const val KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE = "IntroSlider_StateOfSlides"
-    const val KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE = "StateOfSatelliteSwitchButton"
-    const val KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE = "StateOfTrafficSwitchButton"
-    const val KEY_NAME_NAVIGATION_MAP_STYLE = "MapStyleNavigation"
+
+    const val KEY_USER_CITY_LOCATION_SHARED_PREFERENCE = "LocationCity"
+    const val KEY_USER_CITY_LOCATION_TEMPERATURE = "Temperature"
+    const val KEY_USER_CITY_WEATHER_CONDITION_TEXT = "WeatherConditionText"
+    const val KEY_USER_CITY_WEATHER_CONDITION_ICON = "WeatherConditionIcon"
+
+
+
+    const val KEY_MAPS_TYPE = "MapsType"
+    const val KEY_MAPS_3D = "Maps3D"
+    const val KEY_MAPS_TRAFFIC = "MapsTraffic"
+    const val KEY_INTRO_SLIDER = "IntroSlider_StateOfSlides"
+    const val KEY_SWITCH_SATELLITE = "StateOfSatelliteSwitchButton"
+    const val KEY_SWITCH_TRAFFIC = "StateOfTrafficSwitchButton"
+    const val KEY_NAVIGATION_MAP_STYLE = "MapStyleNavigation"
 
 
     const val ON_MAP_CLICK_SOURCE_ID = "icon-sourceID";

@@ -15,7 +15,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.ActivityIntroSliderBinding
 import com.example.commutingapp.utils.others.Constants.DEFAULT_INDICATOR_POSITION
-import com.example.commutingapp.utils.others.Constants.KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE
+import com.example.commutingapp.utils.others.Constants.KEY_INTRO_SLIDER
 import com.example.commutingapp.utils.others.Constants.SLIDER_ITEM_COUNTS
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch.startActivityOf
 import com.example.commutingapp.utils.ui_utilities.ScreenDimension
@@ -81,7 +81,7 @@ class IntroSlider : AppCompatActivity() {
         binding = ActivityIntroSliderBinding.inflate(layoutInflater)
         setTheme(R.style.Theme_CommutingApp)
         setContentView(binding?.root)
-        preferences = getSharedPreferences(KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE, Context.MODE_PRIVATE)
+        preferences = getSharedPreferences(KEY_INTRO_SLIDER, Context.MODE_PRIVATE)
     }
 
     private fun setCallbacks() {
@@ -97,7 +97,7 @@ class IntroSlider : AppCompatActivity() {
     }
 
     private fun userHasAlreadySeenTheIntroSliders() =
-        preferences.getBoolean(KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE, false)
+        preferences.getBoolean(KEY_INTRO_SLIDER, false)
 
 
     private fun setViewPageDisplay() {
@@ -205,7 +205,7 @@ class IntroSlider : AppCompatActivity() {
     private fun userIsDoneWithIntroSliders() {
 
          preferences.edit().apply {
-            putBoolean(KEY_NAME_INTRO_SLIDER_SHARED_PREFERENCE, true)
+            putBoolean(KEY_INTRO_SLIDER, true)
             apply()
         }
     }

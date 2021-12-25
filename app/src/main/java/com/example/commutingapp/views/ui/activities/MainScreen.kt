@@ -140,7 +140,6 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
     override fun onStart() {
         super.onStart()
-
         displayUserProfileName()
     }
 

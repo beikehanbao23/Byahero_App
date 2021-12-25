@@ -6,13 +6,13 @@ import android.graphics.Color
 import android.view.View
 import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
-import com.example.commutingapp.utils.others.Constants.KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE
+import com.example.commutingapp.utils.others.Constants.KEY_MAPS_TYPE
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.mapbox.mapboxsdk.maps.Style
 
 class MapTypes(private val context: Context) {
     private var mapTypesPreferences: SharedPreferences = context.getSharedPreferences(
-        KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE,
+        KEY_MAPS_TYPE,
         Context.MODE_PRIVATE)
 
 
@@ -55,10 +55,10 @@ class MapTypes(private val context: Context) {
         setMapSelectedIndicator(customDialogBuilder)
     }
 
-     fun currentMapType():String = mapTypesPreferences.getString(KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE,Style.LIGHT).toString()
+     fun currentMapType():String = mapTypesPreferences.getString(KEY_MAPS_TYPE,Style.LIGHT).toString()
 
     private fun saveMapTypeToSharedPreference(mapType: String) {
-        mapTypesPreferences.edit().putString(KEY_NAME_MAPS_TYPE_SHARED_PREFERENCE, mapType).apply()
+        mapTypesPreferences.edit().putString(KEY_MAPS_TYPE, mapType).apply()
     }
 
 

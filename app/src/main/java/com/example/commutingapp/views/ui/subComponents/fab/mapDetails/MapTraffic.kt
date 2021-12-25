@@ -12,7 +12,7 @@ import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 class MapTraffic(context: Context):IMapDetails {
 
     private var mapTrafficDetailsPreferences : SharedPreferences = context.getSharedPreferences(
-        Constants.KEY_NAME_MAPS_TRAFFIC_SHARED_PREFERENCE,
+        Constants.KEY_MAPS_TRAFFIC,
         Context.MODE_PRIVATE
     )
 
@@ -27,12 +27,12 @@ class MapTraffic(context: Context):IMapDetails {
     }
 
     override fun changeMapButtonState(state: SwitchState) {
-        mapTrafficDetailsPreferences.edit().putString(Constants.KEY_NAME_MAPS_TRAFFIC_SHARED_PREFERENCE,state.toString()).apply()
+        mapTrafficDetailsPreferences.edit().putString(Constants.KEY_MAPS_TRAFFIC,state.toString()).apply()
     }
 
 
 
     override fun isButtonSelected() =
-        mapTrafficDetailsPreferences.getString(Constants.KEY_NAME_MAPS_TRAFFIC_SHARED_PREFERENCE,SwitchState.OFF.toString()) == SwitchState.ON.toString()
+        mapTrafficDetailsPreferences.getString(Constants.KEY_MAPS_TRAFFIC,SwitchState.OFF.toString()) == SwitchState.ON.toString()
 
 }

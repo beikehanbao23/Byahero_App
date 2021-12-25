@@ -24,9 +24,9 @@ import com.example.commutingapp.R
 import com.example.commutingapp.data.local_db.Commuter
 import com.example.commutingapp.databinding.FragmentNavigationBinding
 import com.example.commutingapp.utils.others.Constants
-import com.example.commutingapp.utils.others.Constants.KEY_NAME_NAVIGATION_MAP_STYLE
-import com.example.commutingapp.utils.others.Constants.KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE
-import com.example.commutingapp.utils.others.Constants.KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE
+import com.example.commutingapp.utils.others.Constants.KEY_NAVIGATION_MAP_STYLE
+import com.example.commutingapp.utils.others.Constants.KEY_SWITCH_SATELLITE
+import com.example.commutingapp.utils.others.Constants.KEY_SWITCH_TRAFFIC
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_HEAVY_CONGESTION
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_LOW_CONGESTION
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_MODERATE_CONGESTION
@@ -191,24 +191,24 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
 
     private fun saveSatelliteSwitchStatePreference(state:String){
-        satelliteSwitchButtonPreference.edit().putString(KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE,state).apply()
+        satelliteSwitchButtonPreference.edit().putString(KEY_SWITCH_SATELLITE,state).apply()
     }
     private fun saveTrafficSwitchStatePreference(state:String){
-        trafficSwitchButtonPreference.edit().putString(KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE,state).apply()
+        trafficSwitchButtonPreference.edit().putString(KEY_SWITCH_TRAFFIC,state).apply()
     }
     private fun saveMapStylePreference(style:String){
-        mapStylePreference.edit().putString(KEY_NAME_NAVIGATION_MAP_STYLE,style).apply()
+        mapStylePreference.edit().putString(KEY_NAVIGATION_MAP_STYLE,style).apply()
     }
 
 
     private fun satelliteSwitchState()=
-        satelliteSwitchButtonPreference.getString(KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE,SwitchState.OFF.toString())
+        satelliteSwitchButtonPreference.getString(KEY_SWITCH_SATELLITE,SwitchState.OFF.toString())
 
     private fun trafficSwitchState()=
-        trafficSwitchButtonPreference.getString(KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE,SwitchState.ON.toString())
+        trafficSwitchButtonPreference.getString(KEY_SWITCH_TRAFFIC,SwitchState.ON.toString())
 
     private fun currentMapStyle()=
-        mapStylePreference.getString(KEY_NAME_NAVIGATION_MAP_STYLE,Style.TRAFFIC_NIGHT)
+        mapStylePreference.getString(KEY_NAVIGATION_MAP_STYLE,Style.TRAFFIC_NIGHT)
 
 
 
@@ -284,9 +284,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     @Suppress("Warnings")
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        satelliteSwitchButtonPreference = context.getSharedPreferences(KEY_NAME_SWITCH_SATELLITE_SHARED_PREFERENCE,Context.MODE_PRIVATE)
-        trafficSwitchButtonPreference = context.getSharedPreferences(KEY_NAME_SWITCH_TRAFFIC_SHARED_PREFERENCE,Context.MODE_PRIVATE)
-        mapStylePreference = context.getSharedPreferences(KEY_NAME_NAVIGATION_MAP_STYLE,Context.MODE_PRIVATE)
+        satelliteSwitchButtonPreference = context.getSharedPreferences(KEY_SWITCH_SATELLITE,Context.MODE_PRIVATE)
+        trafficSwitchButtonPreference = context.getSharedPreferences(KEY_SWITCH_TRAFFIC,Context.MODE_PRIVATE)
+        mapStylePreference = context.getSharedPreferences(KEY_NAVIGATION_MAP_STYLE,Context.MODE_PRIVATE)
         try {
             this.notifyListener = context as FragmentToActivity<Fragment>
         } catch (e: ClassCastException) { }
