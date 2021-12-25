@@ -6,7 +6,6 @@
     android:layout_height="match_parent">
 
 
-    <include layout="@layout/circular_progressbar" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/RL_Home"
@@ -18,6 +17,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:elevation="12dp"
+            android:indeterminateTint="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/circularProgressBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/imageView4"
@@ -57,6 +68,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
+
         <ImageView
             android:id="@+id/imageViewBackgroundImage"
             android:layout_width="match_parent"
@@ -66,9 +78,10 @@
             android:src="@drawable/weather_fragment_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -88,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewCityName"
-            android:text="@string/city_place_holder"
+
             android:textSize="20sp"
             android:textColor="@color/white"
             android:elevation="5dp"
@@ -112,35 +125,7 @@
             android:orientation="horizontal"
             android:baselineAligned="false">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayoutSearchCity"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="4.5"
-                android:background="@color/transparent"
-                android:elevation="7dp"
-                android:hint="@string/enter_city_name"
-                android:padding="5dp"
-                android:textColorHint="@color/white"
-                app:hintTextColor="@color/white"
-                app:startIconDrawable="@drawable/ic_baseline_search_24"
-                app:startIconTint="@color/WhiteSmoke">
 
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditTextSearchCity"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/transparent"
-                    android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:maxLines="60"
-                    android:textColor="@color/white"
-                    android:textSize="15sp" />
-
-
-            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 
@@ -152,7 +137,7 @@
             android:layout_marginTop="200dp"
             android:elevation="8dp"
             android:gravity="center"
-            android:text="@string/temperature_place_holder"
+
             android:textColor="@color/white"
             android:textSize="60sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -162,21 +147,20 @@
 
 
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/textViewTemperature"
             android:id="@+id/imageViewWeatherCondition"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:elevation="9dp"
-            app:srcCompat="@drawable/weather_icon1"
+
             />
 
         <TextView
             android:id="@+id/textViewWeatherCondition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/rainy"
             android:elevation="9dp"
             android:textSize="16sp"
             android:layout_marginTop="10dp"
