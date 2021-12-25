@@ -29,7 +29,6 @@ class MapLocationPuck(private val activity: Activity, private val locationCompon
             .compassAnimationEnabled(true)
             .accuracyAnimationEnabled(true)
             .elevation(100.0f)
-        .layerBelow("traffic")
             .compassAnimationEnabled(true)
             .build()
 
