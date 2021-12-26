@@ -24,13 +24,11 @@ import kotlin.collections.HashMap
 class WeatherViewModel : ViewModel() {
     private var map: HashMap<String, String> = HashMap()
     private var request: WeatherServiceAPI
-    private val userLocation = MutableLiveData<String>()
     private val searchedLocation = MutableLiveData<Weather>()
     private val jsonApi = MutableLiveData<String>()
-
     fun getWeatherJson(): LiveData<String> = jsonApi
     fun getSearchedLocation(): LiveData<Weather> = searchedLocation
-    fun getCurrentLocation(): LiveData<String> = userLocation
+
 
     init {
         map.apply {
@@ -42,7 +40,7 @@ class WeatherViewModel : ViewModel() {
         request = WeatherService.buildService(WeatherServiceAPI::class.java)
     }
 
-     fun requestWeather(cityName: String) {
+    private fun requestWeather(cityName: String) {
         map["q"] = cityName
         val call = request.getWeatherData(map)
         call.enqueue(weatherCallback())
@@ -51,15 +49,18 @@ class WeatherViewModel : ViewModel() {
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation(context: Context) {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        var location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000L , 0.0f) { location = it }
         val geocoder = Geocoder(context, Locale.getDefault())
         try {
             location?.let {
                  geocoder.getFromLocation(it.latitude, it.longitude, 1).forEach { address ->
                     val city = "${address.locality} ${address.thoroughfare}"
-                    userLocation.value = city
+                     requestWeather(city)
+                     return@let
                 }
             }
+            throw RuntimeException("Location not found")
         } catch (e: IOException) {
             Timber.e("Weather View Model: ${e.message}")
         }
@@ -69,7 +70,7 @@ class WeatherViewModel : ViewModel() {
         override fun onResponse(call: Call<Weather>, response: Response<Weather>) {
 
             if(!response.isSuccessful){
-                Timber.e("Response no success: ${response.code()}")
+                Timber.e("Response not success: ${response.code()}")
                 return
             }
             jsonApi.value = Gson().toJson(response.body())
