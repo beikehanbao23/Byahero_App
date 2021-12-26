@@ -3,7 +3,6 @@ package com.example.commutingapp.viewmodels
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
-import android.location.LocationManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +11,7 @@ import com.example.commutingapp.data.api.Weather
 import com.example.commutingapp.data.api.WeatherService
 import com.example.commutingapp.data.api.WeatherServiceAPI
 import com.google.gson.Gson
+import im.delight.android.location.SimpleLocation
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -48,18 +48,15 @@ class WeatherViewModel : ViewModel() {
 
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation(context: Context) {
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        var location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000L , 0.0f) { location = it }
+        val location = SimpleLocation(context)
         val geocoder = Geocoder(context, Locale.getDefault())
         try {
-            location?.let {
-                 geocoder.getFromLocation(it.latitude, it.longitude, 1).forEach { address ->
+                 geocoder.getFromLocation(location.latitude, location.longitude, 1).forEach { address ->
                     val city = "${address.locality} ${address.thoroughfare}"
                      requestWeather(city)
-                     return@let
+                     return
                 }
-            }
+
             throw RuntimeException("Location not found")
         } catch (e: IOException) {
             Timber.e("Weather View Model: ${e.message}")
