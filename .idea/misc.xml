@@ -43,6 +43,7 @@
         <entry key="app/src/main/res/drawable/ic_baseline_bookmark_border.xml" value="0.5734375" />
         <entry key="app/src/main/res/drawable/ic_baseline_choose_map.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.2552083333333333" />
+        <entry key="app/src/main/res/drawable/ic_baseline_cloud_24.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_baseline_directions.xml" value="0.57421875" />
         <entry key="app/src/main/res/drawable/ic_baseline_layers.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_baseline_my_location.xml" value="0.384375" />
@@ -57,10 +58,13 @@
         <entry key="app/src/main/res/drawable/ic_baseline_settings_voice_24.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_baseline_share.xml" value="0.5734375" />
         <entry key="app/src/main/res/drawable/ic_baseline_traffic_24.xml" value="0.2552083333333333" />
+        <entry key="app/src/main/res/drawable/ic_baseline_wind_24.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_bn_weather.xml" value="0.283984375" />
         <entry key="app/src/main/res/drawable/ic_close.xml" value="0.14" />
+        <entry key="app/src/main/res/drawable/ic_cloud_showers_heavy_solid.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_create_account.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_direction.xml" value="0.2552083333333333" />
+        <entry key="app/src/main/res/drawable/ic_droplet_svgrepo_com.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_email.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_facebook.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_finding_route.xml" value="0.3828125" />
@@ -76,6 +80,7 @@
         <entry key="app/src/main/res/drawable/ic_map.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_network__two_color.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/drawable/ic_password.xml" value="0.3802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_rain_svgrepo_com.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_search_signal.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_settings.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_splash.xml" value="0.32734375" />
@@ -83,6 +88,7 @@
         <entry key="app/src/main/res/drawable/ic_splashscreen.xml" value="0.5" />
         <entry key="app/src/main/res/drawable/ic_statistics.xml" value="0.283984375" />
         <entry key="app/src/main/res/drawable/ic_traveller.xml" value="0.37435897435897436" />
+        <entry key="app/src/main/res/drawable/ic_water_drop.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_wave_3.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/ic_wave_6.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_wave__6.xml" value="0.24177631578947367" />
@@ -114,7 +120,7 @@
         <entry key="app/src/main/res/layout/activity_intro_slider.xml" value="0.18" />
         <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_splashscreen.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_token_expired.xml" value="0.35" />
         <entry key="app/src/main/res/layout/application_icon_display.xml" value="0.35" />
@@ -146,7 +152,7 @@
         <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/tracking_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/turn_by_turn_experience.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.5" />
         <entry key="app/src/main/res/layout/weather_recycler_view_adapter.xml" value="0.5" />
         <entry key="app/src/main/res/layout/weather_recycler_view_item.xml" value="0.25" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.67" />
@@ -172,7 +178,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.14" />
+        <option name="scale" value="0.18" />
       </ProjectState>
     </option>
   </component>

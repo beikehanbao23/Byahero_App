@@ -109,11 +109,9 @@
 
 
     <!--WeatherFragment-->
-    <string name="city_place_holder">Batangas City</string>
-    <string name="rainy">Rainy</string>
+
     <string name="today_s_weather_forecast">Today\'s Weather Forecast</string>
-    <string name="enter_city_name">Enter City Name</string>
-    <string name="temperature_place_holder">33.5°c</string>
-    <string name="wind_speed_placeholder">10.8 Km/h</string>
-    <string name="time_placeholder">12:00 AM</string>
+    <string name="place_text_holder">- - - -</string>
+    <string name="temperature_placeholder">0.00°c</string>
+    <string name="highest_and_lowest_temperature">H:00°c  |  L:00°c</string>
 </resources>
