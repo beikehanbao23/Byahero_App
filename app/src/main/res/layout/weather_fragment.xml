@@ -81,32 +81,20 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/textView18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="10dp"
-            android:elevation="9dp"
-            android:text="@string/today_s_weather_forecast"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toTopOf="@+id/recyclerViewDisplay"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="468dp" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
 
             android:id="@+id/textViewCityName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="- - - -"
-            android:layout_marginTop="65dp"
+            android:layout_marginTop="40dp"
+            android:paddingBottom="10dp"
             android:elevation="5dp"
+            android:text="@string/place_text_holder"
             android:textColor="@color/white"
             android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/textViewTemperature"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -115,22 +103,21 @@
         <TextView
             android:id="@+id/textViewTemperature"
             android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:layout_marginTop="200dp"
+            android:layout_height="wrap_content"
             android:elevation="8dp"
             android:gravity="center"
-            android:text="0.00°c"
+            android:text="@string/temperature_placeholder"
             android:textColor="@color/white"
-            android:textSize="60sp"
+            android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewCityName" />
 
 
         <ImageView
             android:id="@+id/imageViewWeatherCondition"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:elevation="9dp"
             android:src="@drawable/default_weather_icon"
             app:layout_constraintEnd_toEndOf="parent"
@@ -143,24 +130,129 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:elevation="9dp"
-            android:text="- - - -"
+            android:text="@string/place_text_holder"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewWeatherCondition"
-            tools:layout_editor_absoluteY="410dp" />
+            app:layout_constraintTop_toBottomOf="@+id/imageViewWeatherCondition" />
 
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewDisplay"
             android:layout_width="match_parent"
-            android:layout_height="144dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
             android:elevation="12dp"
+
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewInformatiopn" />
+
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:elevation="12dp"
+            android:padding="2dp"
+            android:text="@string/highest_and_lowest_temperature"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewWeatherCondition" />
+
+        <TextView
+            android:id="@+id/textViewInformatiopn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="132dp"
+            android:elevation="12dp"
+            android:padding="3dp"
+            android:text="@string/long_info"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
+        <TextView
+            android:id="@+id/textViewWindSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="24dp"
+            android:elevation="12dp"
+            android:padding="3dp"
+            android:text="@string/wind"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            app:drawableLeftCompat="@drawable/ic_baseline_wind_24"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintTop_toBottomOf="@+id/textView19"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/textViewChanceOfRain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:elevation="12dp"
+            android:padding="3dp"
+            android:text="@string/rain"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            app:drawableLeftCompat="@drawable/ic_rain_svgrepo_com"
+            app:layout_constraintEnd_toStartOf="@id/guideline4"
+            app:layout_constraintTop_toBottomOf="@+id/textViewWindSpeed"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/textViewCloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="30dp"
+            android:elevation="12dp"
+            android:padding="3dp"
+            android:text="@string/cloud"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            app:drawableLeftCompat="@drawable/ic_baseline_cloud_24"
+            app:layout_constraintStart_toEndOf="@id/guideline4"
+            app:layout_constraintTop_toBottomOf="@+id/textView19"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/textViewHumidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="12dp"
+            android:elevation="12dp"
+            android:padding="3dp"
+            android:text="@string/humidity"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            app:drawableLeftCompat="@drawable/ic_droplet_svgrepo_com"
+            app:layout_constraintStart_toEndOf="@id/guideline4"
+            app:layout_constraintTop_toBottomOf="@+id/textViewCloud"
+            tools:ignore="MissingConstraints" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="12dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5"
+             />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

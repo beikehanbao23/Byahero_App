@@ -114,4 +114,9 @@
     <string name="place_text_holder">- - - -</string>
     <string name="temperature_placeholder">0.00°c</string>
     <string name="highest_and_lowest_temperature">H:00°c  |  L:00°c</string>
+    <string name="long_info">00°/00° | Feels like 00°c | Wind 00 KM/H | WSW</string>
+    <string name="wind">Wind: 0.0 km/h</string>
+    <string name="rain">Chance of rain: 10%</string>
+    <string name="humidity">Humidity: 10%</string>
+    <string name="cloud">Cloud: 10%</string>
 </resources>
