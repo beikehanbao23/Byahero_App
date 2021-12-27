@@ -27,10 +27,15 @@ class WeatherRecyclerViewAdapter(
         return ViewHolder(binding!!.root)
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
 
     override fun onBindViewHolder(holder: WeatherRecyclerViewAdapter.ViewHolder, position: Int) {
         holder.bindAttributes(position)
     }
+
 
     override fun getItemCount(): Int  = listOfWeatherModel.size
 

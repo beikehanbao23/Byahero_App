@@ -51,12 +51,11 @@ class WeatherViewModel : ViewModel() {
         val location = SimpleLocation(context)
         val geocoder = Geocoder(context, Locale.getDefault())
         try {
-                 geocoder.getFromLocation(location.latitude, location.longitude, 1).forEach { address ->
-                    val city = "${address.locality} ${address.thoroughfare}"
-                     requestWeather(city)
-                     return
-                }
-
+             geocoder.getFromLocation(location.latitude, location.longitude, 1).forEach { address ->
+                val city = "${address.locality} ${address.thoroughfare}"
+                requestWeather(city)
+                return
+             }
             throw RuntimeException("Location not found")
         } catch (e: IOException) {
             Timber.e("Weather View Model: ${e.message}")
