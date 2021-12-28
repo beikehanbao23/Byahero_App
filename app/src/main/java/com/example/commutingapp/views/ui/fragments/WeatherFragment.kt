@@ -21,7 +21,7 @@ import com.example.commutingapp.utils.others.Constants.REQUEST_USER_LOCATION
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestLocationPermission
 import com.example.commutingapp.viewmodels.WeatherViewModel
-import com.example.commutingapp.views.adapters.WeatherRecyclerViewAdapter
+import com.example.commutingapp.views.adapters.WeatherAdapter
 import com.example.commutingapp.views.ui.recycler_view.WeatherRecyclerViewModel
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
@@ -221,7 +221,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
     private fun initializeAttributes(){
         binding!!.recyclerViewDisplay.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
         binding!!.recyclerViewDisplay.adapter?.setHasStableIds(true)
-        binding!!.recyclerViewDisplay.adapter = WeatherRecyclerViewAdapter(requireActivity(),listOfWeatherModel)
+        binding!!.recyclerViewDisplay.adapter = WeatherAdapter(requireActivity(),listOfWeatherModel)
         weatherViewModel = WeatherViewModel()
     }
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
