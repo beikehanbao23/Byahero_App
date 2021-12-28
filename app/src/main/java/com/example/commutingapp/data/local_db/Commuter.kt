@@ -14,7 +14,7 @@ data class Commuter(
     var wentPlaces:String? = null) {
 
 @PrimaryKey(autoGenerate = true)
-var ID: Int? = null
+var id: Int? = null
 
 
 }
