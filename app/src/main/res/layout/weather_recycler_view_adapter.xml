@@ -12,6 +12,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:padding="8dp"
         android:layout_height="wrap_content"
         android:background="@drawable/weather_card_background">
 
@@ -39,7 +40,7 @@
             android:id="@+id/textViewCardTemperature"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/temperature_place_holder"
+            android:text="@string/temperature_placeholder"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="13sp"

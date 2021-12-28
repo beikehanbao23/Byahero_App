@@ -39,6 +39,7 @@
         <entry key="app/src/main/res/drawable/google_button_background.xml" value="0.33" />
         <entry key="app/src/main/res/drawable/ic_back_button.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_backbutton.xml" value="0.37435897435897436" />
+        <entry key="app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.5765625" />
         <entry key="app/src/main/res/drawable/ic_baseline_assistant_direction_24.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_baseline_bookmark_border.xml" value="0.5734375" />
         <entry key="app/src/main/res/drawable/ic_baseline_choose_map.xml" value="0.25" />
@@ -118,7 +119,7 @@
         <entry key="app/src/main/res/font/berkshire_swash.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/font/fonts.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/layout/activity_intro_slider.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_splashscreen.xml" value="0.2" />
@@ -136,6 +137,8 @@
         <entry key="app/src/main/res/layout/bottom_sheet_tracking_state.xml" value="0.25" />
         <entry key="app/src/main/res/layout/choose_map_dialog.xml" value="0.2" />
         <entry key="app/src/main/res/layout/circular_progressbar.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/commuter_data_fragment.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/commuter_data_recycler_view_adapter.xml" value="0.55234375" />
         <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.33" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
@@ -152,7 +155,7 @@
         <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/tracking_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/turn_by_turn_experience.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.67" />
+        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.5" />
         <entry key="app/src/main/res/layout/weather_recycler_view_adapter.xml" value="0.5" />
         <entry key="app/src/main/res/layout/weather_recycler_view_item.xml" value="0.25" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.67" />
