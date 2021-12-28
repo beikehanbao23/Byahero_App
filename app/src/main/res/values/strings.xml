@@ -1,4 +1,128 @@
 <resources>
     <string name="app_name">Byahero</string>
 
+    <string name="fieldLeftBlankMessage">Field cannot be left blank.</string>
+    <string name="doubleTappedMessage">Tap again to exit</string>
+    <string name="incorrectEmailOrPasswordMessage">Email or password is incorrect</string>
+    <string name="emailIsInvalidMessage">Email is invalid</string>
+    <string name="passwordIsNotMatchMessage">The specified password do not match.</string>
+    <string name="passwordIsWeakMessage">Password must contain at least 8 characters, including numbers or special characters.</string>
+    <string name="disabledAccountMessage">Account Disabled, our content monitors have determined that your behaviour has been in violation of our Terms of Service.</string>
+    <string name="resendEmailFailedMessage">Please check your inbox. A verification email is already sent to your email address.</string>
+    <string name="resendEmailSuccessMessage">New verification email has been sent to your email address.</string>
+    <string name="sendingEmailErrorMessage">There was an error trying to send the verification email. Please try again.</string>
+    <string name="newEmailSent">New email sent</string>
+    <string name="pleaseCheckYourInbox">Please check your inbox</string>
+
+    <!--Intro slider-->
+    <string name="headerTextChooseDestinationMessage">Choose your destination</string>
+    <string name="headerTextEnjoyTripsMessage">Enjoy your trips</string>
+    <string name="headerTextAccurateWeatherMessage">Accurate weather update</string>
+    <string name="headerTextCreateAccountMessage">Create your account</string>
+
+    <!--Intro slider-->
+    <string name="descriptionTextChooseDestinationMessage">The road ahead may be long and winding but you’ll make it there safe and sound</string>
+    <string name="descriptionTextEnjoyTripMessage">You\'re going to have a blast on your cruise—enjoy every bit of it and have a safe trip.</string>
+    <string name="descriptionTextAccurateWeatherMessage">Wherever you go, no matter what the weather, always bring your own sunshine.</string>
+    <string name="descriptionTextCreateAccountMessage">Complete your profile in less than 5 minutes to get accurate results.</string>
+    <string name="skipButton">Skip</string>
+    <string name="nextButton">Next</string>
+
+
+    <!--No internet dialog XML-->
+    <string name="titleNoInternetDialog">No Internet Connection</string>
+    <string name="descriptionNoInternetDialog">Slow or no internet connection.\nPlease check your internet settings and try\n again.</string>
+    <string name="RetryButton">Retry</string>
+    <string name="GoToSettings">Go to Settings</string>
+
+    <!-- Email XML-->
+    <string name="resendVerification">Resend verification</string>
+    <string name="checkEmailVerification">Check your email and click on\n the verification link to continue.</string>
+    <string name="emailTextHolder">sampleEmail@gmail.com</string>
+    <string name="weSentConfirmationEmail">We sent a confirmation email to:</string>
+    <string name="confirmEmailAddress">Confirm your email address</string>
+
+    <!-- SignUpXml-->
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="passwordTextView">Password</string>
+    <string name="emailTextView">Email</string>
+    <string name="letsGetStarted">Let\'s Get Started!</string>
+    <string name="createAnAccountInByahero">Create an account to Byahero</string>
+    <string name="askIfHaveAccount">Already have an account? Login Here</string>
+    <string name="buttonCreate">Sign Up</string>
+
+
+    <!--Sign In XML -->
+    <string name="welcomeMessage">Welcome to Byahero!</string>
+    <string name="loginButton">Sign In</string>
+    <string name="connectUsing"> Or connect using</string>
+    <string name="googleButton">Google</string>
+    <string name="facebookButton">Facebook</string>
+    <string name="askIfDontHaveAccount">Don\'t have an account? Sign up here</string>
+    <string name="askToLoginAccount">Login your account to Byahero</string>
+
+
+    <!--Permission Dialog-->
+    <string name="requestLocationMessage">You need to accept location permission to use this app.</string>
+    <string name="requestAudioRecord">Allow <b>Byahero</b> to record Audio?</string>
+
+    <!-- Commuter Fragment-->
+    <string name="startButton">Start</string>
+    <string name="stopButton">Stop</string>
+
+
+    <!-- Bottom Navigation -->
+    <string name="title_Commutes">Commutes</string>
+    <string name="title_Statistics">Statistics</string>
+    <string name="title_Weather">Weather</string>
+    <string name="title_Settings">Settings</string>
+
+
+
+    <!--Map styles dialog -->
+    <!-- TextViews -->
+    <string name="defaultStyle">Default</string>
+    <string name="trafficNight">Traffic Night</string>
+    <string name="darkMapStyle">Dark Map</string>
+    <string name="streetsStyle">Streets</string>
+    <string name="satelliteStreetsStyle">Satellite Streets</string>
+    <string name="outdoorsStyle">Outdoors</string>
+    <string name="lightStyle">Light</string>
+    <string name="neonStyle">Neon</string>
+    <string name="satelliteStyle">Satellite</string>
+    <string name="mapTypeTitle">Map Type</string>
+
+
+    <!--CommuterFragment -->
+    <string name="alreadyHaveAnAccount">Already have an account? Log In</string>
+    <string name="searchPlaces">Search places</string>
+    <string name="share">Share</string>
+    <string name="save">Save</string>
+    <string name="start">Start</string>
+    <string name="directions">Directions</string>
+    <string name="unreachableDestination">Destination is Unreachable. Can\'t find a way there</string>
+    <string name="please_wait">Please wait..</string>
+    <string name="finding_best_route">Finding best route...</string>
+
+
+
+
+    <!--WeatherFragment-->
+
+    <string name="today_s_weather_forecast">Today\'s Weather Forecast</string>
+    <string name="place_text_holder">- - - -</string>
+    <string name="wind_speed_placeholder">0.0km/h</string>
+    <string name="time_placeholder">12:00 am</string>
+    <string name="temperature_placeholder">0.00°c</string>
+    <string name="highest_and_lowest_temperature">H: 00°c  |  L: 00°c</string>
+    <string name="long_info">00°c | Feels like 00°c </string>
+    <string name="wind">\u0020 \u0020 Wind: 0.0 km/h</string>
+    <string name="rain">\u0020 \u0020 Chance of rain: 10%</string>
+    <string name="humidity">\u0020 \u0020 Humidity: 10%</string>
+    <string name="cloud">\u0020 \u0020 Cloud: 10%</string>
+    <string name="avgspeed">AVGSPEED</string>
+    <string name="went_places">WENT PLACES</string>
+    <string name="distance">DISTANCE</string>
+    <string name="time">TIME</string>
+
 </resources>
