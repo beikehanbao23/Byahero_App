@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.commutingapp.R
 import com.example.commutingapp.data.api.Weather
 import com.example.commutingapp.databinding.WeatherFragmentBinding
@@ -31,7 +32,6 @@ import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.gms.tasks.Task
 import com.google.gson.Gson
-import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -57,6 +57,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
         initializeAttributes()
         provideObservers()
 
@@ -122,6 +123,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
     }
 
     override fun onRequestPermissionsResult( requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        @Suppress("DEPRECATION")
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
@@ -137,8 +139,8 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
                     textViewCloud.text = "   Cloud: ${cloud}%"
                     textViewHumidity.text = "   Humidity: ${humidity}%"
                     textViewInformation.text = "${temp_c}°c | Feels like ${feelslike_c}°c"
-                    Picasso.Builder(activity).build()
-                        .load("http:" + (condition.icon))
+
+                    Glide.with(requireActivity()).load("http:" + (condition.icon))
                         .into(imageViewWeatherCondition)
                     textViewWindSpeed.text = "   Wind: ${wind_kph}km/h"
                 }
@@ -218,11 +220,15 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
         weatherApiJson.edit().putString(KEY_USER_CITY_JSON_WEATHER,cityName).apply()
     }
     private fun getJsonSharedPreference():String? = weatherApiJson.getString(KEY_USER_CITY_JSON_WEATHER,null)
+
     private fun initializeAttributes(){
-        binding!!.recyclerViewDisplay.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
-        binding!!.recyclerViewDisplay.adapter?.setHasStableIds(true)
-        binding!!.recyclerViewDisplay.adapter = WeatherAdapter(requireActivity(),listOfWeatherModel)
         weatherViewModel = WeatherViewModel()
+    }
+
+    private fun setupRecyclerView()=binding!!.recyclerViewDisplay.apply {
+        layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+        adapter?.setHasStableIds(true)
+        adapter = WeatherAdapter(requireActivity(),listOfWeatherModel)
     }
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
         if(requestCode == REQUEST_CODE_LOCATION_PERMISSION){
