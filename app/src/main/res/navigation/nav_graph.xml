@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/placeholder">
+    app:startDestination="@id/commuter_data_fragment">
 
     <action
         android:id="@+id/main_screen_To_commuter_fragment"
@@ -38,7 +38,14 @@
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
-
+    <action
+        android:id="@+id/main_screen_To_commuter_data_fragment"
+        app:destination="@+id/commuter_data_fragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"
+        />
 
 
 
@@ -77,6 +84,7 @@
         tools:layout="@layout/weather_fragment"/>
 
 
+
     <fragment
         android:id="@+id/navigation_fragment"
         android:name="com.example.commutingapp.views.ui.fragments.NavigationFragment"
@@ -101,11 +109,17 @@
             android:defaultValue="@null" />
     </fragment>
 
+
+
+
+
     <fragment
-        android:id="@+id/placeholder"
+        android:id="@+id/commuter_data_fragment"
         android:name="com.example.commutingapp.views.ui.fragments.CommuterDataFragment"
         android:label="CommuterData"
         tools:layout="@layout/commuter_data_fragment">
+
+
         <action
             android:id="@+id/action_placeholder_to_commuter_fragment"
             app:destination="@id/commuter_fragment"
@@ -114,7 +128,13 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             />
+
+
     </fragment>
+
+
+
+
 
 
 </navigation>

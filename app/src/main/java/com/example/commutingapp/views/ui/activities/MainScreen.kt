@@ -82,9 +82,9 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
         activityMainScreenBinding?.bottomNavigation?.apply {
             setOnItemSelectedListener {
                 when (it.itemId) {
-                    R.id.commuter_fragment -> {
-                        if (currentFragment() != R.id.commuter_fragment) {
-                            navigationController.navigate(R.id.main_screen_To_commuter_fragment)
+                    R.id.commuter_data_fragment -> {
+                        if (currentFragment() != R.id.commuter_data_fragment) {
+                            navigationController.navigate(R.id.main_screen_To_commuter_data_fragment)
                         }
                     }
                     R.id.settings_fragment -> {
@@ -125,7 +125,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
     override fun onBackPressed() {
 
 
-        if(currentFragment() == R.id.commuter_fragment){
+        if(currentFragment() == R.id.commuter_data_fragment){
             BackButton().applyDoubleClickToExit(this)
             return
         }

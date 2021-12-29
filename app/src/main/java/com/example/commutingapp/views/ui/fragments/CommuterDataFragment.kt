@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.CommuterDataFragmentBinding
@@ -21,8 +22,17 @@ class CommuterDataFragment : Fragment(R.layout.commuter_data_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
+        provideObservers()
+        provideListeners()
+    }
+    private fun provideObservers(){
         mainViewModel.runSortedByDate.observe(viewLifecycleOwner){
             commuterAdapter.submitList(it)
+        }
+    }
+    private fun provideListeners(){
+        binding!!.addCommuteFAB.setOnClickListener {
+            Navigation.findNavController(binding!!.root).navigate(R.id.main_screen_To_commuter_fragment)
         }
     }
 

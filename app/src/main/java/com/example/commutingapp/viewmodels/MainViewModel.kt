@@ -11,6 +11,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repository: CommuteRepository):ViewModel(){
 
+
+    val runSortedByDate =  repository.filterBy("TIMESTAMP")
+
     fun insertCommuter(commuter: Commuter){
         viewModelScope.launch {
             repository.insertCommuter(commuter)
