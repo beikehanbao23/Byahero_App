@@ -1,5 +1,6 @@
 package com.example.commutingapp.views.ui.fragments
 
+
 import StopWatch
 import android.annotation.SuppressLint
 import android.content.Context
@@ -46,9 +47,7 @@ import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.geojson.Point
-import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.mapboxsdk.snapshotter.MapSnapshotter
 import com.mapbox.maps.*
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.camera
@@ -93,10 +92,17 @@ import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi
 import com.mapbox.navigation.ui.tripprogress.model.*
 import com.rejowan.cutetoast.CuteToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
-import java.util.Calendar.*
 import kotlin.math.round
+
+
+
+
+
 
 @AndroidEntryPoint
 class NavigationFragment : Fragment(R.layout.fragment_navigation) {
@@ -443,7 +449,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private fun distanceFormatterOptionsBuilder()=DistanceFormatterOptions.Builder(requireContext().applicationContext)
         .unitType(UnitType.METRIC)
         .build()
-
     private fun progressUpdateFormatter(distanceFormatterOptions: DistanceFormatterOptions)=TripProgressUpdateFormatter.Builder(requireContext())
         .distanceRemainingFormatter(DistanceRemainingFormatter(distanceFormatterOptions))
         .timeRemainingFormatter(TimeRemainingFormatter(requireContext()))
@@ -463,51 +468,64 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
 
     }
+    private fun getAverageSpeed():Float{
+        return round((distanceTravelledInMeters!! / 1000f) / (commuteTimeInMillis!! / 1000f / 60 / 60)) * 10 / 10f
+    }
+    private fun getDateTimeStamp():Long{
+        return Calendar.getInstance().timeInMillis
+    }
+    private fun getWentPlaces():String {
+        return  "Laguna"// todo
+    }
 
-    private fun endCommuteAndSaveToDB(){
-        val width = binding?.mapView?.width
-        val height = binding?.mapView?.height
+    private fun saveToDB(){
 
-        val location = CameraPosition.Builder()
-            .target(userLocation)
-            .zoom(16.0)
-            .build()
-        val options = MapSnapshotter.Options(width!!,height!!).withCameraPosition(location)
-        val averageSpeed:Float = round((distanceTravelledInMeters!! / 1000f) / (commuteTimeInMillis!! / 1000f / 60 / 60)) * 10 / 10f
-        val dateTimeStamp:Long = getInstance().timeInMillis
-        val wentPlaces = "Laguna"// todo
 
         try {
-            MapSnapshotter(requireContext(),options).start {snapshot->
-                val commute = Commuter(snapshot.bitmap,dateTimeStamp,averageSpeed, distanceTravelledInMeters!!, commuteTimeInMillis!!, wentPlaces)
-                mainViewModel.insertCommuter(commute)
-            }
+           binding!!.mapView.snapshot {
+               val commuter = Commuter(
+                    it,
+                    getDateTimeStamp(),
+                    getAverageSpeed(),
+                    distanceTravelledInMeters!!,
+                    commuteTimeInMillis!!,
+                    getWentPlaces()
+                )
 
-        }catch(e:IllegalStateException){
-            Timber.e("Inserting Records: ${e.message}")
-        }
+                CoroutineScope(Dispatchers.Main).launch {
+                    mainViewModel.insertCommuter(commuter)
+                }
+            }
+            } catch (e: IllegalStateException) {
+                Timber.e("Inserting Records: ${e.message}")
+            }
 
 
         Snackbar.make( requireActivity().findViewById(R.id.rootView), "Commute Save successfully", Snackbar.LENGTH_LONG).show()
     }
-
+    private fun endCommute(){
+        stopWatch.stop()
+        clearRouteAndStopNavigation()
+        Navigation.findNavController(binding!!.root).navigate(R.id.navigation_fragment_to_commuter_fragment)
+    }
     private fun providerClickListener(){
 
         binding?.stop?.setOnClickListener {
+
         DialogDirector(requireActivity())
             .buildYesOrNoDialog()
             .setPositiveButton("YES") { _, _ ->
-                // TODO refactor this code, fix null pointers
+
                 NavigationCameraTransitionOptions.Builder().maxDuration(5).build()
                     .apply(navigationCamera::requestNavigationCameraToOverview)
-                endCommuteAndSaveToDB()
-                Navigation.findNavController(binding!!.root).navigate(R.id.navigation_fragment_to_commuter_fragment)
-                stopWatch.stop()
-                clearRouteAndStopNavigation()
+                saveToDB()
+                endCommute()
 
+                
             }.setNegativeButton("NO") { dialog, _ ->
                 dialog.dismiss()
-            }.also { dialog-> dialog.show()
+            }.also { dialog->
+                dialog.show()
         }
 
         }
