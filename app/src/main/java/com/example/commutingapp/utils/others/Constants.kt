@@ -61,8 +61,8 @@ object Constants {
     const val KEY_NAVIGATION_MAP_STYLE = "MapStyleNavigation"
 
 
-    const val ON_MAP_CLICK_SOURCE_ID = "icon-sourceID";
-    const val ON_MAP_CLICK_LAYER_ID = "icon-layerID";
+    const val ON_MAP_CLICK_SOURCE_ID = "icon-sourceID"
+    const val ON_MAP_CLICK_LAYER_ID = "icon-layerID"
 
     const val ROUTE_SOURCE_ID = "route-sourceId"
     const val ROUTE_LAYER_ID = "route-layerId"

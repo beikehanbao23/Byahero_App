@@ -17,12 +17,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
-import com.example.commutingapp.data.local_db.Commuter
 import com.example.commutingapp.databinding.FragmentNavigationBinding
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.KEY_NAVIGATION_MAP_STYLE
@@ -37,12 +35,10 @@ import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_SEVERE_CONGES
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.utils.others.WatchFormat
-import com.example.commutingapp.viewmodels.MainViewModel
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
 import com.example.commutingapp.views.ui.subComponents.Component
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
-import com.google.android.material.snackbar.Snackbar
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
@@ -92,9 +88,6 @@ import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi
 import com.mapbox.navigation.ui.tripprogress.model.*
 import com.rejowan.cutetoast.CuteToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import kotlin.math.round
@@ -106,7 +99,7 @@ import kotlin.math.round
 
 @AndroidEntryPoint
 class NavigationFragment : Fragment(R.layout.fragment_navigation) {
-    private val mainViewModel: MainViewModel by viewModels()
+
     private val locationArgs:NavigationFragmentArgs by navArgs()
     private companion object {
         private const val BUTTON_ANIMATION_DURATION = 1500L
@@ -478,32 +471,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         return  "Laguna"// todo
     }
 
-    private fun saveToDB(){
-
-
-        try {
-           binding!!.mapView.snapshot {
-               val commuter = Commuter(
-                    it,
-                    getDateTimeStamp(),
-                    getAverageSpeed(),
-                    distanceTravelledInMeters!!,
-                    commuteTimeInMillis!!,
-                    getWentPlaces()
-                )
-
-                CoroutineScope(Dispatchers.Main).launch {
-                    mainViewModel.insertCommuter(commuter)
-                    endCommute()
-                }
-            }
-            } catch (e: IllegalStateException) {
-                Timber.e("Inserting Records: ${e.message}")
-            }
-
-
-        Snackbar.make( requireActivity().findViewById(R.id.rootView), "Commute Save successfully", Snackbar.LENGTH_LONG).show()
-    }
     private fun endCommute(){
         Navigation.findNavController(binding!!.root).navigate(R.id.navigation_fragment_to_commuter_fragment)
     }
@@ -515,9 +482,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             .buildYesOrNoDialog()
             .setPositiveButton("YES") { _, _ ->
 
-                NavigationCameraTransitionOptions.Builder().maxDuration(1).build().apply(navigationCamera::requestNavigationCameraToOverview)
-
-               saveToDB()
 
 
                 

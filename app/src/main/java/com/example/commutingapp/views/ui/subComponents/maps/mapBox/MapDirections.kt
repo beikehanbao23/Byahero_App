@@ -55,7 +55,7 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
                         }
                     }
                     if (it.isEmpty()) {
-                        CuteToast.ct(activity,activity.getString(R.string.unreachableDestination), CuteToast.LENGTH_LONG,CuteToast.WARN, true).show();
+                        CuteToast.ct(activity,activity.getString(R.string.unreachableDestination), CuteToast.LENGTH_LONG,CuteToast.WARN, true).show()
                     }
                     findRouteDialog.hide()
                 }

@@ -3,7 +3,7 @@
 
 
     <item
-        android:id="@+id/commuter_data_fragment"
+        android:id="@+id/commuter_fragment"
         android:icon="@drawable/ic_jeep"
         android:title="@string/title_Commutes" />
 
