@@ -87,16 +87,6 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
                             navigationController.navigate(R.id.main_screen_To_commuter_fragment)
                         }
                     }
-                    R.id.settings_fragment -> {
-                        if (currentFragment() != R.id.settings_fragment) {
-                            navigationController.navigate(R.id.main_screen_To_settings_fragment)
-                        }
-                    }
-                    R.id.statistics_fragment -> {
-                        if (currentFragment() != R.id.statistics_fragment) {
-                            navigationController.navigate(R.id.main_screen_To_statistics_fragment)
-                        }
-                    }
                     R.id.weather_fragment -> {
                         if (currentFragment() != R.id.weather_fragment) {
                            navigationController.navigate(R.id.main_screen_To_weather_fragment)

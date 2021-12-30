@@ -22,21 +22,6 @@
         app:popExitAnim="@anim/nav_default_pop_exit_anim"
         />
 
-    <action
-        android:id="@+id/main_screen_To_statistics_fragment"
-        app:destination="@+id/statistics_fragment"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim"
-        />
-    <action
-        android:id="@+id/main_screen_To_settings_fragment"
-        app:destination="@+id/settings_fragment"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
 
 
@@ -52,21 +37,6 @@
 
 
     </fragment>
-
-
-
-    <fragment
-        android:id="@+id/settings_fragment"
-        android:name="com.example.commutingapp.views.ui.fragments.SettingsFragment"
-        android:label="@string/title_Settings"
-        tools:layout="@layout/settings_fragment"/>
-
-
-    <fragment
-        android:id="@+id/statistics_fragment"
-        android:name="com.example.commutingapp.views.ui.fragments.StatisticsFragment"
-        android:label="@string/title_Statistics"
-        tools:layout="@layout/statistics_fragment"/>
 
 
     <fragment

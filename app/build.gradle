@@ -10,6 +10,8 @@ plugins {
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+
+
 android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
@@ -84,28 +86,13 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.6.2')
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'com.google.code.gson:gson:2.8.9'
+
     implementation "com.mapbox.search:mapbox-search-android-ui:1.0.0-beta.22"
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
-    // Room
-    implementation "androidx.room:room-runtime:2.4.0"
-    kapt "androidx.room:room-compiler:2.4.0"
-
-    // Kotlin Extensions and Coroutines support for Room
-    implementation "androidx.room:room-ktx:2.4.0"
 
 
-    // Dagger Core
-    implementation "com.google.dagger:dagger:2.38.1"
-    kapt "com.google.dagger:dagger-compiler:2.38.1"
-
-    // Dagger Android
-    api 'com.google.dagger:dagger-android:2.35.1'
-    api 'com.google.dagger:dagger-android-support:2.28.1'
-    kapt 'com.google.dagger:dagger-android-processor:2.23.2'
-    // Easy Permissions
     implementation 'pub.devrel:easypermissions:3.0.0'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
