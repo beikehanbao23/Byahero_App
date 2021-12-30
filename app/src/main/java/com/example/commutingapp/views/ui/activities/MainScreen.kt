@@ -123,7 +123,10 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
         return navigationController.currentDestination?.id
     }
     override fun onBackPressed() {
-
+        if(currentFragment() == R.id.commuter_fragment){
+            navigationController.navigate(R.id.main_screen_To_commuter_data_fragment)
+            return
+        }
 
         if(currentFragment() == R.id.commuter_data_fragment){
             BackButton().applyDoubleClickToExit(this)
