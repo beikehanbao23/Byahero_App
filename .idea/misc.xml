@@ -138,7 +138,7 @@
         <entry key="app/src/main/res/layout/choose_map_dialog.xml" value="0.2" />
         <entry key="app/src/main/res/layout/circular_progressbar.xml" value="0.5" />
         <entry key="app/src/main/res/layout/commuter_data_fragment.xml" value="0.5" />
-        <entry key="app/src/main/res/layout/commuter_data_recycler_view_adapter.xml" value="0.55234375" />
+        <entry key="app/src/main/res/layout/commuter_data_recycler_view_adapter.xml" value="0.5" />
         <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.33" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
@@ -155,7 +155,7 @@
         <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/tracking_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/turn_by_turn_experience.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.16" />
         <entry key="app/src/main/res/layout/weather_recycler_view_adapter.xml" value="0.5" />
         <entry key="app/src/main/res/layout/weather_recycler_view_item.xml" value="0.25" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.67" />
@@ -181,7 +181,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.18" />
+        <option name="scale" value="0.15" />
       </ProjectState>
     </option>
   </component>

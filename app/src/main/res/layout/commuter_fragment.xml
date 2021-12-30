@@ -16,7 +16,7 @@
         android:drawableLeft="@drawable/ic_baseline_search_24"
         android:elevation="50dp"
         android:hint="@string/searchPlaces"
-        android:paddingLeft="15dp"
+        android:paddingStart="15dp"
         android:textAlignment="textStart"
         android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,6 +27,7 @@
         android:id="@+id/googleMapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

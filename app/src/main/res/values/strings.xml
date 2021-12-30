@@ -124,5 +124,6 @@
     <string name="went_places">WENT PLACES</string>
     <string name="distance">DISTANCE</string>
     <string name="time">TIME</string>
+    <string name="date">DATE</string>
 
 </resources>

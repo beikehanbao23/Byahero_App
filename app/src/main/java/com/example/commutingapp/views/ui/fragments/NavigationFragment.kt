@@ -494,6 +494,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
                 CoroutineScope(Dispatchers.Main).launch {
                     mainViewModel.insertCommuter(commuter)
+                    endCommute()
                 }
             }
             } catch (e: IllegalStateException) {
@@ -504,8 +505,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         Snackbar.make( requireActivity().findViewById(R.id.rootView), "Commute Save successfully", Snackbar.LENGTH_LONG).show()
     }
     private fun endCommute(){
-        stopWatch.stop()
-        clearRouteAndStopNavigation()
         Navigation.findNavController(binding!!.root).navigate(R.id.navigation_fragment_to_commuter_fragment)
     }
     private fun providerClickListener(){
@@ -516,10 +515,10 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             .buildYesOrNoDialog()
             .setPositiveButton("YES") { _, _ ->
 
-                NavigationCameraTransitionOptions.Builder().maxDuration(5).build()
-                    .apply(navigationCamera::requestNavigationCameraToOverview)
-                saveToDB()
-                endCommute()
+                NavigationCameraTransitionOptions.Builder().maxDuration(1).build().apply(navigationCamera::requestNavigationCameraToOverview)
+
+               saveToDB()
+
 
                 
             }.setNegativeButton("NO") { dialog, _ ->
@@ -664,6 +663,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     override fun onDestroy() {
         super.onDestroy()
         binding = null
+        stopWatch.stop()
+        clearRouteAndStopNavigation()
         MapboxNavigationProvider.destroy()
     }
 
