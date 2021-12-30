@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.commutingapp.data.local_db.Commuter
 import com.example.commutingapp.databinding.CommuterDataRecyclerViewAdapterBinding
 import com.example.commutingapp.utils.others.WatchFormat
@@ -46,7 +47,8 @@ class CommuterDataAdapter(
         with(binding) {
 
             val commuter = differ.currentList[position]
-            Glide.with(activity).load(commuter.image).into(ivCommuteImage)
+            Glide.with(activity).load(commuter.image).override(1080, 600).thumbnail(0.5f).diskCacheStrategy(
+                DiskCacheStrategy.ALL).into(ivCommuteImage)
             val calendar = Calendar.getInstance().apply {
                 timeInMillis = commuter.timestamp
             }
