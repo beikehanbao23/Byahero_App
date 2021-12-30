@@ -35,7 +35,6 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
-import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -150,9 +149,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
                     textViewhighestLowestTemperature.text = "H: ${day.maxtemp_c}°c  |  L: ${day.mintemp_c}°c"
 
                     hour.forEach {
-                        //todo add log for time
 
-                        Timber.e("${it.time}\n")
                         listOfWeatherModel.add(
                             WeatherRecyclerViewModel(
                                 time = it.time,
@@ -170,6 +167,11 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
         }
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+    }
 
     private fun getUserCityLocation(){
         try {

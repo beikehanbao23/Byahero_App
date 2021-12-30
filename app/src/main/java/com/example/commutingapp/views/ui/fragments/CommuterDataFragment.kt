@@ -1,5 +1,6 @@
 package com.example.commutingapp.views.ui.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,9 +26,11 @@ class CommuterDataFragment : Fragment(R.layout.commuter_data_fragment) {
         provideObservers()
         provideListeners()
     }
+    @SuppressLint("NotifyDataSetChanged")
     private fun provideObservers(){
         mainViewModel.runSortedByDate.observe(viewLifecycleOwner){
             commuterAdapter.submitList(it)
+            binding!!.recyclerViewDisplay.adapter?.notifyDataSetChanged()
         }
     }
     private fun provideListeners(){
@@ -43,7 +46,16 @@ class CommuterDataFragment : Fragment(R.layout.commuter_data_fragment) {
 
     private fun setupRecyclerView()=binding!!.recyclerViewDisplay.apply {
         commuterAdapter = CommuterDataAdapter(requireActivity())
-        layoutManager = LinearLayoutManager(requireContext())
+        layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
+        adapter?.setHasStableIds(true)
         adapter = commuterAdapter
+    }
+
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+
     }
 }
