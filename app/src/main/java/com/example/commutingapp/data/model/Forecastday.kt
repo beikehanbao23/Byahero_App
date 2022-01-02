@@ -1,4 +1,4 @@
-package com.example.commutingapp.data.api
+package com.example.commutingapp.data.model
 
 data class Forecastday(
     var astro: Astro,

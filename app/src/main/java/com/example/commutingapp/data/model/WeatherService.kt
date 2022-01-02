@@ -1,4 +1,4 @@
-package com.example.commutingapp.data.api
+package com.example.commutingapp.data.model
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

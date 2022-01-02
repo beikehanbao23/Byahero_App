@@ -7,9 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.commutingapp.BuildConfig
-import com.example.commutingapp.data.api.Weather
-import com.example.commutingapp.data.api.WeatherService
-import com.example.commutingapp.data.api.WeatherServiceAPI
+import com.example.commutingapp.data.model.Weather
+import com.example.commutingapp.data.model.WeatherService
+import com.example.commutingapp.data.model.WeatherServiceAPI
 import com.google.gson.Gson
 import im.delight.android.location.SimpleLocation
 import retrofit2.Call

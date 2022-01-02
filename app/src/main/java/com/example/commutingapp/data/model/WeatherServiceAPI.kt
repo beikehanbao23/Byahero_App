@@ -1,4 +1,4 @@
-package com.example.commutingapp.data.api
+package com.example.commutingapp.data.model
 
 import retrofit2.Call
 import retrofit2.http.GET

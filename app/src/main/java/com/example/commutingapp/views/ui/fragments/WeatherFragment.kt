@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.commutingapp.R
-import com.example.commutingapp.data.api.Weather
+import com.example.commutingapp.data.model.Weather
 import com.example.commutingapp.databinding.WeatherFragmentBinding
 import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.utils.others.Constants.KEY_USER_CITY_JSON_WEATHER
