@@ -23,6 +23,14 @@
         />
 
 
+    <action
+        android:id="@+id/main_screen_To_list_Fragment"
+        app:destination="@+id/listFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"
+        />
 
 
 
@@ -44,7 +52,6 @@
         android:name="com.example.commutingapp.views.ui.fragments.WeatherFragment"
         android:label="@string/title_Weather"
         tools:layout="@layout/weather_fragment"/>
-
 
 
     <fragment
@@ -73,9 +80,11 @@
 
 
 
-
-
-
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.example.commutingapp.views.ui.fragments.ListFragment"
+        android:label="fragment_list"
+        tools:layout="@layout/fragment_list" />
 
 
 </navigation>

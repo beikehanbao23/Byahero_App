@@ -87,6 +87,13 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
                             navigationController.navigate(R.id.main_screen_To_commuter_fragment)
                         }
                     }
+
+                    R.id.listFragment -> {
+                        if(currentFragment() != R.id.listFragment){
+                            navigationController.navigate(R.id.main_screen_To_list_Fragment)
+                        }
+                    }
+
                     R.id.weather_fragment -> {
                         if (currentFragment() != R.id.weather_fragment) {
                            navigationController.navigate(R.id.main_screen_To_weather_fragment)

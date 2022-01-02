@@ -78,7 +78,6 @@
     <string name="title_Settings">Settings</string>
 
 
-
     <!--Map styles dialog -->
     <!-- TextViews -->
     <string name="defaultStyle">Default</string>
@@ -105,8 +104,6 @@
     <string name="finding_best_route">Finding best route...</string>
 
 
-
-
     <!--WeatherFragment-->
 
     <string name="today_s_weather_forecast">Today\'s Weather Forecast</string>
@@ -126,5 +123,7 @@
     <string name="time">TIME</string>
     <string name="date">DATE</string>
     <string name="or">Or</string>
+
+    <string name="saved">Saved</string>
 
 </resources>

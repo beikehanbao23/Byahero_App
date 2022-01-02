@@ -51,7 +51,7 @@ import com.example.commutingapp.views.ui.subComponents.fab.MapTypes
 import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.Map3DBuilding
 import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.MapDetailsWrapper
 import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.MapTraffic
-import com.example.commutingapp.views.ui.subComponents.maps.MapWrapper
+import com.example.commutingapp.views.ui.subComponents.maps.MapImpl
 import com.example.commutingapp.views.ui.subComponents.maps.mapBox.MapBox
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
@@ -85,7 +85,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var bottomNavigation:Component
     private lateinit var locationFAB:LocationButton
     private lateinit var mapTypes:MapTypes
-    private lateinit var map:MapWrapper<MapView>
+    private lateinit var map:MapImpl<MapView>
     private var userDestinationLocation: LatLng? = null
     private lateinit var map3DBuilding: MapDetailsWrapper
     private lateinit var mapTraffic: MapDetailsWrapper
@@ -190,7 +190,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
         }
 
-        map = MapWrapper(mapbox)
+        map = MapImpl(mapbox)
 
 
     }

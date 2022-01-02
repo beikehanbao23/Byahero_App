@@ -12,9 +12,7 @@
         <entry key="../.gradle/caches/transforms-3/e4575a45ca77dc1355c6d37a47feae00/transformed/jetified-CuteToast-1.2/res/drawable/ic_confuse.xml" value="0.56796875" />
         <entry key="../Android/Sdk/platforms/android-30/data/res/drawable/btn_star.xml" value="0.3828125" />
         <entry key="app/src/main/res/drawable-v23/bottom_sheet_close_button.xml" value="0.3828125" />
-        <entry key="app/src/main/res/drawable-v24/active_indicator.xml" value="0.3125" />
         <entry key="app/src/main/res/drawable-v24/customdialog_background.xml" value="0.25" />
-        <entry key="app/src/main/res/drawable-v24/ic_back_button.xml" value="0.3125" />
         <entry key="app/src/main/res/drawable-v24/ic_create_account.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable-v24/ic_google.xml" value="0.57421875" />
         <entry key="app/src/main/res/drawable-v24/ic_map.xml" value="0.384375" />
@@ -42,9 +40,9 @@
         <entry key="app/src/main/res/drawable/ic_back_button.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_backbutton.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.5765625" />
-        <entry key="app/src/main/res/drawable/ic_baseline_add_road_24.xml" value="0.3125" />
         <entry key="app/src/main/res/drawable/ic_baseline_assistant_direction_24.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_baseline_bookmark_border.xml" value="0.5734375" />
+        <entry key="app/src/main/res/drawable/ic_baseline_bookmark_border_24.xml" value="0.578125" />
         <entry key="app/src/main/res/drawable/ic_baseline_choose_map.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_baseline_cloud_24.xml" value="0.384375" />
@@ -146,6 +144,8 @@
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.33" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_item_list.xml" value="0.534375" />
+        <entry key="app/src/main/res/layout/fragment_list.xml" value="0.55390625" />
         <entry key="app/src/main/res/layout/fragment_navigation.xml" value="0.33" />
         <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.22" />
         <entry key="app/src/main/res/layout/map_styles_dialog.xml" value="0.33" />
