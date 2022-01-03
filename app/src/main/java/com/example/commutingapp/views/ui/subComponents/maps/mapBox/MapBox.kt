@@ -78,7 +78,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             CoroutineScope(Dispatchers.Main).launch {
                 initializeMap()
                 initializeStyles(mapType)
-                initializeSearchFABLocation()
+
                 initializeMapComponents()
             }
         }
@@ -159,11 +159,11 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
     override fun updateMapStyle(style: String) {
 
-        mapBoxMap?.setStyle(style) {style->
-            if (style.isFullyLoaded) {
-                createMarkerImage(style)
-                initializePlugins(style)
-                initializeMapSymbols(style)
+        mapBoxMap?.setStyle(style) {
+            if (it.isFullyLoaded) {
+                createMarkerImage(it)
+                initializePlugins(it)
+                initializeMapSymbols(it)
                 destinationLocation?.let { location->
                     createRouteDirection(location)
                     showUserLocation(location, null)
@@ -217,14 +217,11 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     }
 
 
-
-    private fun initializeSearchFABLocation(){
-        searchLocationButton.setOnClickListener {
-            onSearchCompleted(search.getLocationSearchIntent())
-        }
-
+    override fun getLocationSearchIntent(): Intent {
+        return search.getLocationSearchIntent()
     }
-    abstract fun onSearchCompleted(intent:Intent)
+
+
 
     override fun createDirections() {
         hasExistingMapRoute = true

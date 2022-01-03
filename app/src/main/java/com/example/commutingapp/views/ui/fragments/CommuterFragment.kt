@@ -185,9 +185,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
                 mapboxMap.addOnMoveListener(this@CommuterFragment)
                 moveCameraToLastKnownLocation()
             }
-            override fun onSearchCompleted(intent: Intent) {
-            startActivityForResult(intent,REQUEST_SEARCH_RESULT)
-            }
+
         }
 
         map = MapImpl(mapbox)
@@ -209,6 +207,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         provideSaveButtonListener()
         provideShareButtonListener()
         provideVoiceSpeechButtonListener()
+        provideSearchButtonListener()
+    }
+
+    private fun provideSearchButtonListener(){
+        binding?.buttonLocationSearch?.setOnClickListener {
+            val intent = map.getLocationSearchIntent()
+            startActivityForResult(intent,REQUEST_SEARCH_RESULT)
+        }
     }
     private fun provideMapTypeDialogListener() {
         binding?.floatingActionButtonChooseMap?.setOnClickListener {
