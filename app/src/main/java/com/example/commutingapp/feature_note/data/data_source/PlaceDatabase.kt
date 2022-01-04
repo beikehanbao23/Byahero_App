@@ -12,4 +12,8 @@ import com.example.commutingapp.feature_note.domain.model.Place
 abstract class PlaceDatabase:RoomDatabase() {
 
     abstract val placeDao:PlaceDao
+
+    companion object{
+        const val database_name = "place_bookmarks_db"
+    }
 }

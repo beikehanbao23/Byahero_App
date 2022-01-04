@@ -9,11 +9,11 @@ class PlaceRepositoryImpl(
 private val dao: PlaceDao
 ):PlaceRepository {
 
-    override fun getSaveList(): Flow<List<Place>> {
+    override fun getPlaceList(): Flow<List<Place>> {
         return dao.getPlaceList()
     }
 
-    override suspend fun getSaveListByPlaceName(placeName: String): Place {
+    override suspend fun getPlaceListByName(placeName: String): Place {
        return dao.getPlaceListByName(placeName)
     }
 
