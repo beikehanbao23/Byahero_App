@@ -17,7 +17,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+object PlaceBookmarkModule {
 
     @Provides
     @Singleton
@@ -45,4 +45,7 @@ object AppModule {
             getPlace = GetPlace(repository)
         )
     }
+
+
+
 }
