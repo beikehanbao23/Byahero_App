@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.ActivityIntroSliderBinding
@@ -30,14 +30,14 @@ class IntroSlider : AppCompatActivity() {
 
     private lateinit var preferences: SharedPreferences
     private var binding: ActivityIntroSliderBinding? = null
-    private lateinit var viewModel: IntroSliderViewModel
+    private val viewModel:IntroSliderViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         initializeAttributes()
 
-        viewModel = ViewModelProvider(this)[IntroSliderViewModel::class.java]
+
         if (userHasAlreadySeenTheIntroSliders()) {
             startTransitionToNextActivity()
             return

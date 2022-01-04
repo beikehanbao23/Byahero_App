@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.commutingapp.R
@@ -41,7 +42,7 @@ import pub.devrel.easypermissions.EasyPermissions
 class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.PermissionCallbacks{
     private var binding: WeatherFragmentBinding? = null
     private var listOfWeatherModel:MutableList<WeatherRecyclerViewModel> = ArrayList()
-    private lateinit var weatherViewModel: WeatherViewModel
+    private val weatherViewModel: WeatherViewModel by viewModels()
     private lateinit var weatherApiJson :SharedPreferences
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -57,7 +58,6 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        initializeAttributes()
         provideObservers()
 
         if(!Connection.hasGPSConnection(requireContext())){
@@ -223,9 +223,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
     }
     private fun getJsonSharedPreference():String? = weatherApiJson.getString(KEY_USER_CITY_JSON_WEATHER,null)
 
-    private fun initializeAttributes(){
-        weatherViewModel = WeatherViewModel()
-    }
+
 
     private fun setupRecyclerView()=binding!!.recyclerViewDisplay.apply {
         layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
