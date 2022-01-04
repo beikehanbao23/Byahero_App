@@ -52,13 +52,11 @@ class MapSearch(private val activity:Activity,style: Style?) {
             .text("Mapbox SF Office")
             .geometry(Point.fromLngLat(-122.3964485, 37.7912561))
             .placeName("50 Beale St, San Francisco, CA")
-
             .properties(JsonObject())
             .build()
         work = CarmenFeature.builder().text("Mapbox DC Office")
             .placeName("740 15th Street NW, Washington DC")
             .geometry(Point.fromLngLat(-77.0338348, 38.899750))
-
             .properties(JsonObject())
             .build()
     }
