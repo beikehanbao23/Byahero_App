@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.data.model.Weather
-import com.example.commutingapp.data.model.WeatherService
 import com.example.commutingapp.data.model.WeatherServiceAPI
 import com.google.gson.Gson
 import im.delight.android.location.SimpleLocation
@@ -18,12 +17,13 @@ import retrofit2.Response
 import timber.log.Timber
 import java.io.IOException
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.HashMap
 
 
 class WeatherViewModel : ViewModel() {
     private var map: HashMap<String, String> = HashMap()
-    private var request: WeatherServiceAPI
+    @Inject lateinit var request: WeatherServiceAPI
     private val searchedLocation = MutableLiveData<Weather>()
     private val jsonApi = MutableLiveData<String>()
     fun getWeatherJson(): LiveData<String> = jsonApi
@@ -37,7 +37,7 @@ class WeatherViewModel : ViewModel() {
             this["aqi"] = "yes"
             this["alerts"] = "yes"
         }
-        request = WeatherService.buildService(WeatherServiceAPI::class.java)
+
     }
 
     private fun requestWeather(cityName: String) {
