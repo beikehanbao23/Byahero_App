@@ -1,4 +1,4 @@
-package com.example.commutingapp.data
+package com.example.commutingapp.feature_note
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
