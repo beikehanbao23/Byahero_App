@@ -1,7 +1,6 @@
 package com.example.commutingapp.views.ui.fragments
 
 
-import StopWatch
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
@@ -34,7 +33,6 @@ import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_ROAD_RESTRICT
 import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_SEVERE_CONGESTION
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.SwitchState
-import com.example.commutingapp.utils.others.WatchFormat
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
 import com.example.commutingapp.views.ui.subComponents.Component
@@ -90,7 +88,6 @@ import com.rejowan.cutetoast.CuteToast
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.*
-import kotlin.math.round
 
 
 
@@ -120,8 +117,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private var userLastLocation:Point? = null
     private lateinit var findRouteDialog: CustomDialogBuilder
     private var userLocation: LatLng? = null
-    private var distanceTravelledInMeters :Int? = null
-    private var commuteTimeInMillis:Long? = null
 
 
 
@@ -149,7 +144,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private lateinit var routeLineView: MapboxRouteLineView
     private val routeArrowApi: MapboxRouteArrowApi = MapboxRouteArrowApi()
     private lateinit var routeArrowView: MapboxRouteArrowView
-    private val stopWatch = StopWatch()
+
 
     private val navigationLocationProvider = NavigationLocationProvider()
 
@@ -216,7 +211,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private val routeProgressObserver = RouteProgressObserver { routeProgress ->
         viewportDataSource.onRouteProgressChanged(routeProgress)
         viewportDataSource.evaluate()
-        distanceTravelledInMeters = routeProgress.distanceTraveled.toInt()
+
         val style = mapboxMap.getStyle()
         style?.let{
             val maneuverArrowResult = routeArrowApi.addUpcomingManeuverArrow(routeProgress)
@@ -318,9 +313,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onFinalDestinationArrival(routeProgress: RouteProgress) {
             Timber.e("FINAL DESTINATION ARRIVED")
-            distanceTravelledInMeters = routeProgress.distanceTraveled.toInt()
-            Timber.e("Distance travelled: $distanceTravelledInMeters")
-            stopWatch.stop()
         }
       }
 
@@ -332,7 +324,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         findRouteDialog = DialogDirector(requireActivity()).buildFindRouteDialog().apply { show() }
         mapboxMap = binding?.mapView?.getMapboxMap()!!
 
-        stopWatch.postInitialValues()
+
         mapboxMap.setBounds(cameraBoundsOptionsBuilder())
         trackingBottomSheet = Component(TrackingBottomSheet(view)).apply {show() }
 
@@ -413,16 +405,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         providerClickListener()
         mapboxNavigation.startTripSession()
 
-
-        stopWatch.start()
-
-        stopWatch.getTimeCommuteInSeconds().observe(viewLifecycleOwner) {
-          val time  = WatchFormat.getFormattedStopWatchTime(it * 1000L)
-            Timber.e("Time is: ${time}")
-        }
-        stopWatch.getTimeCommuteMillis().observe(viewLifecycleOwner){
-            commuteTimeInMillis = it
-        }
     }
 
 
@@ -461,19 +443,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
 
     }
-    private fun getAverageSpeed():Float{
-        return round((distanceTravelledInMeters!! / 1000f) / (commuteTimeInMillis!! / 1000f / 60 / 60)) * 10 / 10f
-    }
-    private fun getDateTimeStamp():Long{
-        return Calendar.getInstance().timeInMillis
-    }
-    private fun getWentPlaces():String {
-        return  "Laguna"// todo
-    }
 
-    private fun endCommute(){
-        Navigation.findNavController(binding!!.root).navigate(R.id.navigation_fragment_to_commuter_fragment)
-    }
     private fun providerClickListener(){
 
         binding?.stop?.setOnClickListener {
@@ -482,8 +452,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             .buildYesOrNoDialog()
             .setPositiveButton("YES") { _, _ ->
 
-
-
+                Navigation.findNavController(binding!!.root).navigate(R.id.navigation_fragment_to_commuter_fragment)
                 
             }.setNegativeButton("NO") { dialog, _ ->
                 dialog.dismiss()
@@ -619,15 +588,13 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxNavigation.unregisterLocationObserver(locationObserver)
         mapboxNavigation.stopTripSession()
 
-        stopWatch.stop()
-
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
         binding = null
-        stopWatch.stop()
+
         clearRouteAndStopNavigation()
         MapboxNavigationProvider.destroy()
     }
@@ -642,7 +609,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                         CuteToast.ct(requireContext(), requireActivity().getString(R.string.unreachableDestination), CuteToast.LENGTH_LONG, CuteToast.WARN, true).show()
                         findRouteDialog.cancel()
                         Navigation.findNavController(binding!!.root).navigate(R.id.navigation_fragment_to_commuter_fragment)
-                        stopWatch.stop()
+
                     }
 
                     override fun onCanceled(routeOptions: RouteOptions, routerOrigin: RouterOrigin) {

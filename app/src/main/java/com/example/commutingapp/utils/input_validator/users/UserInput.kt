@@ -64,7 +64,7 @@ open class ValidateInputModel constructor(
         }.also { password.requestFocus() }
         return password.error
     }
-    /**kind of weird putting '== true' there, but it's part of kotlin null safety btw.*/
+
     override fun isValid(): Boolean? {
         return !(validationEmailFailed() == true || validationPasswordFailed() == true || validationConfirmPasswordFailed() == true)
     }
