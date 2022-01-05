@@ -42,6 +42,10 @@
         <action
             android:id="@+id/commuter_fragment_To_navigation_fragment"
             app:destination="@+id/navigation_fragment"/>
+        <argument
+            android:name="isOpenFromBookmarks"
+            app:argType="boolean"
+            android:defaultValue="false" />
 
 
     </fragment>
@@ -82,9 +86,14 @@
 
     <fragment
         android:id="@+id/listFragment"
-        android:name="com.example.commutingapp.views.ui.fragments.ListFragment"
+        android:name="com.example.commutingapp.feature_note.presentation.ListFragment"
         android:label="fragment_list"
-        tools:layout="@layout/fragment_list" />
+        tools:layout="@layout/fragment_list" >
+
+        <action
+            android:id="@+id/action_listFragment_to_commuter_fragment"
+            app:destination="@id/commuter_fragment" />
+    </fragment>
 
 
 </navigation>

@@ -16,6 +16,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.navArgs
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.CommuterFragmentBinding
 import com.example.commutingapp.utils.InternetConnection.Connection
@@ -53,6 +54,7 @@ import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.MapDetails
 import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.MapTraffic
 import com.example.commutingapp.views.ui.subComponents.maps.MapImpl
 import com.example.commutingapp.views.ui.subComponents.maps.mapBox.MapBox
+import com.example.commutingapp.views.ui.subComponents.maps.mapBox.MapSearch
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -75,8 +77,7 @@ import kotlin.reflect.KFunction0
 class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
      MapboxMap.OnMapLongClickListener, MapboxMap.OnMapClickListener,MapboxMap.OnMoveListener {
 
-
-
+   private val commuterArgs: CommuterFragmentArgs by navArgs()
     private lateinit var dialogDirector: DialogDirector
     private var binding: CommuterFragmentBinding? = null
     private lateinit var searchLocationButton: AppCompatButton
@@ -91,7 +92,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var mapTraffic: MapDetailsWrapper
     private lateinit var traffic : TrafficPlugin
     private lateinit var building3D : BuildingPlugin
-
+    private var isOpenedFromBookmarks:Boolean = false
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = CommuterFragmentBinding.inflate(inflater,container,false)
         return binding!!.root
@@ -111,8 +112,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         map.setupUI(mapTypes.currentMapType())
         locationFAB.updateLocationFloatingButtonIcon()
         provideObservers()
-
+        isOpenedFromBookmarks = commuterArgs.isOpenFromBookmarks
     }
+
 
 
     @Suppress("Warnings")
@@ -168,6 +170,13 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
         val mapbox = object : MapBox(view,requireActivity()){
+            override fun onMapSearchInitialized(search: MapSearch) {
+                if(isOpenedFromBookmarks){
+                    val intent = map.getLocationSearchIntent()
+                    startActivityForResult(intent,REQUEST_SEARCH_RESULT)
+                    isOpenedFromBookmarks = false
+                }
+            }
 
             override fun onMapTrafficInitialized(trafficPlugin: TrafficPlugin) {
                 traffic = trafficPlugin
