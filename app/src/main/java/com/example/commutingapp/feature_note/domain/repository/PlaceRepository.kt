@@ -8,6 +8,5 @@ interface PlaceRepository {
     suspend fun getPlaceListByName(placeName:String):Place
     suspend fun insertPlace(place: Place)
     suspend fun deletePlace(place:Place)
-    //todo check if the use case use the repository multiple times
-    // Repository method should be used by one, and only one
+
 }

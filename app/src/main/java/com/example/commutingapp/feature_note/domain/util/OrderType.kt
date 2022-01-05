@@ -1,6 +1,8 @@
 package com.example.commutingapp.feature_note.domain.util
 
 sealed class OrderType{
-    object Ascending:OrderType()
-    object Descending:OrderType()
+
+    object Ascending: OrderType()
+    object Descending: OrderType()
+
 }

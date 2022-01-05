@@ -1,13 +1,11 @@
-package com.example.commutingapp.feature_note.data.di
+package com.example.commutingapp.di
 
 import android.app.Application
 import androidx.room.Room
 import com.example.commutingapp.feature_note.data.data_source.PlaceDatabase
 import com.example.commutingapp.feature_note.data.repository.PlaceRepositoryImpl
 import com.example.commutingapp.feature_note.domain.repository.PlaceRepository
-import com.example.commutingapp.feature_note.domain.use_case.DeletePlace
-import com.example.commutingapp.feature_note.domain.use_case.GetPlace
-import com.example.commutingapp.feature_note.domain.use_case.PlaceUseCase
+import com.example.commutingapp.feature_note.domain.use_case.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,7 +40,9 @@ object PlaceBookmarkModule {
     fun providePlaceUseCase(repository: PlaceRepository):PlaceUseCase{
         return PlaceUseCase(
             deletePlace = DeletePlace(repository),
-            getPlace = GetPlace(repository)
+            getPlace = GetPlaces(repository),
+            addPlace = AddPlace(repository),
+            getPlaceName = GetPlaceByName(repository)
         )
     }
 

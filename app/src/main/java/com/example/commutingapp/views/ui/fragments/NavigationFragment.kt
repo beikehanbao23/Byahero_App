@@ -97,7 +97,7 @@ import java.util.*
 @AndroidEntryPoint
 class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
-    private val locationArgs:NavigationFragmentArgs by navArgs()
+    private val navigationArgs:NavigationFragmentArgs by navArgs()
     private companion object {
         private const val BUTTON_ANIMATION_DURATION = 1500L
     }
@@ -432,8 +432,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         .build()
 
     private fun createRoute(){
-    locationArgs.destinationLocation?.let { target ->
-        locationArgs.lastKnownLocation?.let { origin->
+    navigationArgs.destinationLocation?.let { target ->
+        navigationArgs.lastKnownLocation?.let { origin->
             val destination = Point.fromLngLat(target.longitude,target.latitude)
             val lastLocation = Point.fromLngLat(origin.longitude,origin.latitude)
             findRoute(destination,lastLocation)

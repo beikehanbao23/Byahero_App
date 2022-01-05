@@ -20,5 +20,6 @@ interface IMap<V> {
     fun getPlaceName():LiveData<String?>
     fun createDirections()
     fun setVoiceSearchResult(place:String)
+    fun getLocationSearchIntent():Intent
     fun clearCache()
 }

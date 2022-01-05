@@ -1,4 +1,4 @@
-package com.example.commutingapp.data
+package com.example.commutingapp.di
 
 import com.example.commutingapp.data.model.WeatherServiceAPI
 import dagger.Module

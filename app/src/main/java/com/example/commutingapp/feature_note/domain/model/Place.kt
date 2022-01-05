@@ -12,4 +12,5 @@ data class Place(
     val latitude:Double = Constants.DEFAULT_LATITUDE,
     val placeText:String = ""
 )
-//todo convert to LatLng later
+
+
