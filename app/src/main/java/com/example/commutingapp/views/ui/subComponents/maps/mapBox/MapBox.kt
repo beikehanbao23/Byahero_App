@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.view.View
-import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.commutingapp.R
@@ -41,7 +40,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private var mapBoxMap:MapboxMap? = null
     private var mapBoxView: MapView = view.findViewById(R.id.googleMapView)
 
-    private var searchLocationButton: AppCompatButton  = view.findViewById(R.id.buttonLocationSearch)
+
 
     private lateinit var marker:MapMarker
     private lateinit var search:MapSearch
@@ -78,7 +77,6 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             CoroutineScope(Dispatchers.Main).launch {
                 initializeMap()
                 initializeStyles(mapType)
-
                 initializeMapComponents()
             }
         }
@@ -93,6 +91,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
         marker = MapMarker(style)
         search = MapSearch(activity, style)
+        onMapSearchInitialized(search)
         directions = MapDirections(style, activity)
     }
 
@@ -109,6 +108,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         }
 
     }
+    abstract fun onMapSearchInitialized(search: MapSearch)
     abstract fun onMapTrafficInitialized(trafficPlugin: TrafficPlugin)
     abstract fun onMap3DBuildingInitialized(buildingPlugin: BuildingPlugin)
     abstract fun onMapReady(mapboxMap: MapboxMap)
