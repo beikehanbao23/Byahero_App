@@ -8,7 +8,7 @@
         android:title="@string/title_Commutes" />
 
     <item
-        android:id="@+id/listFragment"
+        android:id="@+id/placeBookmarks_fragment"
         android:icon="@drawable/ic_baseline_bookmark_border_24"
         android:title="@string/saved"
         />

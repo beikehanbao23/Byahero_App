@@ -2,9 +2,9 @@ package com.example.commutingapp.di
 
 import android.app.Application
 import androidx.room.Room
-import com.example.commutingapp.feature_note.data.data_source.PlaceDatabase
-import com.example.commutingapp.feature_note.data.repository.PlaceRepositoryImpl
-import com.example.commutingapp.feature_note.domain.repository.PlaceRepository
+import com.example.commutingapp.feature_note.data.data_source.PlaceBookmarksDatabase
+import com.example.commutingapp.feature_note.data.repository.PlaceBookmarksRepositoryImpl
+import com.example.commutingapp.feature_note.domain.repository.PlaceBookmarksRepository
 import com.example.commutingapp.feature_note.domain.use_case.*
 import dagger.Module
 import dagger.Provides
@@ -19,30 +19,30 @@ object PlaceBookmarkModule {
 
     @Provides
     @Singleton
-    fun providePlaceDatabase(app:Application):PlaceDatabase{
+    fun providePlaceDatabase(app:Application):PlaceBookmarksDatabase{
         return Room.databaseBuilder(
             app,
-            PlaceDatabase::class.java,
-            PlaceDatabase.database_name
+            PlaceBookmarksDatabase::class.java,
+            PlaceBookmarksDatabase.database_name
         ).build()
     }
 
 
     @Provides
     @Singleton
-    fun providePlaceRepository(db:PlaceDatabase):PlaceRepository{
-        return PlaceRepositoryImpl(db.placeDao)
+    fun providePlaceRepository(db:PlaceBookmarksDatabase):PlaceBookmarksRepository{
+        return PlaceBookmarksRepositoryImpl(db.placeBookmarksDao)
     }
 
 
     @Provides
     @Singleton
-    fun providePlaceUseCase(repository: PlaceRepository):PlaceUseCase{
-        return PlaceUseCase(
-            deletePlace = DeletePlace(repository),
-            getPlace = GetPlaces(repository),
-            addPlace = AddPlace(repository),
-            getPlaceName = GetPlaceByName(repository)
+    fun providePlaceUseCase(bookmarksRepository: PlaceBookmarksRepository):PlaceBookmarksUseCase{
+        return PlaceBookmarksUseCase(
+            deletePlaceFromBookmarks = DeletePlaceFromBookmarks(bookmarksRepository),
+            getPlaceFromBookmarks = GetPlacesFromBookmarks(bookmarksRepository),
+            addPlaceToBookmarks = AddPlaceToBookmarks(bookmarksRepository),
+            getPlaceNameFromBookmarks = GetPlaceByNameFromBookmarks(bookmarksRepository)
         )
     }
 

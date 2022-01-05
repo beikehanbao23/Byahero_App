@@ -1,20 +1,20 @@
 package com.example.commutingapp.feature_note.domain.use_case
 
-import com.example.commutingapp.feature_note.domain.model.Place
-import com.example.commutingapp.feature_note.domain.repository.PlaceRepository
+import com.example.commutingapp.feature_note.domain.model.PlaceBookmarks
+import com.example.commutingapp.feature_note.domain.repository.PlaceBookmarksRepository
 import com.example.commutingapp.feature_note.domain.util.OrderType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class GetPlaces(
-    private val repository: PlaceRepository) {
+class GetPlacesFromBookmarks(
+    private val bookmarksRepository: PlaceBookmarksRepository) {
 
 
     operator fun invoke(
         orderType: OrderType
-    ): Flow<List<Place>> {
+    ): Flow<List<PlaceBookmarks>> {
 
-        return repository.getPlaceList().map { place->
+        return bookmarksRepository.getPlaceList().map { place->
 
             when(orderType){
 

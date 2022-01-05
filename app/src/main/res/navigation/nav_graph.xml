@@ -24,8 +24,8 @@
 
 
     <action
-        android:id="@+id/main_screen_To_list_Fragment"
-        app:destination="@+id/listFragment"
+        android:id="@+id/main_screen_To_place_bookmarks_fragment"
+        app:destination="@+id/placeBookmarks_fragment"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -85,10 +85,10 @@
 
 
     <fragment
-        android:id="@+id/listFragment"
-        android:name="com.example.commutingapp.feature_note.presentation.ListFragment"
-        android:label="fragment_list"
-        tools:layout="@layout/fragment_list" >
+        android:id="@+id/placeBookmarks_fragment"
+        android:name="com.example.commutingapp.feature_note.presentation.PlaceBookmarksFragment"
+        android:label="place_bookmarks_fragment"
+        tools:layout="@layout/place_bookmarks_fragment" >
 
         <action
             android:id="@+id/action_listFragment_to_commuter_fragment"

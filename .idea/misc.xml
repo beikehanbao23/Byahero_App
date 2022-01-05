@@ -37,15 +37,18 @@
         <entry key="app/src/main/res/drawable/customdialog_background.xml" value="0.33" />
         <entry key="app/src/main/res/drawable/dialog_background.xml" value="0.22280701754385965" />
         <entry key="app/src/main/res/drawable/google_button_background.xml" value="0.33" />
+        <entry key="app/src/main/res/drawable/ic_alphabet_order_icon.xml" value="0.578125" />
         <entry key="app/src/main/res/drawable/ic_back_button.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_backbutton.xml" value="0.37435897435897436" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.5765625" />
+        <entry key="app/src/main/res/drawable/ic_baseline_add_location_alt_24.xml" value="0.578125" />
         <entry key="app/src/main/res/drawable/ic_baseline_assistant_direction_24.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_baseline_bookmark_border.xml" value="0.5734375" />
         <entry key="app/src/main/res/drawable/ic_baseline_bookmark_border_24.xml" value="0.578125" />
         <entry key="app/src/main/res/drawable/ic_baseline_choose_map.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_baseline_cloud_24.xml" value="0.384375" />
+        <entry key="app/src/main/res/drawable/ic_baseline_delete_24.xml" value="0.578125" />
         <entry key="app/src/main/res/drawable/ic_baseline_directions.xml" value="0.57421875" />
         <entry key="app/src/main/res/drawable/ic_baseline_layers.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_baseline_my_location.xml" value="0.384375" />
@@ -145,7 +148,9 @@
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_item_list.xml" value="0.534375" />
-        <entry key="app/src/main/res/layout/fragment_list.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_list.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/fragment_list_adapter.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/fragment_list_adpater.xml" value="0.55390625" />
         <entry key="app/src/main/res/layout/fragment_navigation.xml" value="0.33" />
         <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.22" />
         <entry key="app/src/main/res/layout/map_styles_dialog.xml" value="0.33" />

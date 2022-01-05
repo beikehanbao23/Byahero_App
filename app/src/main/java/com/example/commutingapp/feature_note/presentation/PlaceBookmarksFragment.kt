@@ -9,16 +9,16 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.FragmentListBinding
-import com.example.commutingapp.feature_note.presentation.place.components.PlaceViewModel
+import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksViewModel
 
 
-class ListFragment : Fragment(R.layout.fragment_list) {
+class PlaceBookmarksFragment : Fragment(R.layout.place_bookmarks_fragment) {
     private lateinit var binding:FragmentListBinding
-    private val viewModel:PlaceViewModel by viewModels()
+    private val bookmarksViewModel:PlaceBookmarksViewModel by viewModels()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonNavigate.setOnClickListener {
-            val action = ListFragmentDirections.actionListFragmentToCommuterFragment(isOpenFromBookmarks = true)
+            val action = PlaceBookmarksFragmentDirections.actionListFragmentToCommuterFragment(isOpenFromBookmarks = true)
             Navigation.findNavController(binding.root).navigate(action)
         }
     }
