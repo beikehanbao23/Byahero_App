@@ -12,8 +12,6 @@ interface PlaceBookmarksDao {
     @Query("SELECT * FROM PlaceBookmarks")
     fun getPlaceList(): Flow<List<PlaceBookmarks>>
 
-    @Query("SELECT * FROM PlaceBookmarks WHERE placeName like '%' || :placeName || '%'")
-    suspend fun getPlaceListByName(placeName:String):PlaceBookmarks
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlace(placeBookmarks: PlaceBookmarks)

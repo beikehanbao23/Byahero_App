@@ -13,10 +13,6 @@ private val bookmarksDao: PlaceBookmarksDao
         return bookmarksDao.getPlaceList()
     }
 
-    override suspend fun getPlaceListByName(placeName: String): PlaceBookmarks {
-       return bookmarksDao.getPlaceListByName(placeName)
-    }
-
     override suspend fun insertPlace(placeBookmarks: PlaceBookmarks) {
         bookmarksDao.insertPlace(placeBookmarks)
     }

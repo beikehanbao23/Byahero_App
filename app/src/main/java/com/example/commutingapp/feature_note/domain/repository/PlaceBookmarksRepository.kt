@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlaceBookmarksRepository {
     fun getPlaceList(): Flow<List<PlaceBookmarks>>
-    suspend fun getPlaceListByName(placeName:String):PlaceBookmarks
     suspend fun insertPlace(placeBookmarks: PlaceBookmarks)
     suspend fun deletePlace(placeBookmarks:PlaceBookmarks)
 

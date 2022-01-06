@@ -7,5 +7,5 @@ sealed class PlaceBookmarksEvent {
     data class ChangeOrder(val orderType: OrderType):PlaceBookmarksEvent()
     data class DeletePlaceBookmarks(val placeBookmarks:PlaceBookmarks):PlaceBookmarksEvent()
     object RestoreNote:PlaceBookmarksEvent()
-    data class SearchPlaceBookmarks(val placeName:String):PlaceBookmarksEvent()
+    data class SavePlace(val placeBookmarks:PlaceBookmarks):PlaceBookmarksEvent()
 }
