@@ -11,14 +11,22 @@ import android.speech.RecognizerIntent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.CommuterFragmentBinding
+import com.example.commutingapp.feature_note.domain.model.PlaceBookmarks
+import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksEvent
+import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksUiEvent
+import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksViewModel
 import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
@@ -66,18 +74,23 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.plugins.building.BuildingPlugin
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
 import kotlin.reflect.KFunction0
 
 
-
+@AndroidEntryPoint
 class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
      MapboxMap.OnMapLongClickListener, MapboxMap.OnMapClickListener,MapboxMap.OnMoveListener {
 
-   private val commuterArgs: CommuterFragmentArgs by navArgs()
+
+    private val viewModel: PlaceBookmarksViewModel by viewModels()
+    private val commuterArgs: CommuterFragmentArgs by navArgs()
     private lateinit var dialogDirector: DialogDirector
     private var binding: CommuterFragmentBinding? = null
     private lateinit var searchLocationButton: AppCompatButton
@@ -93,6 +106,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private lateinit var traffic : TrafficPlugin
     private lateinit var building3D : BuildingPlugin
     private var isOpenedFromBookmarks:Boolean = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = CommuterFragmentBinding.inflate(inflater,container,false)
         return binding!!.root
@@ -113,9 +127,28 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         locationFAB.updateLocationFloatingButtonIcon()
         provideObservers()
         isOpenedFromBookmarks = commuterArgs.isOpenFromBookmarks
+
+
+        collectLifecycleFlow(viewModel.event){
+            when(it){
+                is PlaceBookmarksUiEvent.SavePlace-> {
+                    Toast.makeText(requireContext(),"Place Successfully Saved!",Toast.LENGTH_SHORT).show()
+                }
+                is PlaceBookmarksUiEvent.ShowSnackBar->{
+                    Toast.makeText(requireContext(),it.message,Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
 
+    private fun <T> Fragment.collectLifecycleFlow(flow: Flow<T>, collect: suspend (T) -> Unit){
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                flow.collect(collect)
+            }
+        }
+    }
 
     @Suppress("Warnings")
     override fun onAttach(context: Context) {
@@ -134,7 +167,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideObservers(){
 
         with(binding) {
+
             map.getPlaceName().observe(viewLifecycleOwner) {
+
                 this?.progressBar?.visibility = View.GONE
                 if (it == null) {
                     this?.geocodePlaceName?.visibility = View.GONE
@@ -147,6 +182,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
             map.getPlaceText().observe(viewLifecycleOwner) {
+
                 this?.progressBar?.visibility = View.GONE
                 if (it == null) {
                     this?.geocodePlaceText?.visibility = View.GONE
@@ -350,7 +386,18 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun provideSaveButtonListener() {
         binding?.saveButton?.setOnClickListener {
 
+            viewModel.onEvent(PlaceBookmarksEvent.SavePlace(
+                PlaceBookmarks(
+                    placeName = binding!!.geocodePlaceName.text as String,
+                    placeText = binding!!.geocodePlaceText.text as String,
+                    longitude = userDestinationLocation!!.longitude,
+                    latitude = userDestinationLocation!!.latitude
+                )
+            ))
         }
+
+
+
     }
     private fun provideShareButtonListener(){
         binding?.shareButton?.setOnClickListener {
