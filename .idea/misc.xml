@@ -155,6 +155,8 @@
         <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.22" />
         <entry key="app/src/main/res/layout/map_styles_dialog.xml" value="0.33" />
         <entry key="app/src/main/res/layout/navigation_dialog_finding_route.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/place_bookmarks_fragment.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/place_bookmarks_recyclerview_adapter.xml" value="0.5" />
         <entry key="app/src/main/res/layout/search_bar.xml" value="0.24444444444444444" />
         <entry key="app/src/main/res/layout/search_view_location.xml" value="0.33" />
         <entry key="app/src/main/res/layout/settings_fragment.xml" value="0.5" />
