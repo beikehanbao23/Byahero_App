@@ -48,6 +48,7 @@ class WeatherViewModel : ViewModel() {
 
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation(context: Context) {
+        //todo not getting actual location after clearing data
         val location = SimpleLocation(context)
         val geocoder = Geocoder(context, Locale.getDefault())
         try {

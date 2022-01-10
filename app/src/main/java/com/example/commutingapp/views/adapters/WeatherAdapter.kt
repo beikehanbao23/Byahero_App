@@ -30,7 +30,9 @@ class WeatherAdapter(
     override fun getItemViewType(position: Int): Int {
         return position
     }
-
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
 
     override fun onBindViewHolder(holder: WeatherAdapter.ViewHolder, position: Int) {
         holder.bindAttributes(position)

@@ -52,7 +52,6 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private var hasExistingMapRoute = false
     private var geocodePlaceName = MutableLiveData<String?>()
     private var geocodeText = MutableLiveData<String?>()
-    private val bottomSheetPlaceInfo:BottomSheetPlaceInfo = BottomSheetPlaceInfo()
     private lateinit var trafficPlugin: TrafficPlugin
     private lateinit var building3DPlugin : BuildingPlugin
 

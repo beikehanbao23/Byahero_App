@@ -35,10 +35,12 @@
         android:elevation="2dp"
         android:minWidth="48dp"
         android:minHeight="48dp"
-        android:src="@drawable/ic_alphabet_order_icon"
+        android:clickable="true"
+        android:src="@drawable/ic__ascending_order"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonAdd"
-        tools:ignore="SpeakableTextPresentCheck" />
+        tools:ignore="SpeakableTextPresentCheck"
+        android:focusable="true" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewDisplay"

@@ -20,6 +20,10 @@ class PlaceBookmarksAdapter(
         return position
     }
 
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         binding = PlaceBookmarksRecyclerviewAdapterBinding.inflate(activity.layoutInflater, parent, false)
         return ViewHolder(binding.root)

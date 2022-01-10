@@ -10,7 +10,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,7 +58,6 @@ class PlaceBookmarksViewModel @Inject  constructor(
                     placeBookmarksUseCase.addPlaceToBookmarks(placeBookmarksEvent.placeBookmarks)
                     _event.emit(PlaceBookmarksUiEvent.SavePlace)
                 }catch (e:InvalidPlaceException){
-                    Timber.e("${this.javaClass.name}: ${e.message}")
                     _event.emit(PlaceBookmarksUiEvent.ShowSnackBar(e.message ?: "Couldn't Save Place"))
                 }
             }
@@ -72,9 +70,9 @@ class PlaceBookmarksViewModel @Inject  constructor(
     private fun getPlace(orderType: OrderType) {
         getPlaceJob?.cancel()
         getPlaceJob = placeBookmarksUseCase.getPlaceFromBookmarks(orderType).onEach { places ->
-                _state.value = state.value.copy(
+                _state.emit(PlaceBookmarksState(
                     placeBookmarks = places,
-                    orderType = orderType)
+                    orderType = orderType))
             }.launchIn(viewModelScope)
     }
 }

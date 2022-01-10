@@ -37,6 +37,8 @@
         <entry key="app/src/main/res/drawable/customdialog_background.xml" value="0.33" />
         <entry key="app/src/main/res/drawable/dialog_background.xml" value="0.22280701754385965" />
         <entry key="app/src/main/res/drawable/google_button_background.xml" value="0.33" />
+        <entry key="app/src/main/res/drawable/ic__ascending_order.xml" value="0.571875" />
+        <entry key="app/src/main/res/drawable/ic__descending_order.xml" value="0.75" />
         <entry key="app/src/main/res/drawable/ic_alphabet_order_icon.xml" value="0.578125" />
         <entry key="app/src/main/res/drawable/ic_back_button.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_backbutton.xml" value="0.37435897435897436" />

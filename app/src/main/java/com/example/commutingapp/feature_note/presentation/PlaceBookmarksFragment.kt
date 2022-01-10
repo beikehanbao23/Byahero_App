@@ -14,6 +14,9 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.PlaceBookmarksFragmentBinding
+import com.example.commutingapp.feature_note.domain.util.OrderType
+import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksEvent
+import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksState
 import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksViewModel
 import com.example.commutingapp.views.adapters.PlaceBookmarksAdapter
 import com.example.commutingapp.views.ui.recycler_view_model.PlaceBookmarksRVModel
@@ -56,42 +59,66 @@ class PlaceBookmarksFragment : Fragment(R.layout.place_bookmarks_fragment) {
             repeatOnLifecycle(Lifecycle.State.CREATED){
                  viewModel.state.collect{
 
+                     changeOrderIcon(it.orderType)
+
                      if(it.placeBookmarks.isEmpty()){
                          binding!!.tvDisplay.visibility = View.VISIBLE
                          return@collect
                      }
-
-                     binding!!.tvDisplay.visibility = View.INVISIBLE
-                     it.placeBookmarks.forEach { placeBookmarks->
-                         listOfPlaceBookmarks.add(
-                             PlaceBookmarksRVModel(
-                                 placeName = placeBookmarks.placeName,
-                                 placeText = placeBookmarks.placeText,
-                                 location = LatLng(placeBookmarks.latitude, placeBookmarks.longitude)
-                             )
-                         )
-                     }
-                     binding!!.recyclerViewDisplay.adapter?.notifyDataSetChanged()
-
-
+                     showDataFromDatabase(it)
                  }
 
             }
         }
 
+    }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private fun showDataFromDatabase(placeBookmarksState:PlaceBookmarksState){
+        binding!!.tvDisplay.visibility = View.INVISIBLE
 
+        listOfPlaceBookmarks.clear()
 
+        placeBookmarksState.placeBookmarks.forEach { placeBookmarks->
 
-                
+            listOfPlaceBookmarks.add(
+                PlaceBookmarksRVModel(
+                    placeName = placeBookmarks.placeName,
+                    placeText = placeBookmarks.placeText,
+                    location = LatLng(placeBookmarks.latitude, placeBookmarks.longitude)
+                )
+            )
 
+        }
+        binding!!.recyclerViewDisplay.adapter?.notifyDataSetChanged()
+        binding!!.recyclerViewDisplay.adapter = PlaceBookmarksAdapter(requireActivity(), listOfPlaceBookmarks )
 
 
     }
+    private fun changeOrderIcon(orderType: OrderType){
+
+        with(binding!!) {
+            if (orderType == OrderType.Ascending) {
+                imageButtonOrder.setImageResource(R.drawable.ic__ascending_order)
+                imageButtonOrder.tag = R.drawable.ic__ascending_order
+                return
+            }
+            imageButtonOrder.setImageResource(R.drawable.ic__descending_order)
+            imageButtonOrder.tag = R.drawable.ic__descending_order
+
+        }
+    }
+
     private fun provideClickListener(){
         binding!!.imageButtonOrder.setOnClickListener {
 
+            if(binding!!.imageButtonOrder.tag == R.drawable.ic__ascending_order){
+                viewModel.onEvent(PlaceBookmarksEvent.ChangeOrder(OrderType.Descending))
+                return@setOnClickListener
+            }
+            viewModel.onEvent(PlaceBookmarksEvent.ChangeOrder(OrderType.Ascending))
         }
+
         binding!!.buttonAdd.setOnClickListener {
             val action = PlaceBookmarksFragmentDirections.actionListFragmentToCommuterFragment(isOpenFromBookmarks = true)
             Navigation.findNavController(binding!!.root).navigate(action)
