@@ -18,6 +18,7 @@ interface IMap<V> {
     fun getMapView():V
     fun getPlaceText():LiveData<String?>
     fun getPlaceName():LiveData<String?>
+    fun getPlaceLocation():LiveData<LatLng?>
     fun createDirections()
     fun setVoiceSearchResult(place:String)
     fun getLocationSearchIntent():Intent

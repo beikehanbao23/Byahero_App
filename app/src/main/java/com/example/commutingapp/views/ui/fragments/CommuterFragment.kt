@@ -168,6 +168,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
         with(binding) {
 
+            map.getPlaceLocation().observe(viewLifecycleOwner){
+                userDestinationLocation = it
+            }
+
             map.getPlaceName().observe(viewLifecycleOwner) {
 
                 this?.progressBar?.visibility = View.GONE
@@ -579,7 +583,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
     }
     override fun onMapLongClick(point: LatLng): Boolean {
-        userDestinationLocation = point
         map.pointMapMarker(point)
         resetBottomSheetPlace()
         return true

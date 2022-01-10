@@ -12,8 +12,9 @@ import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.coroutines.runBlocking
 
-class MapMarker(private val style: Style?) {
-    private var latLng: LatLng? = null
+class MapMarker(val style: Style?) {
+
+
     init {
         style?.apply {
             runBlocking {
@@ -28,15 +29,12 @@ class MapMarker(private val style: Style?) {
             }
         }
     }
-      fun create(){
-        val destinationLocation = latLng?.let {
+
+    fun createMapMarker(latLng:LatLng){
+        val destinationLocation = latLng.let {
             Point.fromLngLat(it.longitude,it.latitude) }
         val feature: Feature = Feature.fromGeometry(destinationLocation)
         createMarker(feature)
-
-    }
-    fun setLocation(latLng:LatLng){
-        this.latLng = latLng
     }
     private fun createMarker(feature:Feature){
         val source:GeoJsonSource? = style?.getSourceAs(ON_MAP_CLICK_SOURCE_ID)
