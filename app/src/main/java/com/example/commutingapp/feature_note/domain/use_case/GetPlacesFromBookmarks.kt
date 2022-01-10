@@ -18,9 +18,9 @@ class GetPlacesFromBookmarks(
 
             when(orderType){
 
-                is OrderType.Descending -> place.sortedBy { it.placeName }
+                is OrderType.Descending -> place.sortedByDescending { it.placeName }
 
-                is OrderType.Ascending -> place.sortedByDescending { it.placeName }
+                is OrderType.Ascending -> place.sortedBy { it.placeName }
 
             }
         }
