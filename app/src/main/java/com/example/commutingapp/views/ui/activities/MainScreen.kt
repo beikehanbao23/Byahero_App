@@ -88,9 +88,9 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
                         }
                     }
 
-                    R.id.listFragment -> {
-                        if(currentFragment() != R.id.listFragment){
-                            navigationController.navigate(R.id.main_screen_To_list_Fragment)
+                    R.id.placeBookmarks_fragment -> {
+                        if(currentFragment() != R.id.placeBookmarks_fragment){
+                            navigationController.navigate(R.id.main_screen_To_place_bookmarks_fragment)
                         }
                     }
 

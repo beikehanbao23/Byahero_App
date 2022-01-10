@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.example.commutingapp.utils.others.Constants
 
 @Entity
-data class Place(
+data class PlaceBookmarks(
     @PrimaryKey(autoGenerate = false)
     val placeName:String = "Philippines",
     val longitude:Double = Constants.DEFAULT_LONGITUDE,

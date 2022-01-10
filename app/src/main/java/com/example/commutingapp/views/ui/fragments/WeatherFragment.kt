@@ -24,7 +24,7 @@ import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocati
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestLocationPermission
 import com.example.commutingapp.viewmodels.WeatherViewModel
 import com.example.commutingapp.views.adapters.WeatherAdapter
-import com.example.commutingapp.views.ui.recycler_view.WeatherRecyclerViewModel
+import com.example.commutingapp.views.ui.recycler_view_model.WeatherRVModel
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationServices
@@ -41,7 +41,7 @@ import pub.devrel.easypermissions.EasyPermissions
 @AndroidEntryPoint
 class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.PermissionCallbacks{
     private var binding: WeatherFragmentBinding? = null
-    private var listOfWeatherModel:MutableList<WeatherRecyclerViewModel> = ArrayList()
+    private var listOfWeatherModel:MutableList<WeatherRVModel> = ArrayList()
     private val weatherViewModel: WeatherViewModel by viewModels()
     private lateinit var weatherApiJson :SharedPreferences
     override fun onAttach(context: Context) {
@@ -95,7 +95,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
     private fun renderDefaultRecyclerViewsData(){
         for(i in 1..12){
             listOfWeatherModel.add(
-                WeatherRecyclerViewModel(
+                WeatherRVModel(
                 time = "--:-- --",
                 icon = null,
                 temperature = "00.0°c",
@@ -151,7 +151,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
                     hour.forEach {
 
                         listOfWeatherModel.add(
-                            WeatherRecyclerViewModel(
+                            WeatherRVModel(
                                 time = it.time,
                                 icon = it.condition.icon,
                                 temperature = it.temp_c.toString(),
@@ -225,10 +225,10 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
 
 
 
-    private fun setupRecyclerView()=binding!!.recyclerViewDisplay.apply {
+    private fun setupRecyclerView() = binding!!.recyclerViewDisplay.apply {
         layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
         adapter?.setHasStableIds(true)
-        adapter = WeatherAdapter(requireActivity(),listOfWeatherModel)
+        adapter = WeatherAdapter(requireActivity(), listOfWeatherModel)
     }
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
         if(requestCode == REQUEST_CODE_LOCATION_PERMISSION){
@@ -242,6 +242,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
            // renderDefaultData()
         }
     }
+
 
 
 }

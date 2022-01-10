@@ -125,5 +125,8 @@
     <string name="or">Or</string>
 
     <string name="saved">Saved</string>
+    <string name="no_saved_place_to_display">No saved place to display</string>
+    <string name="add">Add</string>
+    <string name="saved_places">Saved Places</string>
 
 </resources>

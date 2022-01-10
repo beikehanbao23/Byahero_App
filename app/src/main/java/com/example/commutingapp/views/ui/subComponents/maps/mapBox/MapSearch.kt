@@ -35,7 +35,6 @@ class MapSearch(private val activity:Activity,style: Style?) {
 
     fun getLocationSearchIntent(): Intent {
         return PlaceAutocomplete.IntentBuilder()
-
             .accessToken(activity.getString(R.string.MapsToken))
             .placeOptions(buildPlaceOptions())
             .build(activity)

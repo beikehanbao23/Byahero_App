@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.WeatherRecyclerViewAdapterBinding
-import com.example.commutingapp.views.ui.recycler_view.WeatherRecyclerViewModel
+import com.example.commutingapp.views.ui.recycler_view_model.WeatherRVModel
 import timber.log.Timber
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -16,7 +16,7 @@ import java.util.*
 
 class WeatherAdapter(
     private val activity: Activity,
-    private val listOfWeatherModel:List<WeatherRecyclerViewModel>
+    private val listOfWeatherModel:List<WeatherRVModel>
 ):RecyclerView.Adapter<WeatherAdapter.ViewHolder>() {
 
     private lateinit var binding: WeatherRecyclerViewAdapterBinding
@@ -44,7 +44,7 @@ class WeatherAdapter(
          @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables", "SimpleDateFormat")
 
          fun bindAttributes(position: Int) {
-             val model: WeatherRecyclerViewModel = listOfWeatherModel[position]
+             val model: WeatherRVModel = listOfWeatherModel[position]
 
              val dateFormatInput = SimpleDateFormat("yyyy-MM-dd hh:mm")
              val dateFormatOutput = SimpleDateFormat("hh:mm aa")
