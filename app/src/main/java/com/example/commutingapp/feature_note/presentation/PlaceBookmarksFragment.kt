@@ -6,16 +6,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.PlaceBookmarksFragmentBinding
+import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksViewModel
 import com.example.commutingapp.views.adapters.PlaceBookmarksAdapter
 import com.example.commutingapp.views.ui.recycler_view_model.PlaceBookmarksRVModel
 import com.mapbox.mapboxsdk.geometry.LatLng
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class PlaceBookmarksFragment : Fragment(R.layout.place_bookmarks_fragment) {
+    private val viewModel: PlaceBookmarksViewModel by viewModels()
     private var binding:PlaceBookmarksFragmentBinding? = null
     private var listOfPlaceBookmarks:MutableList<PlaceBookmarksRVModel> = ArrayList()
 
@@ -33,28 +42,60 @@ class PlaceBookmarksFragment : Fragment(R.layout.place_bookmarks_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fillList()
         setupRecyclerView()
+
+        renderData()
+        provideClickListener()
+
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun renderData(){
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED){
+                 viewModel.state.collect{
+
+                     if(it.placeBookmarks.isEmpty()){
+                         binding!!.tvDisplay.visibility = View.VISIBLE
+                         return@collect
+                     }
+
+                     binding!!.tvDisplay.visibility = View.INVISIBLE
+                     it.placeBookmarks.forEach { placeBookmarks->
+                         listOfPlaceBookmarks.add(
+                             PlaceBookmarksRVModel(
+                                 placeName = placeBookmarks.placeName,
+                                 placeText = placeBookmarks.placeText,
+                                 location = LatLng(placeBookmarks.latitude, placeBookmarks.longitude)
+                             )
+                         )
+                     }
+                     binding!!.recyclerViewDisplay.adapter?.notifyDataSetChanged()
+
+
+                 }
+
+            }
+        }
+
+
+
+
+
+                
+
+
+
+    }
+    private fun provideClickListener(){
+        binding!!.imageButtonOrder.setOnClickListener {
+
+        }
         binding!!.buttonAdd.setOnClickListener {
             val action = PlaceBookmarksFragmentDirections.actionListFragmentToCommuterFragment(isOpenFromBookmarks = true)
             Navigation.findNavController(binding!!.root).navigate(action)
         }
-    }
-
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun fillList(){
-        for(i in 1..12){
-
-            listOfPlaceBookmarks.add(
-                PlaceBookmarksRVModel(
-                    placeName = "Dita Sta Rosa",
-                    placeText = "Agatha homes phase 1",
-                    location = LatLng(14.5995,120.9842)
-                )
-            )
-        }
-        binding!!.recyclerViewDisplay.adapter?.notifyDataSetChanged()
     }
 
     override fun onDestroy() {

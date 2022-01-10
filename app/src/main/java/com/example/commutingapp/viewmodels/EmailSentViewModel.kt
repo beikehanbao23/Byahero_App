@@ -1,14 +1,12 @@
 package com.example.commutingapp.viewmodels
 
 import android.os.CountDownTimer
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper
 import com.example.commutingapp.data.firebase.usr.UserEmailProcessor
-import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.ONE_SECOND_TO_MILLIS
 import com.example.commutingapp.utils.others.Constants.REFRESH_EMAIL_SYNCHRONOUSLY_INTERVAL
 import com.example.commutingapp.utils.others.Constants.TIMER_COUNTS

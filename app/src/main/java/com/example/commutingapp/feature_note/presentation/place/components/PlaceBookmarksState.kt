@@ -7,5 +7,4 @@ import com.example.commutingapp.feature_note.domain.util.OrderType
 data class PlaceBookmarksState(
     val placeBookmarks:List<PlaceBookmarks> = emptyList(),
     val orderType: OrderType = OrderType.Ascending,
-
     )

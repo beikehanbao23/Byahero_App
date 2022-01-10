@@ -5,7 +5,10 @@ import androidx.room.Room
 import com.example.commutingapp.feature_note.data.data_source.PlaceBookmarksDatabase
 import com.example.commutingapp.feature_note.data.repository.PlaceBookmarksRepositoryImpl
 import com.example.commutingapp.feature_note.domain.repository.PlaceBookmarksRepository
-import com.example.commutingapp.feature_note.domain.use_case.*
+import com.example.commutingapp.feature_note.domain.use_case.AddPlaceToBookmarks
+import com.example.commutingapp.feature_note.domain.use_case.DeletePlaceFromBookmarks
+import com.example.commutingapp.feature_note.domain.use_case.GetPlacesFromBookmarks
+import com.example.commutingapp.feature_note.domain.use_case.PlaceBookmarksUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,8 +44,7 @@ object PlaceBookmarkModule {
         return PlaceBookmarksUseCase(
             deletePlaceFromBookmarks = DeletePlaceFromBookmarks(bookmarksRepository),
             getPlaceFromBookmarks = GetPlacesFromBookmarks(bookmarksRepository),
-            addPlaceToBookmarks = AddPlaceToBookmarks(bookmarksRepository),
-            getPlaceNameFromBookmarks = GetPlaceByNameFromBookmarks(bookmarksRepository)
+            addPlaceToBookmarks = AddPlaceToBookmarks(bookmarksRepository)
         )
     }
 
