@@ -40,7 +40,7 @@ class PlaceBookmarksFragment : Fragment(R.layout.place_bookmarks_fragment) {
     private fun setupRecyclerView() = binding!!.recyclerViewDisplay.apply {
         layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         adapter?.setHasStableIds(true)
-        adapter = PlaceBookmarksAdapter(requireActivity(), listOfPlaceBookmarks )
+        adapter = PlaceBookmarksAdapter(requireActivity(),viewModel, listOfPlaceBookmarks )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -91,7 +91,7 @@ class PlaceBookmarksFragment : Fragment(R.layout.place_bookmarks_fragment) {
 
         }
         binding!!.recyclerViewDisplay.adapter?.notifyDataSetChanged()
-        binding!!.recyclerViewDisplay.adapter = PlaceBookmarksAdapter(requireActivity(), listOfPlaceBookmarks )
+        binding!!.recyclerViewDisplay.adapter = PlaceBookmarksAdapter(requireActivity(),viewModel, listOfPlaceBookmarks )
 
 
     }
