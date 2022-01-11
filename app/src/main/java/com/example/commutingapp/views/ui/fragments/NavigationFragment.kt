@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -448,8 +449,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
         binding?.stop?.setOnClickListener {
 
-        DialogDirector(requireActivity())
-            .buildYesOrNoDialog()
+            AlertDialog.Builder(requireContext())
+            .setTitle("Cancel the Commute?")
+            .setMessage("Are you sure to cancel the current Commute and delete all its data?")
             .setPositiveButton("YES") { _, _ ->
 
                 Navigation.findNavController(binding!!.root).navigate(R.id.navigation_fragment_to_commuter_fragment)

@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable
 import android.provider.Settings
 import android.view.Gravity
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.InternetConnection.Connection
 import com.thecode.aestheticdialogs.*
@@ -37,12 +36,6 @@ class DialogDirector(val activity: Activity) {
             }
         }
     }
-
-
-    fun buildYesOrNoDialog(): AlertDialog.Builder =
-         AlertDialog.Builder(activity)
-             .setTitle("Cancel the Commute?")
-             .setMessage("Are you sure to cancel the current Commute and delete all its data?")
 
 
 

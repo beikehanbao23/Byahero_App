@@ -103,7 +103,7 @@
         android:text="@string/askIfHaveAccount"
         android:fontFamily="@font/roboto"
         android:textColor="@color/black"
-        android:textSize="16sp"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CreateButton"
