@@ -128,5 +128,6 @@
     <string name="no_saved_place_to_display">No saved place to display</string>
     <string name="add">Add</string>
     <string name="saved_places">Saved Places</string>
+    <string name="rain_0">\u0020 \u0020 Rain: 0%</string>
 
 </resources>

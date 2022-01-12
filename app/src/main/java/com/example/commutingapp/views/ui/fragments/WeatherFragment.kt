@@ -149,7 +149,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
                 }
 
                 with(forecast.forecastday[0]){
-                    textViewChanceOfRain.text = "   Chance of rain: ${day.daily_chance_of_rain}%"
+                    textViewChanceOfRain.text = "  Rain: ${day.daily_chance_of_rain}%"
                     textViewhighestLowestTemperature.text = "H: ${day.maxtemp_c}°c  |  L: ${day.mintemp_c}°c"
 
                     hour.forEach {

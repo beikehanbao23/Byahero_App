@@ -167,7 +167,7 @@
         <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/tracking_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/turn_by_turn_experience.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.16" />
+        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.7302083333333333" />
         <entry key="app/src/main/res/layout/weather_recycler_view_adapter.xml" value="0.5" />
         <entry key="app/src/main/res/layout/weather_recycler_view_item.xml" value="0.25" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.67" />
