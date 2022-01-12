@@ -5,10 +5,10 @@ import com.example.commutingapp.feature_note.domain.repository.PlaceBookmarksRep
 
 class DeletePlaceFromBookmarks(
     private val bookmarksRepository: PlaceBookmarksRepository
-) {
+):IAsyncUseCase<PlaceBookmarks> {
 
-    suspend operator fun invoke(placeBookmarks:PlaceBookmarks){
-        bookmarksRepository.deletePlace(placeBookmarks)
+    override suspend operator fun invoke(input:PlaceBookmarks){
+        bookmarksRepository.deletePlace(input)
     }
 
 }

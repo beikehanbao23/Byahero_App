@@ -5,13 +5,14 @@ import com.example.commutingapp.feature_note.domain.model.PlaceBookmarks
 import com.example.commutingapp.feature_note.domain.repository.PlaceBookmarksRepository
 
 data class AddPlaceToBookmarks(
-    private val bookmarksRepository: PlaceBookmarksRepository) {
+    private val bookmarksRepository: PlaceBookmarksRepository
+    ):IAsyncUseCase<PlaceBookmarks> {
 
-    suspend operator fun invoke(placeBookmarks:PlaceBookmarks){
+    override suspend operator fun invoke(input:PlaceBookmarks){
 
-        if(placeBookmarks.placeName.isBlank() || placeBookmarks.placeText.isBlank()){
+        if(input.placeName.isBlank() || input.placeText.isBlank()){
             throw InvalidPlaceException("Insertion Failed, place name or place text is invalid")
         }
-        bookmarksRepository.insertPlace(placeBookmarks)
+        bookmarksRepository.insertPlace(input)
     }
 }

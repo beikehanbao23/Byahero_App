@@ -7,19 +7,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class GetPlacesFromBookmarks(
-    private val bookmarksRepository: PlaceBookmarksRepository) {
+    private val bookmarksRepository: PlaceBookmarksRepository
+    ):IUseCase<OrderType , Flow<List<PlaceBookmarks>>> {
 
 
-    operator fun invoke(
-        orderType: OrderType
+    override operator fun invoke(
+        input: OrderType
     ): Flow<List<PlaceBookmarks>> {
 
         return bookmarksRepository.getPlaceList().map { place->
-
-            when(orderType){
-
+            when(input){
                 is OrderType.Descending -> place.sortedByDescending { it.placeName }
-
                 is OrderType.Ascending -> place.sortedBy { it.placeName }
 
             }

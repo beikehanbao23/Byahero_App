@@ -62,7 +62,6 @@ import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.MapDetails
 import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.MapTraffic
 import com.example.commutingapp.views.ui.subComponents.maps.MapImpl
 import com.example.commutingapp.views.ui.subComponents.maps.mapBox.MapBox
-import com.example.commutingapp.views.ui.subComponents.maps.mapBox.MapSearch
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -128,7 +127,23 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         provideObservers()
         isOpenedFromBookmarks = commuterArgs.isOpenFromBookmarks
 
+        markLocationFromBookmarks()
+        collectLifecycleFLowUiEvent()
 
+    }
+    private fun isOpenedFromBookmarksRVPlaceItem() = isOpenedFromBookmarks && commuterArgs.bookmarkSelectedLocation != null
+    private fun isOpenedFromBookmarksAddButton() = isOpenedFromBookmarks && commuterArgs.bookmarkSelectedLocation == null
+
+    private fun markLocationFromBookmarks(){
+        if(isOpenedFromBookmarksRVPlaceItem()) {
+            val location = LatLng(
+                commuterArgs.bookmarkSelectedLocation!!.latitude,
+                commuterArgs.bookmarkSelectedLocation!!.longitude)
+            map.pointMapMarker(location)
+            resetBottomSheetPlace()
+        }
+    }
+    private fun collectLifecycleFLowUiEvent(){
         collectLifecycleFlow(viewModel.event){
             when(it){
                 is PlaceBookmarksUiEvent.SavePlace-> {
@@ -140,7 +155,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             }
         }
     }
-
 
     private fun <T> Fragment.collectLifecycleFlow(flow: Flow<T>, collect: suspend (T) -> Unit){
         lifecycleScope.launch {
@@ -198,6 +212,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
     }
 
+    private fun openSearchbarFromBookmarks(){
+        if(isOpenedFromBookmarksAddButton()){
+            val intent = map.getLocationSearchIntent()
+            startActivityForResult(intent,REQUEST_SEARCH_RESULT)
+            isOpenedFromBookmarks = false
+        }
+    }
+
     private fun initializeComponents(view: View) {
         dialogDirector = DialogDirector(requireActivity())
         searchLocationButton = view.findViewById(R.id.buttonLocationSearch)
@@ -210,12 +232,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
         val mapbox = object : MapBox(view,requireActivity()){
-            override fun onMapSearchInitialized(search: MapSearch) {
-                if(isOpenedFromBookmarks){
-                    val intent = map.getLocationSearchIntent()
-                    startActivityForResult(intent,REQUEST_SEARCH_RESULT)
-                    isOpenedFromBookmarks = false
-                }
+            override fun onMapSymbolsInit() {
+                openSearchbarFromBookmarks()
             }
 
             override fun onMapTrafficInitialized(trafficPlugin: TrafficPlugin) {
@@ -389,7 +407,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun provideSaveButtonListener() {
         binding?.saveButton?.setOnClickListener {
-
             viewModel.onEvent(PlaceBookmarksEvent.SavePlace(
                 PlaceBookmarks(
                     placeName = binding!!.geocodePlaceName.text as String,
@@ -518,12 +535,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private fun resetBottomSheetPlace(){
         lifecycleScope.launch {
             bottomNavigation.hide()
-            showPlaceResult()
+            resetPlaceResult()
             delay(50)
             bottomSheet.show()
         }
     }
-    private fun showPlaceResult(){
+    private fun resetPlaceResult(){
 
             if(!Connection.hasInternetConnection(requireContext())){
                 hidePlace()
