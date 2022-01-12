@@ -91,7 +91,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
 
         marker = MapMarker(style)
         search = MapSearch(activity, style)
-        onMapSearchInitialized(search)
+        onMapSymbolsInit()
         directions = MapDirections(style, activity)
     }
 
@@ -108,7 +108,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
         }
 
     }
-    abstract fun onMapSearchInitialized(search: MapSearch)
+    abstract fun onMapSymbolsInit()
     abstract fun onMapTrafficInitialized(trafficPlugin: TrafficPlugin)
     abstract fun onMap3DBuildingInitialized(buildingPlugin: BuildingPlugin)
     abstract fun onMapReady(mapboxMap: MapboxMap)

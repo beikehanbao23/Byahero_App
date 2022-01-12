@@ -42,11 +42,17 @@
         <action
             android:id="@+id/commuter_fragment_To_navigation_fragment"
             app:destination="@+id/navigation_fragment"/>
+
+        <argument
+            android:name="bookmarkSelectedLocation"
+            app:argType="com.mapbox.mapboxsdk.geometry.LatLng"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
         <argument
             android:name="isOpenFromBookmarks"
             app:argType="boolean"
             android:defaultValue="false" />
-
 
     </fragment>
 

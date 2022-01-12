@@ -38,6 +38,7 @@ class PlaceBookmarksViewModel @Inject  constructor(
             viewModelScope.launch {
                 placeBookmarksUseCase.deletePlaceFromBookmarks(placeBookmarksEvent.placeBookmarks)
                 lastDeletedPlaceBookmarks = placeBookmarksEvent.placeBookmarks
+
             }
         }
 

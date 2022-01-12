@@ -71,13 +71,12 @@
         android:id="@+id/tv_display"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="196dp"
         android:elevation="6dp"
         android:text="@string/no_saved_place_to_display"
         android:textSize="18sp"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/recyclerViewDisplay" />
 

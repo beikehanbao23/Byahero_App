@@ -68,6 +68,7 @@ class PlaceBookmarksFragment : Fragment(R.layout.place_bookmarks_fragment) {
                      showDataFromDatabase(it)
                  }
 
+
             }
         }
 
@@ -75,7 +76,7 @@ class PlaceBookmarksFragment : Fragment(R.layout.place_bookmarks_fragment) {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showDataFromDatabase(placeBookmarksState:PlaceBookmarksState){
-        binding!!.tvDisplay.visibility = View.INVISIBLE
+        binding!!.tvDisplay.visibility = View.GONE
 
         listOfPlaceBookmarks.clear()
 
@@ -120,7 +121,7 @@ class PlaceBookmarksFragment : Fragment(R.layout.place_bookmarks_fragment) {
         }
 
         binding!!.buttonAdd.setOnClickListener {
-            val action = PlaceBookmarksFragmentDirections.actionListFragmentToCommuterFragment(isOpenFromBookmarks = true)
+            val action = PlaceBookmarksFragmentDirections.actionListFragmentToCommuterFragment(isOpenFromBookmarks = true, bookmarkSelectedLocation = null)
             Navigation.findNavController(binding!!.root).navigate(action)
         }
     }

@@ -1,23 +1,29 @@
 package com.example.commutingapp.views.adapters
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.commutingapp.databinding.PlaceBookmarksRecyclerviewAdapterBinding
 import com.example.commutingapp.feature_note.domain.model.PlaceBookmarks
+import com.example.commutingapp.feature_note.presentation.PlaceBookmarksFragmentDirections
 import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksEvent
 import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksViewModel
 import com.example.commutingapp.views.ui.recycler_view_model.PlaceBookmarksRVModel
 import com.google.android.material.snackbar.Snackbar
+import com.mapbox.mapboxsdk.geometry.LatLng
 
 class PlaceBookmarksAdapter(
     private val activity: Activity,
     private val viewModel: PlaceBookmarksViewModel,
-    private val listOfPlaceBookmarks : List<PlaceBookmarksRVModel>
+    private val listOfPlaceBookmarks : MutableList<PlaceBookmarksRVModel>
 ): RecyclerView.Adapter<PlaceBookmarksAdapter.ViewHolder>() {
 
+
+    private var currentPosition:Int = -1
     private lateinit var binding: PlaceBookmarksRecyclerviewAdapterBinding
 
 
@@ -49,18 +55,26 @@ class PlaceBookmarksAdapter(
             with(binding){
                 textViewPlaceName.text = model.placeName
                 textViewPlaceText.text = model.placeText
-
+                currentPosition = position
                 provideClickListener(model)
 
             }
         }
 
 
-
-        private fun provideClickListener(model: PlaceBookmarksRVModel){
+        private fun provideClickListener(model: PlaceBookmarksRVModel) {
+            binding.rvItem.setOnClickListener {
+                val action = PlaceBookmarksFragmentDirections.actionListFragmentToCommuterFragment(
+                    isOpenFromBookmarks = true,
+                    bookmarkSelectedLocation = LatLng(
+                        model.location.latitude,
+                        model.location.longitude
+                    )
+                )
+                Navigation.findNavController(binding.root).navigate(action)
+            }
 
             binding.deleteIcon.setOnClickListener {
-
                 showYesNoDialog(model)
             }
         }
@@ -74,7 +88,8 @@ class PlaceBookmarksAdapter(
                 .setMessage("Are you sure you want to delete this place?")
                 .setPositiveButton("YES"){ _ , _ ->
 
-                    insertToDatabase(model)
+                    deletePlaceFromDB(model)
+
                     showDeletedSnackbar()
 
                 }.setNegativeButton("NO"){ dialog,_ ->
@@ -82,7 +97,10 @@ class PlaceBookmarksAdapter(
                 }.show()
         }
 
-        private fun insertToDatabase(model:PlaceBookmarksRVModel){
+        @SuppressLint("NotifyDataSetChanged")
+        private fun deletePlaceFromDB(model:PlaceBookmarksRVModel){
+
+
             viewModel.onEvent(
                 PlaceBookmarksEvent.DeletePlaceBookmarks(
                     PlaceBookmarks(
@@ -91,6 +109,10 @@ class PlaceBookmarksAdapter(
                         longitude = model.location.longitude,
                         latitude = model.location.latitude )
                 ))
+
+            listOfPlaceBookmarks.removeAt(0)
+            notifyItemRemoved(currentPosition)
+
         }
 
 
