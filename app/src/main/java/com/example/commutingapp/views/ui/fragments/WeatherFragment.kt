@@ -96,7 +96,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
         for(i in 1..12){
             listOfWeatherModel.add(
                 WeatherRVModel(
-                time = "--:-- --",
+                time = "00:00 am",
                 icon = null,
                 temperature = "00.0°c",
                 windSpeed = "---/h --")
@@ -113,7 +113,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
             binding!!.circularProgressBar.visibility = View.INVISIBLE
 
         }
-        weatherViewModel.getSearchedLocation().observe(viewLifecycleOwner){
+        weatherViewModel.getCurrentWeather().observe(viewLifecycleOwner){
             renderData(it)
             binding!!.circularProgressBar.visibility = View.INVISIBLE
         }
@@ -132,6 +132,10 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
         with(binding!!) {
             with(weatherInfo) {
                 with(current){
+                    if(listOfWeatherModel.isNotEmpty()){
+                        listOfWeatherModel.clear()
+                    }
+
                     textViewCityName.text = "${location.region}, ${location.country}"
                     textViewTemperature.text = "${temp_c}°c"
                     textViewWeatherCondition.text = condition.text
@@ -232,14 +236,15 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
     }
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
         if(requestCode == REQUEST_CODE_LOCATION_PERMISSION){
-           // getUserCityLocation()
-            return
+
+                getUserCityLocation()
+
         }
     }
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
         if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
             AppSettingsDialog.Builder(this).build().show()
-           // renderDefaultData()
+            renderDefaultData()
         }
     }
 

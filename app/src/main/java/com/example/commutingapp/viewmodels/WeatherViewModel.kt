@@ -10,6 +10,7 @@ import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.data.model.Weather
 import com.example.commutingapp.data.model.WeatherServiceAPI
 import com.google.gson.Gson
+import dagger.hilt.android.lifecycle.HiltViewModel
 import im.delight.android.location.SimpleLocation
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,13 +22,15 @@ import javax.inject.Inject
 import kotlin.collections.HashMap
 
 
-class WeatherViewModel : ViewModel() {
+@HiltViewModel
+class WeatherViewModel @Inject constructor(
+     private val request: WeatherServiceAPI
+) : ViewModel() {
     private var map: HashMap<String, String> = HashMap()
-    @Inject lateinit var request: WeatherServiceAPI
-    private val searchedLocation = MutableLiveData<Weather>()
+    private val currentWeather = MutableLiveData<Weather>()
     private val jsonApi = MutableLiveData<String>()
     fun getWeatherJson(): LiveData<String> = jsonApi
-    fun getSearchedLocation(): LiveData<Weather> = searchedLocation
+    fun getCurrentWeather(): LiveData<Weather> = currentWeather
 
 
     init {
@@ -48,7 +51,7 @@ class WeatherViewModel : ViewModel() {
 
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation(context: Context) {
-        //todo not getting actual location after clearing data
+
         val location = SimpleLocation(context)
         val geocoder = Geocoder(context, Locale.getDefault())
         try {
@@ -71,7 +74,7 @@ class WeatherViewModel : ViewModel() {
                 return
             }
             jsonApi.value = Gson().toJson(response.body())
-            searchedLocation.value = response.body()
+            currentWeather.value = response.body()
 
         }
 
