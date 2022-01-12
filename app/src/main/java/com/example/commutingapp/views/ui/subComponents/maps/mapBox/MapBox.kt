@@ -90,7 +90,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
     private fun initializeMapSymbols(style: Style) {
 
         marker = MapMarker(style)
-        search = MapSearch(activity, style)
+        search = MapSearch(activity)
         onMapSymbolsInit()
         directions = MapDirections(style, activity)
     }
