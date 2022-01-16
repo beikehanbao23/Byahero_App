@@ -1,7 +1,10 @@
 package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 
-import android.annotation.SuppressLint
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.Activity
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 import com.mapbox.mapboxsdk.location.LocationComponent
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.location.LocationComponentOptions
@@ -32,8 +35,12 @@ class MapLocationPuck(private val activity: Activity, private val locationCompon
             .compassAnimationEnabled(true)
             .build()
 
-    @SuppressLint("MissingPermission")
+
     private fun createComponentsLocation(locationComponent: LocationComponent) {
+        if (ActivityCompat.checkSelfPermission(activity, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+           && ActivityCompat.checkSelfPermission(activity, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+           return
+        }
         locationComponent.apply {
             isLocationComponentEnabled = true
             renderMode = RenderMode.COMPASS
