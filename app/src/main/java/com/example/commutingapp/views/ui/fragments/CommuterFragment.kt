@@ -128,7 +128,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         isOpenedFromBookmarks = commuterArgs.isOpenFromBookmarks
 
         markLocationFromBookmarks()
-        collectLifecycleFLowUiEvent()
+        collectLifecycleFlowUiEvent()
 
     }
     private fun isOpenedFromBookmarksRVPlaceItem() = isOpenedFromBookmarks && commuterArgs.bookmarkSelectedLocation != null
@@ -143,7 +143,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             resetBottomSheetPlace()
         }
     }
-    private fun collectLifecycleFLowUiEvent(){
+    private fun collectLifecycleFlowUiEvent(){
         collectLifecycleFlow(viewModel.event){
             when(it){
                 is PlaceBookmarksUiEvent.SavePlace-> {

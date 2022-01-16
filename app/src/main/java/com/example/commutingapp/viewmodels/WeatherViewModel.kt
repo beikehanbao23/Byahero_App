@@ -62,7 +62,7 @@ class WeatherViewModel @Inject constructor(
              }
             throw RuntimeException("Location not found")
         } catch (e: IOException) {
-            throw RuntimeException("Location not found")
+           throw RuntimeException("No Internet Connection")
         }
     }
 
@@ -79,7 +79,7 @@ class WeatherViewModel @Inject constructor(
         }
 
         override fun onFailure(call: Call<Weather>, t: Throwable) {
-            Timber.e("Weather View Model on failure ${t.message}")
+            throw RuntimeException("An unexpected error occurred")
         }
     }
 }

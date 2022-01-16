@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -60,8 +61,14 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
         setupRecyclerView()
         provideViewModelObservers()
         provideClickListener()
-        checkGPS()
-        checkInternet()
+        if(!Connection.hasGPSConnection(requireContext())){
+            checkLocationSetting().addOnCompleteListener(::askGPS)
+        }
+
+        if(!Connection.hasInternetConnection(requireContext())){
+            renderDefaultData()
+            return
+        }
         checkLocationPermission()
 
     }
@@ -69,16 +76,6 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
     private fun provideClickListener(){
         binding!!.imgBtnRefresh.setOnClickListener {
             getUserCityLocation()
-        }
-    }
-    private fun checkGPS(){
-        if(!Connection.hasGPSConnection(requireContext())){
-            checkLocationSetting().addOnCompleteListener(::askGPS)
-        }
-    }
-    private fun checkInternet(){
-        if(!Connection.hasInternetConnection(requireContext())){
-            renderDefaultData()
         }
     }
     private fun checkLocationPermission(){
@@ -192,6 +189,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
             binding!!.circularProgressBar.visibility = View.VISIBLE
         }catch (e:RuntimeException){
             renderDefaultData()
+            Toast.makeText(requireContext(),e.message,Toast.LENGTH_SHORT).show()
             binding!!.circularProgressBar.visibility = View.INVISIBLE
 
         }
