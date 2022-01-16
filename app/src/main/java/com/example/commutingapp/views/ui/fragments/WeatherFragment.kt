@@ -58,18 +58,28 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        provideObservers()
+        provideViewModelObservers()
+        provideClickListener()
+        checkGPS()
+        checkInternet()
+        checkLocationPermission()
 
+    }
+
+    private fun provideClickListener(){
+        binding!!.imgBtnRefresh.setOnClickListener {
+            getUserCityLocation()
+        }
+    }
+    private fun checkGPS(){
         if(!Connection.hasGPSConnection(requireContext())){
             checkLocationSetting().addOnCompleteListener(::askGPS)
         }
-
+    }
+    private fun checkInternet(){
         if(!Connection.hasInternetConnection(requireContext())){
             renderDefaultData()
-            return
-       }
-        checkLocationPermission()
-
+        }
     }
     private fun checkLocationPermission(){
         if(hasLocationPermission(requireContext())){
@@ -79,7 +89,6 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
         }
     }
     private fun renderDefaultData(){
-
 
             binding!!.circularProgressBar.visibility = View.INVISIBLE
             val jsonObject:Weather? = Gson().fromJson(getJsonSharedPreference(),Weather::class.java)
@@ -106,7 +115,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
     }
 
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
-    private fun provideObservers(){
+    private fun provideViewModelObservers(){
 
         weatherViewModel.getWeatherJson().observe(viewLifecycleOwner){
             updateJsonSharedPreference(it)
@@ -236,9 +245,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
     }
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
         if(requestCode == REQUEST_CODE_LOCATION_PERMISSION){
-
                 getUserCityLocation()
-
         }
     }
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {

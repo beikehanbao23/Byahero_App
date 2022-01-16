@@ -62,7 +62,7 @@ class WeatherViewModel @Inject constructor(
              }
             throw RuntimeException("Location not found")
         } catch (e: IOException) {
-            Timber.e("Weather View Model: ${e.message}")
+            throw RuntimeException("Location not found")
         }
     }
 

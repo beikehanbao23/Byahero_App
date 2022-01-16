@@ -58,6 +58,7 @@
         <entry key="app/src/main/res/drawable/ic_baseline_my_location_blue.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_baseline_navigation.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/ic_baseline_pause_24.xml" value="0.56796875" />
+        <entry key="app/src/main/res/drawable/ic_baseline_refresh_24.xml" value="0.571875" />
         <entry key="app/src/main/res/drawable/ic_baseline_remove.xml" value="0.57421875" />
         <entry key="app/src/main/res/drawable/ic_baseline_satellite_24.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.2552083333333333" />
@@ -167,7 +168,7 @@
         <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/tracking_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/turn_by_turn_experience.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.7302083333333333" />
+        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.5" />
         <entry key="app/src/main/res/layout/weather_recycler_view_adapter.xml" value="0.5" />
         <entry key="app/src/main/res/layout/weather_recycler_view_item.xml" value="0.25" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.67" />
