@@ -16,7 +16,6 @@ class StartingBottomSheet(view:View, private val context: Context) :IComponent{
     private var startButton: Button = view.findViewById(R.id.startButton)
     private var directionButton: Button = view.findViewById(R.id.directionsButton)
     private var saveButton: Button = view.findViewById(R.id.saveButton)
-    private var shareButton: Button = view.findViewById(R.id.shareButton)
 
 
     override fun hide(){
@@ -50,7 +49,6 @@ class StartingBottomSheet(view:View, private val context: Context) :IComponent{
         showDefaultBottomSheetLayout()
     }
     private fun showNoInternetAndHasGpsBottomSheetLayout() {
-        shareButton.visibility = View.GONE
         saveButton.visibility = View.GONE
         directionButton.visibility = View.VISIBLE
         startButton.visibility = View.VISIBLE
@@ -58,18 +56,15 @@ class StartingBottomSheet(view:View, private val context: Context) :IComponent{
     private fun showHasInternetAndNoGpsBottomSheetLayout() {
         startButton.visibility = View.GONE
         saveButton.visibility = View.VISIBLE
-        shareButton.visibility = View.VISIBLE
         directionButton.visibility = View.VISIBLE
     }
     private fun showNoInternetAndNoGpsBottomSheetLayout() {
         startButton.visibility = View.GONE
         saveButton.visibility = View.GONE
-        shareButton.visibility = View.GONE
         directionButton.visibility = View.VISIBLE
     }
     private fun showDefaultBottomSheetLayout() {
         saveButton.visibility = View.VISIBLE
-        shareButton.visibility = View.VISIBLE
         directionButton.visibility = View.VISIBLE
         startButton.visibility = View.VISIBLE
 

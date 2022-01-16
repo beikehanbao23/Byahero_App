@@ -100,7 +100,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             with(it) {
                 uiSettings.isAttributionEnabled = false
                 uiSettings.isLogoEnabled = false
-                uiSettings.setCompassMargins(0, 480, 50, 0)
+                uiSettings.setCompassMargins(0,     400, 20, 0)
                 setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
                 setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
                 onMapReady(this)

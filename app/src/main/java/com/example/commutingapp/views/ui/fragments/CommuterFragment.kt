@@ -272,7 +272,6 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         provideStartButtonListener()
         provideDirectionButtonListener()
         provideSaveButtonListener()
-        provideShareButtonListener()
         provideVoiceSpeechButtonListener()
         provideSearchButtonListener()
     }
@@ -420,12 +419,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     }
-    private fun provideShareButtonListener(){
-        binding?.shareButton?.setOnClickListener {
 
-        }
-
-    }
     private fun provideVoiceSpeechButtonListener(){
         binding?.voiceSpeechButton?.setOnClickListener {
             if(hasRecordAudioPermission(requireContext())){

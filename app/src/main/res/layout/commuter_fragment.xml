@@ -37,6 +37,8 @@
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:elevation="90dp"
+            android:id="@+id/coordinatorLayout"
             android:background="@color/transparent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -97,6 +99,7 @@
                     android:scrollbars="none"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.65"
                     app:layout_constraintStart_toStartOf="parent">
 
                     <LinearLayout
@@ -155,21 +158,6 @@
                             android:textSize="11sp"
                             tools:ignore="RtlSymmetry" />
 
-                        <Button
-                            android:id="@+id/shareButton"
-                            android:layout_width="90dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="7dp"
-                            android:backgroundTint="@color/White"
-                            android:drawableLeft="@drawable/ic_baseline_share"
-                            android:gravity="center"
-                            android:paddingStart="4dp"
-                            android:text="@string/share"
-                            android:textAlignment="center"
-                            android:textAllCaps="false"
-                            android:textColor="@color/Black"
-                            android:textSize="11sp"
-                            tools:ignore="RtlSymmetry" />
 
                     </LinearLayout>
 
@@ -211,7 +199,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="250dp"
+        android:layout_marginBottom="180dp"
         android:backgroundTint="@color/white"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_baseline_my_location"
@@ -222,21 +210,19 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButtonChooseMap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="40dp"
         android:backgroundTint="@color/White"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_baseline_layers"
         app:backgroundTint="@color/White"
         app:fabCustomSize="42.5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButtonLocation"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

@@ -125,6 +125,7 @@
         <entry key="app/src/main/res/font/audiowide.xml" value="0.37407407407407406" />
         <entry key="app/src/main/res/font/berkshire_swash.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/font/fonts.xml" value="0.18333333333333332" />
+        <entry key="app/src/main/res/layout-w780dp-port/test.xml" value="0.273828125" />
         <entry key="app/src/main/res/layout/activity_intro_slider.xml" value="0.18" />
         <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.33" />
@@ -146,7 +147,7 @@
         <entry key="app/src/main/res/layout/circular_progressbar.xml" value="0.5" />
         <entry key="app/src/main/res/layout/commuter_data_fragment.xml" value="0.5" />
         <entry key="app/src/main/res/layout/commuter_data_recycler_view_adapter.xml" value="0.5" />
-        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.33" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
@@ -168,8 +169,8 @@
         <entry key="app/src/main/res/layout/statistics_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/tracking_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/turn_by_turn_experience.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.5" />
-        <entry key="app/src/main/res/layout/weather_recycler_view_adapter.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/weather_recycler_view_adapter.xml" value="0.9" />
         <entry key="app/src/main/res/layout/weather_recycler_view_item.xml" value="0.25" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.67" />
         <entry key="app/src/main/res/menu/toolbar_tracking_menu.xml" value="0.54921875" />
@@ -194,7 +195,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.15" />
+        <option name="scale" value="0.2" />
       </ProjectState>
     </option>
   </component>
