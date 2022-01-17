@@ -7,13 +7,11 @@ import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.Color
 import android.location.Location
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -311,14 +309,14 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         }
 
 
-        @RequiresApi(Build.VERSION_CODES.O)
+
         override fun onFinalDestinationArrival(routeProgress: RouteProgress) {
             Timber.e("FINAL DESTINATION ARRIVED")
         }
       }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -581,21 +579,17 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onStop() {
-        super.onStop()
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+
         mapboxNavigation.unregisterArrivalObserver(arrivalObserver)
         mapboxNavigation.unregisterRoutesObserver(routesObserver)
         mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
         mapboxNavigation.unregisterLocationObserver(locationObserver)
         mapboxNavigation.stopTripSession()
-
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        binding = null
 
         clearRouteAndStopNavigation()
         MapboxNavigationProvider.destroy()
