@@ -50,7 +50,9 @@ object Constants {
     const val KEY_USER_CITY_JSON_WEATHER = "JsonWeather"
 
 
-
+    const val CHANNEL_ID = "channel_id_navigation"
+    const val CHANNEL_NAME = "channel_name_navigation"
+    const val NOTIFICATION_ID = 100
 
     const val KEY_MAPS_TYPE = "MapsType"
     const val KEY_MAPS_3D = "Maps3D"
