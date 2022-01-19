@@ -64,15 +64,15 @@ dependencies {
 
     implementation 'com.facebook.android:facebook-android-sdk:11.2.0'
     implementation 'com.google.firebase:firebase-auth:21.0.1'
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-    implementation 'com.google.android.gms:play-services-auth:20.0.0'
+    implementation 'com.google.android.gms:play-services-auth:20.0.1'
 
-    implementation 'com.google.android.gms:play-services-location:19.0.0'
+    implementation 'com.google.android.gms:play-services-location:19.0.1'
 
     implementation 'com.firebaseui:firebase-ui-auth:8.0.0'
     implementation 'com.google.firebase:firebase-firestore:24.0.0'
@@ -94,11 +94,11 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
 
     // Room
-    implementation "androidx.room:room-runtime:2.4.0"
-    kapt "androidx.room:room-compiler:2.4.0"
+    implementation "androidx.room:room-runtime:2.4.1"
+    kapt "androidx.room:room-compiler:2.4.1"
 
     // Kotlin Extensions and Coroutines support for Room
-    implementation "androidx.room:room-ktx:2.4.0"
+    implementation "androidx.room:room-ktx:2.4.1"
 
 
     // Dagger Core
@@ -136,8 +136,9 @@ dependencies {
     // Compose dependencies
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0"
     implementation "androidx.navigation:navigation-compose:2.4.0-rc01"
-    implementation "androidx.compose.material:material-icons-extended:1.1.0-rc01"
+    implementation "androidx.compose.material:material-icons-extended:1.2.0-alpha01"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0-rc01"
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
 }
 kapt {
     correctErrorTypes true
