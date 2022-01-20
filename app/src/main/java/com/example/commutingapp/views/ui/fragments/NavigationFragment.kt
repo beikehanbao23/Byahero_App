@@ -2,25 +2,22 @@ package com.example.commutingapp.views.ui.fragments
 
 
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.Color
 import android.location.Location
-import android.media.AudioAttributes
-import android.media.RingtoneManager
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -30,8 +27,6 @@ import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.FragmentNavigationBinding
 import com.example.commutingapp.utils.others.Constants
-import com.example.commutingapp.utils.others.Constants.CHANNEL_ID
-import com.example.commutingapp.utils.others.Constants.CHANNEL_NAME
 import com.example.commutingapp.utils.others.Constants.KEY_NAVIGATION_MAP_STYLE
 import com.example.commutingapp.utils.others.Constants.KEY_SWITCH_SATELLITE
 import com.example.commutingapp.utils.others.Constants.KEY_SWITCH_TRAFFIC
@@ -45,7 +40,6 @@ import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
-import com.example.commutingapp.views.ui.activities.MainScreen
 import com.example.commutingapp.views.ui.subComponents.Component
 import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
 import com.mapbox.api.directions.v5.models.Bearing
@@ -95,11 +89,15 @@ import com.mapbox.navigation.ui.maps.route.line.model.RouteLineColorResources
 import com.mapbox.navigation.ui.maps.route.line.model.RouteLineResources
 import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi
 import com.mapbox.navigation.ui.tripprogress.model.*
-import com.mapbox.navigation.utils.internal.NOTIFICATION_ID
 import com.rejowan.cutetoast.CuteToast
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.*
+
+
+
+
+
 
 
 
@@ -125,8 +123,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private var userDestination:Point? = null
     private var userLastLocation:Point? = null
     private lateinit var findRouteDialog: CustomDialogBuilder
-    private var userLocation: LatLng? = null
-    private lateinit var notificationCompatBuilder: NotificationCompat.Builder
+
+    private var mediaPlayer:MediaPlayer = MediaPlayer()
 
 
     private val overviewPadding: EdgeInsets by lazy {
@@ -159,21 +157,26 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         var firstLocationUpdateReceived = false
 
         @SuppressLint("BinaryOperationInTimber")
+        @Suppress("Warnings")
         override fun onNewRawLocation(rawLocation: Location) {
-            val location = LatLng(rawLocation.latitude,rawLocation.longitude)
-             Timber.d("New Raw Location $location")
+
+            val userLocation = LatLng(rawLocation.latitude, rawLocation.longitude)
+
+            userDestination?.let { destination ->
+
+                val distance = Math.round( userLocation.distanceTo(LatLng(destination.latitude(), destination.longitude())) /10 ) * 10
+                makeAlerts(distance)
+            }
+
         }
 
         override fun onNewLocationMatcherResult(locationMatcherResult: LocationMatcherResult) {
-
 
             val enhancedLocation = locationMatcherResult.enhancedLocation
             navigationLocationProvider.changePosition(
                 location = enhancedLocation,
                 keyPoints = locationMatcherResult.keyPoints,
             )
-
-            userLocation = LatLng(enhancedLocation.latitude, enhancedLocation.longitude)
 
 
             viewportDataSource.onLocationChanged(enhancedLocation)
@@ -189,6 +192,59 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             }
         }
     }
+
+
+
+
+
+    private fun makeAlerts(distance:Long){
+
+        if(distance in 990..1000){
+            vibratePhone(500L)
+            playVoiceAlerts(R.raw.destination_in_1000m)
+            return
+        }
+
+        if(distance in 490..500){
+            vibratePhone(500L)
+            playVoiceAlerts(R.raw.destination_in_500m)
+            return
+        }
+
+        if(distance in 290..300){
+            vibratePhone(500L)
+            playVoiceAlerts(R.raw.destination_in_300m)
+            return
+        }
+
+        if(distance in 140..150){
+            vibratePhone(500L)
+            playVoiceAlerts(R.raw.destination_in_150m)
+            return
+        }
+
+        if(distance in 40..50){
+            vibratePhone(1000L)
+            playVoiceAlerts(R.raw.destination_in_50m)
+            return
+        }
+
+
+    }
+
+
+
+
+
+    private fun vibratePhone(millis:Long) {
+        val vibrator =  (requireContext().getSystemService(AppCompatActivity.VIBRATOR_SERVICE) as Vibrator)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(millis, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            vibrator.vibrate(millis)
+        }
+    }
+
     private fun saveSatelliteSwitchStatePreference(state:String){
         satelliteSwitchButtonPreference.edit().putString(KEY_SWITCH_SATELLITE,state).apply()
     }
@@ -240,7 +296,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             tripProgressApi.getTripProgress(routeProgress)
         )
     }
-
     private val routesObserver = RoutesObserver { routeUpdateResult ->
         if (routeUpdateResult.routes.isNotEmpty()) {
 
@@ -274,7 +329,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             viewportDataSource.evaluate()
         }
     }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentNavigationBinding.inflate(inflater, container, false)
         return binding?.root
@@ -308,16 +362,22 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         override fun onWaypointArrival(routeProgress: RouteProgress) {
             Timber.e("ON WAY POINT ARRIVAL")
 
-        }
 
+        }
         override fun onNextRouteLegStart(routeLegProgress: RouteLegProgress) {
             Timber.e("ON NEXT ROUTE LEG START")
+
+
         }
-
-
-
         override fun onFinalDestinationArrival(routeProgress: RouteProgress) {
-            Timber.e("FINAL DESTINATION ARRIVED")
+            vibratePhone(500)
+            playVoiceAlerts(R.raw.destination_reached)
+            mapboxNavigation.unregisterRoutesObserver(routesObserver)
+            mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
+            mapboxNavigation.unregisterLocationObserver(locationObserver)
+            mapboxNavigation.stopTripSession()
+            clearRouteAndStopNavigation()
+            MapboxNavigationProvider.destroy()
         }
       }
 
@@ -329,8 +389,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         findRouteDialog = DialogDirector(requireActivity()).buildFindRouteDialog().apply { show() }
         mapboxMap = binding?.mapView?.getMapboxMap()!!
         notificationManager = NotificationManagerCompat.from(requireContext())
-        createNotification()
-
         mapboxMap.setBounds(cameraBoundsOptionsBuilder())
         trackingBottomSheet = Component(TrackingBottomSheet(view)).apply {show() }
 
@@ -355,7 +413,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         } else {
             MapboxNavigationProvider.create(navigationOptionsBuilder())
         }
-        
+
 
 
         viewportDataSource = MapboxNavigationViewportDataSource(mapboxMap)
@@ -408,18 +466,28 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             createRoute()
         }
 
+
         providerClickListener()
         mapboxNavigation.startTripSession()
 
     }
 
+    private fun playVoiceAlerts(resId:Int){
 
+
+        if(!mediaPlayer.isPlaying){
+            mediaPlayer = MediaPlayer.create(requireContext(), resId)
+            mediaPlayer.setScreenOnWhilePlaying(true)
+            mediaPlayer.setVolume(1.0f,1.0f)
+            mediaPlayer.start()
+        }
+    }
     private fun setSwitchState(){
         binding?.satelliteMapSwitchButton?.isChecked = satelliteSwitchState() == SwitchState.ON.toString()
         binding?.trafficMapSwitchButton?.isChecked = trafficSwitchState() == SwitchState.ON.toString()
 
     }
-    private fun navigationOptionsBuilder()= NavigationOptions.Builder(requireActivity().applicationContext)
+    private fun navigationOptionsBuilder()= NavigationOptions.Builder(requireContext())
         .accessToken(getString(R.string.MapsToken))
         .distanceFormatterOptions(distanceFormatterOptionsBuilder())
         .build()// todo add incident options
@@ -429,13 +497,12 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private fun distanceFormatterOptionsBuilder()=DistanceFormatterOptions.Builder(requireContext().applicationContext)
         .unitType(UnitType.METRIC)
         .build()
-    private fun progressUpdateFormatter(distanceFormatterOptions: DistanceFormatterOptions)=TripProgressUpdateFormatter.Builder(requireContext())
+    private fun progressUpdateFormatter(distanceFormatterOptions: DistanceFormatterOptions) = TripProgressUpdateFormatter.Builder(requireContext())
         .distanceRemainingFormatter(DistanceRemainingFormatter(distanceFormatterOptions))
         .timeRemainingFormatter(TimeRemainingFormatter(requireContext()))
         .percentRouteTraveledFormatter(PercentDistanceTraveledFormatter())
         .estimatedTimeToArrivalFormatter(EstimatedTimeToArrivalFormatter(requireContext(), TimeFormat.NONE_SPECIFIED))
         .build()
-
     private fun createRoute(){
     navigationArgs.destinationLocation?.let { target ->
         navigationArgs.lastKnownLocation?.let { origin->
@@ -448,15 +515,12 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
 
     }
-
     private fun providerClickListener(){
 
         binding?.stop?.setOnClickListener {
 
-            showNotification(" This is a test"," this is another test")
-            //(requireContext().getSystemService(AppCompatActivity.VIBRATOR_SERVICE) as Vibrator).vibrate(700)
 
-            /*
+
             AlertDialog.Builder(requireContext())
             .setTitle("Cancel the Commute?")
             .setMessage("Are you sure to cancel the current Commute and delete all its data?")
@@ -471,7 +535,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         }
 
 
-             */
+
+
+
         }
 
 
@@ -573,79 +639,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
 
 
-
-
-    @SuppressLint("UnspecifiedImmutableFlag")
-    private fun buildNotificationCompat(){
-
-       // val sound = Uri.parse("android.resource://" + requireContext().packageName.toString() + "/" + R.raw)
-        val contentIntent = PendingIntent.getActivity(
-            requireContext(), 0,
-            Intent(requireContext(), MainScreen::class.java), PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        notificationCompatBuilder = NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_app_icon)
-            .setContentTitle("")
-            .setAutoCancel(true)
-            .setShowWhen(true)
-            .setDefaults(NotificationCompat.DEFAULT_SOUND)
-            .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-            .setContentText("")
-            .setLights(Color.RED, 3000, 3000)
-            .setOngoing(true)
-            .setContentIntent(contentIntent)
-            .setFullScreenIntent(contentIntent, true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setOnlyAlertOnce(false)
-
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-
-            //
-            notificationCompatBuilder.build()
-
-
-    }
-
-
-    private fun showNotification(title:String , message:String){
-
-        notificationCompatBuilder.setContentTitle(title)
-        notificationCompatBuilder.setContentText(message)
-        notificationManager.notify(NOTIFICATION_ID,notificationCompatBuilder.build())
-    }
-    private fun createNotification(){
-
-        if(isAndroidVersionAboveOreo()){
-            buildNotificationChannel()
-        }
-        buildNotificationCompat()
-
-    }
-    private fun isAndroidVersionAboveOreo() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun buildNotificationChannel() {
-     val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val attributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-            .build()
-
-       NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH).apply {
-            lightColor = Color.BLUE
-            enableLights(true)
-            enableVibration(true)
-            setSound(soundUri, attributes)
-            vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
-            notificationManager.createNotificationChannel(this)
-        }
-
-    }
-
     @SuppressLint("MissingPermission")
     override fun onStart() {
         super.onStart()
-
         mapboxNavigation.registerArrivalObserver(arrivalObserver)
         mapboxNavigation.registerRoutesObserver(routesObserver)
         mapboxNavigation.registerRouteProgressObserver(routeProgressObserver)
@@ -654,20 +650,23 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     }
     override fun onDestroy() {
-        super.onDestroy()
         binding = null
-
+        mediaPlayer.release()
         mapboxNavigation.unregisterArrivalObserver(arrivalObserver)
         mapboxNavigation.unregisterRoutesObserver(routesObserver)
         mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
         mapboxNavigation.unregisterLocationObserver(locationObserver)
         mapboxNavigation.stopTripSession()
-
         clearRouteAndStopNavigation()
         MapboxNavigationProvider.destroy()
+        super.onDestroy()
+
     }
+
+
     private fun findRoute(destinationLocation: Point, lastLocation:Point) {
             mapboxNavigation.requestRoutes(routeOptionsBuilder(lastLocation, destinationLocation), object : RouterCallback {
+
                     override fun onRoutesReady(routes: List<DirectionsRoute>, routerOrigin: RouterOrigin) {
                         setRouteAndStartNavigation(routes)
                         findRouteDialog.cancel()

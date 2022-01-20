@@ -126,8 +126,14 @@ class PlaceBookmarksFragment : Fragment(R.layout.place_bookmarks_fragment) {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
         binding = null
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        binding = null
+        super.onDestroy()
+
     }
 }
