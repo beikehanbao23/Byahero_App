@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -92,7 +91,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     private val commuterArgs: CommuterFragmentArgs by navArgs()
     private lateinit var dialogDirector: DialogDirector
     private var binding: CommuterFragmentBinding? = null
-    private lateinit var searchLocationButton: AppCompatButton
+
     private lateinit var notifyListener: FragmentToActivity<Fragment>
     private lateinit var bottomSheet: Component
     private lateinit var bottomNavigation:Component
@@ -222,7 +221,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun initializeComponents(view: View) {
         dialogDirector = DialogDirector(requireActivity())
-        searchLocationButton = view.findViewById(R.id.buttonLocationSearch)
+
         bottomSheet = Component(StartingBottomSheet(view,requireContext()))
         bottomNavigation = Component(BottomNavigation(notifyListener))
         locationFAB = LocationButton(binding!!,requireContext())
@@ -636,13 +635,23 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         map.getMapView().onLowMemory()
     }
     override fun onDestroy() {
-        super.onDestroy()
         map.clearCache()
         binding = null
         map.getMapView().onDestroy()
         unregisterReceiver()
+        super.onDestroy()
+
 
     }
+
+    override fun onDestroyView() {
+        map.clearCache()
+        binding = null
+        map.getMapView().onDestroy()
+        unregisterReceiver()
+        super.onDestroyView()
+    }
+
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
     Timber.e("onPermissionsDenied requestCode is $requestCode")
     }
