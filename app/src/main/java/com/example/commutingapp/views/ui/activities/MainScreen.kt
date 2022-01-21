@@ -9,7 +9,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.commutingapp.R
-import com.example.commutingapp.data.firebase.usr.FirebaseUserWrapper
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.views.menubuttons.BackButton
@@ -22,11 +21,11 @@ import timber.log.Timber
 
 @AndroidEntryPoint
 class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
-    private val firebaseUser = FirebaseUserWrapper()
+
 
     private var activityMainScreenBinding: ActivityMainScreenBinding? = null
     private lateinit var navigationController: NavController
-    private var isCommuterFragmentAtForeground = false
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

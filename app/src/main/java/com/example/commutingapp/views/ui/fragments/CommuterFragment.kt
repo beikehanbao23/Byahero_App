@@ -4,6 +4,8 @@ package com.example.commutingapp.views.ui.fragments
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.*
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
@@ -12,7 +14,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
+import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -20,8 +25,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
-import com.example.commutingapp.databinding.CommuterFragmentBinding
+import com.example.commutingapp.databinding.FragmentCommuterBinding
 import com.example.commutingapp.feature_note.domain.model.PlaceBookmarks
 import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksEvent
 import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksUiEvent
@@ -51,24 +57,19 @@ import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestLo
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestRecordAudioPermission
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
-import com.example.commutingapp.views.ui.subComponents.BottomNavigation
-import com.example.commutingapp.views.ui.subComponents.Component
-import com.example.commutingapp.views.ui.subComponents.StartingBottomSheet
-import com.example.commutingapp.views.ui.subComponents.fab.LocationButton
-import com.example.commutingapp.views.ui.subComponents.fab.MapTypes
-import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.Map3DBuilding
-import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.MapDetailsWrapper
-import com.example.commutingapp.views.ui.subComponents.fab.mapDetails.MapTraffic
+
 import com.example.commutingapp.views.ui.subComponents.maps.MapImpl
 import com.example.commutingapp.views.ui.subComponents.maps.mapBox.MapBox
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.building.BuildingPlugin
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
@@ -79,50 +80,49 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
-import kotlin.reflect.KFunction0
 
 
 @AndroidEntryPoint
-class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.PermissionCallbacks,
+class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.PermissionCallbacks,
      MapboxMap.OnMapLongClickListener, MapboxMap.OnMapClickListener,MapboxMap.OnMoveListener {
 
 
     private val viewModel: PlaceBookmarksViewModel by viewModels()
     private val commuterArgs: CommuterFragmentArgs by navArgs()
     private lateinit var dialogDirector: DialogDirector
-    private var binding: CommuterFragmentBinding? = null
+    private var commuterBinding: FragmentCommuterBinding? = null
+    private lateinit var fragmentToActivityListener: FragmentToActivity<Fragment>
 
-    private lateinit var notifyListener: FragmentToActivity<Fragment>
-    private lateinit var bottomSheet: Component
-    private lateinit var bottomNavigation:Component
-    private lateinit var locationFAB:LocationButton
-    private lateinit var mapTypes:MapTypes
+
+
     private lateinit var map:MapImpl<MapView>
     private var userDestinationLocation: LatLng? = null
-    private lateinit var map3DBuilding: MapDetailsWrapper
-    private lateinit var mapTraffic: MapDetailsWrapper
     private lateinit var traffic : TrafficPlugin
     private lateinit var building3D : BuildingPlugin
     private var isOpenedFromBookmarks:Boolean = false
+    private lateinit var commuterBottomSheet: BottomSheetBehavior<View>
+    private lateinit var map3dDetailsPreferences: SharedPreferences
+    private lateinit var mapTrafficDetailsPreferences: SharedPreferences
+    private lateinit var mapTypesPreferences: SharedPreferences
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = CommuterFragmentBinding.inflate(inflater,container,false)
-        return binding!!.root
+        commuterBinding = FragmentCommuterBinding.inflate(inflater,container,false)
+        return commuterBinding!!.root
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeComponents(view)
-        bottomSheet.hide()
-        bottomNavigation.show()
+        hidePlacesBottomSheet()
+        showBottomNavigation()
         provideClickListeners()
         map.getMapView().apply {
             onCreate(savedInstanceState)
             isClickable = true
         }
-        map.setupUI(mapTypes.currentMapType())
-        locationFAB.updateLocationFloatingButtonIcon()
+        map.setupUI(currentMapType())
+        updateLocationFloatingButtonIcon()
         provideObservers()
         isOpenedFromBookmarks = commuterArgs.isOpenFromBookmarks
 
@@ -167,7 +167,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            this.notifyListener = context as FragmentToActivity<Fragment>
+            this.fragmentToActivityListener = context as FragmentToActivity<Fragment>
+            map3dDetailsPreferences = context.getSharedPreferences(Constants.KEY_MAPS_3D,Context.MODE_PRIVATE)
+            mapTrafficDetailsPreferences = context.getSharedPreferences(Constants.KEY_MAPS_TRAFFIC,Context.MODE_PRIVATE)
+            mapTypesPreferences =  context.getSharedPreferences(Constants.KEY_MAPS_TYPE, Context.MODE_PRIVATE)
         } catch (e: ClassCastException) { }
     }
 
@@ -179,7 +182,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun provideObservers(){
 
-        with(binding) {
+        with(commuterBinding) {
 
             map.getPlaceLocation().observe(viewLifecycleOwner){
                 userDestinationLocation = it
@@ -219,15 +222,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         }
     }
 
+
     private fun initializeComponents(view: View) {
         dialogDirector = DialogDirector(requireActivity())
+        commuterBottomSheet = BottomSheetBehavior.from(view.findViewById(R.id.bottomSheetNormalState)).apply {
+            this.isHideable = true
+        }
 
-        bottomSheet = Component(StartingBottomSheet(view,requireContext()))
-        bottomNavigation = Component(BottomNavigation(notifyListener))
-        locationFAB = LocationButton(binding!!,requireContext())
-        mapTypes = MapTypes(requireContext())
-        map3DBuilding = MapDetailsWrapper(Map3DBuilding(requireContext()))
-        mapTraffic = MapDetailsWrapper(MapTraffic(requireContext()))
+
 
 
         val mapbox = object : MapBox(view,requireActivity()){
@@ -258,63 +260,284 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
 
     }
+
+     private fun hidePlacesBottomSheet(){
+        commuterBottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
+    }
+     private fun showPlacesBottomSheet() {
+        renderBottomSheetButtons()
+        commuterBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+
+
+
+
+
+    private fun renderBottomSheetButtons(){
+        if(!Connection.hasInternetConnection(requireContext()) && Connection.hasGPSConnection(requireContext())){
+            showNoInternetAndHasGpsBottomSheetLayout()
+            return
+        }
+        if(Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())){
+            showHasInternetAndNoGpsBottomSheetLayout()
+            return
+        }
+        if(!Connection.hasInternetConnection(requireContext()) && !Connection.hasGPSConnection(requireContext())){
+            showNoInternetAndNoGpsBottomSheetLayout()
+            return
+        }
+
+        showDefaultBottomSheetLayout()
+    }
+    private fun showNoInternetAndHasGpsBottomSheetLayout() {
+        commuterBinding?.saveButton?.visibility = View.GONE
+        commuterBinding?.directionsButton?.visibility = View.VISIBLE
+        commuterBinding?.startButton?.visibility = View.VISIBLE
+    }
+    private fun showHasInternetAndNoGpsBottomSheetLayout() {
+        commuterBinding?.startButton?.visibility = View.GONE
+        commuterBinding?.saveButton?.visibility = View.VISIBLE
+        commuterBinding?.directionsButton?.visibility = View.VISIBLE
+    }
+    private fun showNoInternetAndNoGpsBottomSheetLayout() {
+        commuterBinding?.startButton?.visibility = View.GONE
+        commuterBinding?.saveButton?.visibility = View.GONE
+        commuterBinding?.directionsButton?.visibility = View.VISIBLE
+    }
+    private fun showDefaultBottomSheetLayout() {
+        commuterBinding?.saveButton?.visibility = View.VISIBLE
+        commuterBinding?.directionsButton?.visibility = View.VISIBLE
+        commuterBinding?.startButton?.visibility = View.VISIBLE
+
+    }
+
+    private fun showBottomNavigation() {
+        fragmentToActivityListener.onSecondNotify()
+    }
+
+    private fun hideBottomNavigation() {
+        fragmentToActivityListener.onFirstNotify()
+    }
+
     private fun showTrafficView(){
-        traffic.setVisibility(mapTraffic.isButtonSelected())
+        traffic.setVisibility(isMapTrafficButtonSelected())
 
     }
     private fun show3DBuildingView(){
-        building3D.setVisibility(map3DBuilding.isButtonSelected())
+        building3D.setVisibility(isMap3dButtonSelected())
     }
     private fun provideClickListeners() {
-        provideMapTypeDialogListener()
-        provideLocationButtonListener()
-        provideStartButtonListener()
-        provideDirectionButtonListener()
-        provideSaveButtonListener()
-        provideVoiceSpeechButtonListener()
-        provideSearchButtonListener()
+        provideMapTypeDialogClickListener()
+        provideLocationButtonClickListener()
+        provideStartButtonClickListener()
+        provideDirectionButtonClickListener()
+        provideSaveButtonClickListener()
+        provideSpeechButtonClickListener()
+        provideSearchButtonClickListener()
+
     }
 
-    private fun provideSearchButtonListener(){
-        binding?.buttonLocationSearch?.setOnClickListener {
+    private fun provideSearchButtonClickListener(){
+        commuterBinding?.buttonLocationSearch?.setOnClickListener {
             val intent = map.getLocationSearchIntent()
             startActivityForResult(intent,REQUEST_SEARCH_RESULT)
         }
     }
-    private fun provideMapTypeDialogListener() {
-        binding?.floatingActionButtonChooseMap?.setOnClickListener {
-            dialogDirector.buildChooseMapTypeDialog().apply {
 
-                mapTypes.setMapSelectedIndicator(this)
-                provideMapDetailsButtonListenerOf(this, map3DBuilding, R.id.maps3dDetailsButton, ::show3DBuildingView)
-                provideMapDetailsButtonListenerOf(this, mapTraffic, R.id.trafficMapDetailsButton, ::showTrafficView)
-                setMapTypeListeners(this)
+
+
+
+    private fun setMapSelectedIndicator(customDialogBuilder: CustomDialogBuilder){
+        customDialogBuilder.also {
+            val mapTypeButton = getMapTypeButtons().getValue(currentMapType())
+            it.findViewById<View>(mapTypeButton)?.setBackgroundResource(R.drawable.map_type_selected_state_indicator)
+        }
+    }
+
+    private fun removePreviousMapTypeIndicator(customDialogBuilder: CustomDialogBuilder){
+        customDialogBuilder.apply {
+            for(i in getMapTypeButtons()){
+                if(i.key == currentMapType()){
+                    continue
+                }else{
+                    findViewById<View>(i.value)?.setBackgroundColor(Color.WHITE)
+                }
+            }
+        }
+    }
+
+    private fun getMapTypeButtons():HashMap<String,Int> =
+        HashMap<String,Int>().apply {
+            this[Style.LIGHT] = R.id.defaultMapStyleButton
+            this[Style.DARK] = R.id.darkMapStyleButton
+            this[Style.MAPBOX_STREETS] = R.id.streetMapStyleButton
+            this[Style.SATELLITE_STREETS] = R.id.satelliteStreetsMapStyleButton
+            this[BuildConfig.MAP_STYLE] = R.id.neonMapStyleButton
+            this[Style.SATELLITE] = R.id.satelliteMapStyleButton
+
+        }
+
+
+
+    private fun changeMapType(customDialogBuilder: CustomDialogBuilder,mapType: String) {
+        saveMapTypeToSharedPreference(mapType)
+        removePreviousMapTypeIndicator(customDialogBuilder)
+        setMapSelectedIndicator(customDialogBuilder)
+    }
+
+    private fun currentMapType():String = mapTypesPreferences.getString(Constants.KEY_MAPS_TYPE, Style.LIGHT).toString()
+
+    private fun saveMapTypeToSharedPreference(mapType: String) {
+        mapTypesPreferences.edit().putString(Constants.KEY_MAPS_TYPE, mapType).apply()
+    }
+
+
+
+    private fun addMap3dButtonSelectedIndicator(customDialogBuilder: CustomDialogBuilder) {
+        customDialogBuilder.apply {
+            if (isMap3dButtonSelected()) {
+                findViewById<View>(R.id.maps3dDetailsButton)
+                    ?.setBackgroundResource(R.drawable.map_type_selected_state_indicator)
+            } else {
+                findViewById<View>(R.id.maps3dDetailsButton)?.setBackgroundColor(Color.WHITE)
+            }
+        }
+    }
+
+    private fun changeMap3dButtonState(state: SwitchState) {
+        map3dDetailsPreferences.edit().putString(Constants.KEY_MAPS_3D,state.toString()).apply()
+    }
+
+
+    private fun isMap3dButtonSelected() =
+        map3dDetailsPreferences.getString(Constants.KEY_MAPS_3D,
+            SwitchState.OFF.toString()) == SwitchState.ON.toString()
+
+
+
+
+
+
+
+    private fun addMapTrafficButtonSelectedIndicator(customDialogBuilder: CustomDialogBuilder) {
+        customDialogBuilder.apply {
+            if(isMapTrafficButtonSelected()){
+                findViewById<View>( R.id.trafficMapDetailsButton)?.setBackgroundResource(R.drawable.map_type_selected_state_indicator)
+            }else{
+                findViewById<View>( R.id.trafficMapDetailsButton)?.setBackgroundColor(Color.WHITE)
+            }
+        }
+    }
+
+
+    private fun changeMapTrafficButtonState(state: SwitchState) {
+        mapTrafficDetailsPreferences.edit().putString(Constants.KEY_MAPS_TRAFFIC,state.toString()).apply()
+    }
+
+    private fun isMapTrafficButtonSelected() =
+        mapTrafficDetailsPreferences.getString(Constants.KEY_MAPS_TRAFFIC,SwitchState.OFF.toString()) == SwitchState.ON.toString()
+
+
+
+
+
+
+    private fun provideMapTypeDialogClickListener() {
+        commuterBinding?.floatingActionButtonChooseMap?.setOnClickListener {
+            dialogDirector.buildMapTypeDialog().apply {
+
+                setMapSelectedIndicator(this)
+
+                addMapTrafficButtonSelectedIndicator(this)
+                addMap3dButtonSelectedIndicator(this)
+
+
+                setMapTypeClickListeners(this)
                 show()
             }
         }
     }
 
 
-    private fun provideMapDetailsButtonListenerOf(customDialogBuilder: CustomDialogBuilder, mapDetails: MapDetailsWrapper, id: Int, showViews: KFunction0<Unit>) {
-        with(mapDetails) {
-            customDialogBuilder.also { dialogBuilder ->
-                addMapSelectedIndicator(dialogBuilder)
-                dialogBuilder.findViewById<View>(id)?.setOnClickListener {
-                    if (this.isButtonSelected()) {
-                        changeMapButtonState(SwitchState.OFF)
-                    } else {
-                        changeMapButtonState(SwitchState.ON)
+    private fun setMapTypeClickListeners(customDialogBuilder: CustomDialogBuilder) {
+
+        var previousType = ""
+        customDialogBuilder.also { mapTypeListener->
+            getMapTypeButtons().forEach { hashMap->
+
+
+                mapTypeListener.findViewById<View>(hashMap.value )?.setOnClickListener {
+                    val currentType = hashMap.key
+                    if(previousType != currentType) {
+                        changeMapType(mapTypeListener, currentType)
+                        map.updateMapStyle(currentType)
+                        previousType = currentType
                     }
-                    showViews()
-                    addMapSelectedIndicator(dialogBuilder)
                 }
+
+                mapTypeListener.findViewById<View>(R.id.maps3dDetailsButton)?.setOnClickListener {
+                    if(isMap3dButtonSelected()){
+                        changeMap3dButtonState(SwitchState.OFF)
+                    }else{
+                        changeMap3dButtonState(SwitchState.ON)
+                    }
+                    show3DBuildingView()
+                    addMap3dButtonSelectedIndicator(customDialogBuilder)
+                }
+
+
+                mapTypeListener.findViewById<View>(R.id.trafficMapDetailsButton)?.setOnClickListener {
+                    if(isMapTrafficButtonSelected()){
+                        changeMapTrafficButtonState(SwitchState.OFF)
+                    }else{
+                        changeMapTrafficButtonState(SwitchState.ON)
+                    }
+                    showTrafficView()
+                    addMapTrafficButtonSelectedIndicator(customDialogBuilder)
+                }
+
+
             }
         }
     }
 
 
-    private fun provideLocationButtonListener() {
-        binding?.floatingActionButtonLocation?.setOnClickListener {
+    private fun showLocationFloatingButton(){
+        commuterBinding!!.floatingActionButtonLocation.visibility = View.VISIBLE
+    }
+    private fun hideLocationFloatingButton(){
+        commuterBinding!!.floatingActionButtonLocation.visibility = View.GONE
+    }
+
+    private fun updateLocationFloatingButtonIcon()=
+        if(Connection.hasGPSConnection(requireContext())) changeFloatingButtonIconBlack() else changeFloatingButtonIconRed()
+
+    private fun changeFloatingButtonIconRed(){
+        changeLocationFloatingButtonIconColor(Color.RED)
+        changeLocationFloatingButtonIcon(R.drawable.ic_location_asking)
+    }
+    private fun changeFloatingButtonIconBlack(){
+        changeLocationFloatingButtonIconColor(Color.BLACK)
+        changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location)
+    }
+    private fun changeFloatingButtonIconBlue(){
+        changeLocationFloatingButtonIconColor(Color.BLUE)
+        changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location)
+    }
+    private fun changeLocationFloatingButtonIconColor(@ColorInt color:Int){
+        ImageViewCompat.setImageTintList(
+            commuterBinding!!.floatingActionButtonLocation,
+            ColorStateList.valueOf(color))
+
+    }
+    private fun changeLocationFloatingButtonIcon(@DrawableRes imageId:Int){
+        commuterBinding!!.floatingActionButtonLocation.setImageResource(imageId)
+    }
+
+    private fun provideLocationButtonClickListener() {
+        commuterBinding?.floatingActionButtonLocation?.setOnClickListener {
             if (hasLocationPermission(requireContext())) {
                 renderUserLocation()
             }else{
@@ -336,22 +559,22 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             getLastKnownLocation()?.let { location ->
                 createLocationPuck()
                 moveCameraToUser(location, CAMERA_ZOOM_MAP_MARKER, FAST_CAMERA_ANIMATION_DURATION)
-                locationFAB.changeFloatingButtonIconBlue()
+                changeFloatingButtonIconBlue()
             }
         }
 
     }
-    private fun provideStartButtonListener(){
-        binding?.startButton?.setOnClickListener {
+    private fun provideStartButtonClickListener(){
+        commuterBinding?.startButton?.setOnClickListener {
             if (hasLocationPermission(requireContext())) {
                 if(!Connection.hasInternetConnection(requireContext())){
                     DialogDirector(requireActivity()).buildNoInternetDialog()
-                    bottomSheet.hide()
+                    hidePlacesBottomSheet()
                     return@setOnClickListener
                 }
-                bottomSheet.hide()
-                bottomNavigation.hide()
-                locationFAB.hideLocationFloatingButton()
+                hidePlacesBottomSheet()
+                hideBottomNavigation()
+                hideLocationFloatingButton()
 
                 checkLocationSetting().addOnCompleteListener {task->
                     onStartButtonClickAskGPS(task)
@@ -383,32 +606,34 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
         userDestinationLocation?.let { destinationLocation ->
             map.getLastKnownLocation()?.let { lastLocation ->
             val action = CommuterFragmentDirections.commuterFragmentToNavigationFragment(destinationLocation,lastLocation)
-                Navigation.findNavController(binding!!.root).navigate(action)
+                Navigation.findNavController(commuterBinding!!.root).navigate(action)
             }
         }
 
 
     }
 
-    private fun provideDirectionButtonListener(){
-        binding?.directionsButton?.setOnClickListener {
+
+
+    private fun provideDirectionButtonClickListener(){
+        commuterBinding?.directionsButton?.setOnClickListener {
 
             if(!Connection.hasInternetConnection(requireContext())){
                 DialogDirector(requireActivity()).buildNoInternetDialog()
-                bottomSheet.hide()
+                hidePlacesBottomSheet()
                 return@setOnClickListener
             }
                 map.createDirections()
-                binding?.directionsButton?.visibility = View.GONE
+                commuterBinding?.directionsButton?.visibility = View.GONE
             }
         }
 
-    private fun provideSaveButtonListener() {
-        binding?.saveButton?.setOnClickListener {
+    private fun provideSaveButtonClickListener() {
+        commuterBinding?.saveButton?.setOnClickListener {
             viewModel.onEvent(PlaceBookmarksEvent.SavePlace(
                 PlaceBookmarks(
-                    placeName = binding!!.geocodePlaceName.text as String,
-                    placeText = binding!!.geocodePlaceText.text as String,
+                    placeName = commuterBinding!!.geocodePlaceName.text as String,
+                    placeText = commuterBinding!!.geocodePlaceText.text as String,
                     longitude = userDestinationLocation!!.longitude,
                     latitude = userDestinationLocation!!.latitude
                 )
@@ -419,8 +644,8 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     }
 
-    private fun provideVoiceSpeechButtonListener(){
-        binding?.voiceSpeechButton?.setOnClickListener {
+    private fun provideSpeechButtonClickListener(){
+        commuterBinding?.voiceSpeechButton?.setOnClickListener {
             if(hasRecordAudioPermission(requireContext())){
                 openVoiceSearchCommand()
             }else{
@@ -454,27 +679,12 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onReceive(context: Context?, intent: Intent?) {
                 if(LocationManager.PROVIDERS_CHANGED_ACTION == intent?.action){
-                    locationFAB.updateLocationFloatingButtonIcon()
+                    updateLocationFloatingButtonIcon()
                 }
             }
 
     }
-    private fun setMapTypeListeners(customDialogBuilder: CustomDialogBuilder) {
 
-        var previousType = ""
-        customDialogBuilder.also { mapTypeListener->
-            mapTypes.getMapTypeButtons().forEach { hashMap->
-               mapTypeListener.findViewById<View>(hashMap.value )?.setOnClickListener {
-                   val currentType = hashMap.key
-                   if(previousType != currentType) {
-                       mapTypes.changeMapType(mapTypeListener, currentType)
-                       map.updateMapStyle(currentType)
-                       previousType = currentType
-                   }
-               }
-           }
-        }
-    }
 
 
     @SuppressLint("MissingPermission")
@@ -527,10 +737,10 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
 
     private fun resetBottomSheetPlace(){
         lifecycleScope.launch {
-            bottomNavigation.hide()
+            hideBottomNavigation()
             resetPlaceResult()
             delay(50)
-            bottomSheet.show()
+            showPlacesBottomSheet()
         }
     }
     private fun resetPlaceResult(){
@@ -542,14 +752,14 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
             showPlace()
     }
     private fun showPlace(){
-        with(binding){
+        with(commuterBinding){
             this?.progressBar?.visibility = View.VISIBLE
             this?.geocodePlaceName?.text = ""
             this?.geocodePlaceText?.text = ""
         }
     }
     private fun hidePlace() {
-        with(binding) {
+        with(commuterBinding) {
             this?.progressBar?.visibility = View.GONE
             this?.geocodePlaceText?.visibility = View.GONE
             this?.geocodePlaceName?.visibility = View.GONE
@@ -599,9 +809,9 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     override fun onMapClick(point: LatLng): Boolean {
         map.deleteRouteAndMarkers()
-        bottomSheet.hide()
-        bottomNavigation.show()
-        binding?.directionsButton?.visibility = View.VISIBLE
+        hidePlacesBottomSheet()
+        showBottomNavigation()
+        commuterBinding?.directionsButton?.visibility = View.VISIBLE
         return true
     }
 
@@ -636,17 +846,16 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     override fun onDestroy() {
         map.clearCache()
-        binding = null
+        commuterBinding = null
         map.getMapView().onDestroy()
         unregisterReceiver()
         super.onDestroy()
 
 
     }
-
     override fun onDestroyView() {
         map.clearCache()
-        binding = null
+        commuterBinding = null
         map.getMapView().onDestroy()
         unregisterReceiver()
         super.onDestroyView()
@@ -673,7 +882,7 @@ class CommuterFragment : Fragment(R.layout.commuter_fragment), EasyPermissions.P
     }
     override fun onMoveBegin(detector: MoveGestureDetector){}
     override fun onMove(detector: MoveGestureDetector) {
-        locationFAB.changeFloatingButtonIconBlack()
+        changeFloatingButtonIconBlack()
     }
     override fun onMoveEnd(detector: MoveGestureDetector) {}
 

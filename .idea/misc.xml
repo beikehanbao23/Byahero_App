@@ -155,10 +155,10 @@
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/dialog_finding_route.xml" value="0.3651041666666667" />
-        <entry key="app/src/main/res/layout/dialog_map_types.xml" value="0.3651041666666667" />
+        <entry key="app/src/main/res/layout/dialog_map_types.xml" value="0.2" />
         <entry key="app/src/main/res/layout/dialog_no_internet.xml" value="0.3651041666666667" />
         <entry key="app/src/main/res/layout/fragment_bookmarks.xml" value="0.3651041666666667" />
-        <entry key="app/src/main/res/layout/fragment_commuter.xml" value="0.67" />
+        <entry key="app/src/main/res/layout/fragment_commuter.xml" value="0.2" />
         <entry key="app/src/main/res/layout/fragment_item_list.xml" value="0.534375" />
         <entry key="app/src/main/res/layout/fragment_list.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_list_adapter.xml" value="0.5" />
