@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.commutingapp.R
 import com.example.commutingapp.data.model.Weather
-import com.example.commutingapp.databinding.WeatherFragmentBinding
+import com.example.commutingapp.databinding.FragmentWeatherBinding
 import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.utils.others.Constants.KEY_USER_CITY_JSON_WEATHER
 import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_LOCATION_PERMISSION
@@ -40,8 +40,8 @@ import pub.devrel.easypermissions.EasyPermissions
 
 
 @AndroidEntryPoint
-class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.PermissionCallbacks{
-    private var binding: WeatherFragmentBinding? = null
+class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.PermissionCallbacks{
+    private var binding: FragmentWeatherBinding? = null
     private var listOfWeatherModel:MutableList<WeatherRVModel> = ArrayList()
     private val weatherViewModel: WeatherViewModel by viewModels()
     private lateinit var weatherApiJson :SharedPreferences
@@ -52,7 +52,7 @@ class WeatherFragment: Fragment(R.layout.weather_fragment), EasyPermissions.Perm
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = WeatherFragmentBinding.inflate(inflater,container,false)
+        binding = FragmentWeatherBinding.inflate(inflater,container,false)
         return binding!!.root
     }
 

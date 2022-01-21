@@ -12,14 +12,14 @@ import com.example.commutingapp.R
 data class CustomDialogBuilder constructor(
 
     @NonNull val activity: Activity,
-    @LayoutRes val layout: Int = R.layout.custom_dialog_no_internet,
+    @LayoutRes val layout: Int = R.layout.dialog_no_internet,
     @StyleRes val animation: Int = android.R.style.Animation_Dialog,
     @NonNull val backgroundColorDrawable: ColorDrawable = ColorDrawable(Color.TRANSPARENT),
     val title: String = "Default Title",
     val description: String = "Default Description",
 
 
-) : AppCompatDialog(activity) {
+    ) : AppCompatDialog(activity) {
 
     init {
         setContentView(layout)

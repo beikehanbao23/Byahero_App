@@ -7,8 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.commutingapp.R;
+import com.example.commutingapp.databinding.ActivityEmailSentBinding;
 import com.example.commutingapp.databinding.CircularProgressbarBinding;
-import com.example.commutingapp.databinding.CustomEmailsentDialogBinding;
 import com.example.commutingapp.utils.ui_utilities.ActivitySwitch;
 import com.example.commutingapp.viewmodels.EmailSentViewModel;
 import com.example.commutingapp.views.dialogs.DialogDirector;
@@ -21,7 +21,7 @@ public class EmailSent extends AppCompatActivity {
 
 
     private DialogDirector dialogDirector;
-    private CustomEmailsentDialogBinding emailDialogBinding;
+    private ActivityEmailSentBinding emailBinding;
     private CircularProgressbarBinding progressbarBinding;
     private EmailSentViewModel viewModel;
 
@@ -40,9 +40,9 @@ public class EmailSent extends AppCompatActivity {
     }
 
     private void initializeAttributes() {
-        emailDialogBinding = CustomEmailsentDialogBinding.inflate(getLayoutInflater());
-        progressbarBinding = CircularProgressbarBinding.bind(emailDialogBinding.getRoot());
-        setContentView(emailDialogBinding.getRoot());
+        emailBinding = ActivityEmailSentBinding.inflate(getLayoutInflater());
+        progressbarBinding = CircularProgressbarBinding.bind(emailBinding.getRoot());
+        setContentView(emailBinding.getRoot());
         dialogDirector = new DialogDirector(this);
         viewModel = new ViewModelProvider(this).get(EmailSentViewModel.class);
 
@@ -78,7 +78,7 @@ public class EmailSent extends AppCompatActivity {
 
 
     private void destroyBinding() {
-        emailDialogBinding = null;
+        emailBinding = null;
         progressbarBinding = null;
     }
 
@@ -119,7 +119,7 @@ public class EmailSent extends AppCompatActivity {
     }
 
     private void displayUserEmailToTextView() {
-        viewModel.displayUserEmailToTextView().observe(this, userEmail -> emailDialogBinding.textViewEmail.setText(userEmail));
+        viewModel.displayUserEmailToTextView().observe(this, userEmail -> emailBinding.textViewEmail.setText(userEmail));
     }
 
     public void resendEmailIsClicked(View view) {
@@ -129,15 +129,15 @@ public class EmailSent extends AppCompatActivity {
     }
 
     private void displayWhenVerificationTimerStarted(long secondsLeft) {
-        emailDialogBinding.ResendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.gray));
-        emailDialogBinding.ResendVerificationButton.setText(new StringBuilder().append(getString(R.string.resendVerification)).append(" in").append(secondsLeft).append("s").toString());
-        emailDialogBinding.ResendVerificationButton.setEnabled(false);
+        emailBinding.ResendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.gray));
+        emailBinding.ResendVerificationButton.setText(new StringBuilder().append(getString(R.string.resendVerification)).append(" in").append(secondsLeft).append("s").toString());
+        emailBinding.ResendVerificationButton.setEnabled(false);
     }
 
     private void displayWhenVerificationTimerIsFinished() {
-        emailDialogBinding.ResendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.blue2));
-        emailDialogBinding.ResendVerificationButton.setText(getString(R.string.resendVerification));
-        emailDialogBinding.ResendVerificationButton.setEnabled(true);
+        emailBinding.ResendVerificationButton.setTextColor(ContextCompat.getColor(this, R.color.blue2));
+        emailBinding.ResendVerificationButton.setText(getString(R.string.resendVerification));
+        emailBinding.ResendVerificationButton.setEnabled(true);
     }
 
     private void startVerificationTimer() {

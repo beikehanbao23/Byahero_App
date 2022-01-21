@@ -38,7 +38,7 @@
         android:id="@+id/commuter_fragment"
         android:name="com.example.commutingapp.views.ui.fragments.CommuterFragment"
         android:label="@string/title_Commutes"
-        tools:layout="@layout/commuter_fragment">
+        tools:layout="@layout/fragment_commuter">
         <action
             android:id="@+id/commuter_fragment_To_navigation_fragment"
             app:destination="@+id/navigation_fragment"/>
@@ -61,7 +61,7 @@
         android:id="@+id/weather_fragment"
         android:name="com.example.commutingapp.views.ui.fragments.WeatherFragment"
         android:label="@string/title_Weather"
-        tools:layout="@layout/weather_fragment"/>
+        tools:layout="@layout/fragment_weather"/>
 
 
     <fragment
@@ -94,7 +94,7 @@
         android:id="@+id/placeBookmarks_fragment"
         android:name="com.example.commutingapp.feature_note.presentation.PlaceBookmarksFragment"
         android:label="place_bookmarks_fragment"
-        tools:layout="@layout/place_bookmarks_fragment" >
+        tools:layout="@layout/fragment_bookmarks" >
 
         <action
             android:id="@+id/action_listFragment_to_commuter_fragment"

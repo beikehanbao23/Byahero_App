@@ -10,10 +10,10 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.widget.ImageViewCompat
 import com.example.commutingapp.R
-import com.example.commutingapp.databinding.CommuterFragmentBinding
+import com.example.commutingapp.databinding.FragmentCommuterBinding
 import com.example.commutingapp.utils.InternetConnection.Connection
 
-class LocationButton(private val commuterFragmentBinding: CommuterFragmentBinding, private val context:Context) {
+class LocationButton(private val commuterFragmentBinding: FragmentCommuterBinding, private val context:Context) {
 
      fun showLocationFloatingButton(){
         commuterFragmentBinding.floatingActionButtonLocation.visibility = View.VISIBLE

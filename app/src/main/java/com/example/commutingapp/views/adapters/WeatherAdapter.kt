@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.commutingapp.R
-import com.example.commutingapp.databinding.WeatherRecyclerViewAdapterBinding
+import com.example.commutingapp.databinding.RvWeatherAdapterBinding
+
 import com.example.commutingapp.views.ui.recycler_view_model.WeatherRVModel
 import timber.log.Timber
 import java.text.ParseException
@@ -19,11 +20,11 @@ class WeatherAdapter(
     private val listOfWeatherModel:List<WeatherRVModel>
 ):RecyclerView.Adapter<WeatherAdapter.ViewHolder>() {
 
-    private lateinit var binding: WeatherRecyclerViewAdapterBinding
+    private lateinit var binding: RvWeatherAdapterBinding
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherAdapter.ViewHolder {
-        binding = WeatherRecyclerViewAdapterBinding.inflate(activity.layoutInflater,parent,false)
+        binding = RvWeatherAdapterBinding.inflate(activity.layoutInflater,parent,false)
         return ViewHolder(binding.root)
     }
 

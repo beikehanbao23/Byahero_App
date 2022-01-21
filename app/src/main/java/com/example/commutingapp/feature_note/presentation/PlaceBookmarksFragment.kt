@@ -13,7 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.commutingapp.R
-import com.example.commutingapp.databinding.PlaceBookmarksFragmentBinding
+import com.example.commutingapp.databinding.FragmentBookmarksBinding
 import com.example.commutingapp.feature_note.domain.util.OrderType
 import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksEvent
 import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksState
@@ -26,14 +26,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class PlaceBookmarksFragment : Fragment(R.layout.place_bookmarks_fragment) {
+class PlaceBookmarksFragment : Fragment(R.layout.fragment_bookmarks) {
     private val viewModel: PlaceBookmarksViewModel by viewModels()
-    private var binding:PlaceBookmarksFragmentBinding? = null
+    private var binding:FragmentBookmarksBinding? = null
     private var listOfPlaceBookmarks:MutableList<PlaceBookmarksRVModel> = ArrayList()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = PlaceBookmarksFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentBookmarksBinding.inflate(inflater, container, false)
         return binding!!.root
     }
 

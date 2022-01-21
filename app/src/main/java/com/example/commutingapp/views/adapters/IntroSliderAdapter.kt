@@ -7,9 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.commutingapp.R.drawable.*
 import com.example.commutingapp.R.string.*
-import com.example.commutingapp.databinding.IntroSlidersAdapterBinding
+import com.example.commutingapp.databinding.AdaptersIntroSlidersBinding
 import com.example.commutingapp.utils.others.Constants.SLIDER_ITEM_COUNTS
-import com.facebook.appevents.internal.Constants
 
 
 /* Adapters provide a binding from an
@@ -21,7 +20,7 @@ class IntroSliderAdapter(
     private val _context: Context
     ) : RecyclerView.Adapter<IntroSliderAdapter.IntroSliderViewHolder>() {
 
-    private var binding: IntroSlidersAdapterBinding? = null
+    private var binding: AdaptersIntroSlidersBinding? = null
     private val images = arrayListOf(
         ic_create_account,
         ic_traveller,
@@ -60,7 +59,7 @@ class IntroSliderAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntroSliderViewHolder {
 
-        binding = IntroSlidersAdapterBinding.inflate(inflater, parent, false)
+        binding = AdaptersIntroSlidersBinding.inflate(inflater, parent, false)
 
         return IntroSliderViewHolder(binding!!.root)
 

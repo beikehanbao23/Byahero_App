@@ -10,7 +10,7 @@ import com.example.commutingapp.utils.others.Constants.KEY_MAPS_TYPE
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.mapbox.mapboxsdk.maps.Style
 
-class MapTypes(private val context: Context) {
+class MapTypes(context: Context) {
     private var mapTypesPreferences: SharedPreferences = context.getSharedPreferences(
         KEY_MAPS_TYPE,
         Context.MODE_PRIVATE)

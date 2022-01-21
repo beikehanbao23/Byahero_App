@@ -12,6 +12,7 @@
         <entry key="../.gradle/caches/transforms-3/e4575a45ca77dc1355c6d37a47feae00/transformed/jetified-CuteToast-1.2/res/drawable/ic_confuse.xml" value="0.56796875" />
         <entry key="../Android/Sdk/platforms/android-30/data/res/drawable/btn_star.xml" value="0.3828125" />
         <entry key="app/src/main/res/drawable-v23/bottom_sheet_close_button.xml" value="0.3828125" />
+        <entry key="app/src/main/res/drawable-v24/active_indicator.xml" value="0.23796296296296296" />
         <entry key="app/src/main/res/drawable-v24/customdialog_background.xml" value="0.25" />
         <entry key="app/src/main/res/drawable-v24/ic_create_account.xml" value="0.384375" />
         <entry key="app/src/main/res/drawable-v24/ic_google.xml" value="0.57421875" />
@@ -126,12 +127,14 @@
         <entry key="app/src/main/res/font/berkshire_swash.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/font/fonts.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/layout-w780dp-port/test.xml" value="0.273828125" />
-        <entry key="app/src/main/res/layout/activity_intro_slider.xml" value="0.18" />
+        <entry key="app/src/main/res/layout/activity_email_sent.xml" value="0.3651041666666667" />
+        <entry key="app/src/main/res/layout/activity_intro_slider.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.22" />
-        <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_splashscreen.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_token_expired.xml" value="0.35" />
+        <entry key="app/src/main/res/layout/adapters_intro_sliders.xml" value="0.3651041666666667" />
         <entry key="app/src/main/res/layout/application_icon_display.xml" value="0.35" />
         <entry key="app/src/main/res/layout/bottom_sheet.xml" value="0.16" />
         <entry key="app/src/main/res/layout/bottom_sheet_buttons.xml" value="0.18" />
@@ -144,23 +147,32 @@
         <entry key="app/src/main/res/layout/bottom_sheet_start_state.xml" value="0.33" />
         <entry key="app/src/main/res/layout/bottom_sheet_tracking_state.xml" value="0.25" />
         <entry key="app/src/main/res/layout/choose_map_dialog.xml" value="0.2" />
-        <entry key="app/src/main/res/layout/circular_progressbar.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/circular_progressbar.xml" value="0.33" />
         <entry key="app/src/main/res/layout/commuter_data_fragment.xml" value="0.5" />
         <entry key="app/src/main/res/layout/commuter_data_recycler_view_adapter.xml" value="0.5" />
         <entry key="app/src/main/res/layout/commuter_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_dialog_no_internet.xml" value="0.33" />
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/dialog_finding_route.xml" value="0.3651041666666667" />
+        <entry key="app/src/main/res/layout/dialog_map_types.xml" value="0.3651041666666667" />
+        <entry key="app/src/main/res/layout/dialog_no_internet.xml" value="0.3651041666666667" />
+        <entry key="app/src/main/res/layout/fragment_bookmarks.xml" value="0.3651041666666667" />
+        <entry key="app/src/main/res/layout/fragment_commuter.xml" value="0.67" />
         <entry key="app/src/main/res/layout/fragment_item_list.xml" value="0.534375" />
         <entry key="app/src/main/res/layout/fragment_list.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_list_adapter.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_list_adpater.xml" value="0.55390625" />
-        <entry key="app/src/main/res/layout/fragment_navigation.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_navigation.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_weather.xml" value="0.3651041666666667" />
         <entry key="app/src/main/res/layout/intro_sliders_adapter.xml" value="0.22" />
         <entry key="app/src/main/res/layout/map_styles_dialog.xml" value="0.33" />
         <entry key="app/src/main/res/layout/navigation_dialog_finding_route.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/place_bookmarks_fragment.xml" value="0.5" />
-        <entry key="app/src/main/res/layout/place_bookmarks_recyclerview_adapter.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/navigation_fragment.xml" value="0.3651041666666667" />
+        <entry key="app/src/main/res/layout/place_bookmarks_fragment.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/place_bookmarks_recyclerview_adapter.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/rv_bookmarks.xml" value="0.17291666666666666" />
+        <entry key="app/src/main/res/layout/rv_weather_adapter.xml" value="0.17291666666666666" />
         <entry key="app/src/main/res/layout/search_bar.xml" value="0.24444444444444444" />
         <entry key="app/src/main/res/layout/search_view_location.xml" value="0.33" />
         <entry key="app/src/main/res/layout/settings_fragment.xml" value="0.5" />
@@ -170,7 +182,7 @@
         <entry key="app/src/main/res/layout/tracking_fragment.xml" value="0.22" />
         <entry key="app/src/main/res/layout/turn_by_turn_experience.xml" value="0.18" />
         <entry key="app/src/main/res/layout/weather_fragment.xml" value="0.2" />
-        <entry key="app/src/main/res/layout/weather_recycler_view_adapter.xml" value="0.9" />
+        <entry key="app/src/main/res/layout/weather_recycler_view_adapter.xml" value="0.5" />
         <entry key="app/src/main/res/layout/weather_recycler_view_item.xml" value="0.25" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.67" />
         <entry key="app/src/main/res/menu/toolbar_tracking_menu.xml" value="0.54921875" />
@@ -190,13 +202,6 @@
       <set>
         <option value="Commuting_App.app" />
       </set>
-    </option>
-  </component>
-  <component name="VisualizationToolProject">
-    <option name="state">
-      <ProjectState>
-        <option name="scale" value="0.2" />
-      </ProjectState>
     </option>
   </component>
 </project>

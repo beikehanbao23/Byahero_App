@@ -20,7 +20,7 @@ class DialogDirector(val activity: Activity) {
     fun buildNoInternetDialog(): CustomDialogBuilder {
         return CustomDialogBuilder(
             activity = activity,
-            layout = R.layout.custom_dialog_no_internet,
+            layout = R.layout.dialog_no_internet,
             animation = android.R.style.Animation_Dialog,
             backgroundColorDrawable = ColorDrawable(Color.TRANSPARENT)
 
@@ -42,12 +42,12 @@ class DialogDirector(val activity: Activity) {
 
 
 
-    fun buildChooseMapTypeDialog():CustomDialogBuilder{
+    fun buildMapTypeDialog():CustomDialogBuilder{
 
 
         return CustomDialogBuilder(
             activity = activity,
-            layout = R.layout.map_styles_dialog,
+            layout = R.layout.dialog_map_types,
             animation = android.R.style.Animation_Dialog,
             backgroundColorDrawable = ColorDrawable(Color.TRANSPARENT)
         ).also {
@@ -58,7 +58,7 @@ class DialogDirector(val activity: Activity) {
     fun buildFindRouteDialog():CustomDialogBuilder{
         return CustomDialogBuilder(
             activity = activity,
-            layout = R.layout.navigation_dialog_finding_route,
+            layout = R.layout.dialog_finding_route,
             animation =  android.R.style.Animation_Dialog,
             backgroundColorDrawable =  ColorDrawable(Color.TRANSPARENT)
         ).also {

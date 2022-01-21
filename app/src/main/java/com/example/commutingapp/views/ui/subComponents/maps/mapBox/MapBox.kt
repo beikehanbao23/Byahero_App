@@ -212,7 +212,7 @@ abstract class MapBox(private val view: View,private val activity: Activity):
             mapBoxMap?.getStyle {
                 CoroutineScope(Dispatchers.Main).launch { location.buildLocationPuck(it) }
             }
-        } catch (e: IllegalArgumentException) {
+        } catch (e: Exception) {
             Timber.e("Location puck failed! "+ e.message.toString())
         }
     }

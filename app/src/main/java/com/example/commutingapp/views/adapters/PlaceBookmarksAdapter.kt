@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
-import com.example.commutingapp.databinding.PlaceBookmarksRecyclerviewAdapterBinding
+
+import com.example.commutingapp.databinding.RvBookmarksBinding
 import com.example.commutingapp.feature_note.domain.model.PlaceBookmarks
 import com.example.commutingapp.feature_note.presentation.PlaceBookmarksFragmentDirections
 import com.example.commutingapp.feature_note.presentation.place.components.PlaceBookmarksEvent
@@ -24,7 +25,7 @@ class PlaceBookmarksAdapter(
 
 
     private var currentPosition:Int = -1
-    private lateinit var binding: PlaceBookmarksRecyclerviewAdapterBinding
+    private lateinit var binding: RvBookmarksBinding
 
 
 
@@ -37,7 +38,7 @@ class PlaceBookmarksAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = PlaceBookmarksRecyclerviewAdapterBinding.inflate(activity.layoutInflater, parent, false)
+        binding = RvBookmarksBinding.inflate(activity.layoutInflater, parent, false)
         return ViewHolder(binding.root)
     }
 

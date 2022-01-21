@@ -14,7 +14,7 @@
         android:layout_marginEnd="10dp"
         android:background="@drawable/search_view_location_background"
         android:drawableLeft="@drawable/ic_baseline_search_24"
-        android:elevation="50dp"
+        android:elevation="5dp"
         android:hint="@string/searchPlaces"
         android:paddingStart="15dp"
         android:textAlignment="textStart"
@@ -37,7 +37,7 @@
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:elevation="90dp"
+            android:elevation="5dp"
             android:id="@+id/coordinatorLayout"
             android:background="@color/transparent">
 
@@ -46,10 +46,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bottom_sheet_starting_state_background"
-                android:elevation="100dp"
+                android:elevation="5dp"
                 android:minHeight="90dp"
                 app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:behavior_hideable="false"
+                app:behavior_peekHeight="160dp"
                 app:layout_constraintStart_toStartOf="parent">
 
                 <ProgressBar
@@ -88,7 +90,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/geocodePlaceText" />
 
 
-                <include layout="@layout/bottom_sheet_line_image" />
+                <include layout="@layout/line_image" />
 
                 <HorizontalScrollView
                     android:id="@+id/bottomSheetButtonScrollView"
@@ -168,7 +170,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
@@ -176,6 +177,19 @@
 
 
     </com.mapbox.mapboxsdk.maps.MapView>
+
+    <include
+        layout="@layout/dialog_map_types"
+        android:layout_width="0dp"
+        android:layout_height="420dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+
+        android:layout_marginBottom="115dp"
+        android:elevation="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonLocationSearch" />
 
 
     <ImageButton
@@ -186,7 +200,7 @@
         android:layout_marginEnd="3dp"
         android:layout_marginBottom="4dp"
         android:backgroundTint="@color/transparent"
-        android:elevation="60dp"
+        android:elevation="6dp"
         android:src="@drawable/ic_baseline_settings_voice_24"
         app:layout_constraintBottom_toBottomOf="@+id/buttonLocationSearch"
         app:layout_constraintEnd_toEndOf="@+id/buttonLocationSearch"
@@ -204,7 +218,7 @@
         android:importantForAccessibility="no"
         android:src="@drawable/ic_baseline_my_location"
         app:backgroundTint="@color/White"
-        app:elevation="80dp"
+        app:elevation="4dp"
         app:fabCustomSize="54.5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -217,6 +231,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="40dp"
         android:backgroundTint="@color/White"
+        android:elevation="4dp"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_baseline_layers"
         app:backgroundTint="@color/White"
@@ -225,15 +240,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

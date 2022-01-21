@@ -29,6 +29,8 @@
         android:background="@drawable/bottom_sheet_tracking_state_background"
         android:translationZ="10dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="90dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -39,9 +41,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="99dp"
             android:background="@color/White"
+            android:orientation="vertical"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -54,8 +56,8 @@
                 android:drawableLeft="@drawable/ic_baseline_search_24"
                 android:text="  Search along route"
                 android:textAlignment="textStart"
-                android:textColor="@color/Black"
                 android:textAllCaps="false"
+                android:textColor="@color/Black"
                 android:textSize="20sp" />
 
         </LinearLayout>
@@ -66,10 +68,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
             <com.google.android.material.switchmaterial.SwitchMaterial
@@ -80,14 +82,13 @@
                 android:paddingStart="15dp"
                 android:text="     Show satellite map"
                 android:textAlignment="textStart"
-                app:trackTint="@color/gray"
-                app:thumbTint="@color/blue2"
                 android:textAllCaps="false"
                 android:textColor="@color/Black"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                app:thumbTint="@color/blue2"
+                app:trackTint="@color/gray" />
 
         </LinearLayout>
-
 
 
         <LinearLayout
@@ -96,10 +97,10 @@
             android:layout_height="wrap_content"
             android:background="@color/transparent"
             android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
 
             <com.google.android.material.switchmaterial.SwitchMaterial
@@ -109,11 +110,11 @@
                 android:drawableStart="@drawable/ic_baseline_traffic_24"
                 android:paddingStart="15dp"
                 android:text="     Show traffic on map"
-                app:trackTint="@color/gray"
-                app:thumbTint="@color/blue2"
                 android:textAlignment="textStart"
                 android:textColor="@color/Black"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                app:thumbTint="@color/blue2"
+                app:trackTint="@color/gray" />
         </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -161,12 +162,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <include layout="@layout/bottom_sheet_line_image" />
+        <include layout="@layout/line_image" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 
