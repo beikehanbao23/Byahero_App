@@ -157,4 +157,6 @@
     <color name="SplashScreenThemeColor">#091E92</color>
     <color name="BottomSheetButtonColors">#4254F8</color>
     <color name="TrackingBottomSheetColor">#1E1E1E</color>
+    <color name="NavigationDialogBackground">#454545</color>
+    <color name="DirtyWhite">#EDE9E8</color>
 </resources>

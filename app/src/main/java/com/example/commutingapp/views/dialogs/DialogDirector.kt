@@ -38,7 +38,17 @@ class DialogDirector(val activity: Activity) {
     }
 
 
-
+    fun buildNavigationCompletedDialog():CustomDialogBuilder{
+        return CustomDialogBuilder(
+            activity = activity,
+            layout = R.layout.dialog_navigation_completed,
+            animation = android.R.style.Animation_Dialog,
+            backgroundColorDrawable =  ColorDrawable(Color.TRANSPARENT)
+        ).also {
+            it.window?.setGravity(Gravity.BOTTOM)
+            it.show()
+        }
+    }
 
 
 

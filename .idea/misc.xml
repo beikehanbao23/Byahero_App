@@ -8,6 +8,7 @@
         <entry key="../../../../layout/custom_preview.xml" value="0.48764629388816644" />
         <entry key="../../../layout/custom_preview.xml" value="0.22" />
         <entry key="../.gradle/caches/transforms-3/3c34205c0a7dc727d9a1cf992a6ef3e0/transformed/jetified-facebook-common-11.2.0/res/drawable/com_facebook_button_icon.xml" value="0.56796875" />
+        <entry key="../.gradle/caches/transforms-3/b35252af3aef08db36ff8e1f8cd24a53/transformed/jetified-CuteToast-1.2/res/drawable/ic_warning.xml" value="0.571875" />
         <entry key="../.gradle/caches/transforms-3/e3461eea8d9d16672e41d76c5de77759/transformed/jetified-ui-maps-2.1.0-beta.1/res/drawable/mapbox_navigation_puck_icon.xml" value="0.19895833333333332" />
         <entry key="../.gradle/caches/transforms-3/e4575a45ca77dc1355c6d37a47feae00/transformed/jetified-CuteToast-1.2/res/drawable/ic_confuse.xml" value="0.56796875" />
         <entry key="../Android/Sdk/platforms/android-30/data/res/drawable/btn_star.xml" value="0.3828125" />
@@ -87,6 +88,10 @@
         <entry key="app/src/main/res/drawable/ic_location_asking.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_location_map_marker.xml" value="0.2552083333333333" />
         <entry key="app/src/main/res/drawable/ic_map.xml" value="0.37435897435897436" />
+        <entry key="app/src/main/res/drawable/ic_map_navigation.xml" value="0.571875" />
+        <entry key="app/src/main/res/drawable/ic_map_svg.xml" value="0.571875" />
+        <entry key="app/src/main/res/drawable/ic_navigation_flatline.xml" value="0.571875" />
+        <entry key="app/src/main/res/drawable/ic_navigation_two_color.xml" value="0.571875" />
         <entry key="app/src/main/res/drawable/ic_network__two_color.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/drawable/ic_password.xml" value="0.3802083333333333" />
         <entry key="app/src/main/res/drawable/ic_rain_svgrepo_com.xml" value="0.384375" />
@@ -155,7 +160,8 @@
         <entry key="app/src/main/res/layout/custom_emailsent_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_no_internet_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/dialog_finding_route.xml" value="0.3651041666666667" />
-        <entry key="app/src/main/res/layout/dialog_map_types.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/dialog_map_types.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/dialog_navigation_completed.xml" value="0.5" />
         <entry key="app/src/main/res/layout/dialog_no_internet.xml" value="0.3651041666666667" />
         <entry key="app/src/main/res/layout/fragment_bookmarks.xml" value="0.3651041666666667" />
         <entry key="app/src/main/res/layout/fragment_commuter.xml" value="0.2" />

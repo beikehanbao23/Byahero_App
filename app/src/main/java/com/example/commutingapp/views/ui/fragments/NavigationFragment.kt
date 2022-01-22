@@ -40,8 +40,7 @@ import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
-import com.example.commutingapp.views.ui.subComponents.Component
-import com.example.commutingapp.views.ui.subComponents.TrackingBottomSheet
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
@@ -119,14 +118,14 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private lateinit var viewportDataSource: MapboxNavigationViewportDataSource
     private lateinit var notifyListener: FragmentToActivity<Fragment>
     private val pixelDensity = Resources.getSystem().displayMetrics.density
-    private lateinit var trackingBottomSheet: Component
+
     private var userDestination:Point? = null
     private var userLastLocation:Point? = null
     private lateinit var findRouteDialog: CustomDialogBuilder
 
     private var mediaPlayer:MediaPlayer = MediaPlayer()
 
-
+    private lateinit var persistentBottomSheet:BottomSheetBehavior<View>
     private val overviewPadding: EdgeInsets by lazy {
         EdgeInsets(
             140.0 * pixelDensity,
@@ -166,11 +165,15 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
                 val distance = Math.round( userLocation.distanceTo(LatLng(destination.latitude(), destination.longitude())) /10 ) * 10
                 makeAlerts(distance)
+                Timber.e("New Raw Location")
             }
 
         }
 
         override fun onNewLocationMatcherResult(locationMatcherResult: LocationMatcherResult) {
+
+
+            Timber.e("New Location Matcher")
 
             val enhancedLocation = locationMatcherResult.enhancedLocation
             navigationLocationProvider.changePosition(
@@ -370,18 +373,14 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
         }
         override fun onFinalDestinationArrival(routeProgress: RouteProgress) {
-            vibratePhone(500)
-            playVoiceAlerts(R.raw.destination_reached)
-            mapboxNavigation.unregisterRoutesObserver(routesObserver)
-            mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
-            mapboxNavigation.unregisterLocationObserver(locationObserver)
-            mapboxNavigation.stopTripSession()
-            clearRouteAndStopNavigation()
-            MapboxNavigationProvider.destroy()
+            navigationCompleted()
         }
       }
 
 
+    private fun hidePersistentBottomSheet(){
+        persistentBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -390,7 +389,9 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxMap = binding?.mapView?.getMapboxMap()!!
         notificationManager = NotificationManagerCompat.from(requireContext())
         mapboxMap.setBounds(cameraBoundsOptionsBuilder())
-        trackingBottomSheet = Component(TrackingBottomSheet(view)).apply {show() }
+        persistentBottomSheet = BottomSheetBehavior.from(view.findViewById(R.id.bottomSheetTrackingState)).apply {
+            isHideable=false
+        }
 
 
 
@@ -490,7 +491,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     private fun navigationOptionsBuilder()= NavigationOptions.Builder(requireContext())
         .accessToken(getString(R.string.MapsToken))
         .distanceFormatterOptions(distanceFormatterOptionsBuilder())
-        .build()// todo add incident options
+        .build()
     private fun cameraBoundsOptionsBuilder()=CameraBoundsOptions.Builder()
         .minZoom(Constants.MIN_ZOOM_LEVEL_MAPS)
         .build()
@@ -513,6 +514,30 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             userLastLocation = lastLocation
         }
     }
+
+    }
+
+
+    private fun navigationCompleted(){
+        binding!!.maneuverView.visibility = View.GONE
+        persistentBottomSheet.isHideable = true
+        persistentBottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
+        vibratePhone(500)
+        playVoiceAlerts(R.raw.destination_reached)
+        mapboxNavigation.unregisterRoutesObserver(routesObserver)
+        mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
+        mapboxNavigation.unregisterLocationObserver(locationObserver)
+        mapboxNavigation.stopTripSession()
+        clearRouteAndStopNavigation()
+        MapboxNavigationProvider.destroy()
+
+
+        DialogDirector(requireActivity()).buildNavigationCompletedDialog().apply {
+            findViewById<View>(R.id.btn_done)?.setOnClickListener {
+                Navigation.findNavController(binding!!.root).navigate(R.id.navigation_fragment_to_commuter_fragment)
+                dismiss()
+            }
+        }
 
     }
     private fun providerClickListener(){
@@ -538,6 +563,8 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
 
 
+
+
         }
 
 
@@ -558,7 +585,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 changeTrafficModeOff()
                 saveTrafficSwitchStatePreference(SwitchState.OFF.toString())
             }
-            trackingBottomSheet.hide()
+            hidePersistentBottomSheet()
         }
 
         binding?.satelliteMapSwitchButton?.setOnCheckedChangeListener { _, isChecked ->
@@ -569,7 +596,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 changeSatelliteModeOff()
                 saveSatelliteSwitchStatePreference(SwitchState.OFF.toString())
             }
-            trackingBottomSheet.hide()
+            hidePersistentBottomSheet()
         }
 
     }
@@ -650,17 +677,20 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     }
     override fun onDestroy() {
-        binding = null
-        mediaPlayer.release()
-        mapboxNavigation.unregisterArrivalObserver(arrivalObserver)
-        mapboxNavigation.unregisterRoutesObserver(routesObserver)
-        mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
-        mapboxNavigation.unregisterLocationObserver(locationObserver)
-        mapboxNavigation.stopTripSession()
-        clearRouteAndStopNavigation()
-        MapboxNavigationProvider.destroy()
-        super.onDestroy()
-
+        try {
+            binding = null
+            mediaPlayer.release()
+            mapboxNavigation.unregisterArrivalObserver(arrivalObserver)
+            mapboxNavigation.unregisterRoutesObserver(routesObserver)
+            mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
+            mapboxNavigation.unregisterLocationObserver(locationObserver)
+            mapboxNavigation.stopTripSession()
+            clearRouteAndStopNavigation()
+            MapboxNavigationProvider.destroy()
+            super.onDestroy()
+        }catch (e:IllegalStateException){
+            Timber.e("Navigation onDestroy : ${e.message}")
+        }
     }
 
 
