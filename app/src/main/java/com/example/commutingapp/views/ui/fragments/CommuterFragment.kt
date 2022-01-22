@@ -57,7 +57,6 @@ import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestLo
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestRecordAudioPermission
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
-
 import com.example.commutingapp.views.ui.subComponents.maps.MapImpl
 import com.example.commutingapp.views.ui.subComponents.maps.mapBox.MapBox
 import com.google.android.gms.common.api.ApiException
@@ -128,6 +127,7 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
 
         markLocationFromBookmarks()
         collectLifecycleFlowUiEvent()
+
 
     }
     private fun isOpenedFromBookmarksRVPlaceItem() = isOpenedFromBookmarks && commuterArgs.bookmarkSelectedLocation != null
@@ -519,7 +519,7 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
         changeLocationFloatingButtonIcon(R.drawable.ic_location_asking)
     }
     private fun changeFloatingButtonIconBlack(){
-        changeLocationFloatingButtonIconColor(Color.BLACK)
+       changeLocationFloatingButtonIconColor(Color.BLACK)
         changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location)
     }
     private fun changeFloatingButtonIconBlue(){
@@ -527,13 +527,16 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
         changeLocationFloatingButtonIcon(R.drawable.ic_baseline_my_location)
     }
     private fun changeLocationFloatingButtonIconColor(@ColorInt color:Int){
-        ImageViewCompat.setImageTintList(
-            commuterBinding!!.floatingActionButtonLocation,
-            ColorStateList.valueOf(color))
+        commuterBinding?.floatingActionButtonLocation?.let {
+            ImageViewCompat.setImageTintList(
+                it,
+                ColorStateList.valueOf(color))
+        }
 
     }
     private fun changeLocationFloatingButtonIcon(@DrawableRes imageId:Int){
-        commuterBinding!!.floatingActionButtonLocation.setImageResource(imageId)
+        commuterBinding?.floatingActionButtonLocation?.setImageResource(imageId)
+
     }
 
     private fun provideLocationButtonClickListener() {
@@ -664,22 +667,22 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
                 addAction(Intent.ACTION_PROVIDER_CHANGED)
                 requireActivity().registerReceiver(locationSwitchStateReceiver(), this)
             }
-        }catch (e:IllegalArgumentException){
+        }catch (e:Exception){
             Timber.e("Register Receiver: ${e.message}")
         }
     }
     private fun unregisterReceiver(){
         try {
         requireActivity().unregisterReceiver(locationSwitchStateReceiver())
-        }catch (e:IllegalArgumentException){
+        }catch (e:Exception){
             Timber.e("Unregister Receiver: ${e.message}")
         }
     }
     private fun locationSwitchStateReceiver()= object: BroadcastReceiver(){
-            @RequiresApi(Build.VERSION_CODES.M)
+
             override fun onReceive(context: Context?, intent: Intent?) {
                 if(LocationManager.PROVIDERS_CHANGED_ACTION == intent?.action){
-                    updateLocationFloatingButtonIcon()
+                   updateLocationFloatingButtonIcon()
                 }
             }
 
@@ -824,7 +827,7 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
     override fun onResume() {
         super.onResume()
         map.getMapView().onResume()
-        registerReceiver()
+        //registerReceiver()
     }
     override fun onPause() {
         super.onPause()
@@ -833,7 +836,7 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
     override fun onStop() {
         super.onStop()
         map.getMapView().onStop()
-        unregisterReceiver()
+        //unregisterReceiver()
 
     }
     override fun onSaveInstanceState(outState:Bundle) {
