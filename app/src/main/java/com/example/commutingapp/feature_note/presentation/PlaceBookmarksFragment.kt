@@ -24,6 +24,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class PlaceBookmarksFragment : Fragment(R.layout.fragment_bookmarks) {
@@ -60,7 +61,7 @@ class PlaceBookmarksFragment : Fragment(R.layout.fragment_bookmarks) {
                  viewModel.state.collect{
 
                      changeOrderIcon(it.orderType)
-
+                    Timber.e("size: ${it.placeBookmarks.size}")
                      if(it.placeBookmarks.isEmpty()){
                          binding!!.tvDisplay.visibility = View.VISIBLE
                          return@collect
@@ -126,14 +127,9 @@ class PlaceBookmarksFragment : Fragment(R.layout.fragment_bookmarks) {
         }
     }
 
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
-    }
 
     override fun onDestroy() {
         binding = null
         super.onDestroy()
-
     }
 }

@@ -179,8 +179,9 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
 
 
     override fun onDestroy() {
-        super.onDestroy()
         binding = null
+        super.onDestroy()
+
     }
 
     private fun getUserCityLocation(){

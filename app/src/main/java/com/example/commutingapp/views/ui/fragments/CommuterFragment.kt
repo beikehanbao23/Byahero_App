@@ -827,7 +827,7 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
     override fun onResume() {
         super.onResume()
         map.getMapView().onResume()
-        //registerReceiver()
+        registerReceiver()
     }
     override fun onPause() {
         super.onPause()
@@ -836,7 +836,7 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
     override fun onStop() {
         super.onStop()
         map.getMapView().onStop()
-        //unregisterReceiver()
+        unregisterReceiver()
 
     }
     override fun onSaveInstanceState(outState:Bundle) {
@@ -856,13 +856,7 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
 
 
     }
-    override fun onDestroyView() {
-        map.clearCache()
-        commuterBinding = null
-        map.getMapView().onDestroy()
-        unregisterReceiver()
-        super.onDestroyView()
-    }
+
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
     Timber.e("onPermissionsDenied requestCode is $requestCode")
