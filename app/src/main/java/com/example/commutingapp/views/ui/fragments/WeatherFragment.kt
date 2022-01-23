@@ -5,6 +5,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,8 +36,11 @@ import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.gms.tasks.Task
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import im.delight.android.location.SimpleLocation
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 @AndroidEntryPoint
@@ -61,18 +65,19 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
         setupRecyclerView()
         provideViewModelObservers()
         provideClickListener()
-        if(!Connection.hasGPSConnection(requireContext())){
-            checkLocationSetting().addOnCompleteListener(::askGPS)
-        }
+        checkGps()
+        checkPermission()
 
+
+
+    }
+    private fun checkPermission(){
         if(!Connection.hasInternetConnection(requireContext())){
             renderDefaultData()
             return
         }
         checkLocationPermission()
-
     }
-
     private fun provideClickListener(){
         binding!!.imgBtnRefresh.setOnClickListener {
             getUserCityLocation()
@@ -81,9 +86,10 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
     private fun checkLocationPermission(){
         if(hasLocationPermission(requireContext())){
             getUserCityLocation()
-        }else{
-            requestLocationPermission(this)
+            return
         }
+        requestLocationPermission(this)
+
     }
     private fun renderDefaultData(){
 
@@ -123,6 +129,10 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
             renderData(it)
             binding!!.circularProgressBar.visibility = View.INVISIBLE
         }
+        weatherViewModel.getExceptions().observe(viewLifecycleOwner){ message->
+            Toast.makeText(requireContext(),message,Toast.LENGTH_SHORT).show()
+            binding!!.circularProgressBar.visibility = View.INVISIBLE
+        }
 
 
     }
@@ -152,6 +162,7 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
                     Glide.with(requireActivity()).load("http:" + (condition.icon))
                         .into(imageViewWeatherCondition)
                     textViewWindSpeed.text = "   Wind: ${wind_kph}km/h"
+
                 }
 
                 with(forecast.forecastday[0]){
@@ -176,7 +187,20 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
             }
         }
     }
+    private fun checkGps(){
+        if(!Connection.hasGPSConnection(requireContext())){
+            checkLocationSetting().addOnCompleteListener(::askGPS)
+            Toast.makeText(requireContext(),"Location not found",Toast.LENGTH_SHORT).show()
+            return
+        }
+        Toast.makeText(requireContext(),"Searching location please wait...",Toast.LENGTH_SHORT).show()
+    }
+    private fun showDay(){
 
+    }
+    private fun showNight(){
+
+    }
 
     override fun onDestroy() {
         binding = null
@@ -185,15 +209,30 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
     }
 
     private fun getUserCityLocation(){
-        try {
-            weatherViewModel.getLastKnownLocation(requireContext())
-            binding!!.circularProgressBar.visibility = View.VISIBLE
-        }catch (e:RuntimeException){
-            renderDefaultData()
-            Toast.makeText(requireContext(),e.message,Toast.LENGTH_SHORT).show()
-            binding!!.circularProgressBar.visibility = View.INVISIBLE
 
-        }
+            val location = SimpleLocation(requireContext())
+            val geocoder = Geocoder(requireContext(), Locale.ENGLISH)
+            binding!!.circularProgressBar.visibility = View.VISIBLE
+
+            try {
+
+                val listOfUserLocation = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                if (listOfUserLocation.isNotEmpty()) {
+                    listOfUserLocation.forEach { address ->
+                        val city = "${address.locality} ${address.thoroughfare}"
+                            weatherViewModel.requestWeather(city)
+
+                    }
+                    return
+                }
+                checkGps()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(),"Please check your internet connection",Toast.LENGTH_SHORT).show()
+                renderDefaultData()
+            }finally {
+                binding!!.circularProgressBar.visibility = View.INVISIBLE
+            }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
