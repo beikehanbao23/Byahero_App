@@ -8,6 +8,9 @@
     <action
         android:id="@+id/main_screen_To_commuter_fragment"
         app:destination="@id/commuter_fragment"
+        app:popUpTo="@+id/commuter_fragment"
+        app:popUpToInclusive="true"
+        app:popUpToSaveState="true"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -16,6 +19,9 @@
     <action
         android:id="@+id/main_screen_To_weather_fragment"
         app:destination="@id/weather_fragment"
+        app:popUpTo="@+id/weather_fragment"
+        app:popUpToInclusive="true"
+        app:popUpToSaveState="true"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -26,6 +32,9 @@
     <action
         android:id="@+id/main_screen_To_place_bookmarks_fragment"
         app:destination="@+id/placeBookmarks_fragment"
+        app:popUpTo="@+id/placeBookmarks_fragment"
+        app:popUpToInclusive="true"
+        app:popUpToSaveState="true"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
