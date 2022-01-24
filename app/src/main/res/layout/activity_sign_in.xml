@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/signInActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/signInActivity"
     tools:context=".views.ui.activities.SignIn">
 
 
@@ -53,16 +53,16 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
-        android:elevation="10dp"
-        android:gravity="center"
         android:layout_height="19dp"
         android:layout_marginStart="110dp"
         android:layout_marginTop="1dp"
-        android:fontFamily="@font/roboto"
         android:layout_marginEnd="110dp"
-        android:textColor="@color/White"
+        android:elevation="10dp"
+        android:fontFamily="@font/roboto"
+        android:gravity="center"
         android:text="@string/askToLoginAccount"
         android:textAlignment="center"
+        android:textColor="@color/White"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -180,8 +180,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editlogin_TextEmail"
             android:layout_width="match_parent"
-            android:fontFamily="@font/roboto"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto"
             android:inputType="textEmailAddress"
             android:textSize="14sp"
             app:cornerRadius="12dp" />
@@ -208,15 +208,16 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editLogin_TextPassword"
-            android:fontFamily="@font/roboto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto"
             android:inputType="textPassword"
             android:textSize="14sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <include
+        android:id="@+id/include"
         layout="@layout/circular_progressbar" />
 
 
@@ -240,8 +241,8 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="167dp"
-        android:scaleType="fitXY"
         android:elevation="-20dp"
+        android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -254,9 +255,8 @@
         android:layout_marginStart="205dp"
         android:layout_marginEnd="206dp"
         android:layout_marginBottom="639dp"
-        app:layout_constraintGuide_percent="0.5"
         android:orientation="vertical"
-/>
+        app:layout_constraintGuide_percent="0.5" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline6"

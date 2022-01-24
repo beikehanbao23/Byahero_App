@@ -6,7 +6,7 @@
     android:layout_margin="4dp"
     app:cardElevation="6dp"
     app:cardCornerRadius="15dp"
-    android:background="@color/transparent"
+
     android:layout_gravity="center">
 
 
@@ -26,7 +26,7 @@
             android:padding="4dp"
             android:text="@string/time_placeholder"
             android:textAlignment="center"
-            android:textColor="@color/white"
+            android:textColor="@color/White"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:text="@string/temperature_placeholder"
             android:textAlignment="center"
-            android:textColor="@color/white"
+            android:textColor="@color/White"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:text="@string/wind_speed_placeholder"
             android:id="@+id/textViewCardWindSpeed"
-            android:textColor="@color/white"
+            android:textColor="@color/White"
             android:textSize="12sp"
             android:textAlignment="center"
             android:gravity="center"

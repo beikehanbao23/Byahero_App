@@ -42,12 +42,12 @@
             tools:ignore="ContentDescription" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/iv_background"
             android:layout_width="0dp"
             android:layout_height="500dp"
             android:elevation="3dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/weather_background"
+            android:src="@drawable/night"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

@@ -163,7 +163,10 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
                         .into(imageViewWeatherCondition)
                     textViewWindSpeed.text = "   Wind: ${wind_kph}km/h"
 
+                    if(is_day == 1) showDay() else showNight()
+
                 }
+
 
                 with(forecast.forecastday[0]){
                     textViewChanceOfRain.text = "  Rain: ${day.daily_chance_of_rain}%"
@@ -195,11 +198,20 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
         }
         Toast.makeText(requireContext(),"Searching location please wait...",Toast.LENGTH_SHORT).show()
     }
+
     private fun showDay(){
 
+        with(binding!!){
+            ivBackground.setImageResource(R.drawable.day)
+            ivBackground.alpha = 0.4f
+        }
     }
     private fun showNight(){
 
+        with(binding!!){
+            ivBackground.setImageResource(R.drawable.night)
+            ivBackground.alpha = 0.9f
+        }
     }
 
     override fun onDestroy() {
