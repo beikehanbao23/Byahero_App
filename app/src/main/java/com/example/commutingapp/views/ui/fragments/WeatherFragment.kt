@@ -5,7 +5,6 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +21,7 @@ import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.utils.others.Constants.KEY_USER_CITY_JSON_WEATHER
 import com.example.commutingapp.utils.others.Constants.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.commutingapp.utils.others.Constants.REQUEST_USER_LOCATION
+import com.example.commutingapp.utils.others.LastLocation
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.requestLocationPermission
 import com.example.commutingapp.viewmodels.WeatherViewModel
@@ -36,11 +36,8 @@ import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.gms.tasks.Task
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import im.delight.android.location.SimpleLocation
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 @AndroidEntryPoint
@@ -221,14 +218,11 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
     }
 
     private fun getUserCityLocation(){
-
-            val location = SimpleLocation(requireContext())
-            val geocoder = Geocoder(requireContext(), Locale.ENGLISH)
             binding!!.circularProgressBar.visibility = View.VISIBLE
 
             try {
 
-                val listOfUserLocation = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+               val listOfUserLocation = LastLocation.getUserLocation(requireContext())
                 if (listOfUserLocation.isNotEmpty()) {
                     listOfUserLocation.forEach { address ->
                         val city = "${address.locality} ${address.thoroughfare}"
@@ -251,6 +245,7 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == REQUEST_USER_LOCATION && resultCode == RESULT_OK){
             getUserCityLocation()
+            return
         }
     }
 

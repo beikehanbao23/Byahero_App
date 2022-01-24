@@ -35,7 +35,6 @@ import com.example.commutingapp.feature_note.presentation.place.components.Place
 import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.CAMERA_ZOOM_MAP_MARKER
-import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LATITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_LONGITUDE
 import com.example.commutingapp.utils.others.Constants.DEFAULT_MAP_ZOOM
@@ -50,6 +49,7 @@ import com.example.commutingapp.utils.others.Constants.REQUEST_VOICE_COMMAND
 import com.example.commutingapp.utils.others.Constants.TEN_METERS
 import com.example.commutingapp.utils.others.Constants.ULTRA_FAST_CAMERA_ANIMATION_DURATION
 import com.example.commutingapp.utils.others.FragmentToActivity
+import com.example.commutingapp.utils.others.LastLocation
 import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasLocationPermission
 import com.example.commutingapp.utils.others.TrackingPermissionUtility.hasRecordAudioPermission
@@ -79,6 +79,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
+import java.util.*
+import kotlin.collections.HashMap
 
 
 @AndroidEntryPoint
@@ -693,18 +695,21 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
     @SuppressLint("MissingPermission")
     private fun moveCameraToLastKnownLocation() {
         if(hasLocationPermission(requireContext())){
-
-            val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-            locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)?.let { latLng->
-                map.moveCameraToUser(LatLng(latLng.latitude, latLng.longitude), LAST_KNOWN_LOCATION_MAP_ZOOM, ULTRA_FAST_CAMERA_ANIMATION_DURATION)
-               return
-            }
-             map.moveCameraToUser(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), DEFAULT_MAP_ZOOM, DEFAULT_CAMERA_ANIMATION_DURATION)
-
-        }else{
-            requestLocationPermission(this)
+            moveCameraToUser()
+            return
         }
+            requestLocationPermission(this)
+    }
+
+    private fun moveCameraToUser(){
+        val listOfUserLocation = LastLocation.getUserLocation(requireContext())
+        if(listOfUserLocation.isNotEmpty()){
+            listOfUserLocation.forEach{ address ->
+                map.moveCameraToUser(LatLng(address.latitude, address.longitude), LAST_KNOWN_LOCATION_MAP_ZOOM, ULTRA_FAST_CAMERA_ANIMATION_DURATION)
+            }
+            return
+        }
+        map.moveCameraToUser(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), DEFAULT_MAP_ZOOM, ULTRA_FAST_CAMERA_ANIMATION_DURATION)
     }
 
     companion object {
@@ -734,7 +739,12 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
         }
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        getOnActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQUEST_USER_LOCATION  -> continueRequestUserLocation(resultCode)
+            REQUEST_CONTINUE_NAVIGATION -> continueUserNavigation(resultCode)
+            REQUEST_SEARCH_RESULT -> showSearchLocationResult(resultCode,data)
+            REQUEST_VOICE_COMMAND -> showVoiceCommandSearchResult(resultCode, data)
+        }
     }
 
 
@@ -768,14 +778,7 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
             this?.geocodePlaceName?.visibility = View.GONE
         }
     }
-    private fun getOnActivityResult(requestCode: Int, resultCode: Int, data:Intent?){
-        when (requestCode) {
-            REQUEST_USER_LOCATION  -> continueRequestUserLocation(resultCode)
-            REQUEST_CONTINUE_NAVIGATION -> continueUserNavigation(resultCode)
-            REQUEST_SEARCH_RESULT -> showSearchLocationResult(resultCode,data)
-            REQUEST_VOICE_COMMAND -> showVoiceCommandSearchResult(resultCode, data)
-        }
-    }
+
 
 
     private fun showVoiceCommandSearchResult(resultCode: Int, data: Intent?){
