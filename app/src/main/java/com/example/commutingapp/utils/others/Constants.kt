@@ -3,7 +3,6 @@ package com.example.commutingapp.utils.others
 
 
 object Constants {
-    const val COMMUTER_DATABASE_FILE_NAME = "Commute_DB"
 
     const val REQUEST_CODE_LOCATION_PERMISSION = 1
     const val REQUEST_CODE_AUDIO_RECORD_PERMISSION = 2
@@ -36,7 +35,7 @@ object Constants {
     const val REQUEST_VOICE_COMMAND = 1003
     const val REQUEST_SEARCH_RESULT = 1004
 
-    const val TRACKING_VISIBLE_BOTTOM_SHEET_PEEK_HEIGHT = 300
+
     const val TIMER_COUNTS: Long = 120000
     const val ONE_SECOND_TO_MILLIS: Long = 1000
     const val REFRESH_EMAIL_SYNCHRONOUSLY_INTERVAL:Long = 800
@@ -48,11 +47,6 @@ object Constants {
 
 
     const val KEY_USER_CITY_JSON_WEATHER = "JsonWeather"
-
-
-    const val CHANNEL_ID = "channel_id_navigation"
-    const val CHANNEL_NAME = "channel_name_navigation"
-    const val NOTIFICATION_ID = 100
 
     const val KEY_MAPS_TYPE = "MapsType"
     const val KEY_MAPS_3D = "Maps3D"
