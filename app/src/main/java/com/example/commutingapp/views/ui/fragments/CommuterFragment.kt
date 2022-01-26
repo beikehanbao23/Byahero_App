@@ -7,7 +7,6 @@ import android.content.*
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.LayoutInflater
@@ -16,7 +15,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import androidx.annotation.RequiresApi
 import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -111,7 +109,7 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
         return commuterBinding!!.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeComponents(view)
@@ -229,6 +227,8 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
         dialogDirector = DialogDirector(requireActivity())
         commuterBottomSheet = BottomSheetBehavior.from(view.findViewById(R.id.bottomSheetNormalState)).apply {
             this.isHideable = true
+            this.state = BottomSheetBehavior.STATE_HIDDEN
+            this.peekHeight = 0
         }
 
 
@@ -611,7 +611,8 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
         userDestinationLocation?.let { destinationLocation ->
             map.getLastKnownLocation()?.let { lastLocation ->
             val action = CommuterFragmentDirections.commuterFragmentToNavigationFragment(destinationLocation,lastLocation)
-                Navigation.findNavController(commuterBinding!!.root).navigate(action)
+            Navigation.findNavController(commuterBinding!!.root).navigate(action)
+
             }
         }
 
