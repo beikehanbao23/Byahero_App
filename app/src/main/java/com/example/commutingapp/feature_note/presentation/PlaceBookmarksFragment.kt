@@ -53,7 +53,7 @@ class PlaceBookmarksFragment : Fragment(R.layout.fragment_bookmarks) {
 
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged", "UnsafeRepeatOnLifecycleDetector")
     private fun renderData(){
 
         lifecycleScope.launch {
