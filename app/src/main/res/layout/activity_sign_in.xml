@@ -217,7 +217,6 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <include
-        android:id="@+id/include"
         layout="@layout/circular_progressbar" />
 
 

@@ -69,7 +69,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.building.BuildingPlugin
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -77,8 +76,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
-import java.util.*
-import kotlin.collections.HashMap
 
 
 @AndroidEntryPoint
@@ -155,6 +152,7 @@ class CommuterFragment : Fragment(R.layout.fragment_commuter), EasyPermissions.P
         }
     }
 
+    @SuppressLint("UnsafeRepeatOnLifecycleDetector")
     private fun <T> Fragment.collectLifecycleFlow(flow: Flow<T>, collect: suspend (T) -> Unit){
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){

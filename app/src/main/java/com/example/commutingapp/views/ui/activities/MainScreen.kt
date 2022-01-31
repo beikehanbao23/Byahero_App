@@ -23,7 +23,7 @@ import timber.log.Timber
 class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
 
-    private var activityMainScreenBinding: ActivityMainScreenBinding? = null
+    private var binding: ActivityMainScreenBinding? = null
     private lateinit var navigationController: NavController
 
 
@@ -35,7 +35,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
         val navigationHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navigationController = navigationHostFragment.navController
-        activityMainScreenBinding?.bottomNavigation?.setupWithNavController(navigationController)
+        binding?.bottomNavigation?.setupWithNavController(navigationController)
 
         setupBottomNavigationListeners()
         initializeMapBoxSearch()
@@ -54,18 +54,18 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
         }
     }
     override fun onFirstNotify() {
-     activityMainScreenBinding?.bottomNavigation?.visibility = View.GONE 
+     binding?.bottomNavigation?.visibility = View.GONE
     }
 
     override fun onSecondNotify() {
-        activityMainScreenBinding?.bottomNavigation?.visibility = View.VISIBLE
+        binding?.bottomNavigation?.visibility = View.VISIBLE
     }
 
 
 
     private fun setupBottomNavigationListeners() {
 
-        activityMainScreenBinding?.bottomNavigation?.apply {
+        binding?.bottomNavigation?.apply {
             setOnItemSelectedListener {
                 when (it.itemId) {
                     R.id.commuter_fragment -> {
@@ -110,8 +110,7 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
             BackButton().applyDoubleClickToExit(this)
             return
         }
-
-        try { super.onBackPressed() }catch (e:Exception){ }
+        try { super.onBackPressed() }catch (e:Exception){ Timber.e("${javaClass.name}: ${e.message}") }
     }
 
     override fun onDestroy() {
@@ -121,13 +120,13 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
 
     private fun initializeAttributes() {
-        activityMainScreenBinding = ActivityMainScreenBinding.inflate(layoutInflater)
-        setContentView(activityMainScreenBinding?.root)
+        binding = ActivityMainScreenBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
 
     }
 
     private fun destroyBinding() {
-        activityMainScreenBinding = null
+        binding = null
     }
 
 

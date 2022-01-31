@@ -133,7 +133,7 @@
         <entry key="app/src/main/res/font/berkshire_swash.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/font/fonts.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/layout-w780dp-port/test.xml" value="0.273828125" />
-        <entry key="app/src/main/res/layout/activity_email_sent.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/activity_email_sent.xml" value="0.18" />
         <entry key="app/src/main/res/layout/activity_intro_slider.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_main_screen.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.33" />
@@ -165,7 +165,7 @@
         <entry key="app/src/main/res/layout/dialog_navigation_completed.xml" value="0.5" />
         <entry key="app/src/main/res/layout/dialog_no_internet.xml" value="0.3651041666666667" />
         <entry key="app/src/main/res/layout/fragment_bookmarks.xml" value="0.2" />
-        <entry key="app/src/main/res/layout/fragment_commuter.xml" value="0.12" />
+        <entry key="app/src/main/res/layout/fragment_commuter.xml" value="0.2" />
         <entry key="app/src/main/res/layout/fragment_item_list.xml" value="0.534375" />
         <entry key="app/src/main/res/layout/fragment_list.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_list_adapter.xml" value="0.5" />
