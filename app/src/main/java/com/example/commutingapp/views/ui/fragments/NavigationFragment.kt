@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
-import android.graphics.Color
 import android.location.Location
 import android.media.MediaPlayer
 import android.os.Build
@@ -26,36 +25,26 @@ import androidx.navigation.fragment.navArgs
 import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.FragmentNavigationBinding
-import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.KEY_NAVIGATION_MAP_STYLE
 import com.example.commutingapp.utils.others.Constants.KEY_SWITCH_SATELLITE
 import com.example.commutingapp.utils.others.Constants.KEY_SWITCH_TRAFFIC
-import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_HEAVY_CONGESTION
-import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_LOW_CONGESTION
-import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_MODERATE_CONGESTION
-import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_ROAD_CLOSURE
-import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_ROAD_RESTRICTED
-import com.example.commutingapp.utils.others.Constants.ROUTE_COLOR_SEVERE_CONGESTION
 import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.maps.*
+import com.mapbox.maps.CameraBoundsOptions
+import com.mapbox.maps.EdgeInsets
+import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.camera
-import com.mapbox.maps.plugin.locationcomponent.LocationComponentConstants
 import com.mapbox.maps.plugin.locationcomponent.location
-import com.mapbox.navigation.base.TimeFormat
-import com.mapbox.navigation.base.extensions.applyDefaultNavigationOptions
-import com.mapbox.navigation.base.extensions.applyLanguageAndVoiceUnitOptions
 import com.mapbox.navigation.base.formatter.DistanceFormatterOptions
-import com.mapbox.navigation.base.formatter.UnitType
 import com.mapbox.navigation.base.options.NavigationOptions
 import com.mapbox.navigation.base.route.RouterCallback
 import com.mapbox.navigation.base.route.RouterFailure
@@ -84,24 +73,25 @@ import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView
 import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions
 import com.mapbox.navigation.ui.maps.route.line.model.RouteLine
-import com.mapbox.navigation.ui.maps.route.line.model.RouteLineColorResources
-import com.mapbox.navigation.ui.maps.route.line.model.RouteLineResources
 import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi
-import com.mapbox.navigation.ui.tripprogress.model.*
+import com.mapbox.navigation.ui.tripprogress.model.TripProgressUpdateFormatter
 import com.rejowan.cutetoast.CuteToast
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
-import java.util.*
-
-
-
-
-
-
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class NavigationFragment : Fragment(R.layout.fragment_navigation) {
+
+
+    @Inject lateinit var distanceFormatterOptionsBuilder: DistanceFormatterOptions
+    @Inject lateinit var routeOptionsBuilder:RouteOptions.Builder
+    @Inject lateinit var progressUpdateFormatterOptions: TripProgressUpdateFormatter
+    @Inject lateinit var cameraBoundsOptionsBuilder:CameraBoundsOptions
+    @Inject lateinit var navigationOptionsBuilder:NavigationOptions
+    @Inject lateinit var routeLineOptionsBuilder: MapboxRouteLineOptions
+    @Inject lateinit var navigationCameraTransitionOptions: NavigationCameraTransitionOptions
 
     private val navigationArgs:NavigationFragmentArgs by navArgs()
     private companion object {
@@ -188,9 +178,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             if (!firstLocationUpdateReceived) {
                 firstLocationUpdateReceived = true
                 navigationCamera.requestNavigationCameraToOverview(
-                    stateTransitionOptions = NavigationCameraTransitionOptions.Builder()
-                        .maxDuration(0)
-                        .build()
+                    stateTransitionOptions = navigationCameraTransitionOptions
                 )
             }
         }
@@ -199,7 +187,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
 
 
-
+//todo fix this later
     private fun makeAlerts(distance:Long){
 
         if(distance in 990..1000){
@@ -348,18 +336,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         } catch (e: ClassCastException) { }
     }
 
-    private val routeLineResources: RouteLineResources by lazy {
-        RouteLineResources.Builder()
-            .routeLineColorResources(RouteLineColorResources.Builder()
-                .routeClosureColor(Color.parseColor(ROUTE_COLOR_ROAD_CLOSURE))
-                .restrictedRoadColor(Color.parseColor(ROUTE_COLOR_ROAD_RESTRICTED))
-                .routeHeavyCongestionColor(Color.parseColor(ROUTE_COLOR_HEAVY_CONGESTION))
-                .routeSevereCongestionColor(Color.parseColor(ROUTE_COLOR_SEVERE_CONGESTION))
-                .routeModerateCongestionColor(Color.parseColor(ROUTE_COLOR_MODERATE_CONGESTION))
-                .routeLowCongestionColor(Color.parseColor(ROUTE_COLOR_LOW_CONGESTION))
-                .build())
-            .build()
-    }
+
     private val arrivalObserver = object : ArrivalObserver {
 
         override fun onWaypointArrival(routeProgress: RouteProgress) {
@@ -388,13 +365,10 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         findRouteDialog = DialogDirector(requireActivity()).buildFindRouteDialog().apply { show() }
         mapboxMap = binding?.mapView?.getMapboxMap()!!
         notificationManager = NotificationManagerCompat.from(requireContext())
-        mapboxMap.setBounds(cameraBoundsOptionsBuilder())
+        mapboxMap.setBounds(cameraBoundsOptionsBuilder)
         persistentBottomSheet = BottomSheetBehavior.from(view.findViewById(R.id.bottomSheetTrackingState)).apply {
             isHideable=false
         }
-
-
-
 
 
         binding?.mapView?.location?.apply {
@@ -412,7 +386,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         mapboxNavigation = if (MapboxNavigationProvider.isCreated()) {
             MapboxNavigationProvider.retrieve()
         } else {
-            MapboxNavigationProvider.create(navigationOptionsBuilder())
+            MapboxNavigationProvider.create(navigationOptionsBuilder)
         }
 
 
@@ -444,19 +418,15 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
 
         maneuverApi = MapboxManeuverApi(
-            MapboxDistanceFormatter(distanceFormatterOptionsBuilder())
+            MapboxDistanceFormatter(distanceFormatterOptionsBuilder)
         )
 
-        tripProgressApi = MapboxTripProgressApi(progressUpdateFormatter(distanceFormatterOptionsBuilder()))
+        tripProgressApi = MapboxTripProgressApi(progressUpdateFormatterOptions)
 
-        val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(requireContext())
-            .displayRestrictedRoadSections(true)
-            .withRouteLineBelowLayerId(LocationComponentConstants.LOCATION_INDICATOR_LAYER)
-            .withRouteLineResources(routeLineResources)
-            .build()
 
-        routeLineApi = MapboxRouteLineApi(mapboxRouteLineOptions)
-        routeLineView = MapboxRouteLineView(mapboxRouteLineOptions)
+
+        routeLineApi = MapboxRouteLineApi(routeLineOptionsBuilder)
+        routeLineView = MapboxRouteLineView(routeLineOptionsBuilder)
 
         val routeArrowOptions = RouteArrowOptions.Builder(requireContext()).build()
         routeArrowView = MapboxRouteArrowView(routeArrowOptions)
@@ -475,7 +445,6 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     private fun playVoiceAlerts(resId:Int){
 
-
         if(!mediaPlayer.isPlaying){
             mediaPlayer = MediaPlayer.create(requireContext(), resId)
             mediaPlayer.setScreenOnWhilePlaying(true)
@@ -488,22 +457,10 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         binding?.trafficMapSwitchButton?.isChecked = trafficSwitchState() == SwitchState.ON.toString()
 
     }
-    private fun navigationOptionsBuilder()= NavigationOptions.Builder(requireContext())
-        .accessToken(getString(R.string.MapsToken))
-        .distanceFormatterOptions(distanceFormatterOptionsBuilder())
-        .build()
-    private fun cameraBoundsOptionsBuilder()=CameraBoundsOptions.Builder()
-        .minZoom(Constants.MIN_ZOOM_LEVEL_MAPS)
-        .build()
-    private fun distanceFormatterOptionsBuilder()=DistanceFormatterOptions.Builder(requireContext().applicationContext)
-        .unitType(UnitType.METRIC)
-        .build()
-    private fun progressUpdateFormatter(distanceFormatterOptions: DistanceFormatterOptions) = TripProgressUpdateFormatter.Builder(requireContext())
-        .distanceRemainingFormatter(DistanceRemainingFormatter(distanceFormatterOptions))
-        .timeRemainingFormatter(TimeRemainingFormatter(requireContext()))
-        .percentRouteTraveledFormatter(PercentDistanceTraveledFormatter())
-        .estimatedTimeToArrivalFormatter(EstimatedTimeToArrivalFormatter(requireContext(), TimeFormat.NONE_SPECIFIED))
-        .build()
+
+
+
+
     private fun createRoute(){
     navigationArgs.destinationLocation?.let { target ->
         navigationArgs.lastKnownLocation?.let { origin->
@@ -678,6 +635,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
     }
     override fun onDestroy() {
         try {
+
             binding = null
             mediaPlayer.release()
             mapboxNavigation.unregisterArrivalObserver(arrivalObserver)
@@ -715,20 +673,11 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
                 }
             )
     }
-    private fun routeOptionsBuilder(lastLocation: Point,destinationLocation: Point)= RouteOptions.builder()
-        .applyDefaultNavigationOptions()
-        .applyLanguageAndVoiceUnitOptions(requireContext())
+    private fun routeOptionsBuilder(lastLocation: Point,destinationLocation: Point) = routeOptionsBuilder
         .coordinatesList(listOf(lastLocation, destinationLocation))
-        .bearingsList(
-            listOf(
-                Bearing.builder()
-                    .angle(360.0)
-                    .degrees(45.0)
-                    .build(),
-                null
-            )
-        )
         .build()
+
+
     private fun setRouteAndStartNavigation(routes: List<DirectionsRoute>) {
         mapboxNavigation.setRoutes(routes)
         navigationCamera.requestNavigationCameraToOverview()
