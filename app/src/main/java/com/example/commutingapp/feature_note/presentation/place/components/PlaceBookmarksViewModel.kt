@@ -2,7 +2,7 @@ package com.example.commutingapp.feature_note.presentation.place.components
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.commutingapp.feature_note.domain.model.InvalidPlaceException
+import com.example.commutingapp.feature_note.domain.exceptions.InvalidPlaceException
 import com.example.commutingapp.feature_note.domain.model.PlaceBookmarks
 import com.example.commutingapp.feature_note.domain.use_case.PlaceBookmarksUseCase
 import com.example.commutingapp.feature_note.domain.util.OrderType
@@ -58,7 +58,7 @@ class PlaceBookmarksViewModel @Inject  constructor(
                 try{
                     placeBookmarksUseCase.addPlaceToBookmarks(placeBookmarksEvent.placeBookmarks)
                     _event.emit(PlaceBookmarksUiEvent.SavePlace)
-                }catch (e:InvalidPlaceException){
+                }catch (e: InvalidPlaceException){
                     _event.emit(PlaceBookmarksUiEvent.ShowSnackBar(e.message ?: "Couldn't Save Place"))
                 }
             }
