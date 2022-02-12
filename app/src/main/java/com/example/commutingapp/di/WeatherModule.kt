@@ -14,14 +14,12 @@ import javax.inject.Singleton
 object WeatherModule {
     @Provides
     @Singleton
-    fun provideWeatherRetrofit(): Retrofit = Retrofit.Builder()
+    fun provideWeatherRetrofit(): WeatherServiceAPI = Retrofit.Builder()
         .baseUrl("http://api.weatherapi.com/v1/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+        .create(WeatherServiceAPI::class.java)
 
-    @Provides
-    @Singleton
-    fun provideWeatherApiService(retrofit: Retrofit): WeatherServiceAPI = retrofit.create(
-        WeatherServiceAPI::class.java)
+
 
 }

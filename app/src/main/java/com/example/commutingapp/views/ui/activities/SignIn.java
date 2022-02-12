@@ -201,7 +201,7 @@ public class SignIn extends AppCompatActivity {
             showNoInternetActivity();
             return;
         }
-        Timber.e("when onCancel() event occur");
+        Timber.e("when onCancel() event occur %s", error.getStatus().isSuccess());
 
     }
 
