@@ -30,7 +30,7 @@
         <meta-data
             tools:replace="android:value"
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/FacebookAppID" />
+            android:value="${FACEBOOK_APP_ID}" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -41,7 +41,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/MapsApiKey" />
+            android:value="${MAPS_API_KEY}" />
 
 
         <activity

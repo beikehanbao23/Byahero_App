@@ -7,6 +7,7 @@ import android.content.Intent
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.DEFAULT_CAMERA_ANIMATION_DURATION
@@ -349,7 +350,7 @@ abstract class MapBox(private val view: View, private val activity: Activity) :
 
     private fun buildGeocoding(point: Point?, place: String?) =
         with(MapboxGeocoding.builder()) {
-            accessToken(activity.getString(R.string.MapsToken))
+            accessToken(BuildConfig.MAPBOX_DOWNLOADS_TOKEN)
             point?.let(::query)
             place?.let(::query)
             build()

@@ -3,7 +3,7 @@ package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
-import com.example.commutingapp.R
+import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.utils.others.Constants.SEARCH_DIALOG_LAYOUT_COLOR
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -25,7 +25,7 @@ class MapSearch(private val activity:Activity) {
 
     fun getLocationSearchIntent(): Intent {
         return PlaceAutocomplete.IntentBuilder()
-            .accessToken(activity.getString(R.string.MapsToken))
+            .accessToken(BuildConfig.MAPBOX_DOWNLOADS_TOKEN)
             .placeOptions(buildPlaceOptions())
             .build(activity)
     }

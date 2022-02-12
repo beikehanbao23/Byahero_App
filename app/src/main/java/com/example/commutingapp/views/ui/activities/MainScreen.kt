@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
 import com.example.commutingapp.databinding.ActivityMainScreenBinding
 import com.example.commutingapp.utils.others.FragmentToActivity
@@ -42,11 +43,11 @@ class MainScreen : AppCompatActivity(),FragmentToActivity<Fragment> {
 
     }
     private fun initializeMapBoxSearch(){
-        Mapbox.getInstance(this, getString(R.string.MapsToken))
+        Mapbox.getInstance(this, BuildConfig.MAPBOX_DOWNLOADS_TOKEN)
         try {
             MapboxSearchSdk.initialize(
                 this.application,
-                getString(R.string.MapsToken),
+                BuildConfig.MAPBOX_DOWNLOADS_TOKEN,
                 DefaultLocationProvider(this.application)
             )
         }catch (e:IllegalStateException){

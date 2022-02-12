@@ -4,6 +4,7 @@ package com.example.commutingapp.views.ui.subComponents.maps.mapBox
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
+import com.example.commutingapp.BuildConfig
 import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants
 import com.example.commutingapp.utils.others.Constants.ROUTE_LAYER_ID
@@ -103,7 +104,7 @@ class MapDirections(private val style: Style?, private val activity: Activity) {
             .source(DirectionsCriteria.SOURCE_FIRST)
             .destination(DirectionsCriteria.SOURCE_ANY)
             .coordinates(listOfCoordinates)
-            .accessToken(activity.getString(R.string.MapsToken))
+            .accessToken(BuildConfig.MAPBOX_DOWNLOADS_TOKEN)
             .overview(DirectionsCriteria.OVERVIEW_FULL)
             .profile(DirectionsCriteria.PROFILE_DRIVING)
             .build()
