@@ -165,7 +165,7 @@
         <entry key="app/src/main/res/layout/dialog_navigation_completed.xml" value="0.5" />
         <entry key="app/src/main/res/layout/dialog_no_internet.xml" value="0.3651041666666667" />
         <entry key="app/src/main/res/layout/fragment_bookmarks.xml" value="0.2" />
-        <entry key="app/src/main/res/layout/fragment_commuter.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/fragment_commuter.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_item_list.xml" value="0.534375" />
         <entry key="app/src/main/res/layout/fragment_list.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_list_adapter.xml" value="0.5" />

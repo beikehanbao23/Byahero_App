@@ -115,7 +115,7 @@
 
                         <Button
                             android:id="@+id/directionsButton"
-                            android:layout_width="115dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:backgroundTint="@color/BottomSheetButtonColors"
                             android:drawableLeft="@drawable/ic_baseline_directions"
@@ -129,7 +129,7 @@
 
                         <Button
                             android:id="@+id/startButton"
-                            android:layout_width="85dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="7dp"
                             android:backgroundTint="@color/White"
@@ -146,7 +146,7 @@
 
                         <Button
                             android:id="@+id/saveButton"
-                            android:layout_width="85dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="7dp"
                             android:backgroundTint="@color/White"
