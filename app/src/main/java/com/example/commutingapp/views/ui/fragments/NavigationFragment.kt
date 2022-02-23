@@ -32,6 +32,7 @@ import com.example.commutingapp.utils.others.FragmentToActivity
 import com.example.commutingapp.utils.others.SwitchState
 import com.example.commutingapp.views.dialogs.CustomDialogBuilder
 import com.example.commutingapp.views.dialogs.DialogDirector
+import com.example.commutingapp.views.ui.Checkpoints
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
@@ -184,39 +185,59 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
         }
     }
 
+    private fun distanceIsIn1000Meters(currentDistance: Long) =
+        currentDistance in Checkpoints.DistanceIn1000Meters.distance && !Checkpoints.DistanceIn1000Meters.hasReachedCheckpoint
+
+    private fun distanceIn500Meters(currentDistance: Long) =
+        currentDistance in Checkpoints.DistanceIn500Meters.distance && !Checkpoints.DistanceIn500Meters.hasReachedCheckpoint
+
+    private fun distanceIn300Meters(currentDistance: Long) =
+        currentDistance in Checkpoints.DistanceIn300Meters.distance && !Checkpoints.DistanceIn300Meters.hasReachedCheckpoint
+
+    private fun distanceIn150Meters(currentDistance: Long) =
+        currentDistance in Checkpoints.DistanceIn150Meters.distance && !Checkpoints.DistanceIn150Meters.hasReachedCheckpoint
+
+    private fun distanceIn50Meters(currentDistance: Long) =
+        currentDistance in Checkpoints.DistanceIn50Meters.distance && !Checkpoints.DistanceIn50Meters.hasReachedCheckpoint
 
 
 
-//todo fix this later
-    private fun makeAlerts(distance:Long){
 
-        if(distance in 990..1000){
+//todo refactor later
+    private fun makeAlerts(currentDistance:Long){
+
+        if(distanceIsIn1000Meters(currentDistance)){
             vibratePhone(500L)
             playVoiceAlerts(R.raw.destination_in_1000m)
+            Checkpoints.DistanceIn1000Meters.hasReachedCheckpoint = true
             return
         }
 
-        if(distance in 490..500){
+        if(distanceIn500Meters(currentDistance)){
             vibratePhone(500L)
             playVoiceAlerts(R.raw.destination_in_500m)
+            Checkpoints.DistanceIn500Meters.hasReachedCheckpoint = true
             return
         }
 
-        if(distance in 290..300){
+        if(distanceIn300Meters(currentDistance)){
             vibratePhone(500L)
             playVoiceAlerts(R.raw.destination_in_300m)
+            Checkpoints.DistanceIn300Meters.hasReachedCheckpoint = true
             return
         }
 
-        if(distance in 140..150){
+        if(distanceIn150Meters(currentDistance)){
             vibratePhone(500L)
             playVoiceAlerts(R.raw.destination_in_150m)
+            Checkpoints.DistanceIn150Meters.hasReachedCheckpoint = true
             return
         }
 
-        if(distance in 40..50){
+        if(distanceIn50Meters(currentDistance)){
             vibratePhone(1000L)
             playVoiceAlerts(R.raw.destination_in_50m)
+            Checkpoints.DistanceIn50Meters.hasReachedCheckpoint
             return
         }
 
@@ -227,6 +248,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
 
 
+    @SuppressLint("MissingPermission")
     private fun vibratePhone(millis:Long) {
         val vibrator =  (requireContext().getSystemService(AppCompatActivity.VIBRATOR_SERVICE) as Vibrator)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
