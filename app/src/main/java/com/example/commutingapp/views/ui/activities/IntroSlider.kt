@@ -85,7 +85,7 @@ class IntroSlider : AppCompatActivity() {
     }
 
     private fun setCallbacks() {
-        with(binding?.viewPagerSliders, {
+        with(binding?.viewPagerSliders) {
             this?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
@@ -93,7 +93,7 @@ class IntroSlider : AppCompatActivity() {
                     setCurrentIndicator(position)
                 }
             })
-        })
+        }
     }
 
     private fun userHasAlreadySeenTheIntroSliders() =

@@ -5,8 +5,10 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 
-class FirebaseAuthenticatorWrapper:UserAuthenticator<Task<AuthResult>>  {
+class FirebaseAuthenticatorWrapper(
     private var auth:FirebaseAuth = FirebaseAuth.getInstance()
+):UserAuthenticator<Task<AuthResult>>  {
+
 
     override fun createUserWithEmailAndPassword(email: String, password: String):Task<AuthResult>{
        return auth.createUserWithEmailAndPassword(email,password)

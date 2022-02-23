@@ -2,7 +2,7 @@ package com.example.commutingapp.di
 
 import android.content.Context
 import android.graphics.Color
-import com.example.commutingapp.BuildConfig
+import com.example.commutingapp.R
 import com.example.commutingapp.utils.others.Constants
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.RouteOptions
@@ -71,7 +71,7 @@ object NavigationModule {
     @FragmentScoped
     fun provideNavigationOptionsBuilder(@ActivityContext context: Context,  formatterOptions: DistanceFormatterOptions):NavigationOptions{
     return NavigationOptions.Builder(context)
-            .accessToken(BuildConfig.MAPBOX_DOWNLOADS_TOKEN)
+            .accessToken(context.getString(R.string.MapsToken))
             .distanceFormatterOptions(formatterOptions)
             .build()
     }

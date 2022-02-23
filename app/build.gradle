@@ -10,9 +10,9 @@ plugins {
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
-apply plugin:'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
 
-        android {
+android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
@@ -29,19 +29,22 @@ apply plugin:'com.google.gms.google-services'
     }
 
     buildTypes {
-
-    debug{
         def localProperties = new Properties()
         localProperties.load(new FileInputStream(rootProject.file("local.properties")))
-        resValue("string", "MapsToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
-        resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
-        resValue("string", "FBLoginProtocolScheme", localProperties.getProperty("FB_LOGIN_PROTOCOL_SCHEME"))
-        resValue("string", "MapsApiKey", localProperties.getProperty("MAPS_API_KEY"))
-    }
+
+        debug {
+            resValue("string", "MapsToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
+            resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
+            resValue("string", "MapsApiKey", localProperties.getProperty("MAPS_API_KEY"))
+        }
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            resValue("string", "MapsToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
+            resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
+            resValue("string", "MapsApiKey", localProperties.getProperty("MAPS_API_KEY"))
         }
     }
     compileOptions {
