@@ -212,7 +212,7 @@ class NavigationFragment : Fragment(R.layout.fragment_navigation) {
             Checkpoints.DistanceIn1000Meters.hasReachedCheckpoint = true
             return
         }
-
+    
         if(distanceIn500Meters(currentDistance)){
             vibratePhone(500L)
             playVoiceAlerts(R.raw.destination_in_500m)
