@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="blue2">#1933D5</color>
+    <color name="blurText">#B2B2B2</color>
+    <color name="blue_facebook_logo">#4267b2</color>
+    <color name="google_logo">#ea4335</color>
+    <color name="gray">#9E9E9E</color>
+    <color name="transparent">#00000000</color>
+    <color name="RoyalBlue">#4169E1</color>
+    <color name="Blue">#0000FF</color>
     <color name="White">#FFFFFF</color>
     <color name="Ivory">#FFFFF0</color>
     <color name="LightYellow">#FFFFE0</color>
@@ -7,7 +22,7 @@
     <color name="Snow">#FFFAFA</color>
     <color name="FloralWhite">#FFFAF0</color>
     <color name="LemonChiffon">#FFFACD</color>
-    <color name="Cornsilk">#FFF8DC</color>
+    <color name="CornSilk">#FFF8DC</color>
     <color name="Seashell">#FFF5EE</color>
     <color name="LavenderBlush">#FFF0F5</color>
     <color name="PapayaWhip">#FFEFD5</color>
@@ -54,7 +69,7 @@
     <color name="LightCyan">#E0FFFF</color>
     <color name="BurlyWood">#DEB887</color>
     <color name="Plum">#DDA0DD</color>
-    <color name="Gainsboro">#DCDCDC</color>
+    <color name="GainsBoro">#DCDCDC</color>
     <color name="Crimson">#DC143C</color>
     <color name="PaleVioletRed">#DB7093</color>
     <color name="Goldenrod">#DAA520</color>
@@ -114,7 +129,10 @@
     <color name="MediumTurquoise">#48D1CC</color>
     <color name="DarkSlateBlue">#483D8B</color>
     <color name="SteelBlue">#4682B4</color>
-    <color name="RoyalBlue">#4169E1</color>
+    <color name="MediumBlue">#0000CD</color>
+    <color name="DarkBlue">#00008B</color>
+    <color name="Navy">#000080</color>
+    <color name="Black">#000000</color>
     <color name="Turquoise">#40E0D0</color>
     <color name="MediumSeaGreen">#3CB371</color>
     <color name="LimeGreen">#32CD32</color>
@@ -135,9 +153,10 @@
     <color name="Teal">#008080</color>
     <color name="Green">#008000</color>
     <color name="DarkGreen">#006400</color>
-    <color name="Blue">#0000FF</color>
-    <color name="MediumBlue">#0000CD</color>
-    <color name="DarkBlue">#00008B</color>
-    <color name="Navy">#000080</color>
-    <color name="Black">#000000</color>
+    <color name="ThemeColor">#6c63ff</color>
+    <color name="SplashScreenThemeColor">#091E92</color>
+    <color name="BottomSheetButtonColors">#4254F8</color>
+    <color name="TrackingBottomSheetColor">#1E1E1E</color>
+    <color name="NavigationDialogBackground">#454545</color>
+    <color name="DirtyWhite">#EDE9E8</color>
 </resources>
