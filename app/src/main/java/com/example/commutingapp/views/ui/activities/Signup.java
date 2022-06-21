@@ -114,10 +114,8 @@ public class Signup extends AppCompatActivity {
 
         if (userData.hasAccountRemainingInCache() && isUserCreatedNewAccount()) {
             signOutPreviousAccount();
-            ProceedToSignUp();
-            return;
         }
-        ProceedToSignUp();
+        proceedToSignUp();
 
 
 
@@ -137,7 +135,7 @@ public class Signup extends AppCompatActivity {
     }
 
 
-    private void ProceedToSignUp() {
+    private void proceedToSignUp() {
         String userEmail = Objects.requireNonNull(activitySignupBinding.editTextSignUpEmailAddress.getText()).toString().trim();
         String userConfirmPassword = Objects.requireNonNull(activitySignupBinding.editTextSignUpConfirmPassword.getText()).toString().trim();
 
