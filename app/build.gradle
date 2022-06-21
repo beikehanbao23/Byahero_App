@@ -11,21 +11,37 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 31
+    signingConfigs {
+        debug {
+            storeFile file('/home/miko/keystores/byahero_keystore_file.jks')
+            storePassword 'mikojasmin24'
+            keyAlias 'release-key'
+            keyPassword 'mikojasmin24'
+        }
+        release {
+            storeFile file('/home/miko/keystores/byahero_keystore_file.jks')
+            storePassword 'mikojasmin24'
+            keyAlias 'release-key'
+            keyPassword 'mikojasmin24'
+        }
+    }
+    compileSdkVersion 32
     buildToolsVersion "30.0.3"
 
     defaultConfig {
 
         applicationId "com.example.commutingapp"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
         resValue "string","_default",""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
@@ -85,6 +101,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-service:2.4.0"
     implementation "androidx.navigation:navigation-fragment-ktx:2.5.0-alpha01"
     implementation "androidx.navigation:navigation-ui-ktx:2.5.0-alpha01"
+
     androidTestImplementation "androidx.navigation:navigation-testing:2.5.0-alpha01"
     implementation 'androidx.cardview:cardview:1.0.0'
     testImplementation 'junit:junit:4.13.2'
@@ -140,6 +157,11 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:2.5.0-alpha01"
     implementation "androidx.compose.material:material-icons-extended:1.2.0-alpha02"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+
+
+    implementation platform('com.google.firebase:firebase-bom:30.1.0')
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
 }
 kapt {
     correctErrorTypes true
