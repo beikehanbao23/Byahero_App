@@ -1,23 +1,47 @@
 package com.example.commutingapp.data.model
 
+
+import com.google.gson.annotations.SerializedName
+import androidx.annotation.Keep
+
+@Keep
 data class Day(
-    var avghumidity: Double,
-    var avgtemp_c: Double,
-    var avgtemp_f: Double,
-    var avgvis_km: Double,
-    var avgvis_miles: Double,
-    var condition: ConditionX,
-    var daily_chance_of_rain: Int,
-    var daily_chance_of_snow: Int,
-    var daily_will_it_rain: Int,
-    var daily_will_it_snow: Int,
-    var maxtemp_c: Double,
-    var maxtemp_f: Double,
-    var maxwind_kph: Double,
-    var maxwind_mph: Double,
-    var mintemp_c: Double,
-    var mintemp_f: Double,
-    var totalprecip_in: Double,
-    var totalprecip_mm: Double,
-    var uv: Double
+    @SerializedName("avghumidity")
+    val avghumidity: Double,
+    @SerializedName("avgtemp_c")
+    val avgtempC: Double,
+    @SerializedName("avgtemp_f")
+    val avgtempF: Double,
+    @SerializedName("avgvis_km")
+    val avgvisKm: Double,
+    @SerializedName("avgvis_miles")
+    val avgvisMiles: Double,
+    @SerializedName("condition")
+    val condition: Condition,
+    @SerializedName("daily_chance_of_rain")
+    val dailyChanceOfRain: Int,
+    @SerializedName("daily_chance_of_snow")
+    val dailyChanceOfSnow: Int,
+    @SerializedName("daily_will_it_rain")
+    val dailyWillItRain: Int,
+    @SerializedName("daily_will_it_snow")
+    val dailyWillItSnow: Int,
+    @SerializedName("maxtemp_c")
+    val maxtempC: Double,
+    @SerializedName("maxtemp_f")
+    val maxtempF: Double,
+    @SerializedName("maxwind_kph")
+    val maxwindKph: Double,
+    @SerializedName("maxwind_mph")
+    val maxwindMph: Double,
+    @SerializedName("mintemp_c")
+    val mintempC: Double,
+    @SerializedName("mintemp_f")
+    val mintempF: Double,
+    @SerializedName("totalprecip_in")
+    val totalprecipIn: Double,
+    @SerializedName("totalprecip_mm")
+    val totalprecipMm: Double,
+    @SerializedName("uv")
+    val uv: Double
 )

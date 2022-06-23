@@ -1,37 +1,75 @@
 package com.example.commutingapp.data.model
 
+
+import com.google.gson.annotations.SerializedName
+import androidx.annotation.Keep
+
+@Keep
 data class Hour(
-    var chance_of_rain: Int,
-    var chance_of_snow: Int,
-    var cloud: Int,
-    var condition: ConditionXX,
-    var dewpoint_c: Double,
-    var dewpoint_f: Double,
-    var feelslike_c: Double,
-    var feelslike_f: Double,
-    var gust_kph: Double,
-    var gust_mph: Double,
-    var heatindex_c: Double,
-    var heatindex_f: Double,
-    var humidity: Int,
-    var is_day: Int,
-    var precip_in: Double,
-    var precip_mm: Double,
-    var pressure_in: Double,
-    var pressure_mb: Double,
-    var temp_c: Double,
-    var temp_f: Double,
-    var time: String,
-    var time_epoch: Int,
-    var uv: Double,
-    var vis_km: Double,
-    var vis_miles: Double,
-    var will_it_rain: Int,
-    var will_it_snow: Int,
-    var wind_degree: Int,
-    var wind_dir: String,
-    var wind_kph: Double,
-    var wind_mph: Double,
-    var windchill_c: Double,
-    var windchill_f: Double
+    @SerializedName("chance_of_rain")
+    val chanceOfRain: Int,
+    @SerializedName("chance_of_snow")
+    val chanceOfSnow: Int,
+    @SerializedName("cloud")
+    val cloud: Int,
+    @SerializedName("condition")
+    val condition: Condition,
+    @SerializedName("dewpoint_c")
+    val dewpointC: Double,
+    @SerializedName("dewpoint_f")
+    val dewpointF: Double,
+    @SerializedName("feelslike_c")
+    val feelslikeC: Double,
+    @SerializedName("feelslike_f")
+    val feelslikeF: Double,
+    @SerializedName("gust_kph")
+    val gustKph: Double,
+    @SerializedName("gust_mph")
+    val gustMph: Double,
+    @SerializedName("heatindex_c")
+    val heatindexC: Double,
+    @SerializedName("heatindex_f")
+    val heatindexF: Double,
+    @SerializedName("humidity")
+    val humidity: Int,
+    @SerializedName("is_day")
+    val isDay: Int,
+    @SerializedName("precip_in")
+    val precipIn: Double,
+    @SerializedName("precip_mm")
+    val precipMm: Double,
+    @SerializedName("pressure_in")
+    val pressureIn: Double,
+    @SerializedName("pressure_mb")
+    val pressureMb: Double,
+    @SerializedName("temp_c")
+    val tempC: Double,
+    @SerializedName("temp_f")
+    val tempF: Double,
+    @SerializedName("time")
+    val time: String,
+    @SerializedName("time_epoch")
+    val timeEpoch: Int,
+    @SerializedName("uv")
+    val uv: Double,
+    @SerializedName("vis_km")
+    val visKm: Double,
+    @SerializedName("vis_miles")
+    val visMiles: Double,
+    @SerializedName("will_it_rain")
+    val willItRain: Int,
+    @SerializedName("will_it_snow")
+    val willItSnow: Int,
+    @SerializedName("wind_degree")
+    val windDegree: Int,
+    @SerializedName("wind_dir")
+    val windDir: String,
+    @SerializedName("wind_kph")
+    val windKph: Double,
+    @SerializedName("wind_mph")
+    val windMph: Double,
+    @SerializedName("windchill_c")
+    val windchillC: Double,
+    @SerializedName("windchill_f")
+    val windchillF: Double
 )

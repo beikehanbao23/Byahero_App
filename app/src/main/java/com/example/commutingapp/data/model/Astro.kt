@@ -1,10 +1,21 @@
 package com.example.commutingapp.data.model
 
+
+import com.google.gson.annotations.SerializedName
+import androidx.annotation.Keep
+
+@Keep
 data class Astro(
-    var moon_illumination: String,
-    var moon_phase: String,
-    var moonrise: String,
-    var moonset: String,
-    var sunrise: String,
-    var sunset: String
+    @SerializedName("moon_illumination")
+    val moonIllumination: String,
+    @SerializedName("moon_phase")
+    val moonPhase: String,
+    @SerializedName("moonrise")
+    val moonrise: String,
+    @SerializedName("moonset")
+    val moonset: String,
+    @SerializedName("sunrise")
+    val sunrise: String,
+    @SerializedName("sunset")
+    val sunset: String
 )

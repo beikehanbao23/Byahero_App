@@ -17,15 +17,15 @@ android {
     signingConfigs {
         debug {
             storeFile file('/home/miko/keystores/byahero_keystore_file.jks')
-            storePassword 'mikojasmin24'
+            storePassword '87654321'
             keyAlias 'release-key'
-            keyPassword 'mikojasmin24'
+            keyPassword '87654321'
         }
         release {
             storeFile file('/home/miko/keystores/byahero_keystore_file.jks')
-            storePassword 'mikojasmin24'
+            storePassword '87654321'
             keyAlias 'release-key'
-            keyPassword 'mikojasmin24'
+            keyPassword '87654321'
         }
     }
     compileSdkVersion 32

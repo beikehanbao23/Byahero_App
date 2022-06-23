@@ -1,12 +1,25 @@
 package com.example.commutingapp.data.model
 
+
+import com.google.gson.annotations.SerializedName
+import androidx.annotation.Keep
+
+@Keep
 data class Location(
-    var country: String,
-    var lat: Double,
-    var localtime: String,
-    var localtime_epoch: Int,
-    var lon: Double,
-    var name: String,
-    var region: String,
-    var tz_id: String
+    @SerializedName("country")
+    val country: String,
+    @SerializedName("lat")
+    val lat: Double,
+    @SerializedName("localtime")
+    val localtime: String,
+    @SerializedName("localtime_epoch")
+    val localtimeEpoch: Int,
+    @SerializedName("lon")
+    val lon: Double,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("region")
+    val region: String,
+    @SerializedName("tz_id")
+    val tzId: String
 )

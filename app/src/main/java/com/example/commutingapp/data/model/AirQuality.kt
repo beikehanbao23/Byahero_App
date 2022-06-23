@@ -1,12 +1,25 @@
 package com.example.commutingapp.data.model
 
+
+import com.google.gson.annotations.SerializedName
+import androidx.annotation.Keep
+
+@Keep
 data class AirQuality(
-    var co: Double,
-    var gb_defra_index: Int,
-    var no2: Double,
-    var o3: Double,
-    var pm10: Double,
-    var pm2_5: Double,
-    var so2: Double,
-    var us_epa_index: Int
+    @SerializedName("co")
+    val co: Double,
+    @SerializedName("gb-defra-index")
+    val gbDefraIndex: Int,
+    @SerializedName("no2")
+    val no2: Double,
+    @SerializedName("o3")
+    val o3: Double,
+    @SerializedName("pm10")
+    val pm10: Double,
+    @SerializedName("pm2_5")
+    val pm25: Double,
+    @SerializedName("so2")
+    val so2: Double,
+    @SerializedName("us-epa-index")
+    val usEpaIndex: Int
 )

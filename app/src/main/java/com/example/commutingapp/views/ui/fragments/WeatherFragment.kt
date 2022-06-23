@@ -15,7 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.commutingapp.R
-import com.example.commutingapp.data.model.Weather
+import com.example.commutingapp.data.model.WeatherDto
 import com.example.commutingapp.databinding.FragmentWeatherBinding
 import com.example.commutingapp.utils.InternetConnection.Connection
 import com.example.commutingapp.utils.others.Constants.KEY_USER_CITY_JSON_WEATHER
@@ -91,7 +91,7 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
     private fun renderDefaultData(){
 
             binding!!.circularProgressBar.visibility = View.INVISIBLE
-            val jsonObject:Weather? = Gson().fromJson(getJsonSharedPreference(),Weather::class.java)
+            val jsonObject:WeatherDto? = Gson().fromJson(getJsonSharedPreference(),WeatherDto::class.java)
             if(jsonObject!=null){
                 renderData(jsonObject)
                 return
@@ -141,49 +141,50 @@ class WeatherFragment: Fragment(R.layout.fragment_weather), EasyPermissions.Perm
     }
 
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
-    private fun renderData(weatherInfo:Weather){
+    private fun renderData(weatherInfo:WeatherDto) {
         with(binding!!) {
             with(weatherInfo) {
-                with(current){
-                    if(listOfWeatherModel.isNotEmpty()){
+                with(current) {
+                    if (listOfWeatherModel.isNotEmpty()) {
                         listOfWeatherModel.clear()
+
+                        textViewCityName.text = "${location.region}, ${location.country}"
+                        textViewTemperature.text = "${tempC}°c"
+                        textViewWeatherCondition.text = condition.text
+                        textViewCloud.text = "   Cloud: ${cloud}%"
+                        textViewHumidity.text = "   Humidity: ${humidity}%"
+                        textViewInformation.text = "${tempC}°c | Feels like ${feelslikeC}°c"
+
+                        Glide.with(requireActivity()).load("http:" + (condition.icon))
+                            .into(imageViewWeatherCondition)
+                        textViewWindSpeed.text = "   Wind: ${windKph}km/h"
+
+                        if (isDay == 1) showDay() else showNight()
+
                     }
 
-                    textViewCityName.text = "${location.region}, ${location.country}"
-                    textViewTemperature.text = "${temp_c}°c"
-                    textViewWeatherCondition.text = condition.text
-                    textViewCloud.text = "   Cloud: ${cloud}%"
-                    textViewHumidity.text = "   Humidity: ${humidity}%"
-                    textViewInformation.text = "${temp_c}°c | Feels like ${feelslike_c}°c"
 
-                    Glide.with(requireActivity()).load("http:" + (condition.icon))
-                        .into(imageViewWeatherCondition)
-                    textViewWindSpeed.text = "   Wind: ${wind_kph}km/h"
+                    with(forecast.forecastday[0]) {
+                        textViewChanceOfRain.text = "  Rain: ${day.dailyChanceOfRain}%"
+                        textViewhighestLowestTemperature.text =
+                            "H: ${day.maxtempC}°c  |  L: ${day.mintempC}°c"
 
-                    if(is_day == 1) showDay() else showNight()
+                        hour.forEach {
 
-                }
-
-
-                with(forecast.forecastday[0]){
-                    textViewChanceOfRain.text = "  Rain: ${day.daily_chance_of_rain}%"
-                    textViewhighestLowestTemperature.text = "H: ${day.maxtemp_c}°c  |  L: ${day.mintemp_c}°c"
-
-                    hour.forEach {
-
-                        listOfWeatherModel.add(
-                            WeatherRVModel(
-                                time = it.time,
-                                icon = it.condition.icon,
-                                temperature = it.temp_c.toString(),
-                                windSpeed = it.wind_kph.toString()
+                            listOfWeatherModel.add(
+                                WeatherRVModel(
+                                    time = it.time,
+                                    icon = it.condition.icon,
+                                    temperature = it.tempC.toString(),
+                                    windSpeed = it.windKph.toString()
+                                )
                             )
-                        )
+                        }
+                        recyclerViewDisplay.adapter?.notifyDataSetChanged()
                     }
-                    recyclerViewDisplay.adapter?.notifyDataSetChanged()
+
+
                 }
-
-
             }
         }
     }

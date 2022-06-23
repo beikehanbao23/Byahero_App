@@ -4,8 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.commutingapp.BuildConfig
-import com.example.commutingapp.data.model.Weather
+import com.example.commutingapp.data.model.WeatherDto
 import com.example.commutingapp.data.model.WeatherServiceAPI
+
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import retrofit2.Call
@@ -19,11 +20,11 @@ class WeatherViewModel @Inject constructor(
      private val request: WeatherServiceAPI
 ) : ViewModel() {
     private var map: HashMap<String, String> = HashMap()
-    private val currentWeather = MutableLiveData<Weather>()
+    private val currentWeather = MutableLiveData<WeatherDto>()
     private val jsonApi = MutableLiveData<String>()
     private val exceptions = MutableLiveData<String>()
     fun getWeatherJson(): LiveData<String> = jsonApi
-    fun getCurrentWeather(): LiveData<Weather> = currentWeather
+    fun getCurrentWeather(): LiveData<WeatherDto> = currentWeather
     fun getExceptions():LiveData<String> = exceptions
 
     init {
@@ -44,8 +45,8 @@ class WeatherViewModel @Inject constructor(
 
 
 
-    private fun weatherCallback() = object : Callback<Weather> {
-        override fun onResponse(call: Call<Weather>, response: Response<Weather>) {
+    private fun weatherCallback() = object : Callback<WeatherDto> {
+        override fun onResponse(call: Call<WeatherDto>, response: Response<WeatherDto>) {
 
             if(!response.isSuccessful){
                 exceptions.postValue("Please check your internet connection or try again later. Error code: ${response.code()}")
@@ -55,7 +56,7 @@ class WeatherViewModel @Inject constructor(
 
         }
 
-        override fun onFailure(call: Call<Weather>, t: Throwable) {
+        override fun onFailure(call: Call<WeatherDto>, t: Throwable) {
             exceptions.postValue("Please check your internet connection")
         }
     }

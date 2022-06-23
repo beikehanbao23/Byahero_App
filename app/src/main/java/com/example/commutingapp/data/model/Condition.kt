@@ -1,7 +1,15 @@
 package com.example.commutingapp.data.model
 
+
+import com.google.gson.annotations.SerializedName
+import androidx.annotation.Keep
+
+@Keep
 data class Condition(
-    var code: Int,
-    var icon: String,
-    var text: String
+    @SerializedName("code")
+    val code: Int,
+    @SerializedName("icon")
+    val icon: String,
+    @SerializedName("text")
+    val text: String
 )
