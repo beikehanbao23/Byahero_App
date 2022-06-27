@@ -1,7 +1,7 @@
 Google maps clone, with live weather updates.
 
 
-![](https://github.com/JohnDominicJasmin/Byahero_App/blob/main/screenshots/1-removebg-preview.png)
+![](screenshots/1-removebg-preview.png)
 ![](https://github.com/JohnDominicJasmin/Byahero_App/blob/main/screenshots/2-removebg-preview.png)
 ![](https://github.com/JohnDominicJasmin/Byahero_App/blob/main/screenshots/3-removebg-preview.png)
 ![](https://github.com/JohnDominicJasmin/Byahero_App/blob/main/screenshots/4-removebg-preview.png)
