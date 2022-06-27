@@ -29,3 +29,6 @@ The libraries i use are:
 - [Retrofit](https://square.github.io/retrofit/)
 - [Coil](https://coil-kt.github.io/coil/getting_started/)
 - [Android-Gif-Drawable](https://github.com/koral--/android-gif-drawable)
+- [AestheticDialogs](https://github.com/gabriel-TheCode/AestheticDialogs)
+- [FirebaseAuth](https://firebase.google.com/docs/auth)
+- [FirebaseCrashlytics)(https://firebase.google.com/docs/crashlytics/get-started?authuser=0&platform=android)
