@@ -17,5 +17,3 @@ Google maps clone, with live weather updates.
     <img src="screenshots/9-removebg-preview%20.png" width="320" />  
   <img src="screenshots/9-removebg-preview.png" width="320"/>  
 </div>  
-![](https://github.com/JohnDominicJasmin/Byahero_App/blob/main/screenshots/9-removebg-preview%20.png)
-![](https://github.com/JohnDominicJasmin/Byahero_App/blob/main/screenshots/9-removebg-preview.png)
