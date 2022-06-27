@@ -17,3 +17,14 @@ Google maps clone, with live weather updates.
     <img src="screenshots/9-removebg-preview%20.png" width="320" />  
   <img src="screenshots/9-removebg-preview.png" width="320"/>  
 </div>  
+
+
+<br>
+
+# Libraries
+
+The libraries i use are: 
+- [Hilt](https://dagger.dev/hilt/)
+- [Room](https://developer.android.com/jetpack/androidx/releases/room?hl=id)
+- [Retrofit](https://square.github.io/retrofit/)
+- [Coil](https://coil-kt.github.io/coil/getting_started/)
