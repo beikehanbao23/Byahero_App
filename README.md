@@ -28,3 +28,4 @@ The libraries i use are:
 - [Room](https://developer.android.com/jetpack/androidx/releases/room?hl=id)
 - [Retrofit](https://square.github.io/retrofit/)
 - [Coil](https://coil-kt.github.io/coil/getting_started/)
+- [Android-Gif-Drawable](https://github.com/koral--/android-gif-drawable)
