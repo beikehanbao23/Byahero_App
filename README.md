@@ -8,14 +8,14 @@ Google maps clone, with live weather updates.
 </div>
 
 <div>
-  <img src="screenshots/6-removebg-preview.png" width="320" />  
-  <img src="screenshots/7-removebg-preview.png" width="320"/>  
-  <img src="screenshots/8-removebg-preview%20.png" width="320"/></div>
+  <img src="screenshots/6-removebg-preview.png" width="220" />  
+  <img src="screenshots/7-removebg-preview.png" width="220"/>  
+  <img src="screenshots/8-removebg-preview%20.png" width="220"/></div>
 </div>
 
 <div>
-    <img src="screenshots/9-removebg-preview%20.png" width="320" />  
-  <img src="screenshots/9-removebg-preview.png" width="320"/>  
+    <img src="screenshots/9-removebg-preview%20.png" width="220" />  
+  <img src="screenshots/9-removebg-preview.png" width="220"/>  
 </div>  
 
 
