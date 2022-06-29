@@ -2,9 +2,9 @@ Google maps clone, with live weather updates.
 
 
 <div style="display:inline-block;">
-  <img src="screenshots/4-removebg-preview.png" width="320" />  
-  <img src="screenshots/5-removebg-preview.png" width="320"/>  
-  <img src="screenshots/3-removebg-preview.png" width="320"/>
+  <img src="screenshots/4-removebg-preview.png" width="220" />  
+  <img src="screenshots/5-removebg-preview.png" width="220"/>  
+  <img src="screenshots/3-removebg-preview.png" width="220"/>
 </div>
 
 <div>
