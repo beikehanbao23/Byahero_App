@@ -23,7 +23,6 @@ Google maps clone, with live weather updates.
 
 # Libraries and APIs
 
-The libraries I've used: 
 - [Hilt](https://dagger.dev/hilt/)
 - [Room](https://developer.android.com/jetpack/androidx/releases/room?hl=id)
 - [Retrofit](https://square.github.io/retrofit/)
