@@ -21,7 +21,7 @@ Google maps clone, with live weather updates.
 
 <br>
 
-# Libraries
+# Libraries and APIs
 
 The libraries I've used: 
 - [Hilt](https://dagger.dev/hilt/)
